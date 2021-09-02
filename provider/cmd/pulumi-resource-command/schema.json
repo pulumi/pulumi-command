@@ -1,8 +1,8 @@
 {
-    "name": "xyz",
+    "name": "command",
     "version": "0.0.1",
     "resources": {
-        "xyz:index:Random": {
+        "command:index:Random": {
             "properties": {
                 "length": {
                     "type": "integer"
@@ -26,11 +26,24 @@
         }
     },
     "language": {
+        "csharp": {
+            "packageReferences": {
+                "Pulumi": "3.*"
+            }
+        },
+        "go": {
+            "generateResourceContainerTypes": true,
+            "importBasePath": "github.com/pulumi/pulumi-command/sdk/go/command"
+        },
         "nodejs": {
             "dependencies": {
                 "@pulumi/pulumi": "^3.0.0"
             }
         },
-        "python": {}
+        "python": {
+            "requires": {
+                "pulumi": ">=3.0.0,<4.0.0"
+            }
+        }
     }
 }
