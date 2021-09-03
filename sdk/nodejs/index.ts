@@ -5,18 +5,18 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "./utilities";
 
 // Export members:
+export * from "./command";
 export * from "./provider";
-export * from "./random";
 
 // Import resources to register:
-import { Random } from "./random";
+import { Command } from "./command";
 
 const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {
         switch (type) {
-            case "command:index:Random":
-                return new Random(name, <any>undefined, { urn })
+            case "command:index:Command":
+                return new Command(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }

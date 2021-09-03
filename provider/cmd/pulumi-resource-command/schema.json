@@ -2,27 +2,70 @@
     "name": "command",
     "version": "0.0.1",
     "resources": {
-        "command:index:Random": {
+        "command:index:Command": {
             "properties": {
-                "length": {
-                    "type": "integer"
+                "interpreter": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
-                "result": {
+                "dir": {
+                    "type": "string"
+                },
+                "environment": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "create": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                },
+                "delete": {
+                    "type": "string"
+                },
+                "stdout": {
+                    "type": "string"
+                },
+                "stderr": {
                     "type": "string"
                 }
             },
             "required": [
-                "length",
-                "result"
+                "stdout",
+                "stderr"
             ],
             "inputProperties": {
-                "length": {
-                    "type": "integer"
+                "interpreter": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "dir": {
+                    "type": "string"
+                },
+                "environment": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "create": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                },
+                "delete": {
+                    "type": "string"
                 }
             },
-            "requiredInputs": [
-                "length"
-            ]
+            "requiredInputs": []
         }
     },
     "language": {

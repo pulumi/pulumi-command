@@ -1,21 +1,18 @@
 {
     "compilerOptions": {
+        "strict": true,
         "outDir": "bin",
         "target": "es2016",
         "module": "commonjs",
         "moduleResolution": "node",
-        "declaration": true,
         "sourceMap": true,
-        "stripInternal": true,
         "experimentalDecorators": true,
+        "pretty": true,
         "noFallthroughCasesInSwitch": true,
-        "forceConsistentCasingInFileNames": true,
-        "strict": true
+        "noImplicitReturns": true,
+        "forceConsistentCasingInFileNames": true
     },
     "files": [
-        "command.ts",
-        "index.ts",
-        "provider.ts",
-        "utilities.ts"
+        "index.ts"
     ]
 }

@@ -1,0 +1,345 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2021-09-02T21:39:23.55373-07:00",
+            "magic": "25ff35eb2fae40d93bc09f0c28dba28b6a6c73228e44b41f98c7670f813f2894",
+            "version": "v3.11.0"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "lukehoban",
+                "project": "command-ec2",
+                "stack": "test"
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:test::command-ec2::pulumi:pulumi:Stack::command-ec2-test",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "catConfigStdout": "",
+                    "publicHostName": "ec2-52-11-72-116.us-west-2.compute.amazonaws.com",
+                    "publicIp": "52.11.72.116"
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::pulumi:providers:aws::default_4_18_0",
+                "custom": true,
+                "id": "37379923-9c59-4b47-ae90-b3dca3c46a6b",
+                "type": "pulumi:providers:aws",
+                "inputs": {
+                    "region": "us-west-2",
+                    "version": "4.18.0"
+                },
+                "outputs": {
+                    "region": "us-west-2",
+                    "version": "4.18.0"
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::aws:ec2/securityGroup:SecurityGroup::secgrp",
+                "custom": true,
+                "id": "sg-07a38de53027cb024",
+                "type": "aws:ec2/securityGroup:SecurityGroup",
+                "inputs": {
+                    "__defaults": [
+                        "name",
+                        "revokeRulesOnDelete"
+                    ],
+                    "description": "Foo",
+                    "ingress": [
+                        {
+                            "__defaults": [
+                                "self"
+                            ],
+                            "cidrBlocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "fromPort": 22,
+                            "protocol": "tcp",
+                            "self": false,
+                            "toPort": 22
+                        },
+                        {
+                            "__defaults": [
+                                "self"
+                            ],
+                            "cidrBlocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "fromPort": 80,
+                            "protocol": "tcp",
+                            "self": false,
+                            "toPort": 80
+                        }
+                    ],
+                    "name": "secgrp-4761833",
+                    "revokeRulesOnDelete": false
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":900000000000},\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:153052954103:security-group/sg-07a38de53027cb024",
+                    "description": "Foo",
+                    "egress": [],
+                    "id": "sg-07a38de53027cb024",
+                    "ingress": [
+                        {
+                            "cidrBlocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "description": "",
+                            "fromPort": 80,
+                            "ipv6CidrBlocks": [],
+                            "prefixListIds": [],
+                            "protocol": "tcp",
+                            "securityGroups": [],
+                            "self": false,
+                            "toPort": 80
+                        },
+                        {
+                            "cidrBlocks": [
+                                "0.0.0.0/0"
+                            ],
+                            "description": "",
+                            "fromPort": 22,
+                            "ipv6CidrBlocks": [],
+                            "prefixListIds": [],
+                            "protocol": "tcp",
+                            "securityGroups": [],
+                            "self": false,
+                            "toPort": 22
+                        }
+                    ],
+                    "name": "secgrp-4761833",
+                    "namePrefix": "",
+                    "ownerId": "153052954103",
+                    "revokeRulesOnDelete": false,
+                    "tags": {},
+                    "tagsAll": {},
+                    "vpcId": "vpc-05fdf9ab9b4c030c3"
+                },
+                "parent": "urn:pulumi:test::command-ec2::pulumi:pulumi:Stack::command-ec2-test",
+                "provider": "urn:pulumi:test::command-ec2::pulumi:providers:aws::default_4_18_0::37379923-9c59-4b47-ae90-b3dca3c46a6b",
+                "propertyDependencies": {
+                    "description": null,
+                    "ingress": null
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::aws:ec2/keyPair:KeyPair::key",
+                "custom": true,
+                "id": "key-c9ba5f4",
+                "type": "aws:ec2/keyPair:KeyPair",
+                "inputs": {
+                    "__defaults": [
+                        "keyName"
+                    ],
+                    "keyName": "key-c9ba5f4",
+                    "publicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6CD06v1RHDlLvCqD/QfsMovlpNy4I+rVsuSc3ytPTNIJ5PhJeU+ZtpMqLyndmEAlsGZqsIHNjNg9hpYKj9pTHImeJuPqTVfMefn5CqKA1QymwJLRlA/K5GrOzjxzn6SH4sEp5BqBrXNEVRwyXlFnF3xWNuZPsN2zUHMOmhGstLF7NDAEth91gHVOccTvnsMkneqemF5vO44AAuGB/QgZJufNr8RsbSziBomKM4IKl7WS8J6xta+uS+xbRstfdEMIEB9TRgUClIGEtUWH/UdFpK1HrIU0UQHSBrNhXxgLGmztQjR07hZpvTrZqueZLMsXw66FKWahIhSOwP5FCUhKp017WghZqGkPz1Sh1Uinl3pxQmUzucLrBkkrNoE11WqfikpYq4aV9UZEaNDgqECbzIOn6+NSvv8vNH2ZPhLb9YuiFU0sc3WzwJQ8lc6SqopsIj2jPosziXz0aah30e/wWPxruk2e5IDp0VRJtPXgHyPXD8QrywMyDwDLktPLGIhU= lukehoban@Lukes-MacBook-Pro-3.local"
+                },
+                "outputs": {
+                    "__meta": "{\"schema_version\":\"1\"}",
+                    "arn": "arn:aws:ec2:us-west-2:153052954103:key-pair/key-c9ba5f4",
+                    "fingerprint": "8d:5c:bf:3b:e4:79:76:5a:7c:78:83:ac:56:c3:6a:f0",
+                    "id": "key-c9ba5f4",
+                    "keyName": "key-c9ba5f4",
+                    "keyPairId": "key-0d5606f50f9330b8e",
+                    "publicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6CD06v1RHDlLvCqD/QfsMovlpNy4I+rVsuSc3ytPTNIJ5PhJeU+ZtpMqLyndmEAlsGZqsIHNjNg9hpYKj9pTHImeJuPqTVfMefn5CqKA1QymwJLRlA/K5GrOzjxzn6SH4sEp5BqBrXNEVRwyXlFnF3xWNuZPsN2zUHMOmhGstLF7NDAEth91gHVOccTvnsMkneqemF5vO44AAuGB/QgZJufNr8RsbSziBomKM4IKl7WS8J6xta+uS+xbRstfdEMIEB9TRgUClIGEtUWH/UdFpK1HrIU0UQHSBrNhXxgLGmztQjR07hZpvTrZqueZLMsXw66FKWahIhSOwP5FCUhKp017WghZqGkPz1Sh1Uinl3pxQmUzucLrBkkrNoE11WqfikpYq4aV9UZEaNDgqECbzIOn6+NSvv8vNH2ZPhLb9YuiFU0sc3WzwJQ8lc6SqopsIj2jPosziXz0aah30e/wWPxruk2e5IDp0VRJtPXgHyPXD8QrywMyDwDLktPLGIhU= lukehoban@Lukes-MacBook-Pro-3.local",
+                    "tags": {},
+                    "tagsAll": {}
+                },
+                "parent": "urn:pulumi:test::command-ec2::pulumi:pulumi:Stack::command-ec2-test",
+                "provider": "urn:pulumi:test::command-ec2::pulumi:providers:aws::default_4_18_0::37379923-9c59-4b47-ae90-b3dca3c46a6b",
+                "propertyDependencies": {
+                    "publicKey": null
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::aws:ec2/instance:Instance::server",
+                "custom": true,
+                "id": "i-097fd86da43d65b6c",
+                "type": "aws:ec2/instance:Instance",
+                "inputs": {
+                    "__defaults": [
+                        "getPasswordData",
+                        "sourceDestCheck"
+                    ],
+                    "ami": "ami-082b5a644766e0e6f",
+                    "getPasswordData": false,
+                    "instanceType": "t2.micro",
+                    "keyName": "key-c9ba5f4",
+                    "sourceDestCheck": true,
+                    "vpcSecurityGroupIds": [
+                        "sg-07a38de53027cb024"
+                    ]
+                },
+                "outputs": {
+                    "__meta": "{\"e2bfb730-ecaa-11e6-8f88-34363bc7c4c0\":{\"create\":600000000000,\"delete\":1200000000000,\"update\":600000000000},\"schema_version\":\"1\"}",
+                    "ami": "ami-082b5a644766e0e6f",
+                    "arn": "arn:aws:ec2:us-west-2:153052954103:instance/i-097fd86da43d65b6c",
+                    "associatePublicIpAddress": true,
+                    "availabilityZone": "us-west-2a",
+                    "capacityReservationSpecification": {
+                        "capacityReservationPreference": "open",
+                        "capacityReservationTarget": null
+                    },
+                    "cpuCoreCount": 1,
+                    "cpuThreadsPerCore": 1,
+                    "creditSpecification": {
+                        "cpuCredits": "standard"
+                    },
+                    "disableApiTermination": false,
+                    "ebsBlockDevices": [],
+                    "ebsOptimized": false,
+                    "enclaveOptions": {
+                        "enabled": false
+                    },
+                    "ephemeralBlockDevices": [],
+                    "getPasswordData": false,
+                    "hibernation": false,
+                    "iamInstanceProfile": "",
+                    "id": "i-097fd86da43d65b6c",
+                    "instanceInitiatedShutdownBehavior": "stop",
+                    "instanceState": "running",
+                    "instanceType": "t2.micro",
+                    "ipv6AddressCount": 0,
+                    "ipv6Addresses": [],
+                    "keyName": "key-c9ba5f4",
+                    "launchTemplate": null,
+                    "metadataOptions": {
+                        "httpEndpoint": "enabled",
+                        "httpPutResponseHopLimit": 1,
+                        "httpTokens": "optional"
+                    },
+                    "monitoring": false,
+                    "networkInterfaces": [],
+                    "outpostArn": "",
+                    "passwordData": "",
+                    "placementGroup": "",
+                    "primaryNetworkInterfaceId": "eni-06d7d2b69bbdbb244",
+                    "privateDns": "ip-172-31-20-247.us-west-2.compute.internal",
+                    "privateIp": "172.31.20.247",
+                    "publicDns": "ec2-52-11-72-116.us-west-2.compute.amazonaws.com",
+                    "publicIp": "52.11.72.116",
+                    "rootBlockDevice": {
+                        "deleteOnTermination": true,
+                        "deviceName": "/dev/xvda",
+                        "encrypted": false,
+                        "iops": 100,
+                        "kmsKeyId": "",
+                        "tags": {},
+                        "throughput": 0,
+                        "volumeId": "vol-0551ec381eab826ac",
+                        "volumeSize": 8,
+                        "volumeType": "gp2"
+                    },
+                    "secondaryPrivateIps": [],
+                    "securityGroups": [
+                        "secgrp-4761833"
+                    ],
+                    "sourceDestCheck": true,
+                    "subnetId": "subnet-02e3ab7eb2b183a7e",
+                    "tags": {},
+                    "tagsAll": {},
+                    "tenancy": "default",
+                    "vpcSecurityGroupIds": [
+                        "sg-07a38de53027cb024"
+                    ]
+                },
+                "parent": "urn:pulumi:test::command-ec2::pulumi:pulumi:Stack::command-ec2-test",
+                "dependencies": [
+                    "urn:pulumi:test::command-ec2::aws:ec2/keyPair:KeyPair::key",
+                    "urn:pulumi:test::command-ec2::aws:ec2/securityGroup:SecurityGroup::secgrp"
+                ],
+                "provider": "urn:pulumi:test::command-ec2::pulumi:providers:aws::default_4_18_0::37379923-9c59-4b47-ae90-b3dca3c46a6b",
+                "propertyDependencies": {
+                    "ami": null,
+                    "instanceType": null,
+                    "keyName": [
+                        "urn:pulumi:test::command-ec2::aws:ec2/keyPair:KeyPair::key"
+                    ],
+                    "vpcSecurityGroupIds": [
+                        "urn:pulumi:test::command-ec2::aws:ec2/securityGroup:SecurityGroup::secgrp"
+                    ]
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::pulumi:providers:command::default_0_0_1_alpha_1630620749_0a3b399e_dirty",
+                "custom": true,
+                "id": "99b65675-9895-4ec6-af2c-757374c82ac1",
+                "type": "pulumi:providers:command",
+                "inputs": {
+                    "version": "0.0.1-alpha.1630620749+0a3b399e.dirty"
+                },
+                "outputs": {
+                    "version": "0.0.1-alpha.1630620749+0a3b399e.dirty"
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::command:index:Command::config",
+                "custom": true,
+                "id": "6196a3d2a972",
+                "type": "command:index:Command",
+                "inputs": {
+                    "create": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "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"
+                    }
+                },
+                "outputs": {
+                    "create": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "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"
+                    },
+                    "stderr": "ssh: connect to host 52.11.72.116 port 22: Connection refused\r\nlost connection\n",
+                    "stdout": ""
+                },
+                "parent": "urn:pulumi:test::command-ec2::pulumi:pulumi:Stack::command-ec2-test",
+                "dependencies": [
+                    "urn:pulumi:test::command-ec2::aws:ec2/instance:Instance::server"
+                ],
+                "provider": "urn:pulumi:test::command-ec2::pulumi:providers:command::default_0_0_1_alpha_1630620749_0a3b399e_dirty::99b65675-9895-4ec6-af2c-757374c82ac1",
+                "propertyDependencies": {
+                    "create": [
+                        "urn:pulumi:test::command-ec2::aws:ec2/instance:Instance::server"
+                    ]
+                }
+            },
+            {
+                "urn": "urn:pulumi:test::command-ec2::command:index:Command::cat",
+                "custom": true,
+                "id": "6200c8c3f685",
+                "type": "command:index:Command",
+                "inputs": {
+                    "create": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "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"
+                    }
+                },
+                "outputs": {
+                    "create": {
+                        "4dabf18193072939515e22adb298388d": "1b47061264138c4ac30d75fd1eb44270",
+                        "ciphertext": "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"
+                    },
+                    "stderr": "ssh: connect to host 52.11.72.116 port 22: Connection refused\r\n",
+                    "stdout": ""
+                },
+                "parent": "urn:pulumi:test::command-ec2::pulumi:pulumi:Stack::command-ec2-test",
+                "dependencies": [
+                    "urn:pulumi:test::command-ec2::aws:ec2/instance:Instance::server",
+                    "urn:pulumi:test::command-ec2::command:index:Command::config"
+                ],
+                "provider": "urn:pulumi:test::command-ec2::pulumi:providers:command::default_0_0_1_alpha_1630620749_0a3b399e_dirty::99b65675-9895-4ec6-af2c-757374c82ac1",
+                "propertyDependencies": {
+                    "create": [
+                        "urn:pulumi:test::command-ec2::aws:ec2/instance:Instance::server"
+                    ]
+                }
+            }
+        ]
+    }
+}
