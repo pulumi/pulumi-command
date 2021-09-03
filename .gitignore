@@ -11,3 +11,4 @@ yarn.lock
 ci-scripts
 /nuget/
 rsa*
+password.txt

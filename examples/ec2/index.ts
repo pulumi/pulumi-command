@@ -47,7 +47,7 @@ const host = server.publicIp;
 
 const cpConfig = new command.Command("config", {
     create: pulumi.interpolate`
-    
+        sleep 5
         ssh-add - <<< "${privateKey}" 2>/dev/null
         scp myapp.conf ${user}@${host}:myapp.conf
         `,
@@ -55,7 +55,7 @@ const cpConfig = new command.Command("config", {
 
 const catConfig = new command.Command("cat", {
     create: pulumi.interpolate`
-
+        sleep 5
         ssh-add - <<< "${privateKey}" 2>/dev/null
         ssh ${user}@${host} 'cat myapp.conf'
         `,

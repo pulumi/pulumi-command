@@ -161,7 +161,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		return nil, err
 	}
 
-	id, err := cmd.RunCreate(ctx, k.host)
+	id, err := cmd.RunCreate(ctx, k.host, urn)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +227,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		return nil, err
 	}
 
-	err = cmd.RunDelete(ctx, k.host)
+	err = cmd.RunDelete(ctx, k.host, urn)
 	if err != nil {
 		return nil, err
 	}

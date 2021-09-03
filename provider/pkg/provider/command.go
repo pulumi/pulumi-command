@@ -47,8 +47,8 @@ type command struct {
 
 // RunCreate executes the create command, sets Stdout and Stderr, and returns a unique
 // ID for the command execution
-func (c *command) RunCreate(ctx context.Context, host *provider.HostClient) (string, error) {
-	stdout, stderr, id, err := c.run(ctx, c.Create, host)
+func (c *command) RunCreate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
+	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
 	c.Stdout = stdout
 	c.Stderr = stderr
 	return id, err
@@ -56,17 +56,17 @@ func (c *command) RunCreate(ctx context.Context, host *provider.HostClient) (str
 
 // RunDelete executes the create command, sets Stdout and Stderr, and returns a unique
 // ID for the command execution
-func (c *command) RunDelete(ctx context.Context, host *provider.HostClient) error {
+func (c *command) RunDelete(ctx context.Context, host *provider.HostClient, urn resource.URN) error {
 	if c.Delete == nil {
 		return nil
 	}
-	_, _, _, err := c.run(ctx, *c.Delete, host)
+	_, _, _, err := c.run(ctx, *c.Delete, host, urn)
 	return err
 }
 
 // run executes the create command, sets Stdout and Stderr, and returns a unique
 // ID for the command execution
-func (c *command) run(ctx context.Context, command string, host *provider.HostClient) (string, string, string, error) {
+func (c *command) run(ctx context.Context, command string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {
 	var args []string
 	if c.Interpreter != nil && len(*c.Interpreter) > 0 {
 		args = append(args, *c.Interpreter...)
@@ -109,12 +109,12 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 
 	stdoutch := make(chan struct{})
 	stderrch := make(chan struct{})
-	go copyOutput(ctx, host, stdouttee, stdoutch)
-	go copyOutput(ctx, host, stderrtee, stderrch)
+	go copyOutput(ctx, host, urn, stdouttee, stdoutch)
+	go copyOutput(ctx, host, urn, stderrtee, stderrch)
 
 	err = cmd.Start()
 	pid := cmd.Process.Pid
-	if err != nil {
+	if err == nil {
 		err = cmd.Wait()
 	}
 
@@ -137,11 +137,11 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 
 }
 
-func copyOutput(ctx context.Context, host *provider.HostClient, r io.Reader, doneCh chan<- struct{}) {
+func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN, r io.Reader, doneCh chan<- struct{}) {
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		err := host.Log(ctx, diag.Info, "", scanner.Text())
+		err := host.Log(ctx, diag.Info, urn, scanner.Text())
 		if err != nil {
 			return
 		}
