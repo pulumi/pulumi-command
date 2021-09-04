@@ -3,7 +3,8 @@
 Use cases:
 * Post create hook
 * Readiness/health check
-* 
+* `aws` CLI
+* `kubectl patch`
 
 ## Build and Test
 

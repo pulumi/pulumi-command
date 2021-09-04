@@ -1,5 +1,4 @@
 import * as command from "@pulumi/command";
-import * as random from "@pulumi/random";
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -40,6 +39,10 @@ const server = new aws.ec2.Instance("server", {
     ami: amiId,
     keyName: key.keyName,
     vpcSecurityGroupIds: [secgrp.id],
+    userData: `#!/bin/bash
+    sleep 20
+    echo ""Hello, World!"" > index.html
+    nohup python -m SimpleHTTPServer 80 &`,
 });
 
 const user = "ec2-user";
@@ -49,18 +52,24 @@ const cpConfig = new command.Command("config", {
     create: pulumi.interpolate`
         sleep 5
         ssh-add - <<< "${privateKey}" 2>/dev/null
-        scp myapp.conf ${user}@${host}:myapp.conf
-        `,
+        scp -o "StrictHostKeyChecking no" myapp.conf ${user}@${host}:myapp.conf`,
 })
 
 const catConfig = new command.Command("cat", {
     create: pulumi.interpolate`
         sleep 5
         ssh-add - <<< "${privateKey}" 2>/dev/null
-        ssh ${user}@${host} 'cat myapp.conf'
-        `,
+        ssh -o "StrictHostKeyChecking no" ${user}@${host} 'cat myapp.conf'`,
 }, { dependsOn: [cpConfig] });
+
+const waitForServerReady = new command.Command("wait", {
+    create: `until $(curl --output /dev/null -s -f $HOST); do sleep 1; done`,
+    environment: {
+        HOST: host,
+    },
+});
 
 export const publicIp = server.publicIp;
 export const publicHostName = server.publicDns;
+export const waitOutput = waitForServerReady.stdout;
 export const catConfigStdout = catConfig.stdout;

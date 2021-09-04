@@ -33,17 +33,19 @@ import (
 )
 
 type commandProvider struct {
-	host    *provider.HostClient
-	name    string
-	version string
+	host        *provider.HostClient
+	name        string
+	version     string
+	cancelFuncs map[context.Context]context.CancelFunc
 }
 
 func makeProvider(host *provider.HostClient, name, version string) (pulumirpc.ResourceProviderServer, error) {
 	// Return the new provider
 	return &commandProvider{
-		host:    host,
-		name:    name,
-		version: version,
+		host:        host,
+		name:        name,
+		version:     version,
+		cancelFuncs: make(map[context.Context]context.CancelFunc),
 	}, nil
 }
 
@@ -143,6 +145,8 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 
 // Create allocates a new instance of the provided resource and returns its unique ID afterwards.
 func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateRequest) (*pulumirpc.CreateResponse, error) {
+	ctx = k.addContext(ctx)
+	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
 	if ty != "command:index:Command" {
@@ -186,6 +190,8 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 
 // Read the current live state associated with a resource.
 func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) (*pulumirpc.ReadResponse, error) {
+	ctx = k.addContext(ctx)
+	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
 	if ty != "command:index:Command" {
@@ -196,6 +202,8 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 
 // Update updates an existing resource with new values.
 func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateRequest) (*pulumirpc.UpdateResponse, error) {
+	ctx = k.addContext(ctx)
+	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
 	if ty != "command:index:Command" {
@@ -209,6 +217,8 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 // Delete tears down an existing resource with the given ID.  If it fails, the resource is assumed
 // to still exist.
 func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteRequest) (*pbempty.Empty, error) {
+	ctx = k.addContext(ctx)
+	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
 	if ty != "command:index:Command" {
@@ -253,6 +263,18 @@ func (k *commandProvider) GetSchema(ctx context.Context, req *pulumirpc.GetSchem
 // to the host to decide how long to wait after Cancel is called before (e.g.)
 // hard-closing any gRPC connection.
 func (k *commandProvider) Cancel(context.Context, *pbempty.Empty) (*pbempty.Empty, error) {
-	// TODO
+	for _, cancel := range k.cancelFuncs {
+		cancel()
+	}
 	return &pbempty.Empty{}, nil
+}
+
+func (k *commandProvider) addContext(c context.Context) context.Context {
+	newctx, fn := context.WithCancel(c)
+	k.cancelFuncs[newctx] = fn
+	return newctx
+}
+
+func (k *commandProvider) removeContext(c context.Context) {
+	delete(k.cancelFuncs, c)
 }

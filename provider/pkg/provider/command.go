@@ -118,12 +118,16 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 		err = cmd.Wait()
 	}
 
+	fmt.Printf("closing...\n")
+
 	stdoutw.Close()
 	stderrw.Close()
 
+	fmt.Printf("reading from output done channels...\n")
 	<-stdoutch
 	<-stderrch
 
+	fmt.Printf("preparing to return...\n")
 	if err != nil {
 		return "", "", "", err
 	}
@@ -134,7 +138,6 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 	}
 
 	return stdoutbuf.String(), stderrbuf.String(), id, nil
-
 }
 
 func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN, r io.Reader, doneCh chan<- struct{}) {
