@@ -1,4 +1,4 @@
-// Copyright 2016-2020, Pulumi Corporation.
+// Copyright 2016-2021, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,11 +24,9 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-
-	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
-
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
 type command struct {
@@ -40,7 +38,6 @@ type command struct {
 	Delete      *string            `pulumi:"delete,optional"`
 
 	// Output
-
 	Stdout string `pulumi:"stdout"`
 	Stderr string `pulumi:"stderr"`
 }
@@ -118,16 +115,12 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 		err = cmd.Wait()
 	}
 
-	fmt.Printf("closing...\n")
-
 	stdoutw.Close()
 	stderrw.Close()
 
-	fmt.Printf("reading from output done channels...\n")
 	<-stdoutch
 	<-stderrch
 
-	fmt.Printf("preparing to return...\n")
 	if err != nil {
 		return "", "", "", err
 	}

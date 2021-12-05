@@ -62,22 +62,32 @@ func (CommandState) ElementType() reflect.Type {
 }
 
 type commandArgs struct {
-	Create      *string           `pulumi:"create"`
-	Delete      *string           `pulumi:"delete"`
-	Dir         *string           `pulumi:"dir"`
+	// The command to run on create.
+	Create *string `pulumi:"create"`
+	// The command to run on delete.
+	Delete *string `pulumi:"delete"`
+	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+	Dir *string `pulumi:"dir"`
+	// Environment variables to set on commands.
 	Environment map[string]string `pulumi:"environment"`
 	Interpreter []string          `pulumi:"interpreter"`
-	Update      *string           `pulumi:"update"`
+	// The command to run on update.
+	Update *string `pulumi:"update"`
 }
 
 // The set of arguments for constructing a Command resource.
 type CommandArgs struct {
-	Create      pulumi.StringPtrInput
-	Delete      pulumi.StringPtrInput
-	Dir         pulumi.StringPtrInput
+	// The command to run on create.
+	Create pulumi.StringPtrInput
+	// The command to run on delete.
+	Delete pulumi.StringPtrInput
+	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+	Dir pulumi.StringPtrInput
+	// Environment variables to set on commands.
 	Environment pulumi.StringMapInput
 	Interpreter pulumi.StringArrayInput
-	Update      pulumi.StringPtrInput
+	// The command to run on update.
+	Update pulumi.StringPtrInput
 }
 
 func (CommandArgs) ElementType() reflect.Type {

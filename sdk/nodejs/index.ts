@@ -7,9 +7,18 @@ import * as utilities from "./utilities";
 // Export members:
 export * from "./command";
 export * from "./provider";
+export * from "./remoteCommand";
+
+// Export sub-modules:
+import * as types from "./types";
+
+export {
+    types,
+};
 
 // Import resources to register:
 import { Command } from "./command";
+import { RemoteCommand } from "./remoteCommand";
 
 const _module = {
     version: utilities.getVersion(),
@@ -17,6 +26,8 @@ const _module = {
         switch (type) {
             case "command:index:Command":
                 return new Command(name, <any>undefined, { urn })
+            case "command:index:RemoteCommand":
+                return new RemoteCommand(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }

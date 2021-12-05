@@ -7,6 +7,9 @@ import typing
 # Export this package's modules as members:
 from .command import *
 from .provider import *
+from .remote_command import *
+from ._inputs import *
+from . import outputs
 _utilities.register(
     resource_modules="""
 [
@@ -15,7 +18,8 @@ _utilities.register(
   "mod": "index",
   "fqn": "pulumi_command",
   "classes": {
-   "command:index:Command": "Command"
+   "command:index:Command": "Command",
+   "command:index:RemoteCommand": "RemoteCommand"
   }
  }
 ]

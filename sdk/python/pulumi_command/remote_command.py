@@ -7,45 +7,44 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from . import _utilities
+from . import outputs
+from ._inputs import *
 
-__all__ = ['CommandArgs', 'Command']
+__all__ = ['RemoteCommandArgs', 'RemoteCommand']
 
 @pulumi.input_type
-class CommandArgs:
+class RemoteCommandArgs:
     def __init__(__self__, *,
+                 connection: pulumi.Input['RemoteConnectionArgs'],
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
-                 dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  update: Optional[pulumi.Input[str]] = None):
         """
-        The set of arguments for constructing a Command resource.
-        :param pulumi.Input[str] create: The command to run on create.
-        :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[str] dir: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Environment variables to set on commands.
-        :param pulumi.Input[str] update: The command to run on update.
+        The set of arguments for constructing a RemoteCommand resource.
         """
+        pulumi.set(__self__, "connection", connection)
         if create is not None:
             pulumi.set(__self__, "create", create)
         if delete is not None:
             pulumi.set(__self__, "delete", delete)
-        if dir is not None:
-            pulumi.set(__self__, "dir", dir)
         if environment is not None:
             pulumi.set(__self__, "environment", environment)
-        if interpreter is not None:
-            pulumi.set(__self__, "interpreter", interpreter)
         if update is not None:
             pulumi.set(__self__, "update", update)
 
     @property
     @pulumi.getter
+    def connection(self) -> pulumi.Input['RemoteConnectionArgs']:
+        return pulumi.get(self, "connection")
+
+    @connection.setter
+    def connection(self, value: pulumi.Input['RemoteConnectionArgs']):
+        pulumi.set(self, "connection", value)
+
+    @property
+    @pulumi.getter
     def create(self) -> Optional[pulumi.Input[str]]:
-        """
-        The command to run on create.
-        """
         return pulumi.get(self, "create")
 
     @create.setter
@@ -55,9 +54,6 @@ class CommandArgs:
     @property
     @pulumi.getter
     def delete(self) -> Optional[pulumi.Input[str]]:
-        """
-        The command to run on delete.
-        """
         return pulumi.get(self, "delete")
 
     @delete.setter
@@ -66,22 +62,7 @@ class CommandArgs:
 
     @property
     @pulumi.getter
-    def dir(self) -> Optional[pulumi.Input[str]]:
-        """
-        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        """
-        return pulumi.get(self, "dir")
-
-    @dir.setter
-    def dir(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "dir", value)
-
-    @property
-    @pulumi.getter
     def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
-        """
-        Environment variables to set on commands.
-        """
         return pulumi.get(self, "environment")
 
     @environment.setter
@@ -90,19 +71,7 @@ class CommandArgs:
 
     @property
     @pulumi.getter
-    def interpreter(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
-        return pulumi.get(self, "interpreter")
-
-    @interpreter.setter
-    def interpreter(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
-        pulumi.set(self, "interpreter", value)
-
-    @property
-    @pulumi.getter
     def update(self) -> Optional[pulumi.Input[str]]:
-        """
-        The command to run on update.
-        """
         return pulumi.get(self, "update")
 
     @update.setter
@@ -110,43 +79,37 @@ class CommandArgs:
         pulumi.set(self, "update", value)
 
 
-class Command(pulumi.CustomResource):
+class RemoteCommand(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 connection: Optional[pulumi.Input[pulumi.InputType['RemoteConnectionArgs']]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
-                 dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
-        Create a Command resource with the given unique name, props, and options.
+        Create a RemoteCommand resource with the given unique name, props, and options.
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[str] create: The command to run on create.
-        :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[str] dir: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Environment variables to set on commands.
-        :param pulumi.Input[str] update: The command to run on update.
         """
         ...
     @overload
     def __init__(__self__,
                  resource_name: str,
-                 args: Optional[CommandArgs] = None,
+                 args: RemoteCommandArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Create a Command resource with the given unique name, props, and options.
+        Create a RemoteCommand resource with the given unique name, props, and options.
         :param str resource_name: The name of the resource.
-        :param CommandArgs args: The arguments to use to populate this resource's properties.
+        :param RemoteCommandArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
         """
         ...
     def __init__(__self__, resource_name: str, *args, **kwargs):
-        resource_args, opts = _utilities.get_resource_args_opts(CommandArgs, pulumi.ResourceOptions, *args, **kwargs)
+        resource_args, opts = _utilities.get_resource_args_opts(RemoteCommandArgs, pulumi.ResourceOptions, *args, **kwargs)
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
@@ -155,11 +118,10 @@ class Command(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 connection: Optional[pulumi.Input[pulumi.InputType['RemoteConnectionArgs']]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
-                 dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         if opts is None:
@@ -171,18 +133,19 @@ class Command(pulumi.CustomResource):
         if opts.id is None:
             if __props__ is not None:
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
-            __props__ = CommandArgs.__new__(CommandArgs)
+            __props__ = RemoteCommandArgs.__new__(RemoteCommandArgs)
 
+            if connection is None and not opts.urn:
+                raise TypeError("Missing required property 'connection'")
+            __props__.__dict__["connection"] = connection
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
-            __props__.__dict__["dir"] = dir
             __props__.__dict__["environment"] = environment
-            __props__.__dict__["interpreter"] = interpreter
             __props__.__dict__["update"] = update
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
-        super(Command, __self__).__init__(
-            'command:index:Command',
+        super(RemoteCommand, __self__).__init__(
+            'command:index:RemoteCommand',
             resource_name,
             __props__,
             opts)
@@ -190,9 +153,9 @@ class Command(pulumi.CustomResource):
     @staticmethod
     def get(resource_name: str,
             id: pulumi.Input[str],
-            opts: Optional[pulumi.ResourceOptions] = None) -> 'Command':
+            opts: Optional[pulumi.ResourceOptions] = None) -> 'RemoteCommand':
         """
-        Get an existing Command resource's state with the given name, id, and optional extra
+        Get an existing RemoteCommand resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
 
         :param str resource_name: The unique name of the resulting resource.
@@ -201,17 +164,21 @@ class Command(pulumi.CustomResource):
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
-        __props__ = CommandArgs.__new__(CommandArgs)
+        __props__ = RemoteCommandArgs.__new__(RemoteCommandArgs)
 
+        __props__.__dict__["connection"] = None
         __props__.__dict__["create"] = None
         __props__.__dict__["delete"] = None
-        __props__.__dict__["dir"] = None
         __props__.__dict__["environment"] = None
-        __props__.__dict__["interpreter"] = None
         __props__.__dict__["stderr"] = None
         __props__.__dict__["stdout"] = None
         __props__.__dict__["update"] = None
-        return Command(resource_name, opts=opts, __props__=__props__)
+        return RemoteCommand(resource_name, opts=opts, __props__=__props__)
+
+    @property
+    @pulumi.getter
+    def connection(self) -> pulumi.Output[Optional['outputs.RemoteConnection']]:
+        return pulumi.get(self, "connection")
 
     @property
     @pulumi.getter
@@ -225,18 +192,8 @@ class Command(pulumi.CustomResource):
 
     @property
     @pulumi.getter
-    def dir(self) -> pulumi.Output[Optional[str]]:
-        return pulumi.get(self, "dir")
-
-    @property
-    @pulumi.getter
     def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
         return pulumi.get(self, "environment")
-
-    @property
-    @pulumi.getter
-    def interpreter(self) -> pulumi.Output[Optional[Sequence[str]]]:
-        return pulumi.get(self, "interpreter")
 
     @property
     @pulumi.getter

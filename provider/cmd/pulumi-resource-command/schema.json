@@ -1,6 +1,36 @@
 {
     "name": "command",
     "version": "0.0.1",
+    "types": {
+        "command:index:RemoteConnection": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "type": "string",
+                    "descripton": "The user that we should use for the connection. Defaults to `root`."
+                },
+                "password": {
+                    "type": "string",
+                    "description": "The password we should use for the connection."
+                },
+                "host": {
+                    "type": "string",
+                    "description": "The address of the resource to connect to."
+                },
+                "port": {
+                    "type": "number",
+                    "description": "The port to connect to. Defaults to 22."
+                },
+                "privateKey": {
+                    "type": "string",
+                    "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+                }
+            },
+            "required": [
+                "host"
+            ]
+        }
+    },
     "resources": {
         "command:index:Command": {
             "properties": {
@@ -47,7 +77,65 @@
                     }
                 },
                 "dir": {
+                    "type": "string",
+                    "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+                },
+                "environment": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Environment variables to set on commands."
+                },
+                "create": {
+                    "type": "string",
+                    "description": "The command to run on create."
+                },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update."
+                },
+                "delete": {
+                    "type": "string",
+                    "description": "The command to run on delete."
+                }
+            },
+            "requiredInputs": []
+        },
+        "command:index:RemoteCommand": {
+            "properties": {
+                "connection": {
+                    "$ref": "#/types/command:index:RemoteConnection"
+                },
+                "environment": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "create": {
                     "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                },
+                "delete": {
+                    "type": "string"
+                },
+                "stdout": {
+                    "type": "string"
+                },
+                "stderr": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "stdout",
+                "stderr"
+            ],
+            "inputProperties": {
+                "connection": {
+                    "$ref": "#/types/command:index:RemoteConnection"
                 },
                 "environment": {
                     "type": "object",
@@ -65,7 +153,9 @@
                     "type": "string"
                 }
             },
-            "requiredInputs": []
+            "requiredInputs": [
+                "connection"
+            ]
         }
     },
     "language": {

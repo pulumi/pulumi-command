@@ -1,4 +1,4 @@
-// Copyright 2016-2020, Pulumi Corporation.
+// Copyright 2016-2021, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,14 +77,14 @@ func (k *commandProvider) Configure(_ context.Context, req *pulumirpc.ConfigureR
 // Invoke dynamically executes a built-in function in the provider.
 func (k *commandProvider) Invoke(_ context.Context, req *pulumirpc.InvokeRequest) (*pulumirpc.InvokeResponse, error) {
 	tok := req.GetTok()
-	return nil, fmt.Errorf("unknown Invoke token '%s'", tok)
+	return nil, fmt.Errorf("unknown Invoke token %q", tok)
 }
 
 // StreamInvoke dynamically executes a built-in function in the provider. The result is streamed
 // back as a series of messages.
 func (k *commandProvider) StreamInvoke(req *pulumirpc.InvokeRequest, server pulumirpc.ResourceProvider_StreamInvokeServer) error {
 	tok := req.GetTok()
-	return fmt.Errorf("unknown StreamInvoke token '%s'", tok)
+	return fmt.Errorf("unknown StreamInvoke token %q", tok)
 }
 
 // Check validates that the given property bag is valid for a resource of the given type and returns
@@ -96,8 +96,8 @@ func (k *commandProvider) StreamInvoke(req *pulumirpc.InvokeRequest, server pulu
 func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest) (*pulumirpc.CheckResponse, error) {
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" {
-		return nil, fmt.Errorf("unknown resource type '%s'", ty)
+	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 	return &pulumirpc.CheckResponse{Inputs: req.News, Failures: nil}, nil
 }
@@ -106,8 +106,8 @@ func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest
 func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) (*pulumirpc.DiffResponse, error) {
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" {
-		return nil, fmt.Errorf("unknown resource type '%s'", ty)
+	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
 	olds, err := plugin.UnmarshalProperties(req.GetOlds(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
@@ -124,7 +124,7 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 	changes := pulumirpc.DiffResponse_DIFF_NONE
 	var replaces []string
 	// TODO: Non-replace changes
-	for _, replaceKey := range []string{"environment", "dir", "interpreter", "create"} {
+	for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection"} {
 		i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
 		if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
 			continue
@@ -149,8 +149,8 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" {
-		return nil, fmt.Errorf("unknown resource type '%s'", ty)
+	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
 	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
@@ -159,20 +159,42 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 	}
 	inputs := inputProps.Mappable()
 
-	var cmd command
-	err = mapper.MapI(inputs, &cmd)
-	if err != nil {
-		return nil, err
-	}
+	var id string
+	var outputs map[string]interface{}
 
-	id, err := cmd.RunCreate(ctx, k.host, urn)
-	if err != nil {
-		return nil, err
-	}
+	switch ty {
+	case "command:index:Command":
+		var cmd command
+		err = mapper.MapI(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
 
-	outputs, err := mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
-	if err != nil {
-		return nil, err
+		id, err = cmd.RunCreate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
+	case "command:index:RemoteCommand":
+		var cmd remotecommand
+		err = mapper.MapI(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		id, err = cmd.RunCreate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	outputProperties, err := plugin.MarshalProperties(
@@ -194,10 +216,10 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" {
-		return nil, fmt.Errorf("unknown resource type '%s'", ty)
+	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+		return nil, fmt.Errorf("unknown resource type '%q'", ty)
 	}
-	return nil, status.Error(codes.Unimplemented, "Read is not yet implemented for 'command:index:Command'")
+	return nil, status.Errorf(codes.Unimplemented, "Read is not yet implemented for %q", ty)
 }
 
 // Update updates an existing resource with new values.
@@ -206,12 +228,12 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" {
-		return nil, fmt.Errorf("unknown resource type '%s'", ty)
+	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
 	// Our Random resource will never be updated - if there is a diff, it will be a replacement.
-	return nil, status.Error(codes.Unimplemented, "Update is not yet implemented for 'command:index:Command'")
+	return nil, status.Errorf(codes.Unimplemented, "Update is not yet implemented for %q", ty)
 }
 
 // Delete tears down an existing resource with the given ID.  If it fails, the resource is assumed
@@ -221,8 +243,8 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" {
-		return nil, fmt.Errorf("unknown resource type '%s'", ty)
+	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
 	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
@@ -231,15 +253,29 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 	}
 	inputs := inputProps.Mappable()
 
-	var cmd command
-	err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
-	if err != nil {
-		return nil, err
-	}
+	switch ty {
+	case "command:index:Command":
+		var cmd command
+		err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
 
-	err = cmd.RunDelete(ctx, k.host, urn)
-	if err != nil {
-		return nil, err
+		err = cmd.RunDelete(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+	case "command:index:RemoteCommand":
+		var cmd remotecommand
+		err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		err = cmd.RunDelete(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &pbempty.Empty{}, nil

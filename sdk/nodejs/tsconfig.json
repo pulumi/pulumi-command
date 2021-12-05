@@ -16,6 +16,10 @@
         "command.ts",
         "index.ts",
         "provider.ts",
+        "remoteCommand.ts",
+        "types/index.ts",
+        "types/input.ts",
+        "types/output.ts",
         "utilities.ts"
     ]
 }
