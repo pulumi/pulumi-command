@@ -219,7 +219,12 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
 		return nil, fmt.Errorf("unknown resource type '%q'", ty)
 	}
-	return nil, status.Errorf(codes.Unimplemented, "Read is not yet implemented for %q", ty)
+
+	return &pulumirpc.ReadResponse{
+		Id:         req.GetId(),
+		Inputs:     req.GetInputs(),
+		Properties: req.GetInputs(),
+	}, nil
 }
 
 // Update updates an existing resource with new values.
