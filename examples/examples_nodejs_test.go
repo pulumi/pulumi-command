@@ -18,7 +18,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSimpleTs(t *testing.T) {
+func TestRandom(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "random"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				out, ok := stack.Outputs["output"].(string)
+				assert.True(t, ok)
+				assert.Len(t, out, 32)
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
+func TestEc2RemoteTs(t *testing.T) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(getRegion(t))},
 	)
