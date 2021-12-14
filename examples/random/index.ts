@@ -1,6 +1,6 @@
-import * as command from "@pulumi/command";
+import { local } from "@pulumi/command";
 
-const random = new command.Command("random", {
+const random = new local.Command("random", {
     create: "openssl rand -hex 16",
 })
 
