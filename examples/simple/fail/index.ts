@@ -17,8 +17,8 @@ const pwd2 = new local.Command("pwd2", {
     }
 }, { deleteBeforeReplace: true });
 
-// const fail = new local.Command("fail", {
-//     create: `echo "couldn't do what I wanted..." && false`,
-// });
+const fail = new local.Command("fail", {
+    create: `echo "couldn't do what I wanted..." && false`,
+});
 
 export const output = pwd.stdout;
