@@ -7,25 +7,22 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
 
-namespace Pulumi.Command
+namespace Pulumi.Command.Remote
 {
-    [CommandResourceType("command:index:Command")]
+    [CommandResourceType("command:remote:Command")]
     public partial class Command : Pulumi.CustomResource
     {
+        [Output("connection")]
+        public Output<Outputs.Connection?> Connection { get; private set; } = null!;
+
         [Output("create")]
         public Output<string?> Create { get; private set; } = null!;
 
         [Output("delete")]
         public Output<string?> Delete { get; private set; } = null!;
 
-        [Output("dir")]
-        public Output<string?> Dir { get; private set; } = null!;
-
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
-
-        [Output("interpreter")]
-        public Output<ImmutableArray<string>> Interpreter { get; private set; } = null!;
 
         [Output("stderr")]
         public Output<string> Stderr { get; private set; } = null!;
@@ -44,13 +41,13 @@ namespace Pulumi.Command
         /// <param name="name">The unique name of the resource</param>
         /// <param name="args">The arguments used to populate this resource's properties</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public Command(string name, CommandArgs? args = null, CustomResourceOptions? options = null)
-            : base("command:index:Command", name, args ?? new CommandArgs(), MakeResourceOptions(options, ""))
+        public Command(string name, CommandArgs args, CustomResourceOptions? options = null)
+            : base("command:remote:Command", name, args ?? new CommandArgs(), MakeResourceOptions(options, ""))
         {
         }
 
         private Command(string name, Input<string> id, CustomResourceOptions? options = null)
-            : base("command:index:Command", name, null, MakeResourceOptions(options, id))
+            : base("command:remote:Command", name, null, MakeResourceOptions(options, id))
         {
         }
 
@@ -81,47 +78,23 @@ namespace Pulumi.Command
 
     public sealed class CommandArgs : Pulumi.ResourceArgs
     {
-        /// <summary>
-        /// The command to run on create.
-        /// </summary>
+        [Input("connection", required: true)]
+        public Input<Inputs.ConnectionArgs> Connection { get; set; } = null!;
+
         [Input("create")]
         public Input<string>? Create { get; set; }
 
-        /// <summary>
-        /// The command to run on delete.
-        /// </summary>
         [Input("delete")]
         public Input<string>? Delete { get; set; }
 
-        /// <summary>
-        /// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        /// </summary>
-        [Input("dir")]
-        public Input<string>? Dir { get; set; }
-
         [Input("environment")]
         private InputMap<string>? _environment;
-
-        /// <summary>
-        /// Environment variables to set on commands.
-        /// </summary>
         public InputMap<string> Environment
         {
             get => _environment ?? (_environment = new InputMap<string>());
             set => _environment = value;
         }
 
-        [Input("interpreter")]
-        private InputList<string>? _interpreter;
-        public InputList<string> Interpreter
-        {
-            get => _interpreter ?? (_interpreter = new InputList<string>());
-            set => _interpreter = value;
-        }
-
-        /// <summary>
-        /// The command to run on update.
-        /// </summary>
         [Input("update")]
         public Input<string>? Update { get; set; }
 

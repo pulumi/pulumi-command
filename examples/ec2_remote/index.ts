@@ -1,5 +1,5 @@
 import { interpolate, Config } from "@pulumi/pulumi";
-import * as command from "@pulumi/command";
+import { local, remote } from "@pulumi/command";
 import * as aws from "@pulumi/aws";
 import * as fs from "fs";
 import * as os from "os";
@@ -36,24 +36,24 @@ const server = new aws.ec2.Instance("server", {
     vpcSecurityGroupIds: [secgrp.id],
 }, { replaceOnChanges: ["instanceType"] });
 
-const connection: command.types.input.RemoteConnectionArgs = {
+const connection: remote.types.input.ConnectionArgs = {
     host: server.publicIp,
     user: "ec2-user",
     privateKey: privateKey,
 };
 
-const hostname = new command.RemoteCommand("hostname", {
+const hostname = new remote.Command("hostname", {
     connection,
     create: "hostname",
 });
 
-const remotePrivateIP = new command.RemoteCommand("remotePrivateIP", {
+const remotePrivateIP = new remote.Command("remotePrivateIP", {
     connection,
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
 }, { deleteBeforeReplace: true });
 
-const localPrivateIP = new command.Command("localPrivateIP", {
+const localPrivateIP = new local.Command("localPrivateIP", {
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
 }, { deleteBeforeReplace: true });

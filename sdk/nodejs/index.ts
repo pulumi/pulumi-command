@@ -5,35 +5,18 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "./utilities";
 
 // Export members:
-export * from "./command";
 export * from "./provider";
-export * from "./remoteCommand";
 
 // Export sub-modules:
+import * as local from "./local";
+import * as remote from "./remote";
 import * as types from "./types";
 
 export {
+    local,
+    remote,
     types,
 };
-
-// Import resources to register:
-import { Command } from "./command";
-import { RemoteCommand } from "./remoteCommand";
-
-const _module = {
-    version: utilities.getVersion(),
-    construct: (name: string, type: string, urn: string): pulumi.Resource => {
-        switch (type) {
-            case "command:index:Command":
-                return new Command(name, <any>undefined, { urn })
-            case "command:index:RemoteCommand":
-                return new RemoteCommand(name, <any>undefined, { urn })
-            default:
-                throw new Error(`unknown resource type ${type}`);
-        }
-    },
-};
-pulumi.runtime.registerResourceModule("command", "index", _module)
 
 import { Provider } from "./provider";
 
