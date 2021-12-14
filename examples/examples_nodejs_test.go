@@ -31,6 +31,20 @@ func TestRandom(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestSimple(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                    filepath.Join(getCwd(t), "simple"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
+			EditDirs: []integration.EditDir{{
+				Dir:           filepath.Join("simple", "fail"),
+				Additive:      true,
+				ExpectFailure: true,
+			}},
+		})
+	integration.ProgramTest(t, &test)
+}
+
 func TestEc2RemoteTs(t *testing.T) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(getRegion(t))},

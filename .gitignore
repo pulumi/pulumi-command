@@ -14,4 +14,5 @@ sdk/dotnet/version.txt
 
 rsa*
 password.txt
-**/private_ip.txt
+password2.txt
+private_ip.txt

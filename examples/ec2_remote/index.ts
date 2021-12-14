@@ -7,7 +7,6 @@ import * as path from "path";
 import { size } from "./size";
 
 const config = new Config();
-const publicKey = config.get("publicKey") ?? fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa.pub")).toString("utf8");
 const keyName = config.get("keyName") ?? new aws.ec2.KeyPair("key", { publicKey: config.require("publicKey") }).keyName;
 const privateKeyBase64 = config.get("privateKeyBase64");
 const privateKey = privateKeyBase64 ? Buffer.from(privateKeyBase64, 'base64').toString('ascii') : fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa")).toString("utf8");
