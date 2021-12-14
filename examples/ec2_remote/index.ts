@@ -1,5 +1,5 @@
 import { interpolate, Config } from "@pulumi/pulumi";
-import { local, remote } from "@pulumi/command";
+import { local, remote, types } from "@pulumi/command";
 import * as aws from "@pulumi/aws";
 import * as fs from "fs";
 import * as os from "os";
@@ -36,7 +36,7 @@ const server = new aws.ec2.Instance("server", {
     vpcSecurityGroupIds: [secgrp.id],
 }, { replaceOnChanges: ["instanceType"] });
 
-const connection: remote.types.input.ConnectionArgs = {
+const connection: types.input.remote.ConnectionArgs = {
     host: server.publicIp,
     user: "ec2-user",
     privateKey: privateKey,
