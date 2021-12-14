@@ -1,0 +1,36 @@
+archives:
+  - id: archive
+    name_template: '{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}'
+before:
+  hooks:
+    - make init_submodules
+    - make codegen
+    - make generate_schema
+blobs:
+  - bucket: get.pulumi.com
+    folder: releases/plugins/
+    ids:
+      - archive
+    provider: s3
+    region: us-west-2
+builds:
+  - binary: pulumi-resource-command
+    dir: provider
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - darwin
+      - windows
+      - linux
+    ldflags:
+      - -X github.com/pulumi/pulumi-command/provider/pkg/version.Version={{.Tag}}
+    main: ./cmd/pulumi-resource-command/
+changelog:
+  skip: true
+release:
+  disable: true
+snapshot:
+  name_template: '{{ .Tag }}-SNAPSHOT'
