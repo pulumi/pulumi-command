@@ -96,7 +96,7 @@ func (k *commandProvider) StreamInvoke(req *pulumirpc.InvokeRequest, server pulu
 func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest) (*pulumirpc.CheckResponse, error) {
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+	if ty != "command:local:Command" && ty != "command:remote:Command" {
 		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 	return &pulumirpc.CheckResponse{Inputs: req.News, Failures: nil}, nil
@@ -106,7 +106,7 @@ func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest
 func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) (*pulumirpc.DiffResponse, error) {
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+	if ty != "command:local:Command" && ty != "command:remote:Command" {
 		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
@@ -149,7 +149,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+	if ty != "command:local:Command" && ty != "command:remote:Command" {
 		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
@@ -163,7 +163,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 	var outputs map[string]interface{}
 
 	switch ty {
-	case "command:index:Command":
+	case "command:local:Command":
 		var cmd command
 		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
@@ -179,7 +179,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		if err != nil {
 			return nil, err
 		}
-	case "command:index:RemoteCommand":
+	case "command:remote:Command":
 		var cmd remotecommand
 		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
@@ -216,7 +216,7 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+	if ty != "command:local:Command" && ty != "command:remote:Command" {
 		return nil, fmt.Errorf("unknown resource type '%q'", ty)
 	}
 
@@ -233,7 +233,7 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+	if ty != "command:local:Command" && ty != "command:remote:Command" {
 		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
@@ -248,7 +248,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:index:Command" && ty != "command:index:RemoteCommand" {
+	if ty != "command:local:Command" && ty != "command:remote:Command" {
 		return nil, fmt.Errorf("unknown resource type %q", ty)
 	}
 
@@ -259,7 +259,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 	inputs := inputProps.Mappable()
 
 	switch ty {
-	case "command:index:Command":
+	case "command:local:Command":
 		var cmd command
 		err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
 		if err != nil {
@@ -270,7 +270,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		if err != nil {
 			return nil, err
 		}
-	case "command:index:RemoteCommand":
+	case "command:remote:Command":
 		var cmd remotecommand
 		err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
 		if err != nil {

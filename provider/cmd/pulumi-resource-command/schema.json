@@ -2,7 +2,7 @@
     "name": "command",
     "version": "0.0.1",
     "types": {
-        "command:index:RemoteConnection": {
+        "command:remote:Connection": {
             "type": "object",
             "properties": {
                 "user": {
@@ -32,7 +32,7 @@
         }
     },
     "resources": {
-        "command:index:Command": {
+        "command:local:Command": {
             "properties": {
                 "interpreter": {
                     "type": "array",
@@ -102,10 +102,10 @@
             },
             "requiredInputs": []
         },
-        "command:index:RemoteCommand": {
+        "command:remote:Command": {
             "properties": {
                 "connection": {
-                    "$ref": "#/types/command:index:RemoteConnection"
+                    "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
                     "type": "object",
@@ -135,7 +135,7 @@
             ],
             "inputProperties": {
                 "connection": {
-                    "$ref": "#/types/command:index:RemoteConnection"
+                    "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
                     "type": "object",
