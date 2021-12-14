@@ -7,10 +7,10 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
 
-namespace Pulumi.Command.Inputs
+namespace Pulumi.Command.Remote.Inputs
 {
 
-    public sealed class RemoteConnectionArgs : Pulumi.ResourceArgs
+    public sealed class ConnectionArgs : Pulumi.ResourceArgs
     {
         /// <summary>
         /// The address of the resource to connect to.
@@ -39,7 +39,7 @@ namespace Pulumi.Command.Inputs
         [Input("user")]
         public Input<string>? User { get; set; }
 
-        public RemoteConnectionArgs()
+        public ConnectionArgs()
         {
         }
     }

@@ -13,10 +13,12 @@
         "strict": true
     },
     "files": [
-        "command.ts",
         "index.ts",
+        "local/command.ts",
+        "local/index.ts",
         "provider.ts",
-        "remoteCommand.ts",
+        "remote/command.ts",
+        "remote/index.ts",
         "types/index.ts",
         "types/input.ts",
         "types/output.ts",

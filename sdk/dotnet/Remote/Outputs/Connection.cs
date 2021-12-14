@@ -7,11 +7,11 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
 
-namespace Pulumi.Command.Outputs
+namespace Pulumi.Command.Remote.Outputs
 {
 
     [OutputType]
-    public sealed class RemoteConnection
+    public sealed class Connection
     {
         /// <summary>
         /// The address of the resource to connect to.
@@ -32,7 +32,7 @@ namespace Pulumi.Command.Outputs
         public readonly string? User;
 
         [OutputConstructor]
-        private RemoteConnection(
+        private Connection(
             string host,
 
             string? password,

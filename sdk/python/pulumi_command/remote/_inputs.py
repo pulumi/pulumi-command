@@ -6,14 +6,14 @@ import warnings
 import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
-from . import _utilities
+from .. import _utilities
 
 __all__ = [
-    'RemoteConnectionArgs',
+    'ConnectionArgs',
 ]
 
 @pulumi.input_type
-class RemoteConnectionArgs:
+class ConnectionArgs:
     def __init__(__self__, *,
                  host: pulumi.Input[str],
                  password: Optional[pulumi.Input[str]] = None,

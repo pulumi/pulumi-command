@@ -4,22 +4,24 @@
 import * as pulumi from "@pulumi/pulumi";
 import { input as inputs, output as outputs } from "../types";
 
-export interface RemoteConnectionArgs {
-    /**
-     * The address of the resource to connect to.
-     */
-    host: pulumi.Input<string>;
-    /**
-     * The password we should use for the connection.
-     */
-    password?: pulumi.Input<string>;
-    /**
-     * The port to connect to. Defaults to 22.
-     */
-    port?: pulumi.Input<number>;
-    /**
-     * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-     */
-    privateKey?: pulumi.Input<string>;
-    user?: pulumi.Input<string>;
+export namespace remote {
+    export interface ConnectionArgs {
+        /**
+         * The address of the resource to connect to.
+         */
+        host: pulumi.Input<string>;
+        /**
+         * The password we should use for the connection.
+         */
+        password?: pulumi.Input<string>;
+        /**
+         * The port to connect to. Defaults to 22.
+         */
+        port?: pulumi.Input<number>;
+        /**
+         * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+         */
+        privateKey?: pulumi.Input<string>;
+        user?: pulumi.Input<string>;
+    }
 }

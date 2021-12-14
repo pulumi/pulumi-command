@@ -5,21 +5,33 @@
 from . import _utilities
 import typing
 # Export this package's modules as members:
-from .command import *
 from .provider import *
-from .remote_command import *
-from ._inputs import *
-from . import outputs
+
+# Make subpackages available:
+if typing.TYPE_CHECKING:
+    import pulumi_command.local as local
+    import pulumi_command.remote as remote
+else:
+    local = _utilities.lazy_import('pulumi_command.local')
+    remote = _utilities.lazy_import('pulumi_command.remote')
+
 _utilities.register(
     resource_modules="""
 [
  {
   "pkg": "command",
-  "mod": "index",
-  "fqn": "pulumi_command",
+  "mod": "local",
+  "fqn": "pulumi_command.local",
   "classes": {
-   "command:index:Command": "Command",
-   "command:index:RemoteCommand": "RemoteCommand"
+   "command:local:Command": "Command"
+  }
+ },
+ {
+  "pkg": "command",
+  "mod": "remote",
+  "fqn": "pulumi_command.remote",
+  "classes": {
+   "command:remote:Command": "Command"
   }
  }
 ]
