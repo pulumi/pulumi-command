@@ -10,17 +10,31 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// A local command to be executed.
+// This command can be inserted into the life cycles of other resources using the
+// `dependsOn` or `parent` resource options. A command is considered to have
+// failed when it finished with a non-zero exit code. This will fail the CRUD step
+// of the `Command` resource.
 type Command struct {
 	pulumi.CustomResourceState
 
-	Create      pulumi.StringPtrOutput   `pulumi:"create"`
-	Delete      pulumi.StringPtrOutput   `pulumi:"delete"`
-	Dir         pulumi.StringPtrOutput   `pulumi:"dir"`
-	Environment pulumi.StringMapOutput   `pulumi:"environment"`
+	// The command to run on create.
+	Create pulumi.StringPtrOutput `pulumi:"create"`
+	// The command to run on delete.
+	Delete pulumi.StringPtrOutput `pulumi:"delete"`
+	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+	Dir pulumi.StringPtrOutput `pulumi:"dir"`
+	// Additional environmental variables available to the command's process.
+	Environment pulumi.StringMapOutput `pulumi:"environment"`
+	// The program and arguments to run the command.
+	// For example: `["/bin/sh", "-c"]`
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
-	Stderr      pulumi.StringOutput      `pulumi:"stderr"`
-	Stdout      pulumi.StringOutput      `pulumi:"stdout"`
-	Update      pulumi.StringPtrOutput   `pulumi:"update"`
+	// The standard error of the command's process
+	Stderr pulumi.StringOutput `pulumi:"stderr"`
+	// The standard output of the command's process
+	Stdout pulumi.StringOutput `pulumi:"stdout"`
+	// The command to run on update.
+	Update pulumi.StringPtrOutput `pulumi:"update"`
 }
 
 // NewCommand registers a new resource with the given unique name, arguments, and options.
@@ -68,9 +82,11 @@ type commandArgs struct {
 	Delete *string `pulumi:"delete"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	Dir *string `pulumi:"dir"`
-	// Environment variables to set on commands.
+	// Additional environmental variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
-	Interpreter []string          `pulumi:"interpreter"`
+	// The program and arguments to run the command.
+	// For example: `["/bin/sh", "-c"]`
+	Interpreter []string `pulumi:"interpreter"`
 	// The command to run on update.
 	Update *string `pulumi:"update"`
 }
@@ -83,8 +99,10 @@ type CommandArgs struct {
 	Delete pulumi.StringPtrInput
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	Dir pulumi.StringPtrInput
-	// Environment variables to set on commands.
+	// Additional environmental variables available to the command's process.
 	Environment pulumi.StringMapInput
+	// The program and arguments to run the command.
+	// For example: `["/bin/sh", "-c"]`
 	Interpreter pulumi.StringArrayInput
 	// The command to run on update.
 	Update pulumi.StringPtrInput

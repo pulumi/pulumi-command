@@ -9,30 +9,62 @@ using Pulumi.Serialization;
 
 namespace Pulumi.Command.Local
 {
+    /// <summary>
+    /// A local command to be executed.
+    /// This command can be inserted into the life cycles of other resources using the
+    /// `dependsOn` or `parent` resource options. A command is considered to have
+    /// failed when it finished with a non-zero exit code. This will fail the CRUD step
+    /// of the `Command` resource.
+    /// </summary>
     [CommandResourceType("command:local:Command")]
     public partial class Command : Pulumi.CustomResource
     {
+        /// <summary>
+        /// The command to run on create.
+        /// </summary>
         [Output("create")]
         public Output<string?> Create { get; private set; } = null!;
 
+        /// <summary>
+        /// The command to run on delete.
+        /// </summary>
         [Output("delete")]
         public Output<string?> Delete { get; private set; } = null!;
 
+        /// <summary>
+        /// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        /// </summary>
         [Output("dir")]
         public Output<string?> Dir { get; private set; } = null!;
 
+        /// <summary>
+        /// Additional environmental variables available to the command's process.
+        /// </summary>
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
 
+        /// <summary>
+        /// The program and arguments to run the command.
+        /// For example: `["/bin/sh", "-c"]`
+        /// </summary>
         [Output("interpreter")]
         public Output<ImmutableArray<string>> Interpreter { get; private set; } = null!;
 
+        /// <summary>
+        /// The standard error of the command's process
+        /// </summary>
         [Output("stderr")]
         public Output<string> Stderr { get; private set; } = null!;
 
+        /// <summary>
+        /// The standard output of the command's process
+        /// </summary>
         [Output("stdout")]
         public Output<string> Stdout { get; private set; } = null!;
 
+        /// <summary>
+        /// The command to run on update.
+        /// </summary>
         [Output("update")]
         public Output<string?> Update { get; private set; } = null!;
 
@@ -103,7 +135,7 @@ namespace Pulumi.Command.Local
         private InputMap<string>? _environment;
 
         /// <summary>
-        /// Environment variables to set on commands.
+        /// Additional environmental variables available to the command's process.
         /// </summary>
         public InputMap<string> Environment
         {
@@ -113,6 +145,11 @@ namespace Pulumi.Command.Local
 
         [Input("interpreter")]
         private InputList<string>? _interpreter;
+
+        /// <summary>
+        /// The program and arguments to run the command.
+        /// For example: `["/bin/sh", "-c"]`
+        /// </summary>
         public InputList<string> Interpreter
         {
             get => _interpreter ?? (_interpreter = new InputList<string>());

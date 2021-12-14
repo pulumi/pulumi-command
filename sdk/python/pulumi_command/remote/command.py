@@ -22,6 +22,11 @@ class CommandArgs:
                  update: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a Command resource.
+        :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host
+        :param pulumi.Input[str] create: The command to run on create.
+        :param pulumi.Input[str] delete: The command to run on delete.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[str] update: The command to run on update.
         """
         pulumi.set(__self__, "connection", connection)
         if create is not None:
@@ -36,6 +41,9 @@ class CommandArgs:
     @property
     @pulumi.getter
     def connection(self) -> pulumi.Input['ConnectionArgs']:
+        """
+        The parameters with which to connect to the remote host
+        """
         return pulumi.get(self, "connection")
 
     @connection.setter
@@ -45,6 +53,9 @@ class CommandArgs:
     @property
     @pulumi.getter
     def create(self) -> Optional[pulumi.Input[str]]:
+        """
+        The command to run on create.
+        """
         return pulumi.get(self, "create")
 
     @create.setter
@@ -54,6 +65,9 @@ class CommandArgs:
     @property
     @pulumi.getter
     def delete(self) -> Optional[pulumi.Input[str]]:
+        """
+        The command to run on delete.
+        """
         return pulumi.get(self, "delete")
 
     @delete.setter
@@ -63,6 +77,9 @@ class CommandArgs:
     @property
     @pulumi.getter
     def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
+        """
+        Additional environmental variables available to the command's process.
+        """
         return pulumi.get(self, "environment")
 
     @environment.setter
@@ -72,6 +89,9 @@ class CommandArgs:
     @property
     @pulumi.getter
     def update(self) -> Optional[pulumi.Input[str]]:
+        """
+        The command to run on update.
+        """
         return pulumi.get(self, "update")
 
     @update.setter
@@ -91,9 +111,16 @@ class Command(pulumi.CustomResource):
                  update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
-        Create a Command resource with the given unique name, props, and options.
+        A command to run on a remote host.
+        The connection is established via ssh.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host
+        :param pulumi.Input[str] create: The command to run on create.
+        :param pulumi.Input[str] delete: The command to run on delete.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[str] update: The command to run on update.
         """
         ...
     @overload
@@ -102,7 +129,9 @@ class Command(pulumi.CustomResource):
                  args: CommandArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Create a Command resource with the given unique name, props, and options.
+        A command to run on a remote host.
+        The connection is established via ssh.
+
         :param str resource_name: The name of the resource.
         :param CommandArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -178,35 +207,56 @@ class Command(pulumi.CustomResource):
     @property
     @pulumi.getter
     def connection(self) -> pulumi.Output[Optional['outputs.Connection']]:
+        """
+        The parameters with which to connect to the remote host
+        """
         return pulumi.get(self, "connection")
 
     @property
     @pulumi.getter
     def create(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on create.
+        """
         return pulumi.get(self, "create")
 
     @property
     @pulumi.getter
     def delete(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on delete.
+        """
         return pulumi.get(self, "delete")
 
     @property
     @pulumi.getter
     def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
+        """
+        Additional environmental variables available to the command's process.
+        """
         return pulumi.get(self, "environment")
 
     @property
     @pulumi.getter
     def stderr(self) -> pulumi.Output[str]:
+        """
+        The standard error of the command's process
+        """
         return pulumi.get(self, "stderr")
 
     @property
     @pulumi.getter
     def stdout(self) -> pulumi.Output[str]:
+        """
+        The standard output of the command's process
+        """
         return pulumi.get(self, "stdout")
 
     @property
     @pulumi.getter
     def update(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on update.
+        """
         return pulumi.get(self, "update")
 

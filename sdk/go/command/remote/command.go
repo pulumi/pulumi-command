@@ -11,16 +11,25 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// A command to run on a remote host.
+// The connection is established via ssh.
 type Command struct {
 	pulumi.CustomResourceState
 
-	Connection  ConnectionPtrOutput    `pulumi:"connection"`
-	Create      pulumi.StringPtrOutput `pulumi:"create"`
-	Delete      pulumi.StringPtrOutput `pulumi:"delete"`
+	// The parameters with which to connect to the remote host
+	Connection ConnectionPtrOutput `pulumi:"connection"`
+	// The command to run on create.
+	Create pulumi.StringPtrOutput `pulumi:"create"`
+	// The command to run on delete.
+	Delete pulumi.StringPtrOutput `pulumi:"delete"`
+	// Additional environmental variables available to the command's process.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
-	Stderr      pulumi.StringOutput    `pulumi:"stderr"`
-	Stdout      pulumi.StringOutput    `pulumi:"stdout"`
-	Update      pulumi.StringPtrOutput `pulumi:"update"`
+	// The standard error of the command's process
+	Stderr pulumi.StringOutput `pulumi:"stderr"`
+	// The standard output of the command's process
+	Stdout pulumi.StringOutput `pulumi:"stdout"`
+	// The command to run on update.
+	Update pulumi.StringPtrOutput `pulumi:"update"`
 }
 
 // NewCommand registers a new resource with the given unique name, arguments, and options.
@@ -65,20 +74,30 @@ func (CommandState) ElementType() reflect.Type {
 }
 
 type commandArgs struct {
-	Connection  Connection        `pulumi:"connection"`
-	Create      *string           `pulumi:"create"`
-	Delete      *string           `pulumi:"delete"`
+	// The parameters with which to connect to the remote host
+	Connection Connection `pulumi:"connection"`
+	// The command to run on create.
+	Create *string `pulumi:"create"`
+	// The command to run on delete.
+	Delete *string `pulumi:"delete"`
+	// Additional environmental variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
-	Update      *string           `pulumi:"update"`
+	// The command to run on update.
+	Update *string `pulumi:"update"`
 }
 
 // The set of arguments for constructing a Command resource.
 type CommandArgs struct {
-	Connection  ConnectionInput
-	Create      pulumi.StringPtrInput
-	Delete      pulumi.StringPtrInput
+	// The parameters with which to connect to the remote host
+	Connection ConnectionInput
+	// The command to run on create.
+	Create pulumi.StringPtrInput
+	// The command to run on delete.
+	Delete pulumi.StringPtrInput
+	// Additional environmental variables available to the command's process.
 	Environment pulumi.StringMapInput
-	Update      pulumi.StringPtrInput
+	// The command to run on update.
+	Update pulumi.StringPtrInput
 }
 
 func (CommandArgs) ElementType() reflect.Type {

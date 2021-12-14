@@ -10,6 +10,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+// Instructions for how to connect to a remote endpoint.
 type Connection struct {
 	// The address of the resource to connect to.
 	Host string `pulumi:"host"`
@@ -33,6 +34,7 @@ type ConnectionInput interface {
 	ToConnectionOutputWithContext(context.Context) ConnectionOutput
 }
 
+// Instructions for how to connect to a remote endpoint.
 type ConnectionArgs struct {
 	// The address of the resource to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
@@ -98,6 +100,7 @@ func (i *connectionPtrType) ToConnectionPtrOutputWithContext(ctx context.Context
 	return pulumi.ToOutputWithContext(ctx, i).(ConnectionPtrOutput)
 }
 
+// Instructions for how to connect to a remote endpoint.
 type ConnectionOutput struct{ *pulumi.OutputState }
 
 func (ConnectionOutput) ElementType() reflect.Type {

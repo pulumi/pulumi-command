@@ -5,6 +5,9 @@ import * as pulumi from "@pulumi/pulumi";
 import { input as inputs, output as outputs } from "../types";
 
 export namespace remote {
+    /**
+     * Instructions for how to connect to a remote endpoint.
+     */
     export interface Connection {
         /**
          * The address of the resource to connect to.

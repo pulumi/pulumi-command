@@ -4,6 +4,13 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "../utilities";
 
+/**
+ * A local command to be executed.
+ * This command can be inserted into the life cycles of other resources using the
+ * `dependsOn` or `parent` resource options. A command is considered to have
+ * failed when it finished with a non-zero exit code. This will fail the CRUD step
+ * of the `Command` resource.
+ */
 export class Command extends pulumi.CustomResource {
     /**
      * Get an existing Command resource's state with the given name, ID, and optional extra
@@ -31,13 +38,38 @@ export class Command extends pulumi.CustomResource {
         return obj['__pulumiType'] === Command.__pulumiType;
     }
 
+    /**
+     * The command to run on create.
+     */
     public readonly create!: pulumi.Output<string | undefined>;
+    /**
+     * The command to run on delete.
+     */
     public readonly delete!: pulumi.Output<string | undefined>;
+    /**
+     * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+     */
     public readonly dir!: pulumi.Output<string | undefined>;
+    /**
+     * Additional environmental variables available to the command's process.
+     */
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
+    /**
+     * The program and arguments to run the command.
+     * For example: `["/bin/sh", "-c"]`
+     */
     public readonly interpreter!: pulumi.Output<string[] | undefined>;
+    /**
+     * The standard error of the command's process
+     */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
+    /**
+     * The standard output of the command's process
+     */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
+    /**
+     * The command to run on update.
+     */
     public readonly update!: pulumi.Output<string | undefined>;
 
     /**
@@ -93,9 +125,13 @@ export interface CommandArgs {
      */
     dir?: pulumi.Input<string>;
     /**
-     * Environment variables to set on commands.
+     * Additional environmental variables available to the command's process.
      */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    /**
+     * The program and arguments to run the command.
+     * For example: `["/bin/sh", "-c"]`
+     */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
     /**
      * The command to run on update.

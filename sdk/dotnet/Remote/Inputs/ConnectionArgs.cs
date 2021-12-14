@@ -10,6 +10,9 @@ using Pulumi.Serialization;
 namespace Pulumi.Command.Remote.Inputs
 {
 
+    /// <summary>
+    /// Instructions for how to connect to a remote endpoint.
+    /// </summary>
     public sealed class ConnectionArgs : Pulumi.ResourceArgs
     {
         /// <summary>

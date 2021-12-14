@@ -21,6 +21,7 @@ class ConnectionArgs:
                  private_key: Optional[pulumi.Input[str]] = None,
                  user: Optional[pulumi.Input[str]] = None):
         """
+        Instructions for how to connect to a remote endpoint.
         :param pulumi.Input[str] host: The address of the resource to connect to.
         :param pulumi.Input[str] password: The password we should use for the connection.
         :param pulumi.Input[float] port: The port to connect to. Defaults to 22.

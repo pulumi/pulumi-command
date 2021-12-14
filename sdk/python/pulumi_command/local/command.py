@@ -24,7 +24,9 @@ class CommandArgs:
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[str] dir: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Environment variables to set on commands.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
+               For example: `["/bin/sh", "-c"]`
         :param pulumi.Input[str] update: The command to run on update.
         """
         if create is not None:
@@ -80,7 +82,7 @@ class CommandArgs:
     @pulumi.getter
     def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
-        Environment variables to set on commands.
+        Additional environmental variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 
@@ -91,6 +93,10 @@ class CommandArgs:
     @property
     @pulumi.getter
     def interpreter(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        """
+        The program and arguments to run the command.
+        For example: `["/bin/sh", "-c"]`
+        """
         return pulumi.get(self, "interpreter")
 
     @interpreter.setter
@@ -123,13 +129,20 @@ class Command(pulumi.CustomResource):
                  update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
-        Create a Command resource with the given unique name, props, and options.
+        A local command to be executed.
+        This command can be inserted into the life cycles of other resources using the
+        `dependsOn` or `parent` resource options. A command is considered to have
+        failed when it finished with a non-zero exit code. This will fail the CRUD step
+        of the `Command` resource.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[str] dir: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Environment variables to set on commands.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
+               For example: `["/bin/sh", "-c"]`
         :param pulumi.Input[str] update: The command to run on update.
         """
         ...
@@ -139,7 +152,12 @@ class Command(pulumi.CustomResource):
                  args: Optional[CommandArgs] = None,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Create a Command resource with the given unique name, props, and options.
+        A local command to be executed.
+        This command can be inserted into the life cycles of other resources using the
+        `dependsOn` or `parent` resource options. A command is considered to have
+        failed when it finished with a non-zero exit code. This will fail the CRUD step
+        of the `Command` resource.
+
         :param str resource_name: The name of the resource.
         :param CommandArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -216,40 +234,65 @@ class Command(pulumi.CustomResource):
     @property
     @pulumi.getter
     def create(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on create.
+        """
         return pulumi.get(self, "create")
 
     @property
     @pulumi.getter
     def delete(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on delete.
+        """
         return pulumi.get(self, "delete")
 
     @property
     @pulumi.getter
     def dir(self) -> pulumi.Output[Optional[str]]:
+        """
+        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        """
         return pulumi.get(self, "dir")
 
     @property
     @pulumi.getter
     def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
+        """
+        Additional environmental variables available to the command's process.
+        """
         return pulumi.get(self, "environment")
 
     @property
     @pulumi.getter
     def interpreter(self) -> pulumi.Output[Optional[Sequence[str]]]:
+        """
+        The program and arguments to run the command.
+        For example: `["/bin/sh", "-c"]`
+        """
         return pulumi.get(self, "interpreter")
 
     @property
     @pulumi.getter
     def stderr(self) -> pulumi.Output[str]:
+        """
+        The standard error of the command's process
+        """
         return pulumi.get(self, "stderr")
 
     @property
     @pulumi.getter
     def stdout(self) -> pulumi.Output[str]:
+        """
+        The standard output of the command's process
+        """
         return pulumi.get(self, "stdout")
 
     @property
     @pulumi.getter
     def update(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on update.
+        """
         return pulumi.get(self, "update")
 
