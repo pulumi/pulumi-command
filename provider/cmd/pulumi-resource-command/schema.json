@@ -81,7 +81,7 @@
             ],
             "inputProperties": {
                 "interpreter": {
-                    "description": "The program and arguments to run the command.\nFor example: `[\"/bin/sh\", \"-c\"]`",
+                    "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`",
                     "type": "array",
                     "items": {
                         "type": "string"
