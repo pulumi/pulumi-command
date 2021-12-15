@@ -9,27 +9,52 @@ using Pulumi.Serialization;
 
 namespace Pulumi.Command.Remote
 {
+    /// <summary>
+    /// A command to run on a remote host.
+    /// The connection is established via ssh.
+    /// </summary>
     [CommandResourceType("command:remote:Command")]
     public partial class Command : Pulumi.CustomResource
     {
+        /// <summary>
+        /// The parameters with which to connect to the remote host
+        /// </summary>
         [Output("connection")]
         public Output<Outputs.Connection?> Connection { get; private set; } = null!;
 
+        /// <summary>
+        /// The command to run on create.
+        /// </summary>
         [Output("create")]
         public Output<string?> Create { get; private set; } = null!;
 
+        /// <summary>
+        /// The command to run on delete.
+        /// </summary>
         [Output("delete")]
         public Output<string?> Delete { get; private set; } = null!;
 
+        /// <summary>
+        /// Additional environment variables available to the command's process.
+        /// </summary>
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
 
+        /// <summary>
+        /// The standard error of the command's process
+        /// </summary>
         [Output("stderr")]
         public Output<string> Stderr { get; private set; } = null!;
 
+        /// <summary>
+        /// The standard output of the command's process
+        /// </summary>
         [Output("stdout")]
         public Output<string> Stdout { get; private set; } = null!;
 
+        /// <summary>
+        /// The command to run on update.
+        /// </summary>
         [Output("update")]
         public Output<string?> Update { get; private set; } = null!;
 
@@ -78,23 +103,39 @@ namespace Pulumi.Command.Remote
 
     public sealed class CommandArgs : Pulumi.ResourceArgs
     {
+        /// <summary>
+        /// The parameters with which to connect to the remote host
+        /// </summary>
         [Input("connection", required: true)]
         public Input<Inputs.ConnectionArgs> Connection { get; set; } = null!;
 
+        /// <summary>
+        /// The command to run on create.
+        /// </summary>
         [Input("create")]
         public Input<string>? Create { get; set; }
 
+        /// <summary>
+        /// The command to run on delete.
+        /// </summary>
         [Input("delete")]
         public Input<string>? Delete { get; set; }
 
         [Input("environment")]
         private InputMap<string>? _environment;
+
+        /// <summary>
+        /// Additional environment variables available to the command's process.
+        /// </summary>
         public InputMap<string> Environment
         {
             get => _environment ?? (_environment = new InputMap<string>());
             set => _environment = value;
         }
 
+        /// <summary>
+        /// The command to run on update.
+        /// </summary>
         [Input("update")]
         public Input<string>? Update { get; set; }
 

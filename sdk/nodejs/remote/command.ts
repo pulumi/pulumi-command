@@ -5,6 +5,10 @@ import * as pulumi from "@pulumi/pulumi";
 import { input as inputs, output as outputs } from "../types";
 import * as utilities from "../utilities";
 
+/**
+ * A command to run on a remote host.
+ * The connection is established via ssh.
+ */
 export class Command extends pulumi.CustomResource {
     /**
      * Get an existing Command resource's state with the given name, ID, and optional extra
@@ -32,12 +36,33 @@ export class Command extends pulumi.CustomResource {
         return obj['__pulumiType'] === Command.__pulumiType;
     }
 
+    /**
+     * The parameters with which to connect to the remote host
+     */
     public readonly connection!: pulumi.Output<outputs.remote.Connection | undefined>;
+    /**
+     * The command to run on create.
+     */
     public readonly create!: pulumi.Output<string | undefined>;
+    /**
+     * The command to run on delete.
+     */
     public readonly delete!: pulumi.Output<string | undefined>;
+    /**
+     * Additional environment variables available to the command's process.
+     */
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
+    /**
+     * The standard error of the command's process
+     */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
+    /**
+     * The standard output of the command's process
+     */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
+    /**
+     * The command to run on update.
+     */
     public readonly update!: pulumi.Output<string | undefined>;
 
     /**
@@ -81,9 +106,24 @@ export class Command extends pulumi.CustomResource {
  * The set of arguments for constructing a Command resource.
  */
 export interface CommandArgs {
+    /**
+     * The parameters with which to connect to the remote host
+     */
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
+    /**
+     * The command to run on create.
+     */
     create?: pulumi.Input<string>;
+    /**
+     * The command to run on delete.
+     */
     delete?: pulumi.Input<string>;
+    /**
+     * Additional environment variables available to the command's process.
+     */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    /**
+     * The command to run on update.
+     */
     update?: pulumi.Input<string>;
 }

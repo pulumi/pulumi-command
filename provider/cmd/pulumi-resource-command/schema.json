@@ -4,6 +4,7 @@
     "types": {
         "command:remote:Connection": {
             "type": "object",
+            "description": "Instructions for how to connect to a remote endpoint.",
             "properties": {
                 "user": {
                     "type": "string",
@@ -33,35 +34,44 @@
     },
     "resources": {
         "command:local:Command": {
+            "description": "A local command to be executed.\nThis command can be inserted into the life cycles of other resources using the\n`dependsOn` or `parent` resource options. A command is considered to have\nfailed when it finished with a non-zero exit code. This will fail the CRUD step\nof the `Command` resource.",
             "properties": {
                 "interpreter": {
+                    "description": "The program and arguments to run the command.\nFor example: `[\"/bin/sh\", \"-c\"]`",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "dir": {
+                    "description": "The directory from which to run the command from. If `dir` does not exist, then\n`Command` will fail.",
                     "type": "string"
                 },
                 "environment": {
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     }
                 },
                 "create": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The command to run on create."
                 },
                 "update": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The command to run on update."
                 },
                 "delete": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The command to run on delete."
                 },
                 "stdout": {
+                    "description": "The standard output of the command's process",
                     "type": "string"
                 },
                 "stderr": {
+                    "description": "The standard error of the command's process",
                     "type": "string"
                 }
             },
@@ -71,21 +81,22 @@
             ],
             "inputProperties": {
                 "interpreter": {
+                    "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "dir": {
-                    "type": "string",
-                    "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+                    "description": "The working directory in which to run the command from.",
+                    "type": "string"
                 },
                 "environment": {
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
-                    },
-                    "description": "Environment variables to set on commands."
+                    }
                 },
                 "create": {
                     "type": "string",
@@ -103,29 +114,37 @@
             "requiredInputs": []
         },
         "command:remote:Command": {
+            "description": "A command to run on a remote host.\nThe connection is established via ssh.",
             "properties": {
                 "connection": {
+                    "description": "The parameters with which to connect to the remote host",
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     }
                 },
                 "create": {
+                    "description": "The command to run on create.",
                     "type": "string"
                 },
                 "update": {
+                    "description": "The command to run on update.",
                     "type": "string"
                 },
                 "delete": {
+                    "description": "The command to run on delete.",
                     "type": "string"
                 },
                 "stdout": {
+                    "description": "The standard output of the command's process",
                     "type": "string"
                 },
                 "stderr": {
+                    "description": "The standard error of the command's process",
                     "type": "string"
                 }
             },
@@ -135,21 +154,26 @@
             ],
             "inputProperties": {
                 "connection": {
+                    "description": "The parameters with which to connect to the remote host",
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     }
                 },
                 "create": {
+                    "description": "The command to run on create.",
                     "type": "string"
                 },
                 "update": {
+                    "description": "The command to run on update.",
                     "type": "string"
                 },
                 "delete": {
+                    "description": "The command to run on delete.",
                     "type": "string"
                 }
             },

@@ -14,6 +14,9 @@ __all__ = [
 
 @pulumi.output_type
 class Connection(dict):
+    """
+    Instructions for how to connect to a remote endpoint.
+    """
     @staticmethod
     def __key_warning(key: str):
         suggest = None
@@ -38,6 +41,7 @@ class Connection(dict):
                  private_key: Optional[str] = None,
                  user: Optional[str] = None):
         """
+        Instructions for how to connect to a remote endpoint.
         :param str host: The address of the resource to connect to.
         :param str password: The password we should use for the connection.
         :param float port: The port to connect to. Defaults to 22.
