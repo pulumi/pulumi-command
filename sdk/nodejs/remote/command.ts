@@ -52,6 +52,7 @@ export class Command extends pulumi.CustomResource {
      * Additional environment variables available to the command's process.
      */
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
+    public readonly replaceOnChanges!: pulumi.Output<any[] | undefined>;
     /**
      * The standard error of the command's process
      */
@@ -60,10 +61,6 @@ export class Command extends pulumi.CustomResource {
      * The standard output of the command's process
      */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
-    /**
-     * The command to run on update.
-     */
-    public readonly update!: pulumi.Output<string | undefined>;
 
     /**
      * Create a Command resource with the given unique name, arguments, and options.
@@ -83,7 +80,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
-            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["replaceOnChanges"] = args ? args.replaceOnChanges : undefined;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {
@@ -91,9 +88,9 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["create"] = undefined /*out*/;
             resourceInputs["delete"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
+            resourceInputs["replaceOnChanges"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
-            resourceInputs["update"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
@@ -123,7 +120,7 @@ export interface CommandArgs {
      */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
-     * The command to run on update.
+     * Trigger replacements on changes to this input.
      */
-    update?: pulumi.Input<string>;
+    replaceOnChanges?: pulumi.Input<any[]>;
 }

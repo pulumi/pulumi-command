@@ -19,14 +19,14 @@ class CommandArgs:
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 update: Optional[pulumi.Input[str]] = None):
+                 replace_on_changes: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a Command resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
-        :param pulumi.Input[str] update: The command to run on update.
+        :param pulumi.Input[Sequence[Any]] replace_on_changes: Trigger replacements on changes to this input.
         """
         pulumi.set(__self__, "connection", connection)
         if create is not None:
@@ -35,8 +35,8 @@ class CommandArgs:
             pulumi.set(__self__, "delete", delete)
         if environment is not None:
             pulumi.set(__self__, "environment", environment)
-        if update is not None:
-            pulumi.set(__self__, "update", update)
+        if replace_on_changes is not None:
+            pulumi.set(__self__, "replace_on_changes", replace_on_changes)
 
     @property
     @pulumi.getter
@@ -87,16 +87,16 @@ class CommandArgs:
         pulumi.set(self, "environment", value)
 
     @property
-    @pulumi.getter
-    def update(self) -> Optional[pulumi.Input[str]]:
+    @pulumi.getter(name="replaceOnChanges")
+    def replace_on_changes(self) -> Optional[pulumi.Input[Sequence[Any]]]:
         """
-        The command to run on update.
+        Trigger replacements on changes to this input.
         """
-        return pulumi.get(self, "update")
+        return pulumi.get(self, "replace_on_changes")
 
-    @update.setter
-    def update(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "update", value)
+    @replace_on_changes.setter
+    def replace_on_changes(self, value: Optional[pulumi.Input[Sequence[Any]]]):
+        pulumi.set(self, "replace_on_changes", value)
 
 
 class Command(pulumi.CustomResource):
@@ -108,7 +108,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 update: Optional[pulumi.Input[str]] = None,
+                 replace_on_changes: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         """
         A command to run on a remote host.
@@ -120,7 +120,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
-        :param pulumi.Input[str] update: The command to run on update.
+        :param pulumi.Input[Sequence[Any]] replace_on_changes: Trigger replacements on changes to this input.
         """
         ...
     @overload
@@ -151,7 +151,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-                 update: Optional[pulumi.Input[str]] = None,
+                 replace_on_changes: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         if opts is None:
             opts = pulumi.ResourceOptions()
@@ -170,7 +170,7 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
             __props__.__dict__["environment"] = environment
-            __props__.__dict__["update"] = update
+            __props__.__dict__["replace_on_changes"] = replace_on_changes
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
         super(Command, __self__).__init__(
@@ -199,9 +199,9 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["create"] = None
         __props__.__dict__["delete"] = None
         __props__.__dict__["environment"] = None
+        __props__.__dict__["replace_on_changes"] = None
         __props__.__dict__["stderr"] = None
         __props__.__dict__["stdout"] = None
-        __props__.__dict__["update"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
 
     @property
@@ -237,6 +237,11 @@ class Command(pulumi.CustomResource):
         return pulumi.get(self, "environment")
 
     @property
+    @pulumi.getter(name="replaceOnChanges")
+    def replace_on_changes(self) -> pulumi.Output[Optional[Sequence[Any]]]:
+        return pulumi.get(self, "replace_on_changes")
+
+    @property
     @pulumi.getter
     def stderr(self) -> pulumi.Output[str]:
         """
@@ -251,12 +256,4 @@ class Command(pulumi.CustomResource):
         The standard output of the command's process
         """
         return pulumi.get(self, "stdout")
-
-    @property
-    @pulumi.getter
-    def update(self) -> pulumi.Output[Optional[str]]:
-        """
-        The command to run on update.
-        """
-        return pulumi.get(self, "update")
 

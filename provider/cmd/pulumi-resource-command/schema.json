@@ -68,13 +68,16 @@
                         "type": "string"
                     }
                 },
+                "replaceOnChanges": {
+                    "type": "array",
+                    "description": "Trigger replacements on changes to this input.",
+                    "items": {
+                        "$ref": "pulumi.json#/Any"
+                    }
+                },
                 "create": {
                     "type": "string",
                     "description": "The command to run on create."
-                },
-                "update": {
-                    "type": "string",
-                    "description": "The command to run on update."
                 },
                 "delete": {
                     "type": "string",
@@ -112,13 +115,15 @@
                         "type": "string"
                     }
                 },
+                "replaceOnChanges": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "pulumi.json#/Any"
+                    }
+                },
                 "create": {
                     "type": "string",
                     "description": "The command to run on create."
-                },
-                "update": {
-                    "type": "string",
-                    "description": "The command to run on update."
                 },
                 "delete": {
                     "type": "string",
@@ -141,12 +146,14 @@
                         "type": "string"
                     }
                 },
+                "replaceOnChanges": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "pulumi.json#/Any"
+                    }
+                },
                 "create": {
                     "description": "The command to run on create.",
-                    "type": "string"
-                },
-                "update": {
-                    "description": "The command to run on update.",
                     "type": "string"
                 },
                 "delete": {
@@ -178,12 +185,15 @@
                         "type": "string"
                     }
                 },
+                "replaceOnChanges": {
+                    "description": "Trigger replacements on changes to this input.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "pulumi.json#/Any"
+                    }
+                },
                 "create": {
                     "description": "The command to run on create.",
-                    "type": "string"
-                },
-                "update": {
-                    "description": "The command to run on update.",
                     "type": "string"
                 },
                 "delete": {

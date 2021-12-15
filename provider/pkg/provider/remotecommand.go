@@ -91,12 +91,13 @@ func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) 
 
 type remotecommand struct {
 	// Input
-	Connection  remoteconnection   `pulumi:"connection"`
-	Interpreter *[]string          `pulumi:"interpreter,optional"`
-	Dir         *string            `pulumi:"dir,optional"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Create      string             `pulumi:"create"`
-	Delete      *string            `pulumi:"delete,optional"`
+	Connection       remoteconnection   `pulumi:"connection"`
+	Interpreter      *[]string          `pulumi:"interpreter,optional"`
+	Dir              *string            `pulumi:"dir,optional"`
+	Environment      *map[string]string `pulumi:"environment,optional"`
+	ReplaceOnChanges []interface{}      `pulumi:"replaceOnChanges,optional"`
+	Create           string             `pulumi:"create"`
+	Delete           *string            `pulumi:"delete,optional"`
 
 	// Output
 	Stdout string `pulumi:"stdout"`

@@ -61,6 +61,10 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly interpreter!: pulumi.Output<string[] | undefined>;
     /**
+     * Trigger replacements on changes to this input.
+     */
+    public readonly replaceOnChanges!: pulumi.Output<any[] | undefined>;
+    /**
      * The standard error of the command's process
      */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
@@ -68,10 +72,6 @@ export class Command extends pulumi.CustomResource {
      * The standard output of the command's process
      */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
-    /**
-     * The command to run on update.
-     */
-    public readonly update!: pulumi.Output<string | undefined>;
 
     /**
      * Create a Command resource with the given unique name, arguments, and options.
@@ -89,7 +89,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = args ? args.dir : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
             resourceInputs["interpreter"] = args ? args.interpreter : undefined;
-            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["replaceOnChanges"] = args ? args.replaceOnChanges : undefined;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {
@@ -98,9 +98,9 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
             resourceInputs["interpreter"] = undefined /*out*/;
+            resourceInputs["replaceOnChanges"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
-            resourceInputs["update"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
@@ -134,8 +134,5 @@ export interface CommandArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
-    /**
-     * The command to run on update.
-     */
-    update?: pulumi.Input<string>;
+    replaceOnChanges?: pulumi.Input<any[]>;
 }
