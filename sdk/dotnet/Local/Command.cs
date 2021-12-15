@@ -32,13 +32,14 @@ namespace Pulumi.Command.Local
         public Output<string?> Delete { get; private set; } = null!;
 
         /// <summary>
-        /// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        /// The directory from which to run the command from. If `dir` does not exist, then
+        /// `Command` will fail.
         /// </summary>
         [Output("dir")]
         public Output<string?> Dir { get; private set; } = null!;
 
         /// <summary>
-        /// Additional environmental variables available to the command's process.
+        /// Additional environment variables available to the command's process.
         /// </summary>
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
@@ -126,7 +127,7 @@ namespace Pulumi.Command.Local
         public Input<string>? Delete { get; set; }
 
         /// <summary>
-        /// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        /// The working directory in which to run the command from.
         /// </summary>
         [Input("dir")]
         public Input<string>? Dir { get; set; }
@@ -135,7 +136,7 @@ namespace Pulumi.Command.Local
         private InputMap<string>? _environment;
 
         /// <summary>
-        /// Additional environmental variables available to the command's process.
+        /// Additional environment variables available to the command's process.
         /// </summary>
         public InputMap<string> Environment
         {

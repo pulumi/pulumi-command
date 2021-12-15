@@ -23,8 +23,8 @@ class CommandArgs:
         The set of arguments for constructing a Command resource.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[str] dir: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[str] dir: The working directory in which to run the command from.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                For example: `["/bin/sh", "-c"]`
         :param pulumi.Input[str] update: The command to run on update.
@@ -70,7 +70,7 @@ class CommandArgs:
     @pulumi.getter
     def dir(self) -> Optional[pulumi.Input[str]]:
         """
-        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        The working directory in which to run the command from.
         """
         return pulumi.get(self, "dir")
 
@@ -82,7 +82,7 @@ class CommandArgs:
     @pulumi.getter
     def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
-        Additional environmental variables available to the command's process.
+        Additional environment variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 
@@ -139,8 +139,8 @@ class Command(pulumi.CustomResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[str] dir: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[str] dir: The working directory in which to run the command from.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                For example: `["/bin/sh", "-c"]`
         :param pulumi.Input[str] update: The command to run on update.
@@ -251,7 +251,8 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def dir(self) -> pulumi.Output[Optional[str]]:
         """
-        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        The directory from which to run the command from. If `dir` does not exist, then
+        `Command` will fail.
         """
         return pulumi.get(self, "dir")
 
@@ -259,7 +260,7 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
         """
-        Additional environmental variables available to the command's process.
+        Additional environment variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 

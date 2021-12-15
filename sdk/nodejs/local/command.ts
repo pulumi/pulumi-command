@@ -47,11 +47,12 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly delete!: pulumi.Output<string | undefined>;
     /**
-     * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      */
     public readonly dir!: pulumi.Output<string | undefined>;
     /**
-     * Additional environmental variables available to the command's process.
+     * Additional environment variables available to the command's process.
      */
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
     /**
@@ -121,11 +122,11 @@ export interface CommandArgs {
      */
     delete?: pulumi.Input<string>;
     /**
-     * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+     * The working directory in which to run the command from.
      */
     dir?: pulumi.Input<string>;
     /**
-     * Additional environmental variables available to the command's process.
+     * Additional environment variables available to the command's process.
      */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**

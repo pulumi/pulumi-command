@@ -22,7 +22,7 @@ type Command struct {
 	Create pulumi.StringPtrOutput `pulumi:"create"`
 	// The command to run on delete.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
-	// Additional environmental variables available to the command's process.
+	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
@@ -80,7 +80,7 @@ type commandArgs struct {
 	Create *string `pulumi:"create"`
 	// The command to run on delete.
 	Delete *string `pulumi:"delete"`
-	// Additional environmental variables available to the command's process.
+	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
 	// The command to run on update.
 	Update *string `pulumi:"update"`
@@ -94,7 +94,7 @@ type CommandArgs struct {
 	Create pulumi.StringPtrInput
 	// The command to run on delete.
 	Delete pulumi.StringPtrInput
-	// Additional environmental variables available to the command's process.
+	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
 	// The command to run on update.
 	Update pulumi.StringPtrInput

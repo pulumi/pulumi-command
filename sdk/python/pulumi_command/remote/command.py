@@ -25,7 +25,7 @@ class CommandArgs:
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[str] update: The command to run on update.
         """
         pulumi.set(__self__, "connection", connection)
@@ -78,7 +78,7 @@ class CommandArgs:
     @pulumi.getter
     def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
-        Additional environmental variables available to the command's process.
+        Additional environment variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 
@@ -119,7 +119,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environmental variables available to the command's process.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[str] update: The command to run on update.
         """
         ...
@@ -232,7 +232,7 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
         """
-        Additional environmental variables available to the command's process.
+        Additional environment variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 

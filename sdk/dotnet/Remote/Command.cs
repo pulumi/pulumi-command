@@ -35,7 +35,7 @@ namespace Pulumi.Command.Remote
         public Output<string?> Delete { get; private set; } = null!;
 
         /// <summary>
-        /// Additional environmental variables available to the command's process.
+        /// Additional environment variables available to the command's process.
         /// </summary>
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
@@ -125,7 +125,7 @@ namespace Pulumi.Command.Remote
         private InputMap<string>? _environment;
 
         /// <summary>
-        /// Additional environmental variables available to the command's process.
+        /// Additional environment variables available to the command's process.
         /// </summary>
         public InputMap<string> Environment
         {

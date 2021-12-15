@@ -45,11 +45,10 @@
                 },
                 "dir": {
                     "description": "The directory from which to run the command from. If `dir` does not exist, then\n`Command` will fail.",
-                    "type": "string",
-                    "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+                    "type": "string"
                 },
                 "environment": {
-                    "description": "Additional environmental variables available to the command's process.",
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
@@ -89,12 +88,11 @@
                     }
                 },
                 "dir": {
-                    "description": "The directory from which to run the command from. If `dir` does not exist, then\n`Command` will fail.",
-                    "type": "string",
-                    "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+                    "description": "The working directory in which to run the command from.",
+                    "type": "string"
                 },
                 "environment": {
-                    "description": "Additional environmental variables available to the command's process.",
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
@@ -123,7 +121,7 @@
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
-                    "description": "Additional environmental variables available to the command's process.",
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
@@ -160,7 +158,7 @@
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
-                    "description": "Additional environmental variables available to the command's process.",
+                    "description": "Additional environment variables available to the command's process.",
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"

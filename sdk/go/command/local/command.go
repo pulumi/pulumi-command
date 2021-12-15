@@ -22,9 +22,10 @@ type Command struct {
 	Create pulumi.StringPtrOutput `pulumi:"create"`
 	// The command to run on delete.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
-	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+	// The directory from which to run the command from. If `dir` does not exist, then
+	// `Command` will fail.
 	Dir pulumi.StringPtrOutput `pulumi:"dir"`
-	// Additional environmental variables available to the command's process.
+	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// For example: `["/bin/sh", "-c"]`
@@ -80,9 +81,9 @@ type commandArgs struct {
 	Create *string `pulumi:"create"`
 	// The command to run on delete.
 	Delete *string `pulumi:"delete"`
-	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+	// The working directory in which to run the command from.
 	Dir *string `pulumi:"dir"`
-	// Additional environmental variables available to the command's process.
+	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// For example: `["/bin/sh", "-c"]`
@@ -97,9 +98,9 @@ type CommandArgs struct {
 	Create pulumi.StringPtrInput
 	// The command to run on delete.
 	Delete pulumi.StringPtrInput
-	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+	// The working directory in which to run the command from.
 	Dir pulumi.StringPtrInput
-	// Additional environmental variables available to the command's process.
+	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
 	// The program and arguments to run the command.
 	// For example: `["/bin/sh", "-c"]`

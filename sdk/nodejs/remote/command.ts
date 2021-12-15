@@ -49,7 +49,7 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly delete!: pulumi.Output<string | undefined>;
     /**
-     * Additional environmental variables available to the command's process.
+     * Additional environment variables available to the command's process.
      */
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
     /**
@@ -119,7 +119,7 @@ export interface CommandArgs {
      */
     delete?: pulumi.Input<string>;
     /**
-     * Additional environmental variables available to the command's process.
+     * Additional environment variables available to the command's process.
      */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
