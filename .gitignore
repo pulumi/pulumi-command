@@ -17,3 +17,5 @@ password.txt
 password2.txt
 private_ip.txt
 out.txt
+examples/**/venv/
+examples/**/__pycache__/
