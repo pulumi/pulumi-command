@@ -32,17 +32,17 @@ import (
 )
 
 type remoteconnection struct {
-	User       *string `pulumi:"user,optional"`
+	User       string  `pulumi:"user,optional"`
 	Password   *string `pulumi:"password,optional"`
 	Host       string  `pulumi:"host"`
-	Port       *int    `pulumi:"port,optional"`
+	Port       int     `pulumi:"port,optional"`
 	PrivateKey *string `pulumi:"privateKey,optional"`
 }
 
 // Generate an ssh config from a connection specification.
 func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
-		User:            *con.User,
+		User:            con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	if con.PrivateKey != nil {
@@ -72,7 +72,7 @@ func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) 
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(con.Host, fmt.Sprintf("%d", *con.Port)),
+				net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)),
 				config)
 			if err != nil {
 				if try > 10 {

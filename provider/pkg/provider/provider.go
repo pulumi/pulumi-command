@@ -129,21 +129,21 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 		return nil, err
 	}
 
-	d := olds.Diff(news)
 	changes := pulumirpc.DiffResponse_DIFF_NONE
-	var replaces []string
-	// TODO: Non-replace changes
-	for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection", "localPath", "remotePath"} {
-		i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
-		if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
-			continue
-		}
-		if d.Changed(resource.PropertyKey(replaceKey)) {
-			changes = pulumirpc.DiffResponse_DIFF_SOME
-			replaces = append(replaces, replaceKey)
+	replaces := []string{}
+	if d := olds.Diff(news); d != nil {
+		// TODO: Non-replace changes
+		for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection", "localPath", "remotePath"} {
+			i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
+			if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
+				continue
+			}
+			if d.Changed(resource.PropertyKey(replaceKey)) {
+				changes = pulumirpc.DiffResponse_DIFF_SOME
+				replaces = append(replaces, replaceKey)
+			}
 		}
 	}
-
 	// TODO: Detailed diffs
 
 	return &pulumirpc.DiffResponse{
@@ -212,6 +212,11 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 
 		id, err = cpf.RunCreate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cpf)
 		if err != nil {
 			return nil, err
 		}

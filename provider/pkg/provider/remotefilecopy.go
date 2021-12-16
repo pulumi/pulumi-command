@@ -34,7 +34,8 @@ type remotefilecopy struct {
 }
 
 func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
-
+	host.Log(ctx, diag.Debug, urn,
+		fmt.Sprintf("Creating file: %s:%s from local file %s", c.Connection.Host, c.RemotePath, c.LocalPath))
 	inner := func() error {
 		src, err := os.Open(c.LocalPath)
 		if err != nil {
@@ -74,6 +75,6 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 }
 
 func (c *remotefilecopy) RunDelete(ctx context.Context, host *provider.HostClient, urn resource.URN) error {
-	host.Log(ctx, diag.Debug, urn, fmt.Sprintf("Delete called for %s", urn))
+	host.Log(ctx, diag.Debug, urn, fmt.Sprintf("CopyFile delete is a no-op", urn))
 	return nil
 }
