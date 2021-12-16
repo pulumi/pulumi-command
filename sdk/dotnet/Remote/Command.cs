@@ -104,7 +104,7 @@ namespace Pulumi.Command.Remote
     public sealed class CommandArgs : Pulumi.ResourceArgs
     {
         /// <summary>
-        /// The parameters with which to connect to the remote host
+        /// The parameters with which to connect to the remote host.
         /// </summary>
         [Input("connection", required: true)]
         public Input<Inputs.ConnectionArgs> Connection { get; set; } = null!;

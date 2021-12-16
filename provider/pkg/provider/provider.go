@@ -87,6 +87,17 @@ func (k *commandProvider) StreamInvoke(req *pulumirpc.InvokeRequest, server pulu
 	return fmt.Errorf("unknown StreamInvoke token %q", tok)
 }
 
+func check(urn resource.URN) error {
+	ty := urn.Type()
+	valid := []string{"local:Command", "remote:Command", "remote:CopyFile"}
+	for _, v := range valid {
+		if "command:"+v == string(ty) {
+			return nil
+		}
+	}
+	return fmt.Errorf("unknown resource type %q", ty)
+}
+
 // Check validates that the given property bag is valid for a resource of the given type and returns
 // the inputs that should be passed to successive calls to Diff, Create, or Update for this
 // resource. As a rule, the provider inputs returned by a call to Check should preserve the original
@@ -95,9 +106,8 @@ func (k *commandProvider) StreamInvoke(req *pulumirpc.InvokeRequest, server pulu
 // the provider inputs are using for detecting and rendering diffs.
 func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest) (*pulumirpc.CheckResponse, error) {
 	urn := resource.URN(req.GetUrn())
-	ty := urn.Type()
-	if ty != "command:local:Command" && ty != "command:remote:Command" {
-		return nil, fmt.Errorf("unknown resource type %q", ty)
+	if err := check(urn); err != nil {
+		return nil, err
 	}
 	return &pulumirpc.CheckResponse{Inputs: req.News, Failures: nil}, nil
 }
@@ -105,9 +115,8 @@ func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest
 // Diff checks what impacts a hypothetical update will have on the resource's properties.
 func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) (*pulumirpc.DiffResponse, error) {
 	urn := resource.URN(req.GetUrn())
-	ty := urn.Type()
-	if ty != "command:local:Command" && ty != "command:remote:Command" {
-		return nil, fmt.Errorf("unknown resource type %q", ty)
+	if err := check(urn); err != nil {
+		return nil, err
 	}
 
 	olds, err := plugin.UnmarshalProperties(req.GetOlds(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
@@ -120,21 +129,21 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 		return nil, err
 	}
 
-	d := olds.Diff(news)
 	changes := pulumirpc.DiffResponse_DIFF_NONE
-	var replaces []string
-	// TODO: Non-replace changes
-	for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection"} {
-		i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
-		if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
-			continue
-		}
-		if d.Changed(resource.PropertyKey(replaceKey)) {
-			changes = pulumirpc.DiffResponse_DIFF_SOME
-			replaces = append(replaces, replaceKey)
+	replaces := []string{}
+	if d := olds.Diff(news); d != nil {
+		// TODO: Non-replace changes
+		for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection", "localPath", "remotePath"} {
+			i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
+			if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
+				continue
+			}
+			if d.Changed(resource.PropertyKey(replaceKey)) {
+				changes = pulumirpc.DiffResponse_DIFF_SOME
+				replaces = append(replaces, replaceKey)
+			}
 		}
 	}
-
 	// TODO: Detailed diffs
 
 	return &pulumirpc.DiffResponse{
@@ -149,8 +158,8 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:local:Command" && ty != "command:remote:Command" {
-		return nil, fmt.Errorf("unknown resource type %q", ty)
+	if err := check(urn); err != nil {
+		return nil, err
 	}
 
 	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
@@ -195,6 +204,22 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		if err != nil {
 			return nil, err
 		}
+	case "command:remote:CopyFile":
+		var cpf remotefilecopy
+		err = mapper.MapI(inputs, &cpf)
+		if err != nil {
+			return nil, err
+		}
+
+		id, err = cpf.RunCreate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cpf)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	outputProperties, err := plugin.MarshalProperties(
@@ -215,9 +240,8 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 	ctx = k.addContext(ctx)
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
-	ty := urn.Type()
-	if ty != "command:local:Command" && ty != "command:remote:Command" {
-		return nil, fmt.Errorf("unknown resource type '%q'", ty)
+	if err := check(urn); err != nil {
+		return nil, err
 	}
 
 	return &pulumirpc.ReadResponse{
@@ -233,8 +257,8 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:local:Command" && ty != "command:remote:Command" {
-		return nil, fmt.Errorf("unknown resource type %q", ty)
+	if err := check(urn); err != nil {
+		return nil, err
 	}
 
 	// Our Random resource will never be updated - if there is a diff, it will be a replacement.
@@ -248,8 +272,8 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
 	ty := urn.Type()
-	if ty != "command:local:Command" && ty != "command:remote:Command" {
-		return nil, fmt.Errorf("unknown resource type %q", ty)
+	if err := check(urn); err != nil {
+		return nil, err
 	}
 
 	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
@@ -258,10 +282,12 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 	}
 	inputs := inputProps.Mappable()
 
+	decoder := mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true})
+
 	switch ty {
 	case "command:local:Command":
 		var cmd command
-		err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
+		err = decoder.Decode(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -272,12 +298,22 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		}
 	case "command:remote:Command":
 		var cmd remotecommand
-		err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Decode(inputs, &cmd)
+		err = decoder.Decode(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
 
 		err = cmd.RunDelete(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+	case "command:remote:CopyFile":
+		var cpf remotefilecopy
+		err = decoder.Decode(inputs, &cpf)
+		if err != nil {
+			return nil, err
+		}
+		err = cpf.RunDelete(ctx, k.host, urn)
 		if err != nil {
 			return nil, err
 		}

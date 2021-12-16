@@ -18,6 +18,7 @@
         "local/index.ts",
         "provider.ts",
         "remote/command.ts",
+        "remote/copyFile.ts",
         "remote/index.ts",
         "types/index.ts",
         "types/input.ts",

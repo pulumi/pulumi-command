@@ -46,17 +46,29 @@ const hostname = new remote.Command("hostname", {
     create: "hostname",
 });
 
-const remotePrivateIP = new remote.Command("remotePrivateIP", {
+new remote.Command("remotePrivateIP", {
     connection,
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
 }, { deleteBeforeReplace: true });
 
-const localPrivateIP = new local.Command("localPrivateIP", {
+new local.Command("localPrivateIP", {
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
 }, { deleteBeforeReplace: true });
 
+const sizeFile = new remote.CopyFile("size", {
+    connection,
+    localPath: "./size.ts",
+    remotePath: "size.ts",
+})
+
+const catSize = new remote.Command("checkSize", {
+    connection,
+    create: "cat size.ts",
+}, { dependsOn: sizeFile })
+
+export const confirmSize = catSize.stdout;
 export const publicIp = server.publicIp;
 export const publicHostName = server.publicDns;
 export const hostnameStdout = hostname.stdout;

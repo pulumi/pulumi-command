@@ -32,11 +32,61 @@ import (
 )
 
 type remoteconnection struct {
-	User       *string `pulumi:"user,optional"`
+	User       string  `pulumi:"user,optional"`
 	Password   *string `pulumi:"password,optional"`
 	Host       string  `pulumi:"host"`
-	Port       *int    `pulumi:"port,optional"`
+	Port       int     `pulumi:"port,optional"`
 	PrivateKey *string `pulumi:"privateKey,optional"`
+}
+
+// Generate an ssh config from a connection specification.
+func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
+	config := &ssh.ClientConfig{
+		User:            con.User,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	if con.PrivateKey != nil {
+		signer, err := ssh.ParsePrivateKey([]byte(*con.PrivateKey))
+		if err != nil {
+			return nil, err
+		}
+		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
+	}
+	if con.Password != nil {
+		config.Auth = append(config.Auth, ssh.Password(*con.Password))
+		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
+			for i := range questions {
+				answers[i] = *con.Password
+			}
+			return answers, err
+		}))
+	}
+
+	return config, nil
+}
+
+// Dial a ssh client connection from a ssh client configuration, retrying as necessary.
+func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
+	var client *ssh.Client
+	var err error
+	_, _, err = retry.Until(ctx, retry.Acceptor{
+		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
+			client, err = ssh.Dial("tcp",
+				net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)),
+				config)
+			if err != nil {
+				if try > 10 {
+					return true, nil, err
+				}
+				return false, nil, nil
+			}
+			return true, nil, nil
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 type remotecommand struct {
@@ -72,50 +122,12 @@ func (c *remotecommand) RunDelete(ctx context.Context, host *provider.HostClient
 }
 
 func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {
-	user := "root"
-	if c.Connection.User != nil {
-		user = *c.Connection.User
-	}
-	config := &ssh.ClientConfig{
-		User:            user,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
-	if c.Connection.PrivateKey != nil {
-		signer, err := ssh.ParsePrivateKey([]byte(*c.Connection.PrivateKey))
-		if err != nil {
-			return "", "", "", err
-		}
-		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
-	}
-	if c.Connection.Password != nil {
-		config.Auth = append(config.Auth, ssh.Password(*c.Connection.Password))
-		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
-			for i := range questions {
-				answers[i] = *c.Connection.Password
-			}
-			return answers, err
-		}))
+	config, err := c.Connection.SShConfig()
+	if err != nil {
+		return "", "", "", err
 	}
 
-	port := "22"
-	if c.Connection.Port != nil {
-		port = fmt.Sprintf("%d", *c.Connection.Port)
-	}
-
-	var err error
-	var client *ssh.Client
-	_, _, err = retry.Until(ctx, retry.Acceptor{
-		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
-			client, err = ssh.Dial("tcp", net.JoinHostPort(c.Connection.Host, port), config)
-			if err != nil {
-				if try > 10 {
-					return true, nil, err
-				}
-				return false, nil, nil
-			}
-			return true, nil, nil
-		},
-	})
+	client, err := c.Connection.Dial(ctx, config)
 	if err != nil {
 		return "", "", "", err
 	}

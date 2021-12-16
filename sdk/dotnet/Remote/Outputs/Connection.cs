@@ -25,7 +25,7 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly string? Password;
         /// <summary>
-        /// The port to connect to. Defaults to 22.
+        /// The port to connect to.
         /// </summary>
         public readonly double? Port;
         /// <summary>

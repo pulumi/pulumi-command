@@ -81,31 +81,31 @@ export class Command extends pulumi.CustomResource {
      * @param opts A bag of options that control this resource's behavior.
      */
     constructor(name: string, args?: CommandArgs, opts?: pulumi.CustomResourceOptions) {
-        let inputs: pulumi.Inputs = {};
+        let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            inputs["create"] = args ? args.create : undefined;
-            inputs["delete"] = args ? args.delete : undefined;
-            inputs["dir"] = args ? args.dir : undefined;
-            inputs["environment"] = args ? args.environment : undefined;
-            inputs["interpreter"] = args ? args.interpreter : undefined;
-            inputs["update"] = args ? args.update : undefined;
-            inputs["stderr"] = undefined /*out*/;
-            inputs["stdout"] = undefined /*out*/;
+            resourceInputs["create"] = args ? args.create : undefined;
+            resourceInputs["delete"] = args ? args.delete : undefined;
+            resourceInputs["dir"] = args ? args.dir : undefined;
+            resourceInputs["environment"] = args ? args.environment : undefined;
+            resourceInputs["interpreter"] = args ? args.interpreter : undefined;
+            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["stderr"] = undefined /*out*/;
+            resourceInputs["stdout"] = undefined /*out*/;
         } else {
-            inputs["create"] = undefined /*out*/;
-            inputs["delete"] = undefined /*out*/;
-            inputs["dir"] = undefined /*out*/;
-            inputs["environment"] = undefined /*out*/;
-            inputs["interpreter"] = undefined /*out*/;
-            inputs["stderr"] = undefined /*out*/;
-            inputs["stdout"] = undefined /*out*/;
-            inputs["update"] = undefined /*out*/;
+            resourceInputs["create"] = undefined /*out*/;
+            resourceInputs["delete"] = undefined /*out*/;
+            resourceInputs["dir"] = undefined /*out*/;
+            resourceInputs["environment"] = undefined /*out*/;
+            resourceInputs["interpreter"] = undefined /*out*/;
+            resourceInputs["stderr"] = undefined /*out*/;
+            resourceInputs["stdout"] = undefined /*out*/;
+            resourceInputs["update"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
         }
-        super(Command.__pulumiType, name, inputs, opts);
+        super(Command.__pulumiType, name, resourceInputs, opts);
     }
 }
 
@@ -131,7 +131,7 @@ export interface CommandArgs {
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * The program and arguments to run the command.
-     * For example: `["/bin/sh", "-c"]`
+     * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
     /**

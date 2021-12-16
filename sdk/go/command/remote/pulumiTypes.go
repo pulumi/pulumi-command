@@ -16,11 +16,28 @@ type Connection struct {
 	Host string `pulumi:"host"`
 	// The password we should use for the connection.
 	Password *string `pulumi:"password"`
-	// The port to connect to. Defaults to 22.
+	// The port to connect to.
 	Port *float64 `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey *string `pulumi:"privateKey"`
 	User       *string `pulumi:"user"`
+}
+
+// Defaults sets the appropriate defaults for Connection
+func (val *Connection) Defaults() *Connection {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if isZero(tmp.Port) {
+		port_ := 22.0
+		tmp.Port = &port_
+	}
+	if isZero(tmp.User) {
+		user_ := "root"
+		tmp.User = &user_
+	}
+	return &tmp
 }
 
 // ConnectionInput is an input type that accepts ConnectionArgs and ConnectionOutput values.
@@ -40,7 +57,7 @@ type ConnectionArgs struct {
 	Host pulumi.StringInput `pulumi:"host"`
 	// The password we should use for the connection.
 	Password pulumi.StringPtrInput `pulumi:"password"`
-	// The port to connect to. Defaults to 22.
+	// The port to connect to.
 	Port pulumi.Float64PtrInput `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey pulumi.StringPtrInput `pulumi:"privateKey"`
@@ -120,7 +137,7 @@ func (o ConnectionOutput) ToConnectionPtrOutput() ConnectionPtrOutput {
 }
 
 func (o ConnectionOutput) ToConnectionPtrOutputWithContext(ctx context.Context) ConnectionPtrOutput {
-	return o.ApplyT(func(v Connection) *Connection {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v Connection) *Connection {
 		return &v
 	}).(ConnectionPtrOutput)
 }
@@ -135,7 +152,7 @@ func (o ConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.Password }).(pulumi.StringPtrOutput)
 }
 
-// The port to connect to. Defaults to 22.
+// The port to connect to.
 func (o ConnectionOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v Connection) *float64 { return v.Port }).(pulumi.Float64PtrOutput)
 }
@@ -164,7 +181,13 @@ func (o ConnectionPtrOutput) ToConnectionPtrOutputWithContext(ctx context.Contex
 }
 
 func (o ConnectionPtrOutput) Elem() ConnectionOutput {
-	return o.ApplyT(func(v *Connection) Connection { return *v }).(ConnectionOutput)
+	return o.ApplyT(func(v *Connection) Connection {
+		if v != nil {
+			return *v
+		}
+		var ret Connection
+		return ret
+	}).(ConnectionOutput)
 }
 
 // The address of the resource to connect to.
@@ -187,7 +210,7 @@ func (o ConnectionPtrOutput) Password() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// The port to connect to. Defaults to 22.
+// The port to connect to.
 func (o ConnectionPtrOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v *Connection) *float64 {
 		if v == nil {
@@ -217,6 +240,8 @@ func (o ConnectionPtrOutput) User() pulumi.StringPtrOutput {
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*ConnectionInput)(nil)).Elem(), ConnectionArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ConnectionPtrInput)(nil)).Elem(), ConnectionArgs{})
 	pulumi.RegisterOutputType(ConnectionOutput{})
 	pulumi.RegisterOutputType(ConnectionPtrOutput{})
 }
