@@ -72,7 +72,7 @@ func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) 
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)),
+				net.JoinHostPort(con.Host, fmt.Sprintf("%d", *con.Port)),
 				config)
 			if err != nil {
 				if try > 10 {
