@@ -39,6 +39,7 @@ type remoteconnection struct {
 	PrivateKey *string `pulumi:"privateKey,optional"`
 }
 
+// Generate an ssh config from a connection specification.
 func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            *con.User,
@@ -62,6 +63,30 @@ func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
 	}
 
 	return config, nil
+}
+
+// Dial a ssh client connection from a ssh client configuration, retrying as necessary.
+func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
+	var client *ssh.Client
+	var err error
+	_, _, err = retry.Until(ctx, retry.Acceptor{
+		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
+			client, err = ssh.Dial("tcp",
+				net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)),
+				config)
+			if err != nil {
+				if try > 10 {
+					return true, nil, err
+				}
+				return false, nil, nil
+			}
+			return true, nil, nil
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 type remotecommand struct {
@@ -101,21 +126,8 @@ func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.Host
 	if err != nil {
 		return "", "", "", err
 	}
-	var client *ssh.Client
-	_, _, err = retry.Until(ctx, retry.Acceptor{
-		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
-			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(c.Connection.Host, fmt.Sprintf("%d", c.Connection.Port)),
-				config)
-			if err != nil {
-				if try > 10 {
-					return true, nil, err
-				}
-				return false, nil, nil
-			}
-			return true, nil, nil
-		},
-	})
+
+	client, err := c.Connection.Dial(ctx, config)
 	if err != nil {
 		return "", "", "", err
 	}

@@ -16,6 +16,9 @@ package provider
 
 import (
 	"context"
+	"os"
+
+	"github.com/pkg/sftp"
 
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
@@ -30,8 +33,43 @@ type remotefilecopy struct {
 }
 
 func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
-	host.Log(ctx, diag.Info, urn, "Creating remotefilecopy")
-	return "", nil
+
+	inner := func() error {
+		src, err := os.Open(c.LocalPath)
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		config, err := c.Connection.SShConfig()
+		if err != nil {
+			return err
+		}
+		client, err := c.Connection.Dial(ctx, config)
+		if err != nil {
+			return err
+		}
+		defer client.Close()
+
+		sftp, err := sftp.NewClient(client)
+		if err != nil {
+			return err
+		}
+		defer sftp.Close()
+
+		dst, err := sftp.Create(c.RemotePath)
+		if err != nil {
+			return err
+		}
+
+		_, err = dst.ReadFrom(src)
+		return err
+	}
+	if err := inner(); err != nil {
+		return "", err
+	}
+	return resource.NewUniqueHex("", 8, 0)
+
 }
 
 func (c *remotefilecopy) RunDelete(ctx context.Context, host *provider.HostClient, urn resource.URN) error {
