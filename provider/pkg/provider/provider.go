@@ -133,7 +133,7 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 	changes := pulumirpc.DiffResponse_DIFF_NONE
 	var replaces []string
 	// TODO: Non-replace changes
-	for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection"} {
+	for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection", "localPath", "remotePath"} {
 		i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
 		if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
 			continue

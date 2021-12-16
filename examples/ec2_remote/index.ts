@@ -59,7 +59,7 @@ new local.Command("localPrivateIP", {
 
 const sizeFile = new remote.CopyFile("size", {
     connection,
-    localPath: "./size",
+    localPath: "./size.ts",
     remotePath: "size.ts",
 })
 
