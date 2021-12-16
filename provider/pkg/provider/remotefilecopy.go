@@ -16,6 +16,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/pkg/sftp"
@@ -73,6 +74,6 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 }
 
 func (c *remotefilecopy) RunDelete(ctx context.Context, host *provider.HostClient, urn resource.URN) error {
-	host.Log(ctx, diag.Info, urn, "Deleting remotefilecopy")
+	host.Log(ctx, diag.Debug, urn, fmt.Sprintf("Delete called for %s", urn))
 	return nil
 }

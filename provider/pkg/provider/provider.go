@@ -106,12 +106,10 @@ func check(urn resource.URN) error {
 // the provider inputs are using for detecting and rendering diffs.
 func (k *commandProvider) Check(ctx context.Context, req *pulumirpc.CheckRequest) (*pulumirpc.CheckResponse, error) {
 	urn := resource.URN(req.GetUrn())
-	err := check(urn)
-	if err == nil {
-		return &pulumirpc.CheckResponse{Inputs: req.News, Failures: nil}, nil
-	} else {
+	if err := check(urn); err != nil {
 		return nil, err
 	}
+	return &pulumirpc.CheckResponse{Inputs: req.News, Failures: nil}, nil
 }
 
 // Diff checks what impacts a hypothetical update will have on the resource's properties.
