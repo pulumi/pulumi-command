@@ -4,6 +4,8 @@
 import * as pulumi from "@pulumi/pulumi";
 import { input as inputs, output as outputs } from "../types";
 
+import * as utilities from "../utilities";
+
 export namespace remote {
     /**
      * Instructions for how to connect to a remote endpoint.
@@ -26,5 +28,15 @@ export namespace remote {
          */
         privateKey?: pulumi.Input<string>;
         user?: pulumi.Input<string>;
+    }
+    /**
+     * connectionArgsProvideDefaults sets the appropriate defaults for ConnectionArgs
+     */
+    export function connectionArgsProvideDefaults(val: ConnectionArgs): ConnectionArgs {
+        return {
+            ...val,
+            port: (val.port) ?? 22,
+            user: (val.user) ?? "root",
+        };
     }
 }

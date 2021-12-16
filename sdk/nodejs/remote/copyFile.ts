@@ -56,7 +56,7 @@ export class CopyFile extends pulumi.CustomResource {
      * @param opts A bag of options that control this resource's behavior.
      */
     constructor(name: string, args: CopyFileArgs, opts?: pulumi.CustomResourceOptions) {
-        let inputs: pulumi.Inputs = {};
+        let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
             if ((!args || args.connection === undefined) && !opts.urn) {
@@ -68,18 +68,18 @@ export class CopyFile extends pulumi.CustomResource {
             if ((!args || args.remotePath === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'remotePath'");
             }
-            inputs["connection"] = args ? args.connection : undefined;
-            inputs["localPath"] = args ? args.localPath : undefined;
-            inputs["remotePath"] = args ? args.remotePath : undefined;
+            resourceInputs["connection"] = args ? (args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined) : undefined;
+            resourceInputs["localPath"] = args ? args.localPath : undefined;
+            resourceInputs["remotePath"] = args ? args.remotePath : undefined;
         } else {
-            inputs["connection"] = undefined /*out*/;
-            inputs["localPath"] = undefined /*out*/;
-            inputs["remotePath"] = undefined /*out*/;
+            resourceInputs["connection"] = undefined /*out*/;
+            resourceInputs["localPath"] = undefined /*out*/;
+            resourceInputs["remotePath"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
         }
-        super(CopyFile.__pulumiType, name, inputs, opts);
+        super(CopyFile.__pulumiType, name, resourceInputs, opts);
     }
 }
 

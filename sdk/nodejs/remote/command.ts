@@ -73,32 +73,32 @@ export class Command extends pulumi.CustomResource {
      * @param opts A bag of options that control this resource's behavior.
      */
     constructor(name: string, args: CommandArgs, opts?: pulumi.CustomResourceOptions) {
-        let inputs: pulumi.Inputs = {};
+        let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
             if ((!args || args.connection === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
-            inputs["connection"] = args ? args.connection : undefined;
-            inputs["create"] = args ? args.create : undefined;
-            inputs["delete"] = args ? args.delete : undefined;
-            inputs["environment"] = args ? args.environment : undefined;
-            inputs["update"] = args ? args.update : undefined;
-            inputs["stderr"] = undefined /*out*/;
-            inputs["stdout"] = undefined /*out*/;
+            resourceInputs["connection"] = args ? (args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined) : undefined;
+            resourceInputs["create"] = args ? args.create : undefined;
+            resourceInputs["delete"] = args ? args.delete : undefined;
+            resourceInputs["environment"] = args ? args.environment : undefined;
+            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["stderr"] = undefined /*out*/;
+            resourceInputs["stdout"] = undefined /*out*/;
         } else {
-            inputs["connection"] = undefined /*out*/;
-            inputs["create"] = undefined /*out*/;
-            inputs["delete"] = undefined /*out*/;
-            inputs["environment"] = undefined /*out*/;
-            inputs["stderr"] = undefined /*out*/;
-            inputs["stdout"] = undefined /*out*/;
-            inputs["update"] = undefined /*out*/;
+            resourceInputs["connection"] = undefined /*out*/;
+            resourceInputs["create"] = undefined /*out*/;
+            resourceInputs["delete"] = undefined /*out*/;
+            resourceInputs["environment"] = undefined /*out*/;
+            resourceInputs["stderr"] = undefined /*out*/;
+            resourceInputs["stdout"] = undefined /*out*/;
+            resourceInputs["update"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
         }
-        super(Command.__pulumiType, name, inputs, opts);
+        super(Command.__pulumiType, name, resourceInputs, opts);
     }
 }
 

@@ -9,8 +9,10 @@ from .provider import *
 
 # Make subpackages available:
 if typing.TYPE_CHECKING:
-    import pulumi_command.local as local
-    import pulumi_command.remote as remote
+    import pulumi_command.local as __local
+    local = __local
+    import pulumi_command.remote as __remote
+    remote = __remote
 else:
     local = _utilities.lazy_import('pulumi_command.local')
     remote = _utilities.lazy_import('pulumi_command.remote')

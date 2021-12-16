@@ -39,6 +39,8 @@ func NewCopyFile(ctx *pulumi.Context,
 	if args.RemotePath == nil {
 		return nil, errors.New("invalid value for required argument 'RemotePath'")
 	}
+	connectionApplier := func(v Connection) *Connection { return v.Defaults() }
+	args.Connection = args.Connection.ToConnectionOutput().ApplyT(connectionApplier).(ConnectionPtrOutput).Elem()
 	var resource CopyFile
 	err := ctx.RegisterResource("command:remote:CopyFile", name, args, &resource, opts...)
 	if err != nil {
@@ -101,7 +103,7 @@ type CopyFileInput interface {
 }
 
 func (*CopyFile) ElementType() reflect.Type {
-	return reflect.TypeOf((*CopyFile)(nil))
+	return reflect.TypeOf((**CopyFile)(nil)).Elem()
 }
 
 func (i *CopyFile) ToCopyFileOutput() CopyFileOutput {
@@ -110,35 +112,6 @@ func (i *CopyFile) ToCopyFileOutput() CopyFileOutput {
 
 func (i *CopyFile) ToCopyFileOutputWithContext(ctx context.Context) CopyFileOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(CopyFileOutput)
-}
-
-func (i *CopyFile) ToCopyFilePtrOutput() CopyFilePtrOutput {
-	return i.ToCopyFilePtrOutputWithContext(context.Background())
-}
-
-func (i *CopyFile) ToCopyFilePtrOutputWithContext(ctx context.Context) CopyFilePtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(CopyFilePtrOutput)
-}
-
-type CopyFilePtrInput interface {
-	pulumi.Input
-
-	ToCopyFilePtrOutput() CopyFilePtrOutput
-	ToCopyFilePtrOutputWithContext(ctx context.Context) CopyFilePtrOutput
-}
-
-type copyFilePtrType CopyFileArgs
-
-func (*copyFilePtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**CopyFile)(nil))
-}
-
-func (i *copyFilePtrType) ToCopyFilePtrOutput() CopyFilePtrOutput {
-	return i.ToCopyFilePtrOutputWithContext(context.Background())
-}
-
-func (i *copyFilePtrType) ToCopyFilePtrOutputWithContext(ctx context.Context) CopyFilePtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(CopyFilePtrOutput)
 }
 
 // CopyFileArrayInput is an input type that accepts CopyFileArray and CopyFileArrayOutput values.
@@ -191,12 +164,10 @@ func (i CopyFileMap) ToCopyFileMapOutputWithContext(ctx context.Context) CopyFil
 	return pulumi.ToOutputWithContext(ctx, i).(CopyFileMapOutput)
 }
 
-type CopyFileOutput struct {
-	*pulumi.OutputState
-}
+type CopyFileOutput struct{ *pulumi.OutputState }
 
 func (CopyFileOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*CopyFile)(nil))
+	return reflect.TypeOf((**CopyFile)(nil)).Elem()
 }
 
 func (o CopyFileOutput) ToCopyFileOutput() CopyFileOutput {
@@ -207,36 +178,10 @@ func (o CopyFileOutput) ToCopyFileOutputWithContext(ctx context.Context) CopyFil
 	return o
 }
 
-func (o CopyFileOutput) ToCopyFilePtrOutput() CopyFilePtrOutput {
-	return o.ToCopyFilePtrOutputWithContext(context.Background())
-}
-
-func (o CopyFileOutput) ToCopyFilePtrOutputWithContext(ctx context.Context) CopyFilePtrOutput {
-	return o.ApplyT(func(v CopyFile) *CopyFile {
-		return &v
-	}).(CopyFilePtrOutput)
-}
-
-type CopyFilePtrOutput struct {
-	*pulumi.OutputState
-}
-
-func (CopyFilePtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**CopyFile)(nil))
-}
-
-func (o CopyFilePtrOutput) ToCopyFilePtrOutput() CopyFilePtrOutput {
-	return o
-}
-
-func (o CopyFilePtrOutput) ToCopyFilePtrOutputWithContext(ctx context.Context) CopyFilePtrOutput {
-	return o
-}
-
 type CopyFileArrayOutput struct{ *pulumi.OutputState }
 
 func (CopyFileArrayOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*[]CopyFile)(nil))
+	return reflect.TypeOf((*[]*CopyFile)(nil)).Elem()
 }
 
 func (o CopyFileArrayOutput) ToCopyFileArrayOutput() CopyFileArrayOutput {
@@ -248,15 +193,15 @@ func (o CopyFileArrayOutput) ToCopyFileArrayOutputWithContext(ctx context.Contex
 }
 
 func (o CopyFileArrayOutput) Index(i pulumi.IntInput) CopyFileOutput {
-	return pulumi.All(o, i).ApplyT(func(vs []interface{}) CopyFile {
-		return vs[0].([]CopyFile)[vs[1].(int)]
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *CopyFile {
+		return vs[0].([]*CopyFile)[vs[1].(int)]
 	}).(CopyFileOutput)
 }
 
 type CopyFileMapOutput struct{ *pulumi.OutputState }
 
 func (CopyFileMapOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((*map[string]CopyFile)(nil))
+	return reflect.TypeOf((*map[string]*CopyFile)(nil)).Elem()
 }
 
 func (o CopyFileMapOutput) ToCopyFileMapOutput() CopyFileMapOutput {
@@ -268,14 +213,16 @@ func (o CopyFileMapOutput) ToCopyFileMapOutputWithContext(ctx context.Context) C
 }
 
 func (o CopyFileMapOutput) MapIndex(k pulumi.StringInput) CopyFileOutput {
-	return pulumi.All(o, k).ApplyT(func(vs []interface{}) CopyFile {
-		return vs[0].(map[string]CopyFile)[vs[1].(string)]
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) *CopyFile {
+		return vs[0].(map[string]*CopyFile)[vs[1].(string)]
 	}).(CopyFileOutput)
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*CopyFileInput)(nil)).Elem(), &CopyFile{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CopyFileArrayInput)(nil)).Elem(), CopyFileArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*CopyFileMapInput)(nil)).Elem(), CopyFileMap{})
 	pulumi.RegisterOutputType(CopyFileOutput{})
-	pulumi.RegisterOutputType(CopyFilePtrOutput{})
 	pulumi.RegisterOutputType(CopyFileArrayOutput{})
 	pulumi.RegisterOutputType(CopyFileMapOutput{})
 }

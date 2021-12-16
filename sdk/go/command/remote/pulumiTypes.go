@@ -23,6 +23,23 @@ type Connection struct {
 	User       *string `pulumi:"user"`
 }
 
+// Defaults sets the appropriate defaults for Connection
+func (val *Connection) Defaults() *Connection {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if isZero(tmp.Port) {
+		port_ := 22.0
+		tmp.Port = &port_
+	}
+	if isZero(tmp.User) {
+		user_ := "root"
+		tmp.User = &user_
+	}
+	return &tmp
+}
+
 // ConnectionInput is an input type that accepts ConnectionArgs and ConnectionOutput values.
 // You can construct a concrete instance of `ConnectionInput` via:
 //
@@ -120,7 +137,7 @@ func (o ConnectionOutput) ToConnectionPtrOutput() ConnectionPtrOutput {
 }
 
 func (o ConnectionOutput) ToConnectionPtrOutputWithContext(ctx context.Context) ConnectionPtrOutput {
-	return o.ApplyT(func(v Connection) *Connection {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v Connection) *Connection {
 		return &v
 	}).(ConnectionPtrOutput)
 }
@@ -164,7 +181,13 @@ func (o ConnectionPtrOutput) ToConnectionPtrOutputWithContext(ctx context.Contex
 }
 
 func (o ConnectionPtrOutput) Elem() ConnectionOutput {
-	return o.ApplyT(func(v *Connection) Connection { return *v }).(ConnectionOutput)
+	return o.ApplyT(func(v *Connection) Connection {
+		if v != nil {
+			return *v
+		}
+		var ret Connection
+		return ret
+	}).(ConnectionOutput)
 }
 
 // The address of the resource to connect to.
@@ -217,6 +240,8 @@ func (o ConnectionPtrOutput) User() pulumi.StringPtrOutput {
 }
 
 func init() {
+	pulumi.RegisterInputType(reflect.TypeOf((*ConnectionInput)(nil)).Elem(), ConnectionArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*ConnectionPtrInput)(nil)).Elem(), ConnectionArgs{})
 	pulumi.RegisterOutputType(ConnectionOutput{})
 	pulumi.RegisterOutputType(ConnectionPtrOutput{})
 }
