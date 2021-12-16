@@ -149,7 +149,7 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// The program and arguments to run the command.
-        /// For example: `["/bin/sh", "-c"]`
+        /// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         /// </summary>
         public InputList<string> Interpreter
         {

@@ -86,7 +86,7 @@ type commandArgs struct {
 	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
-	// For example: `["/bin/sh", "-c"]`
+	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
 	// The command to run on update.
 	Update *string `pulumi:"update"`
@@ -103,7 +103,7 @@ type CommandArgs struct {
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
 	// The program and arguments to run the command.
-	// For example: `["/bin/sh", "-c"]`
+	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput
 	// The command to run on update.
 	Update pulumi.StringPtrInput

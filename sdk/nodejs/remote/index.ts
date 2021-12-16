@@ -6,9 +6,11 @@ import * as utilities from "../utilities";
 
 // Export members:
 export * from "./command";
+export * from "./copyFile";
 
 // Import resources to register:
 import { Command } from "./command";
+import { CopyFile } from "./copyFile";
 
 const _module = {
     version: utilities.getVersion(),
@@ -16,6 +18,8 @@ const _module = {
         switch (type) {
             case "command:remote:Command":
                 return new Command(name, <any>undefined, { urn })
+            case "command:remote:CopyFile":
+                return new CopyFile(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }

@@ -107,7 +107,7 @@ export class Command extends pulumi.CustomResource {
  */
 export interface CommandArgs {
     /**
-     * The parameters with which to connect to the remote host
+     * The parameters with which to connect to the remote host.
      */
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**

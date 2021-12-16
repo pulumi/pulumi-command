@@ -131,7 +131,7 @@ export interface CommandArgs {
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * The program and arguments to run the command.
-     * For example: `["/bin/sh", "-c"]`
+     * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
     /**

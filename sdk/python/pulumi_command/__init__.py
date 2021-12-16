@@ -31,7 +31,8 @@ _utilities.register(
   "mod": "remote",
   "fqn": "pulumi_command.remote",
   "classes": {
-   "command:remote:Command": "Command"
+   "command:remote:Command": "Command",
+   "command:remote:CopyFile": "CopyFile"
   }
  }
 ]

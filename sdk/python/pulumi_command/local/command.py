@@ -26,7 +26,7 @@ class CommandArgs:
         :param pulumi.Input[str] dir: The working directory in which to run the command from.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
-               For example: `["/bin/sh", "-c"]`
+               On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] update: The command to run on update.
         """
         if create is not None:
@@ -95,7 +95,7 @@ class CommandArgs:
     def interpreter(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
         """
         The program and arguments to run the command.
-        For example: `["/bin/sh", "-c"]`
+        On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         """
         return pulumi.get(self, "interpreter")
 
@@ -142,7 +142,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[str] dir: The working directory in which to run the command from.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
-               For example: `["/bin/sh", "-c"]`
+               On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] update: The command to run on update.
         """
         ...

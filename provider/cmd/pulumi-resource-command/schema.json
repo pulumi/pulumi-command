@@ -154,7 +154,7 @@
             ],
             "inputProperties": {
                 "connection": {
-                    "description": "The parameters with which to connect to the remote host",
+                    "description": "The parameters with which to connect to the remote host.",
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
@@ -179,6 +179,47 @@
             },
             "requiredInputs": [
                 "connection"
+            ]
+        },
+        "command:remote:CopyFile": {
+            "description": "Copy a local file to a remote host.",
+            "inputProperties": {
+                "connection": {
+                    "description": "The parameters with which to connect to the remote host.",
+                    "$ref": "#/types/command:remote:Connection"
+                },
+                "localPath": {
+                    "description": "The path of the file to be copied.",
+                    "type": "string"
+                },
+                "remotePath": {
+                    "description": "The destination path in the remote host.",
+                    "type": "string"
+                }
+            },
+            "requiredInputs": [
+                "connection",
+                "localPath",
+                "remotePath"
+            ],
+            "properties": {
+                "connection": {
+                    "description": "The parameters with which to connect to the remote host.",
+                    "$ref": "#/types/command:remote:Connection"
+                },
+                "localPath": {
+                    "description": "The path of the file to be copied.",
+                    "type": "string"
+                },
+                "remotePath": {
+                    "description": "The destination path in the remote host.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connection",
+                "localPath",
+                "remotePath"
             ]
         }
     },

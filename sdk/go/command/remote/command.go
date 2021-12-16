@@ -74,7 +74,7 @@ func (CommandState) ElementType() reflect.Type {
 }
 
 type commandArgs struct {
-	// The parameters with which to connect to the remote host
+	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`
 	// The command to run on create.
 	Create *string `pulumi:"create"`
@@ -88,7 +88,7 @@ type commandArgs struct {
 
 // The set of arguments for constructing a Command resource.
 type CommandArgs struct {
-	// The parameters with which to connect to the remote host
+	// The parameters with which to connect to the remote host.
 	Connection ConnectionInput
 	// The command to run on create.
 	Create pulumi.StringPtrInput

@@ -22,7 +22,7 @@ class CommandArgs:
                  update: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a Command resource.
-        :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host
+        :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
@@ -42,7 +42,7 @@ class CommandArgs:
     @pulumi.getter
     def connection(self) -> pulumi.Input['ConnectionArgs']:
         """
-        The parameters with which to connect to the remote host
+        The parameters with which to connect to the remote host.
         """
         return pulumi.get(self, "connection")
 
@@ -116,7 +116,7 @@ class Command(pulumi.CustomResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host
+        :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
