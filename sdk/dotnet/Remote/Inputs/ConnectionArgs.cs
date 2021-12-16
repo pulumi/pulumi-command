@@ -28,7 +28,7 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<string>? Password { get; set; }
 
         /// <summary>
-        /// The port to connect to. Defaults to 22.
+        /// The port to connect to.
         /// </summary>
         [Input("port")]
         public Input<double>? Port { get; set; }
@@ -44,6 +44,8 @@ namespace Pulumi.Command.Remote.Inputs
 
         public ConnectionArgs()
         {
+            Port = 22;
+            User = "root";
         }
     }
 }

@@ -44,16 +44,20 @@ class Connection(dict):
         Instructions for how to connect to a remote endpoint.
         :param str host: The address of the resource to connect to.
         :param str password: The password we should use for the connection.
-        :param float port: The port to connect to. Defaults to 22.
+        :param float port: The port to connect to.
         :param str private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         """
         pulumi.set(__self__, "host", host)
         if password is not None:
             pulumi.set(__self__, "password", password)
+        if port is None:
+            port = 22
         if port is not None:
             pulumi.set(__self__, "port", port)
         if private_key is not None:
             pulumi.set(__self__, "private_key", private_key)
+        if user is None:
+            user = 'root'
         if user is not None:
             pulumi.set(__self__, "user", user)
 
@@ -77,7 +81,7 @@ class Connection(dict):
     @pulumi.getter
     def port(self) -> Optional[float]:
         """
-        The port to connect to. Defaults to 22.
+        The port to connect to.
         """
         return pulumi.get(self, "port")
 

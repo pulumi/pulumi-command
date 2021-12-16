@@ -18,7 +18,7 @@ export namespace remote {
          */
         password?: string;
         /**
-         * The port to connect to. Defaults to 22.
+         * The port to connect to.
          */
         port?: number;
         /**

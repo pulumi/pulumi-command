@@ -8,7 +8,8 @@
             "properties": {
                 "user": {
                     "type": "string",
-                    "descripton": "The user that we should use for the connection. Defaults to `root`."
+                    "descripton": "The user that we should use for the connection.",
+                    "default": "root"
                 },
                 "password": {
                     "type": "string",
@@ -20,7 +21,8 @@
                 },
                 "port": {
                     "type": "number",
-                    "description": "The port to connect to. Defaults to 22."
+                    "description": "The port to connect to.",
+                    "default": 22
                 },
                 "privateKey": {
                     "type": "string",

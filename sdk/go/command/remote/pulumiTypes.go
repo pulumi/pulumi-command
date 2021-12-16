@@ -16,7 +16,7 @@ type Connection struct {
 	Host string `pulumi:"host"`
 	// The password we should use for the connection.
 	Password *string `pulumi:"password"`
-	// The port to connect to. Defaults to 22.
+	// The port to connect to.
 	Port *float64 `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey *string `pulumi:"privateKey"`
@@ -40,7 +40,7 @@ type ConnectionArgs struct {
 	Host pulumi.StringInput `pulumi:"host"`
 	// The password we should use for the connection.
 	Password pulumi.StringPtrInput `pulumi:"password"`
-	// The port to connect to. Defaults to 22.
+	// The port to connect to.
 	Port pulumi.Float64PtrInput `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey pulumi.StringPtrInput `pulumi:"privateKey"`
@@ -135,7 +135,7 @@ func (o ConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.Password }).(pulumi.StringPtrOutput)
 }
 
-// The port to connect to. Defaults to 22.
+// The port to connect to.
 func (o ConnectionOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v Connection) *float64 { return v.Port }).(pulumi.Float64PtrOutput)
 }
@@ -187,7 +187,7 @@ func (o ConnectionPtrOutput) Password() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// The port to connect to. Defaults to 22.
+// The port to connect to.
 func (o ConnectionPtrOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v *Connection) *float64 {
 		if v == nil {
