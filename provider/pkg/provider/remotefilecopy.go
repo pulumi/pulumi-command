@@ -75,6 +75,6 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 }
 
 func (c *remotefilecopy) RunDelete(ctx context.Context, host *provider.HostClient, urn resource.URN) error {
-	host.Log(ctx, diag.Debug, urn, fmt.Sprintf("CopyFile delete is a no-op", urn))
+	host.Log(ctx, diag.Debug, urn, "CopyFile delete is a no-op")
 	return nil
 }
