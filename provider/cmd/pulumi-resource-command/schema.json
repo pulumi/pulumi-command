@@ -191,8 +191,12 @@
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "localPath": {
-                    "description": "The file/folder to be copied.\nIf the input is an Asset, it will be interperted as the contents of a file.\nIf the input is an Archive, it will be interperted as the contents of a folder.\nIf the input is a string, it will be interpreted as the path to a file or folder.\nBecause assets and archives are understood by the Pulumi model, they use should be\nprefered to raw paths.",
-                    "$ref": "pulumi.json#/Any"
+                    "description": "The file/folder to be copied.\nIf the input is an Asset, it will be interpreted as the contents of a file.\nIf the input is an Archive, it will be interpreted as the contents of a folder.\nIf the input is a string, it will be interpreted as the path to a file or folder.\nAsset's and Archives change depending on their contents. This means that a change\nto the underlying file/folder will result in a \"replace\" operation for the Copy.",
+                    "oneOf": [
+                        { "type": "string" },
+                        { "$ref": "pulumi.json#/Archive" },
+                        { "$ref": "pulumi.json#/Asset" }
+                    ]
                 },
                 "remotePath": {
                     "description": "The destination path in the remote host.",

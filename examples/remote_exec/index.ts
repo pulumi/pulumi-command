@@ -49,18 +49,18 @@ const program = new remote.CopyFile("program", {
     connection,
     localPath: new asset.FileAsset("./program.py"),
     remotePath: "program.py",
-});
+}, { replaceOnChanges: ["localPath"] });
 
 const zipDataPath = "/tmp/data.zip";
 
 const zipData = new local.Command("zip", {
-    create: `zip ${zipDataPath} data/*`,
-    delete: `rm ${zipDataPath}`,
+    create: `zip ${zipDataPath} data/* || true`,
+    delete: `rm -f ${zipDataPath}`,
 });
 
 const data = new remote.CopyFile("data", {
     connection,
-    localPath: zipData.stdout.apply((_: string) => new asset.FileArchive("/tmp/data.zip")),
+    localPath: zipData.stdout.apply((_: string) => new asset.FileArchive(zipDataPath)),
     remotePath: "data",
 });
 
@@ -68,8 +68,8 @@ const data = new remote.CopyFile("data", {
 const run = new remote.Command("run", {
     connection,
     create: interpolate`python ${program.remotePath} ${data.remotePath}`,
-});
+}, { replaceOnChanges: ["create"] });
 
 
-export const pythonVersion = checkPython.stdout.apply((x: string) => x.trim());
+export const pythonVersion = checkPython.stdout;
 export const result = run.stdout;

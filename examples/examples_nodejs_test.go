@@ -109,6 +109,8 @@ func TestRemoteExec(t *testing.T) {
 		})
 		assert.NoError(t, err)
 	}()
+
+	expected := "45\n"
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "remote_exec"),
@@ -119,9 +121,14 @@ func TestRemoteExec(t *testing.T) {
 				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
 			},
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-				t.Logf("Output: %#v", stack.Outputs)
-				assert.Equal(t, "45\n", stack.Outputs["result"])
+				t.Logf("Output(expecting %q): %#v", expected, stack.Outputs)
+				assert.Equal(t, expected, stack.Outputs["result"])
+				expected = "362880\n"
 			},
+			EditDirs: []integration.EditDir{{
+				Dir:      filepath.Join("remote_exec", "new_program"),
+				Additive: true,
+			}},
 		})
 	integration.ProgramTest(t, &test)
 }
