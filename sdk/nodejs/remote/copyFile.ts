@@ -92,9 +92,14 @@ export interface CopyFileArgs {
      */
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**
-     * The path of the file to be copied.
+     * The file/folder to be copied.
+     * If the input is an Asset, it will be interperted as the contents of a file.
+     * If the input is an Archive, it will be interperted as the contents of a folder.
+     * If the input is a string, it will be interpreted as the path to a file or folder.
+     * Because assets and archives are understood by the Pulumi model, they use should be
+     * prefered to raw paths.
      */
-    localPath: pulumi.Input<string>;
+    localPath: any;
     /**
      * The destination path in the remote host.
      */

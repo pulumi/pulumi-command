@@ -16,12 +16,17 @@ __all__ = ['CopyFileArgs', 'CopyFile']
 class CopyFileArgs:
     def __init__(__self__, *,
                  connection: pulumi.Input['ConnectionArgs'],
-                 local_path: pulumi.Input[str],
+                 local_path: Any,
                  remote_path: pulumi.Input[str]):
         """
         The set of arguments for constructing a CopyFile resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param Any local_path: The file/folder to be copied.
+               If the input is an Asset, it will be interperted as the contents of a file.
+               If the input is an Archive, it will be interperted as the contents of a folder.
+               If the input is a string, it will be interpreted as the path to a file or folder.
+               Because assets and archives are understood by the Pulumi model, they use should be
+               prefered to raw paths.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         """
         pulumi.set(__self__, "connection", connection)
@@ -42,14 +47,19 @@ class CopyFileArgs:
 
     @property
     @pulumi.getter(name="localPath")
-    def local_path(self) -> pulumi.Input[str]:
+    def local_path(self) -> Any:
         """
-        The path of the file to be copied.
+        The file/folder to be copied.
+        If the input is an Asset, it will be interperted as the contents of a file.
+        If the input is an Archive, it will be interperted as the contents of a folder.
+        If the input is a string, it will be interpreted as the path to a file or folder.
+        Because assets and archives are understood by the Pulumi model, they use should be
+        prefered to raw paths.
         """
         return pulumi.get(self, "local_path")
 
     @local_path.setter
-    def local_path(self, value: pulumi.Input[str]):
+    def local_path(self, value: Any):
         pulumi.set(self, "local_path", value)
 
     @property
@@ -71,7 +81,7 @@ class CopyFile(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
-                 local_path: Optional[pulumi.Input[str]] = None,
+                 local_path: Optional[Any] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
@@ -80,7 +90,12 @@ class CopyFile(pulumi.CustomResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param Any local_path: The file/folder to be copied.
+               If the input is an Asset, it will be interperted as the contents of a file.
+               If the input is an Archive, it will be interperted as the contents of a folder.
+               If the input is a string, it will be interpreted as the path to a file or folder.
+               Because assets and archives are understood by the Pulumi model, they use should be
+               prefered to raw paths.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         """
         ...
@@ -108,7 +123,7 @@ class CopyFile(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
-                 local_path: Optional[pulumi.Input[str]] = None,
+                 local_path: Optional[Any] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         if opts is None:
