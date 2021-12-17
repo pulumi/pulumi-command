@@ -64,13 +64,13 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 
 	inner := func() error {
 
-		switch path := c.LocalPath.(type) {
+		switch path := (c.LocalPath).(type) {
 		case string:
 			return withConnection(func(con *sftp.Client) error {
 				return c.writeStringPath(con, path)
 			})
 
-		case resource.Asset:
+		case *resource.Asset:
 			return withConnection(func(con *sftp.Client) error {
 				data, err := path.Bytes()
 				if err != nil {
@@ -85,7 +85,7 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 				return err
 			})
 
-		case resource.Archive:
+		case *resource.Archive:
 			return withConnection(func(con *sftp.Client) error {
 				reader, err := path.Open()
 				if err != nil {
@@ -93,7 +93,7 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 				}
 				defer func() { contract.IgnoreError(reader.Close()) }()
 
-				for src, blob, err := reader.Next(); err != io.EOF; reader.Next() {
+				for src, blob, err := reader.Next(); err != io.EOF; src, blob, err = reader.Next() {
 					if err != nil {
 						return err
 					}

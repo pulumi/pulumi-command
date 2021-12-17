@@ -206,17 +206,20 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 	case "command:remote:CopyFile":
 		var cpf remotefilecopy
-		err = mapper.MapI(inputs, &cpf)
+		err = mapper.MapI(inputs["connection"].(map[string]interface{}), &cpf.Connection)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Failed to grab connection: %w", err)
 		}
+		cpf.RemotePath = inputs["remotePath"].(string)
+		cpf.LocalPath = inputs["localPath"]
 
 		id, err = cpf.RunCreate(ctx, k.host, urn)
 		if err != nil {
 			return nil, err
 		}
 
-		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cpf)
+		// outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cpf)
+		outputs = inputs
 		if err != nil {
 			return nil, err
 		}
@@ -307,16 +310,16 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		if err != nil {
 			return nil, err
 		}
-	case "command:remote:CopyFile":
-		var cpf remotefilecopy
-		err = decoder.Decode(inputs, &cpf)
-		if err != nil {
-			return nil, err
-		}
-		err = cpf.RunDelete(ctx, k.host, urn)
-		if err != nil {
-			return nil, err
-		}
+		// case "command:remote:CopyFile":
+		// 	var cpf remotefilecopy
+		// 	err = decoder.Decode(inputs, &cpf)
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
+		// 	err = cpf.RunDelete(ctx, k.host, urn)
+		// 	if err != nil {
+		// 		return nil, err
+		// 	}
 	}
 
 	return &pbempty.Empty{}, nil
