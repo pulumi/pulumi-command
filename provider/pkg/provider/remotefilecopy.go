@@ -112,7 +112,12 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 					}
 
 					srcPath, name := filepath.Split(src)
-					dst := con.Join(append([]string{c.RemotePath}, strings.Split(srcPath, string(filepath.Separator))...)...)
+					// The first segment is the name of the local source folder
+					sourcePath := strings.Split(srcPath, string(filepath.Separator))
+					if len(sourcePath) > 0 {
+						sourcePath = sourcePath[1:]
+					}
+					dst := con.Join(append([]string{c.RemotePath}, sourcePath...)...)
 
 					err = con.MkdirAll(dst)
 					if err != nil {
@@ -189,9 +194,4 @@ func (c *remotefilecopy) writeStringPath(con *sftp.Client, path string) error {
 
 		return nil
 	})
-}
-
-func (c *remotefilecopy) RunDelete(ctx context.Context, host *provider.HostClient, urn resource.URN) error {
-	host.Log(ctx, diag.Debug, urn, "CopyFile delete is a no-op")
-	return nil
 }

@@ -310,16 +310,6 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		if err != nil {
 			return nil, err
 		}
-		// case "command:remote:CopyFile":
-		// 	var cpf remotefilecopy
-		// 	err = decoder.Decode(inputs, &cpf)
-		// 	if err != nil {
-		// 		return nil, err
-		// 	}
-		// 	err = cpf.RunDelete(ctx, k.host, urn)
-		// 	if err != nil {
-		// 		return nil, err
-		// 	}
 	}
 
 	return &pbempty.Empty{}, nil

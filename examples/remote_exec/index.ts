@@ -67,7 +67,7 @@ const data = new remote.CopyFile("data", {
 // Depends on program and data via the interpolate.
 const run = new remote.Command("run", {
     connection,
-    create: interpolate`python ${program.remotePath} ${data.remotePath}/data`,
+    create: interpolate`python ${program.remotePath} ${data.remotePath}`,
 });
 
 
