@@ -1,0 +1,12 @@
+{
+    "name": "command-lambda",
+    "version": "0.1.0",
+    "devDependencies": {
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/aws": "^4.32.0",
+        "@pulumi/pulumi": "latest",
+        "@pulumi/random": "^4.2.0"
+    }
+}

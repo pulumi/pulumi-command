@@ -1,0 +1,3 @@
+name: command-lambda
+runtime: nodejs
+description: A simple command example
