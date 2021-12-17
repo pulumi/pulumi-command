@@ -252,7 +252,7 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 	}
 
 	// This transformation is necessary here because "localPath" is a union of assets and archives
-	// (and a string). Asset's and Archives are not serialized as valid property maps by default.
+	// (and a string). Assets and Archives are not serialized as valid property maps by default.
 	// They need a .Serialize() transformation. This transformation does not happen for union types.
 	// We call it manually.
 	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(),

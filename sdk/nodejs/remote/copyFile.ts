@@ -93,10 +93,10 @@ export interface CopyFileArgs {
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**
      * The file/folder to be copied.
-     * If the input is an Asset, it will be interpreted as the contents of a file.
-     * If the input is an Archive, it will be interpreted as the contents of a folder.
+     * If the input is a Pulumi Asset, it will be interpreted as the contents of a file.
+     * If the input is a Pulumi Archive, it will be interpreted as the contents of a folder.
      * If the input is a string, it will be interpreted as the path to a file or folder.
-     * Asset's and Archives change depending on their contents. This means that a change
+     * Assets and Archives change depending on their contents. This means that a change
      * to the underlying file/folder will result in a "replace" operation for the Copy.
      */
     localPath: pulumi.Input<string | pulumi.asset.Archive | pulumi.asset.Asset | pulumi.asset.Archive>;
