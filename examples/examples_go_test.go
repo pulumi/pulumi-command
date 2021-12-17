@@ -15,7 +15,7 @@ import (
 func TestRandomGo(t *testing.T) {
 	test := getGoBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "random"),
+			Dir: filepath.Join(getCwd(t), "random-go"),
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				out, ok := stack.Outputs["output"].(string)
 				assert.True(t, ok)
