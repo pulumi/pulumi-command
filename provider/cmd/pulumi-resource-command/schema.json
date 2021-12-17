@@ -233,7 +233,7 @@
         },
         "go": {
             "generateResourceContainerTypes": true,
-            "importBasePath": "github.com/pulumi/pulumi-command/sdk/go/command"
+            "importBasePath": "github.com/pulumi/pulumi-command/sdk/v3/go/command"
         },
         "nodejs": {
             "dependencies": {
