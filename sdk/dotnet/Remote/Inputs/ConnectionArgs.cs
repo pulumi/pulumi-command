@@ -39,6 +39,9 @@ namespace Pulumi.Command.Remote.Inputs
         [Input("privateKey")]
         public Input<string>? PrivateKey { get; set; }
 
+        /// <summary>
+        /// The user that we should use for the connection.
+        /// </summary>
         [Input("user")]
         public Input<string>? User { get; set; }
 

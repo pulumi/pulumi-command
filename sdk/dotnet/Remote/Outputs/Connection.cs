@@ -32,6 +32,9 @@ namespace Pulumi.Command.Remote.Outputs
         /// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         /// </summary>
         public readonly string? PrivateKey;
+        /// <summary>
+        /// The user that we should use for the connection.
+        /// </summary>
         public readonly string? User;
 
         [OutputConstructor]
