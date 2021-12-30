@@ -1,6 +1,18 @@
 {
     "name": "command",
     "version": "0.0.1",
+    "displayName": "Command",
+    "description": "The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
+    "keywords": [
+        "pulumi",
+        "command",
+        "category/utility",
+        "kind/native"
+    ],
+    "homepage": "https://pulumi.com",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/pulumi/pulumi-command",
+    "publisher": "Pulumi",
     "types": {
         "command:remote:Connection": {
             "type": "object",
@@ -8,7 +20,7 @@
             "properties": {
                 "user": {
                     "type": "string",
-                    "descripton": "The user that we should use for the connection.",
+                    "description": "The user that we should use for the connection.",
                     "default": "root"
                 },
                 "password": {
