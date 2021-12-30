@@ -138,7 +138,7 @@ func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		err := host.Log(ctx, diag.Info, urn, scanner.Text())
+		err := host.Log(ctx, diag.Debug, urn, scanner.Text())
 		if err != nil {
 			return
 		}
