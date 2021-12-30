@@ -46,6 +46,7 @@ class Connection(dict):
         :param str password: The password we should use for the connection.
         :param float port: The port to connect to.
         :param str private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        :param str user: The user that we should use for the connection.
         """
         pulumi.set(__self__, "host", host)
         if password is not None:
@@ -96,6 +97,9 @@ class Connection(dict):
     @property
     @pulumi.getter
     def user(self) -> Optional[str]:
+        """
+        The user that we should use for the connection.
+        """
         return pulumi.get(self, "user")
 
 

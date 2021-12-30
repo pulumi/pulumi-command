@@ -39,11 +39,18 @@ def readme():
 
 setup(name='pulumi_command',
       version=VERSION,
+      description="The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
       long_description=readme(),
       long_description_content_type='text/markdown',
       cmdclass={
           'install': InstallPluginCommand,
       },
+      keywords='pulumi command category/utility kind/native',
+      url='https://pulumi.com',
+      project_urls={
+          'Repository': 'https://github.com/pulumi/pulumi-command'
+      },
+      license='Apache-2.0',
       packages=find_packages(),
       package_data={
           'pulumi_command': [
