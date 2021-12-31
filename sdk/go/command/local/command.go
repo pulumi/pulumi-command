@@ -30,12 +30,12 @@ type Command struct {
 	// The program and arguments to run the command.
 	// For example: `["/bin/sh", "-c"]`
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
-	// Trigger replacements on changes to this input.
-	ReplaceOnChanges pulumi.ArrayOutput `pulumi:"replaceOnChanges"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
+	// Trigger replacements on changes to this input.
+	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 }
 
 // NewCommand registers a new resource with the given unique name, arguments, and options.
@@ -87,8 +87,8 @@ type commandArgs struct {
 	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-	Interpreter      []string      `pulumi:"interpreter"`
-	ReplaceOnChanges []interface{} `pulumi:"replaceOnChanges"`
+	Interpreter []string      `pulumi:"interpreter"`
+	Triggers    []interface{} `pulumi:"triggers"`
 }
 
 // The set of arguments for constructing a Command resource.
@@ -103,8 +103,8 @@ type CommandArgs struct {
 	Environment pulumi.StringMapInput
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-	Interpreter      pulumi.StringArrayInput
-	ReplaceOnChanges pulumi.ArrayInput
+	Interpreter pulumi.StringArrayInput
+	Triggers    pulumi.ArrayInput
 }
 
 func (CommandArgs) ElementType() reflect.Type {

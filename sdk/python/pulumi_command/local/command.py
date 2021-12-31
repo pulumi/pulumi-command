@@ -18,7 +18,7 @@ class CommandArgs:
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 replace_on_changes: Optional[pulumi.Input[Sequence[Any]]] = None):
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a Command resource.
         :param pulumi.Input[str] create: The command to run on create.
@@ -38,8 +38,8 @@ class CommandArgs:
             pulumi.set(__self__, "environment", environment)
         if interpreter is not None:
             pulumi.set(__self__, "interpreter", interpreter)
-        if replace_on_changes is not None:
-            pulumi.set(__self__, "replace_on_changes", replace_on_changes)
+        if triggers is not None:
+            pulumi.set(__self__, "triggers", triggers)
 
     @property
     @pulumi.getter
@@ -103,13 +103,13 @@ class CommandArgs:
         pulumi.set(self, "interpreter", value)
 
     @property
-    @pulumi.getter(name="replaceOnChanges")
-    def replace_on_changes(self) -> Optional[pulumi.Input[Sequence[Any]]]:
-        return pulumi.get(self, "replace_on_changes")
+    @pulumi.getter
+    def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
+        return pulumi.get(self, "triggers")
 
-    @replace_on_changes.setter
-    def replace_on_changes(self, value: Optional[pulumi.Input[Sequence[Any]]]):
-        pulumi.set(self, "replace_on_changes", value)
+    @triggers.setter
+    def triggers(self, value: Optional[pulumi.Input[Sequence[Any]]]):
+        pulumi.set(self, "triggers", value)
 
 
 class Command(pulumi.CustomResource):
@@ -122,7 +122,7 @@ class Command(pulumi.CustomResource):
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 replace_on_changes: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         """
         A local command to be executed.
@@ -173,7 +173,7 @@ class Command(pulumi.CustomResource):
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 replace_on_changes: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         if opts is None:
             opts = pulumi.ResourceOptions()
@@ -191,7 +191,7 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["dir"] = dir
             __props__.__dict__["environment"] = environment
             __props__.__dict__["interpreter"] = interpreter
-            __props__.__dict__["replace_on_changes"] = replace_on_changes
+            __props__.__dict__["triggers"] = triggers
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
         super(Command, __self__).__init__(
@@ -221,9 +221,9 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["dir"] = None
         __props__.__dict__["environment"] = None
         __props__.__dict__["interpreter"] = None
-        __props__.__dict__["replace_on_changes"] = None
         __props__.__dict__["stderr"] = None
         __props__.__dict__["stdout"] = None
+        __props__.__dict__["triggers"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
 
     @property
@@ -269,14 +269,6 @@ class Command(pulumi.CustomResource):
         return pulumi.get(self, "interpreter")
 
     @property
-    @pulumi.getter(name="replaceOnChanges")
-    def replace_on_changes(self) -> pulumi.Output[Optional[Sequence[Any]]]:
-        """
-        Trigger replacements on changes to this input.
-        """
-        return pulumi.get(self, "replace_on_changes")
-
-    @property
     @pulumi.getter
     def stderr(self) -> pulumi.Output[str]:
         """
@@ -291,4 +283,12 @@ class Command(pulumi.CustomResource):
         The standard output of the command's process
         """
         return pulumi.get(self, "stdout")
+
+    @property
+    @pulumi.getter
+    def triggers(self) -> pulumi.Output[Optional[Sequence[Any]]]:
+        """
+        Trigger replacements on changes to this input.
+        """
+        return pulumi.get(self, "triggers")
 

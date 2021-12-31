@@ -52,12 +52,6 @@ namespace Pulumi.Command.Local
         public Output<ImmutableArray<string>> Interpreter { get; private set; } = null!;
 
         /// <summary>
-        /// Trigger replacements on changes to this input.
-        /// </summary>
-        [Output("replaceOnChanges")]
-        public Output<ImmutableArray<object>> ReplaceOnChanges { get; private set; } = null!;
-
-        /// <summary>
         /// The standard error of the command's process
         /// </summary>
         [Output("stderr")]
@@ -68,6 +62,12 @@ namespace Pulumi.Command.Local
         /// </summary>
         [Output("stdout")]
         public Output<string> Stdout { get; private set; } = null!;
+
+        /// <summary>
+        /// Trigger replacements on changes to this input.
+        /// </summary>
+        [Output("triggers")]
+        public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
 
 
         /// <summary>
@@ -157,12 +157,12 @@ namespace Pulumi.Command.Local
             set => _interpreter = value;
         }
 
-        [Input("replaceOnChanges")]
-        private InputList<object>? _replaceOnChanges;
-        public InputList<object> ReplaceOnChanges
+        [Input("triggers")]
+        private InputList<object>? _triggers;
+        public InputList<object> Triggers
         {
-            get => _replaceOnChanges ?? (_replaceOnChanges = new InputList<object>());
-            set => _replaceOnChanges = value;
+            get => _triggers ?? (_triggers = new InputList<object>());
+            set => _triggers = value;
         }
 
         public CommandArgs()

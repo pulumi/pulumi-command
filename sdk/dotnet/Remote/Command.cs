@@ -40,9 +40,6 @@ namespace Pulumi.Command.Remote
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
 
-        [Output("replaceOnChanges")]
-        public Output<ImmutableArray<object>> ReplaceOnChanges { get; private set; } = null!;
-
         /// <summary>
         /// The standard error of the command's process
         /// </summary>
@@ -54,6 +51,12 @@ namespace Pulumi.Command.Remote
         /// </summary>
         [Output("stdout")]
         public Output<string> Stdout { get; private set; } = null!;
+
+        /// <summary>
+        /// Trigger replacements on changes to this input.
+        /// </summary>
+        [Output("triggers")]
+        public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
 
 
         /// <summary>
@@ -130,16 +133,16 @@ namespace Pulumi.Command.Remote
             set => _environment = value;
         }
 
-        [Input("replaceOnChanges")]
-        private InputList<object>? _replaceOnChanges;
+        [Input("triggers")]
+        private InputList<object>? _triggers;
 
         /// <summary>
         /// Trigger replacements on changes to this input.
         /// </summary>
-        public InputList<object> ReplaceOnChanges
+        public InputList<object> Triggers
         {
-            get => _replaceOnChanges ?? (_replaceOnChanges = new InputList<object>());
-            set => _replaceOnChanges = value;
+            get => _triggers ?? (_triggers = new InputList<object>());
+            set => _triggers = value;
         }
 
         public CommandArgs()

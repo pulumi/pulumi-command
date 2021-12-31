@@ -8,7 +8,7 @@ const pw = new random.RandomPassword("pw", { length: len });
 const pwd = new local.Command("pwd", {
     create: interpolate`echo "${pw.result}" > password.txt`,
     delete: `rm -f password.txt`,
-    replaceOnChanges: [pw.result],
+    triggers: [pw.result],
 }, { deleteBeforeReplace: true });
 
 const pwd2 = new local.Command("pwd2", {
@@ -17,17 +17,17 @@ const pwd2 = new local.Command("pwd2", {
     environment: {
         PASSWORD: pw.result,
     },
-    replaceOnChanges: [pw.result],
+    triggers: [pw.result],
 }, { deleteBeforeReplace: true });
 
 // Manage an external artifact which is created after a resource is created, 
 // deleted before a resource is destroyed, and recreated when the resource is 
 // replaced.  This could also register/deregister the resource with an external 
-// registration or otehr remote API instead of just writing to local disk.
+// registration or other remote API instead of just writing to local disk.
 const pwd3 = new local.Command("pwd3", {
     create: interpolate`touch "${pw.result}.txt"`,
     delete: interpolate`rm "${pw.result}.txt"`,
-    replaceOnChanges: [pw.result],
+    triggers: [pw.result],
 })
 
 if (fail) {

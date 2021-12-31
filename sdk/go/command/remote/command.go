@@ -23,12 +23,13 @@ type Command struct {
 	// The command to run on delete.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
-	Environment      pulumi.StringMapOutput `pulumi:"environment"`
-	ReplaceOnChanges pulumi.ArrayOutput     `pulumi:"replaceOnChanges"`
+	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
+	// Trigger replacements on changes to this input.
+	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 }
 
 // NewCommand registers a new resource with the given unique name, arguments, and options.
@@ -84,7 +85,7 @@ type commandArgs struct {
 	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
 	// Trigger replacements on changes to this input.
-	ReplaceOnChanges []interface{} `pulumi:"replaceOnChanges"`
+	Triggers []interface{} `pulumi:"triggers"`
 }
 
 // The set of arguments for constructing a Command resource.
@@ -98,7 +99,7 @@ type CommandArgs struct {
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
 	// Trigger replacements on changes to this input.
-	ReplaceOnChanges pulumi.ArrayInput
+	Triggers pulumi.ArrayInput
 }
 
 func (CommandArgs) ElementType() reflect.Type {

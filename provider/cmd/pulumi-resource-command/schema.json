@@ -68,7 +68,7 @@
                         "type": "string"
                     }
                 },
-                "replaceOnChanges": {
+                "triggers": {
                     "type": "array",
                     "description": "Trigger replacements on changes to this input.",
                     "items": {
@@ -115,7 +115,7 @@
                         "type": "string"
                     }
                 },
-                "replaceOnChanges": {
+                "triggers": {
                     "type": "array",
                     "items": {
                         "$ref": "pulumi.json#/Any"
@@ -146,7 +146,8 @@
                         "type": "string"
                     }
                 },
-                "replaceOnChanges": {
+                "triggers": {
+                    "description": "Trigger replacements on changes to this input.",
                     "type": "array",
                     "items": {
                         "$ref": "pulumi.json#/Any"
@@ -185,7 +186,7 @@
                         "type": "string"
                     }
                 },
-                "replaceOnChanges": {
+                "triggers": {
                     "description": "Trigger replacements on changes to this input.",
                     "type": "array",
                     "items": {

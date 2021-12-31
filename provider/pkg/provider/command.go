@@ -32,12 +32,12 @@ import (
 
 type command struct {
 	// Input
-	Interpreter      *[]string          `pulumi:"interpreter,optional"`
-	Dir              *string            `pulumi:"dir,optional"`
-	Environment      *map[string]string `pulumi:"environment,optional"`
-	ReplaceOnChanges *[]interface{}     `pulumi:"replaceOnChanges,optional"`
-	Create           string             `pulumi:"create"`
-	Delete           *string            `pulumi:"delete,optional"`
+	Interpreter *[]string          `pulumi:"interpreter,optional"`
+	Dir         *string            `pulumi:"dir,optional"`
+	Environment *map[string]string `pulumi:"environment,optional"`
+	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
+	Create      string             `pulumi:"create"`
+	Delete      *string            `pulumi:"delete,optional"`
 
 	// Output
 	Stdout string `pulumi:"stdout"`
