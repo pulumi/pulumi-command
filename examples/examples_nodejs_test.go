@@ -38,6 +38,21 @@ func TestSimple(t *testing.T) {
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
 			EditDirs: []integration.EditDir{
 				{
+					Dir:      filepath.Join("simple", "update"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						replaces := 0
+						for _, ev := range stack.Events {
+							if ev.ResourcePreEvent != nil {
+								if ev.ResourcePreEvent.Metadata.Op == apitype.OpReplace {
+									replaces++
+								}
+							}
+						}
+						assert.Equal(t, 0, replaces)
+					},
+				},
+				{
 					Dir:      filepath.Join("simple", "replace"),
 					Additive: true,
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {

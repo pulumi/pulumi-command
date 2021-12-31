@@ -132,15 +132,15 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 	changes := pulumirpc.DiffResponse_DIFF_NONE
 	var diffs, replaces []string
 	properties := map[string]bool{
-		"environment":      false,
-		"dir":              false,
-		"interpreter":      false,
-		"create":           false,
-		"delete":           false,
-		"localPath":        false,
-		"remotePath":       false,
-		"connection":       true,
-		"replaceOnChanges": true,
+		"environment": false,
+		"dir":         false,
+		"interpreter": false,
+		"create":      false,
+		"delete":      false,
+		"localPath":   false,
+		"remotePath":  false,
+		"connection":  true,
+		"triggers":    true,
 	}
 	if d := olds.Diff(news); d != nil {
 		for key, replace := range properties {
@@ -271,13 +271,14 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	ctx = k.addContext(ctx)
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
-	ty := urn.Type()
 	if err := check(urn); err != nil {
 		return nil, err
 	}
 
-	// Our Random resource will never be updated - if there is a diff, it will be a replacement.
-	return nil, status.Errorf(codes.Unimplemented, "Update is not yet implemented for %q", ty)
+	// Updates are currently no-ops.  The `create` command does not re-run except on replacement.
+	return &pulumirpc.UpdateResponse{
+		Properties: req.GetNews(),
+	}, nil
 }
 
 // Delete tears down an existing resource with the given ID.  If it fails, the resource is assumed

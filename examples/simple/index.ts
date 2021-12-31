@@ -1,7 +1,7 @@
 import * as local from "@pulumi/command/local";
 import * as random from "@pulumi/random";
 import { interpolate } from "@pulumi/pulumi";
-import { len, fail } from "./extras";
+import { len, fail, update } from "./extras";
 
 const pw = new random.RandomPassword("pw", { length: len });
 
@@ -11,9 +11,14 @@ const pwd = new local.Command("pwd", {
     triggers: [pw.result],
 }, { deleteBeforeReplace: true });
 
+
+let deleteCommand = "rm -f password2.txt";
+if (update) {
+    deleteCommand += " && echo 'deleted'";
+}
 const pwd2 = new local.Command("pwd2", {
     create: `echo "$PASSWORD" > password2.txt`,
-    delete: `rm -f password2.txt`,
+    delete: deleteCommand,
     environment: {
         PASSWORD: pw.result,
     },
