@@ -35,6 +35,7 @@ type command struct {
 	Interpreter *[]string          `pulumi:"interpreter,optional"`
 	Dir         *string            `pulumi:"dir,optional"`
 	Environment *map[string]string `pulumi:"environment,optional"`
+	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
 

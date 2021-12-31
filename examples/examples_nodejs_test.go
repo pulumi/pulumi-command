@@ -9,12 +9,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,11 +36,43 @@ func TestSimple(t *testing.T) {
 		With(integration.ProgramTestOptions{
 			Dir:                    filepath.Join(getCwd(t), "simple"),
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
-			EditDirs: []integration.EditDir{{
-				Dir:           filepath.Join("simple", "fail"),
-				Additive:      true,
-				ExpectFailure: true,
-			}},
+			EditDirs: []integration.EditDir{
+				{
+					Dir:      filepath.Join("simple", "update"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						replaces := 0
+						for _, ev := range stack.Events {
+							if ev.ResourcePreEvent != nil {
+								if ev.ResourcePreEvent.Metadata.Op == apitype.OpReplace {
+									replaces++
+								}
+							}
+						}
+						assert.Equal(t, 0, replaces)
+					},
+				},
+				{
+					Dir:      filepath.Join("simple", "replace"),
+					Additive: true,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						replaces := 0
+						for _, ev := range stack.Events {
+							if ev.ResourcePreEvent != nil {
+								if ev.ResourcePreEvent.Metadata.Op == apitype.OpReplace {
+									replaces++
+								}
+							}
+						}
+						assert.Equal(t, 4, replaces)
+					},
+				},
+				{
+					Dir:           filepath.Join("simple", "fail"),
+					Additive:      true,
+					ExpectFailure: true,
+				},
+			},
 		})
 	integration.ProgramTest(t, &test)
 }

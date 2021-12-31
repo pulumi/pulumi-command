@@ -130,24 +130,39 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 	}
 
 	changes := pulumirpc.DiffResponse_DIFF_NONE
-	replaces := []string{}
+	var diffs, replaces []string
+	properties := map[string]bool{
+		"environment": false,
+		"dir":         false,
+		"interpreter": false,
+		"create":      false,
+		"delete":      false,
+		"localPath":   false,
+		"remotePath":  false,
+		"connection":  true,
+		"triggers":    true,
+	}
 	if d := olds.Diff(news); d != nil {
-		// TODO: Non-replace changes
-		for _, replaceKey := range []string{"environment", "dir", "interpreter", "create", "connection", "localPath", "remotePath"} {
-			i := sort.SearchStrings(req.IgnoreChanges, replaceKey)
-			if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == replaceKey {
+		for key, replace := range properties {
+			i := sort.SearchStrings(req.IgnoreChanges, key)
+			if i < len(req.IgnoreChanges) && req.IgnoreChanges[i] == key {
 				continue
 			}
-			if d.Changed(resource.PropertyKey(replaceKey)) {
+
+			if d.Changed(resource.PropertyKey(key)) {
 				changes = pulumirpc.DiffResponse_DIFF_SOME
-				replaces = append(replaces, replaceKey)
+				diffs = append(diffs, key)
+
+				if replace {
+					replaces = append(replaces, key)
+				}
 			}
 		}
 	}
-	// TODO: Detailed diffs
 
 	return &pulumirpc.DiffResponse{
 		Changes:  changes,
+		Diffs:    diffs,
 		Replaces: replaces,
 	}, nil
 }
@@ -256,13 +271,14 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	ctx = k.addContext(ctx)
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
-	ty := urn.Type()
 	if err := check(urn); err != nil {
 		return nil, err
 	}
 
-	// Our Random resource will never be updated - if there is a diff, it will be a replacement.
-	return nil, status.Errorf(codes.Unimplemented, "Update is not yet implemented for %q", ty)
+	// Updates are currently no-ops.  The `create` command does not re-run except on replacement.
+	return &pulumirpc.UpdateResponse{
+		Properties: req.GetNews(),
+	}, nil
 }
 
 // Delete tears down an existing resource with the given ID.  If it fails, the resource is assumed

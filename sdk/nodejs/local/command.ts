@@ -69,9 +69,9 @@ export class Command extends pulumi.CustomResource {
      */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
     /**
-     * The command to run on update.
+     * Trigger replacements on changes to this input.
      */
-    public readonly update!: pulumi.Output<string | undefined>;
+    public readonly triggers!: pulumi.Output<any[] | undefined>;
 
     /**
      * Create a Command resource with the given unique name, arguments, and options.
@@ -89,7 +89,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = args ? args.dir : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
             resourceInputs["interpreter"] = args ? args.interpreter : undefined;
-            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {
@@ -100,7 +100,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["interpreter"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
-            resourceInputs["update"] = undefined /*out*/;
+            resourceInputs["triggers"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
@@ -134,8 +134,5 @@ export interface CommandArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
-    /**
-     * The command to run on update.
-     */
-    update?: pulumi.Input<string>;
+    triggers?: pulumi.Input<any[]>;
 }

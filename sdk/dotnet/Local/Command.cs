@@ -64,10 +64,10 @@ namespace Pulumi.Command.Local
         public Output<string> Stdout { get; private set; } = null!;
 
         /// <summary>
-        /// The command to run on update.
+        /// Trigger replacements on changes to this input.
         /// </summary>
-        [Output("update")]
-        public Output<string?> Update { get; private set; } = null!;
+        [Output("triggers")]
+        public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
 
 
         /// <summary>
@@ -157,11 +157,13 @@ namespace Pulumi.Command.Local
             set => _interpreter = value;
         }
 
-        /// <summary>
-        /// The command to run on update.
-        /// </summary>
-        [Input("update")]
-        public Input<string>? Update { get; set; }
+        [Input("triggers")]
+        private InputList<object>? _triggers;
+        public InputList<object> Triggers
+        {
+            get => _triggers ?? (_triggers = new InputList<object>());
+            set => _triggers = value;
+        }
 
         public CommandArgs()
         {
