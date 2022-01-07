@@ -37,6 +37,7 @@ func TestSimple(t *testing.T) {
 			Dir:                    filepath.Join(getCwd(t), "simple"),
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
 			EditDirs: []integration.EditDir{
+				{Additive: true},
 				{
 					Dir:      filepath.Join("simple", "update"),
 					Additive: true,
