@@ -28,8 +28,8 @@ type Command struct {
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
-	// The command to run on update.
-	Update pulumi.StringPtrOutput `pulumi:"update"`
+	// Trigger replacements on changes to this input.
+	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 }
 
 // NewCommand registers a new resource with the given unique name, arguments, and options.
@@ -84,8 +84,8 @@ type commandArgs struct {
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
-	// The command to run on update.
-	Update *string `pulumi:"update"`
+	// Trigger replacements on changes to this input.
+	Triggers []interface{} `pulumi:"triggers"`
 }
 
 // The set of arguments for constructing a Command resource.
@@ -98,8 +98,8 @@ type CommandArgs struct {
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
-	// The command to run on update.
-	Update pulumi.StringPtrInput
+	// Trigger replacements on changes to this input.
+	Triggers pulumi.ArrayInput
 }
 
 func (CommandArgs) ElementType() reflect.Type {

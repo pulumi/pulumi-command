@@ -21,6 +21,8 @@ type CopyFile struct {
 	LocalPath pulumi.StringOutput `pulumi:"localPath"`
 	// The destination path in the remote host.
 	RemotePath pulumi.StringOutput `pulumi:"remotePath"`
+	// Trigger replacements on changes to this input.
+	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 }
 
 // NewCopyFile registers a new resource with the given unique name, arguments, and options.
@@ -84,6 +86,8 @@ type copyFileArgs struct {
 	LocalPath interface{} `pulumi:"localPath"`
 	// The destination path in the remote host.
 	RemotePath string `pulumi:"remotePath"`
+	// Trigger replacements on changes to this input.
+	Triggers []interface{} `pulumi:"triggers"`
 }
 
 // The set of arguments for constructing a CopyFile resource.
@@ -99,6 +103,8 @@ type CopyFileArgs struct {
 	LocalPath pulumi.Input
 	// The destination path in the remote host.
 	RemotePath pulumi.StringInput
+	// Trigger replacements on changes to this input.
+	Triggers pulumi.ArrayInput
 }
 
 func (CopyFileArgs) ElementType() reflect.Type {

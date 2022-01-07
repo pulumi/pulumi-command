@@ -17,7 +17,8 @@ class CopyFileArgs:
     def __init__(__self__, *,
                  connection: pulumi.Input['ConnectionArgs'],
                  local_path: pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]],
-                 remote_path: pulumi.Input[str]):
+                 remote_path: pulumi.Input[str],
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a CopyFile resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
@@ -28,10 +29,13 @@ class CopyFileArgs:
                Assets and Archives change depending on their contents. This means that a change
                to the underlying file/folder will result in a "replace" operation for the Copy.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
         pulumi.set(__self__, "connection", connection)
         pulumi.set(__self__, "local_path", local_path)
         pulumi.set(__self__, "remote_path", remote_path)
+        if triggers is not None:
+            pulumi.set(__self__, "triggers", triggers)
 
     @property
     @pulumi.getter
@@ -74,6 +78,18 @@ class CopyFileArgs:
     def remote_path(self, value: pulumi.Input[str]):
         pulumi.set(self, "remote_path", value)
 
+    @property
+    @pulumi.getter
+    def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
+        """
+        Trigger replacements on changes to this input.
+        """
+        return pulumi.get(self, "triggers")
+
+    @triggers.setter
+    def triggers(self, value: Optional[pulumi.Input[Sequence[Any]]]):
+        pulumi.set(self, "triggers", value)
+
 
 class CopyFile(pulumi.CustomResource):
     @overload
@@ -83,6 +99,7 @@ class CopyFile(pulumi.CustomResource):
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
                  local_path: Optional[pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]]] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         """
         Copy a local file to a remote host.
@@ -97,6 +114,7 @@ class CopyFile(pulumi.CustomResource):
                Assets and Archives change depending on their contents. This means that a change
                to the underlying file/folder will result in a "replace" operation for the Copy.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
         ...
     @overload
@@ -125,6 +143,7 @@ class CopyFile(pulumi.CustomResource):
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
                  local_path: Optional[pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]]] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         if opts is None:
             opts = pulumi.ResourceOptions()
@@ -146,6 +165,7 @@ class CopyFile(pulumi.CustomResource):
             if remote_path is None and not opts.urn:
                 raise TypeError("Missing required property 'remote_path'")
             __props__.__dict__["remote_path"] = remote_path
+            __props__.__dict__["triggers"] = triggers
         super(CopyFile, __self__).__init__(
             'command:remote:CopyFile',
             resource_name,
@@ -171,6 +191,7 @@ class CopyFile(pulumi.CustomResource):
         __props__.__dict__["connection"] = None
         __props__.__dict__["local_path"] = None
         __props__.__dict__["remote_path"] = None
+        __props__.__dict__["triggers"] = None
         return CopyFile(resource_name, opts=opts, __props__=__props__)
 
     @property
@@ -196,4 +217,12 @@ class CopyFile(pulumi.CustomResource):
         The destination path in the remote host.
         """
         return pulumi.get(self, "remote_path")
+
+    @property
+    @pulumi.getter
+    def triggers(self) -> pulumi.Output[Optional[Sequence[Any]]]:
+        """
+        Trigger replacements on changes to this input.
+        """
+        return pulumi.get(self, "triggers")
 

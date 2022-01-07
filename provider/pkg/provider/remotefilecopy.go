@@ -36,6 +36,7 @@ type remotefilecopy struct {
 	// Input
 	Connection remoteconnection `pulumi:"connection"`
 	LocalPath  interface{}      `pulumi:"localPath"`
+	Triggers   *[]interface{}   `pulumi:"triggers,optional"`
 	RemotePath string           `pulumi:"remotePath"`
 }
 

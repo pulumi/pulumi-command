@@ -35,6 +35,7 @@ type command struct {
 	Interpreter *[]string          `pulumi:"interpreter,optional"`
 	Dir         *string            `pulumi:"dir,optional"`
 	Environment *map[string]string `pulumi:"environment,optional"`
+	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
 
@@ -138,7 +139,7 @@ func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		err := host.Log(ctx, diag.Info, urn, scanner.Text())
+		err := host.Log(ctx, diag.Debug, urn, scanner.Text())
 		if err != nil {
 			return
 		}

@@ -47,6 +47,10 @@ export class CopyFile extends pulumi.CustomResource {
      * The destination path in the remote host.
      */
     public readonly remotePath!: pulumi.Output<string>;
+    /**
+     * Trigger replacements on changes to this input.
+     */
+    public readonly triggers!: pulumi.Output<any[] | undefined>;
 
     /**
      * Create a CopyFile resource with the given unique name, arguments, and options.
@@ -71,10 +75,12 @@ export class CopyFile extends pulumi.CustomResource {
             resourceInputs["connection"] = args ? (args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined) : undefined;
             resourceInputs["localPath"] = args ? args.localPath : undefined;
             resourceInputs["remotePath"] = args ? args.remotePath : undefined;
+            resourceInputs["triggers"] = args ? args.triggers : undefined;
         } else {
             resourceInputs["connection"] = undefined /*out*/;
             resourceInputs["localPath"] = undefined /*out*/;
             resourceInputs["remotePath"] = undefined /*out*/;
+            resourceInputs["triggers"] = undefined /*out*/;
         }
         if (!opts.version) {
             opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
@@ -104,4 +110,8 @@ export interface CopyFileArgs {
      * The destination path in the remote host.
      */
     remotePath: pulumi.Input<string>;
+    /**
+     * Trigger replacements on changes to this input.
+     */
+    triggers?: pulumi.Input<any[]>;
 }

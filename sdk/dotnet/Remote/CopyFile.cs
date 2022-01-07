@@ -33,6 +33,12 @@ namespace Pulumi.Command.Remote
         [Output("remotePath")]
         public Output<string> RemotePath { get; private set; } = null!;
 
+        /// <summary>
+        /// Trigger replacements on changes to this input.
+        /// </summary>
+        [Output("triggers")]
+        public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
+
 
         /// <summary>
         /// Create a CopyFile resource with the given unique name, arguments, and options.
@@ -100,6 +106,18 @@ namespace Pulumi.Command.Remote
         /// </summary>
         [Input("remotePath", required: true)]
         public Input<string> RemotePath { get; set; } = null!;
+
+        [Input("triggers")]
+        private InputList<object>? _triggers;
+
+        /// <summary>
+        /// Trigger replacements on changes to this input.
+        /// </summary>
+        public InputList<object> Triggers
+        {
+            get => _triggers ?? (_triggers = new InputList<object>());
+            set => _triggers = value;
+        }
 
         public CopyFileArgs()
         {

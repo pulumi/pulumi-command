@@ -27,6 +27,9 @@ export namespace remote {
          * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
          */
         privateKey?: string;
+        /**
+         * The user that we should use for the connection.
+         */
         user?: string;
     }
     /**

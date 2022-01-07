@@ -1,0 +1,11 @@
+---
+# From https://gist.github.com/satrapu/31b1a03f321990f8d9ae067372a8b456
+# This playbook prints a simple debug message
+- name: Echo
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+  - name: Print debug message
+    debug:
+      msg: Hello, world!

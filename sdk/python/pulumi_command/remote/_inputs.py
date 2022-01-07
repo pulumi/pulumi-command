@@ -26,6 +26,7 @@ class ConnectionArgs:
         :param pulumi.Input[str] password: The password we should use for the connection.
         :param pulumi.Input[float] port: The port to connect to.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        :param pulumi.Input[str] user: The user that we should use for the connection.
         """
         pulumi.set(__self__, "host", host)
         if password is not None:
@@ -92,6 +93,9 @@ class ConnectionArgs:
     @property
     @pulumi.getter
     def user(self) -> Optional[pulumi.Input[str]]:
+        """
+        The user that we should use for the connection.
+        """
         return pulumi.get(self, "user")
 
     @user.setter
