@@ -91,10 +91,15 @@ namespace Pulumi.Command.Remote
         public Input<Inputs.ConnectionArgs> Connection { get; set; } = null!;
 
         /// <summary>
-        /// The path of the file to be copied.
+        /// The file/folder to be copied.
+        /// If the input is a Pulumi Asset, it will be interpreted as the contents of a file.
+        /// If the input is a Pulumi Archive, it will be interpreted as the contents of a folder.
+        /// If the input is a string, it will be interpreted as the path to a file or folder.
+        /// Assets and Archives change depending on their contents. This means that a change
+        /// to the underlying file/folder will result in a "replace" operation for the Copy.
         /// </summary>
         [Input("localPath", required: true)]
-        public Input<string> LocalPath { get; set; } = null!;
+        public object LocalPath { get; set; } = null!;
 
         /// <summary>
         /// The destination path in the remote host.

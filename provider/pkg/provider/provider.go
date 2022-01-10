@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"sync"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/mapper"
 
@@ -37,6 +38,7 @@ type commandProvider struct {
 	name        string
 	version     string
 	cancelFuncs map[context.Context]context.CancelFunc
+	mutex       sync.Mutex
 }
 
 func makeProvider(host *provider.HostClient, name, version string) (pulumirpc.ResourceProviderServer, error) {
@@ -221,19 +223,24 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 	case "command:remote:CopyFile":
 		var cpf remotefilecopy
-		err = mapper.MapI(inputs, &cpf)
+		err = mapper.MapI(inputs["connection"].(map[string]interface{}), &cpf.Connection)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Failed to grab connection: %w", err)
 		}
+		cpf.RemotePath = inputs["remotePath"].(string)
+		cpf.LocalPath = inputs["localPath"]
 
 		id, err = cpf.RunCreate(ctx, k.host, urn)
 		if err != nil {
 			return nil, err
 		}
 
-		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cpf)
-		if err != nil {
-			return nil, err
+		outputs = inputs
+		switch localPath := cpf.LocalPath.(type) {
+		case resource.Asset:
+			outputs["localPath"] = localPath.Serialize()
+		case resource.Archive:
+			outputs["localPath"] = localPath.Serialize()
 		}
 	}
 
@@ -259,10 +266,48 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 		return nil, err
 	}
 
+	// This transformation is necessary here because "localPath" is a union of assets and archives
+	// (and a string). Assets and Archives are not serialized as valid property maps by default.
+	// They need a .Serialize() transformation. This transformation does not happen for union types.
+	// We call it manually.
+	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(),
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	if err != nil {
+		return nil, err
+	}
+	inputs := inputProps.Mappable()
+
+	var outputs map[string]interface{}
+
+	if _, ok := inputProps["localPath"]; ok {
+		var cpf remotefilecopy
+		err = mapper.MapI(inputs["connection"].(map[string]interface{}), &cpf.Connection)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to grab connection: %w", err)
+		}
+		cpf.RemotePath = inputs["remotePath"].(string)
+		cpf.LocalPath = inputs["localPath"]
+
+		outputs = inputs
+		switch localPath := cpf.LocalPath.(type) {
+		case resource.Asset:
+			outputs["localPath"] = localPath.Serialize()
+		case resource.Archive:
+			outputs["localPath"] = localPath.Serialize()
+		}
+	}
+	props, err := plugin.MarshalProperties(
+		resource.NewPropertyMapFromMap(outputs),
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return &pulumirpc.ReadResponse{
 		Id:         req.GetId(),
-		Inputs:     req.GetInputs(),
-		Properties: req.GetInputs(),
+		Inputs:     props,
+		Properties: props,
 	}, nil
 }
 
@@ -323,16 +368,6 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		if err != nil {
 			return nil, err
 		}
-	case "command:remote:CopyFile":
-		var cpf remotefilecopy
-		err = decoder.Decode(inputs, &cpf)
-		if err != nil {
-			return nil, err
-		}
-		err = cpf.RunDelete(ctx, k.host, urn)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return &pbempty.Empty{}, nil
@@ -363,11 +398,15 @@ func (k *commandProvider) Cancel(context.Context, *pbempty.Empty) (*pbempty.Empt
 }
 
 func (k *commandProvider) addContext(c context.Context) context.Context {
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
 	newctx, fn := context.WithCancel(c)
 	k.cancelFuncs[newctx] = fn
 	return newctx
 }
 
 func (k *commandProvider) removeContext(c context.Context) {
+	k.mutex.Lock()
+	defer k.mutex.Unlock()
 	delete(k.cancelFuncs, c)
 }

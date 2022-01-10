@@ -37,6 +37,7 @@ func TestSimple(t *testing.T) {
 			Dir:                    filepath.Join(getCwd(t), "simple"),
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
 			EditDirs: []integration.EditDir{
+				{Additive: true},
 				{
 					Dir:      filepath.Join("simple", "update"),
 					Additive: true,
@@ -115,6 +116,53 @@ func TestEc2RemoteTs(t *testing.T) {
 			}},
 		})
 
+	integration.ProgramTest(t, &test)
+}
+
+func TestRemoteExec(t *testing.T) {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(getRegion(t))},
+	)
+	assert.NoError(t, err)
+	svc := ec2.New(sess)
+	keyName, err := resource.NewUniqueHex("test-keyname", 8, 20)
+	assert.NoError(t, err)
+	t.Logf("Creating keypair %s.\n", keyName)
+	key, err := svc.CreateKeyPair(&ec2.CreateKeyPairInput{
+		KeyName: aws.String(keyName),
+	})
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+	defer func() {
+		t.Logf("Deleting keypair %s.\n", keyName)
+		_, err := svc.DeleteKeyPair(&ec2.DeleteKeyPairInput{
+			KeyName: aws.String(keyName),
+		})
+		assert.NoError(t, err)
+	}()
+
+	expected := "45\n"
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "remote_exec"),
+			Config: map[string]string{
+				"keyName": aws.StringValue(key.KeyName),
+			},
+			Secrets: map[string]string{
+				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
+			},
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				t.Logf("Output(expecting %q): %#v", expected, stack.Outputs)
+				assert.Equal(t, expected, stack.Outputs["result"])
+				expected = "362880\n"
+			},
+			EditDirs: []integration.EditDir{{
+				Dir:      filepath.Join("remote_exec", "new_program"),
+				Additive: true,
+			}},
+		})
 	integration.ProgramTest(t, &test)
 }
 

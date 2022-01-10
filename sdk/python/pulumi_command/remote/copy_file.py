@@ -16,13 +16,18 @@ __all__ = ['CopyFileArgs', 'CopyFile']
 class CopyFileArgs:
     def __init__(__self__, *,
                  connection: pulumi.Input['ConnectionArgs'],
-                 local_path: pulumi.Input[str],
+                 local_path: pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]],
                  remote_path: pulumi.Input[str],
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a CopyFile resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]] local_path: The file/folder to be copied.
+               If the input is a Pulumi Asset, it will be interpreted as the contents of a file.
+               If the input is a Pulumi Archive, it will be interpreted as the contents of a folder.
+               If the input is a string, it will be interpreted as the path to a file or folder.
+               Assets and Archives change depending on their contents. This means that a change
+               to the underlying file/folder will result in a "replace" operation for the Copy.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
@@ -46,14 +51,19 @@ class CopyFileArgs:
 
     @property
     @pulumi.getter(name="localPath")
-    def local_path(self) -> pulumi.Input[str]:
+    def local_path(self) -> pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]]:
         """
-        The path of the file to be copied.
+        The file/folder to be copied.
+        If the input is a Pulumi Asset, it will be interpreted as the contents of a file.
+        If the input is a Pulumi Archive, it will be interpreted as the contents of a folder.
+        If the input is a string, it will be interpreted as the path to a file or folder.
+        Assets and Archives change depending on their contents. This means that a change
+        to the underlying file/folder will result in a "replace" operation for the Copy.
         """
         return pulumi.get(self, "local_path")
 
     @local_path.setter
-    def local_path(self, value: pulumi.Input[str]):
+    def local_path(self, value: pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]]):
         pulumi.set(self, "local_path", value)
 
     @property
@@ -87,7 +97,7 @@ class CopyFile(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
-                 local_path: Optional[pulumi.Input[str]] = None,
+                 local_path: Optional[pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]]] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
@@ -97,7 +107,12 @@ class CopyFile(pulumi.CustomResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]] local_path: The file/folder to be copied.
+               If the input is a Pulumi Asset, it will be interpreted as the contents of a file.
+               If the input is a Pulumi Archive, it will be interpreted as the contents of a folder.
+               If the input is a string, it will be interpreted as the path to a file or folder.
+               Assets and Archives change depending on their contents. This means that a change
+               to the underlying file/folder will result in a "replace" operation for the Copy.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
@@ -126,7 +141,7 @@ class CopyFile(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
-                 local_path: Optional[pulumi.Input[str]] = None,
+                 local_path: Optional[pulumi.Input[Union[str, pulumi.Archive, Union[pulumi.Asset, pulumi.Archive]]]] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
