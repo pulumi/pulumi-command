@@ -38,7 +38,7 @@ export const output = random.stdout;
 package main
 
 import (
-	"github.com/pulumi/pulumi-command/sdk/v3/go/command/local"
+	"github.com/pulumi/pulumi-command/sdk/go/command/local"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
