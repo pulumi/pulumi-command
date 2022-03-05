@@ -26,6 +26,8 @@ type Command struct {
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
+	// Pass a string to the command's process as standard in
+	Stdin pulumi.StringPtrOutput `pulumi:"stdin"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
 	// Trigger replacements on changes to this input.
@@ -84,6 +86,8 @@ type commandArgs struct {
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
+	// Pass a string to the command's process as standard in
+	Stdin *string `pulumi:"stdin"`
 	// Trigger replacements on changes to this input.
 	Triggers []interface{} `pulumi:"triggers"`
 }
@@ -98,6 +102,8 @@ type CommandArgs struct {
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
+	// Pass a string to the command's process as standard in
+	Stdin pulumi.StringPtrInput
 	// Trigger replacements on changes to this input.
 	Triggers pulumi.ArrayInput
 }

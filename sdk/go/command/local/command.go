@@ -32,6 +32,8 @@ type Command struct {
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
+	// Pass a string to the command's process as standard in
+	Stdin pulumi.StringPtrOutput `pulumi:"stdin"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
 	// Trigger replacements on changes to this input.
@@ -87,8 +89,10 @@ type commandArgs struct {
 	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-	Interpreter []string      `pulumi:"interpreter"`
-	Triggers    []interface{} `pulumi:"triggers"`
+	Interpreter []string `pulumi:"interpreter"`
+	// Pass a string to the command's process as standard in
+	Stdin    *string       `pulumi:"stdin"`
+	Triggers []interface{} `pulumi:"triggers"`
 }
 
 // The set of arguments for constructing a Command resource.
@@ -104,7 +108,9 @@ type CommandArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput
-	Triggers    pulumi.ArrayInput
+	// Pass a string to the command's process as standard in
+	Stdin    pulumi.StringPtrInput
+	Triggers pulumi.ArrayInput
 }
 
 func (CommandArgs) ElementType() reflect.Type {
