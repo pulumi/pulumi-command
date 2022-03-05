@@ -21,6 +21,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
@@ -98,6 +99,7 @@ type remotecommand struct {
 	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
+	Stdin       *string            `pulumi:"stdin,optional"`
 
 	// Output
 	Stdout string `pulumi:"stdout"`
@@ -143,6 +145,10 @@ func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.Host
 		for k, v := range *c.Environment {
 			session.Setenv(k, v)
 		}
+	}
+
+	if c.Stdin != nil && len(*c.Stdin) > 0 {
+		session.Stdin = strings.NewReader(*c.Stdin)
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)

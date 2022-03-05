@@ -90,6 +90,10 @@
                 "stderr": {
                     "description": "The standard error of the command's process",
                     "type": "string"
+                },
+                "stdin": {
+                    "description": "Pass a string to the command's process as standard in",
+                    "type": "string"
                 }
             },
             "required": [
@@ -128,6 +132,10 @@
                 "delete": {
                     "type": "string",
                     "description": "The command to run on delete."
+                },
+                "stdin": {
+                    "description": "Pass a string to the command's process as standard in",
+                    "type": "string"
                 }
             },
             "requiredInputs": []
@@ -168,6 +176,10 @@
                 "stderr": {
                     "description": "The standard error of the command's process",
                     "type": "string"
+                },
+                "stdin": {
+                    "description": "Pass a string to the command's process as standard in",
+                    "type": "string"
                 }
             },
             "required": [
@@ -199,6 +211,10 @@
                 },
                 "delete": {
                     "description": "The command to run on delete.",
+                    "type": "string"
+                },
+                "stdin": {
+                    "description": "Pass a string to the command's process as standard in",
                     "type": "string"
                 }
             },

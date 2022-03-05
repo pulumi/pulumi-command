@@ -38,6 +38,7 @@ type command struct {
 	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
+	Stdin       *string            `pulumi:"stdin,optional"`
 
 	// Output
 	Stdout string `pulumi:"stdout"`
@@ -98,6 +99,10 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 		for k, v := range *c.Environment {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 		}
+	}
+
+	if c.Stdin != nil && len(*c.Stdin) > 0 {
+		cmd.Stdin = strings.NewReader(*c.Stdin)
 	}
 
 	var stdoutbuf bytes.Buffer

@@ -31,6 +31,19 @@ func TestRandom(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestStdin(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "stdin"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				out, ok := stack.Outputs["output"].(string)
+				assert.True(t, ok)
+				assert.Equal(t, "the quick brown fox", out)
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
 func TestSimple(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
