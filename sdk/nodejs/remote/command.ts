@@ -57,6 +57,10 @@ export class Command extends pulumi.CustomResource {
      */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
     /**
+     * Pass a string to the command's process as standard in
+     */
+    public readonly stdin!: pulumi.Output<string | undefined>;
+    /**
      * The standard output of the command's process
      */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
@@ -83,6 +87,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
+            resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
@@ -92,6 +97,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["delete"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
+            resourceInputs["stdin"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
             resourceInputs["triggers"] = undefined /*out*/;
         }
@@ -122,6 +128,10 @@ export interface CommandArgs {
      * Additional environment variables available to the command's process.
      */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    /**
+     * Pass a string to the command's process as standard in
+     */
+    stdin?: pulumi.Input<string>;
     /**
      * Trigger replacements on changes to this input.
      */

@@ -47,6 +47,12 @@ namespace Pulumi.Command.Remote
         public Output<string> Stderr { get; private set; } = null!;
 
         /// <summary>
+        /// Pass a string to the command's process as standard in
+        /// </summary>
+        [Output("stdin")]
+        public Output<string?> Stdin { get; private set; } = null!;
+
+        /// <summary>
         /// The standard output of the command's process
         /// </summary>
         [Output("stdout")]
@@ -132,6 +138,12 @@ namespace Pulumi.Command.Remote
             get => _environment ?? (_environment = new InputMap<string>());
             set => _environment = value;
         }
+
+        /// <summary>
+        /// Pass a string to the command's process as standard in
+        /// </summary>
+        [Input("stdin")]
+        public Input<string>? Stdin { get; set; }
 
         [Input("triggers")]
         private InputList<object>? _triggers;

@@ -1,0 +1,11 @@
+{
+    "name": "command-random",
+    "version": "0.1.0",
+    "devDependencies": {
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/pulumi": "latest",
+        "@pulumi/random": "^4.2.0"
+    }
+}

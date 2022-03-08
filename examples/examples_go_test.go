@@ -25,6 +25,19 @@ func TestRandomGo(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestStdinGo(t *testing.T) {
+	test := getGoBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "stdin-go"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				out, ok := stack.Outputs["output"].(string)
+				assert.True(t, ok)
+				assert.Equal(t, "the quick brown fox", out)
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
 func getGoBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	base := getBaseOptions(t)
 	baseGo := base.With(integration.ProgramTestOptions{

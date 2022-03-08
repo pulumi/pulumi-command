@@ -19,6 +19,7 @@ class CommandArgs:
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a Command resource.
@@ -26,6 +27,7 @@ class CommandArgs:
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
+        :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
         pulumi.set(__self__, "connection", connection)
@@ -35,6 +37,8 @@ class CommandArgs:
             pulumi.set(__self__, "delete", delete)
         if environment is not None:
             pulumi.set(__self__, "environment", environment)
+        if stdin is not None:
+            pulumi.set(__self__, "stdin", stdin)
         if triggers is not None:
             pulumi.set(__self__, "triggers", triggers)
 
@@ -88,6 +92,18 @@ class CommandArgs:
 
     @property
     @pulumi.getter
+    def stdin(self) -> Optional[pulumi.Input[str]]:
+        """
+        Pass a string to the command's process as standard in
+        """
+        return pulumi.get(self, "stdin")
+
+    @stdin.setter
+    def stdin(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "stdin", value)
+
+    @property
+    @pulumi.getter
     def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
         """
         Trigger replacements on changes to this input.
@@ -108,6 +124,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         """
@@ -120,6 +137,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
+        :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
         ...
@@ -151,6 +169,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         if opts is None:
@@ -170,6 +189,7 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
             __props__.__dict__["environment"] = environment
+            __props__.__dict__["stdin"] = stdin
             __props__.__dict__["triggers"] = triggers
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
@@ -200,6 +220,7 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["delete"] = None
         __props__.__dict__["environment"] = None
         __props__.__dict__["stderr"] = None
+        __props__.__dict__["stdin"] = None
         __props__.__dict__["stdout"] = None
         __props__.__dict__["triggers"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
@@ -243,6 +264,14 @@ class Command(pulumi.CustomResource):
         The standard error of the command's process
         """
         return pulumi.get(self, "stderr")
+
+    @property
+    @pulumi.getter
+    def stdin(self) -> pulumi.Output[Optional[str]]:
+        """
+        Pass a string to the command's process as standard in
+        """
+        return pulumi.get(self, "stdin")
 
     @property
     @pulumi.getter
