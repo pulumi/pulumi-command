@@ -136,6 +136,7 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 		"dir":         false,
 		"interpreter": false,
 		"create":      false,
+		"update":      false,
 		"delete":      false,
 		"stdin":       false,
 		"localPath":   false,
@@ -276,9 +277,79 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 		return nil, err
 	}
 
+	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	if err != nil {
+		return nil, err
+	}
+	inputs := inputProps.Mappable()
+
+	var id string
+	var outputs map[string]interface{}
+
+	switch ty {
+	case "command:local:Command":
+		var cmd command
+		err = mapper.MapI(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		id, err = cmd.RunUpdate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
+	case "command:remote:Command":
+		var cmd remotecommand
+		err = mapper.MapI(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		id, err = cmd.RunUpdate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
+	case "command:remote:CopyFile":
+		var cpf remotefilecopy
+		err = mapper.MapI(inputs, &cpf)
+		if err != nil {
+			return nil, err
+		}
+
+		id, err = cpf.RunUpdate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cpf)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	outputProperties, err := plugin.MarshalProperties(
+		resource.NewPropertyMapFromMap(outputs),
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	// Updates are currently no-ops.  The `create` command does not re-run except on replacement.
 	return &pulumirpc.UpdateResponse{
-		Properties: req.GetNews(),
+		Id:         req.GetId(),
+		Inputs:     req.GetInputs(),
+		Properties: req.GetInputs(),
 	}, nil
 }
 

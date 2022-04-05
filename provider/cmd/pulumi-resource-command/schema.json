@@ -79,6 +79,10 @@
                     "type": "string",
                     "description": "The command to run on create."
                 },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update."
+                },
                 "delete": {
                     "type": "string",
                     "description": "The command to run on delete."
@@ -129,6 +133,10 @@
                     "type": "string",
                     "description": "The command to run on create."
                 },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update."
+                },
                 "delete": {
                     "type": "string",
                     "description": "The command to run on delete."
@@ -163,6 +171,10 @@
                 },
                 "create": {
                     "description": "The command to run on create.",
+                    "type": "string"
+                },
+                "update": {
+                    "description": "The command to run on update.",
                     "type": "string"
                 },
                 "delete": {
@@ -207,6 +219,10 @@
                 },
                 "create": {
                     "description": "The command to run on create.",
+                    "type": "string"
+                },
+                "update": {
+                    "description": "The command to run on update.",
                     "type": "string"
                 },
                 "delete": {
