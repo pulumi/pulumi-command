@@ -108,9 +108,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["stdout"] = undefined /*out*/;
             resourceInputs["triggers"] = undefined /*out*/;
         }
-        if (!opts.version) {
-            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
-        }
+        opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Command.__pulumiType, name, resourceInputs, opts);
     }
 }

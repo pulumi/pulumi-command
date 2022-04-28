@@ -82,9 +82,7 @@ export class CopyFile extends pulumi.CustomResource {
             resourceInputs["remotePath"] = undefined /*out*/;
             resourceInputs["triggers"] = undefined /*out*/;
         }
-        if (!opts.version) {
-            opts = pulumi.mergeOptions(opts, { version: utilities.getVersion()});
-        }
+        opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(CopyFile.__pulumiType, name, resourceInputs, opts);
     }
 }
