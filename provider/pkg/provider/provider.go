@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/mapper"
 
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
@@ -47,6 +48,16 @@ func makeProvider(host *provider.HostClient, name, version string) (pulumirpc.Re
 		version:     version,
 		cancelFuncs: make(map[context.Context]context.CancelFunc),
 	}, nil
+}
+
+// Attach sends the engine address to an already running plugin.
+func (k *commandProvider) Attach(_ context.Context, req *pulumirpc.PluginAttach) (*empty.Empty, error) {
+	host, err := provider.NewHostClient(req.GetAddress())
+	if err != nil {
+		return nil, err
+	}
+	k.host = host
+	return &empty.Empty{}, nil
 }
 
 // Call dynamically executes a method in the provider associated with a component resource.
