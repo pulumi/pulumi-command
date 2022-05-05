@@ -183,6 +183,26 @@ func (o CopyFileOutput) ToCopyFileOutputWithContext(ctx context.Context) CopyFil
 	return o
 }
 
+// The parameters with which to connect to the remote host.
+func (o CopyFileOutput) Connection() ConnectionOutput {
+	return o.ApplyT(func(v *CopyFile) ConnectionOutput { return v.Connection }).(ConnectionOutput)
+}
+
+// The path of the file to be copied.
+func (o CopyFileOutput) LocalPath() pulumi.StringOutput {
+	return o.ApplyT(func(v *CopyFile) pulumi.StringOutput { return v.LocalPath }).(pulumi.StringOutput)
+}
+
+// The destination path in the remote host.
+func (o CopyFileOutput) RemotePath() pulumi.StringOutput {
+	return o.ApplyT(func(v *CopyFile) pulumi.StringOutput { return v.RemotePath }).(pulumi.StringOutput)
+}
+
+// Trigger replacements on changes to this input.
+func (o CopyFileOutput) Triggers() pulumi.ArrayOutput {
+	return o.ApplyT(func(v *CopyFile) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
+}
+
 type CopyFileArrayOutput struct{ *pulumi.OutputState }
 
 func (CopyFileArrayOutput) ElementType() reflect.Type {

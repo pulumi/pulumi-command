@@ -200,6 +200,53 @@ func (o CommandOutput) ToCommandOutputWithContext(ctx context.Context) CommandOu
 	return o
 }
 
+// The command to run on create.
+func (o CommandOutput) Create() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Create }).(pulumi.StringPtrOutput)
+}
+
+// The command to run on delete.
+func (o CommandOutput) Delete() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Delete }).(pulumi.StringPtrOutput)
+}
+
+// The directory from which to run the command from. If `dir` does not exist, then
+// `Command` will fail.
+func (o CommandOutput) Dir() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Dir }).(pulumi.StringPtrOutput)
+}
+
+// Additional environment variables available to the command's process.
+func (o CommandOutput) Environment() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringMapOutput { return v.Environment }).(pulumi.StringMapOutput)
+}
+
+// The program and arguments to run the command.
+// For example: `["/bin/sh", "-c"]`
+func (o CommandOutput) Interpreter() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.Interpreter }).(pulumi.StringArrayOutput)
+}
+
+// The standard error of the command's process
+func (o CommandOutput) Stderr() pulumi.StringOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringOutput { return v.Stderr }).(pulumi.StringOutput)
+}
+
+// Pass a string to the command's process as standard in
+func (o CommandOutput) Stdin() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Stdin }).(pulumi.StringPtrOutput)
+}
+
+// The standard output of the command's process
+func (o CommandOutput) Stdout() pulumi.StringOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringOutput { return v.Stdout }).(pulumi.StringOutput)
+}
+
+// Trigger replacements on changes to this input.
+func (o CommandOutput) Triggers() pulumi.ArrayOutput {
+	return o.ApplyT(func(v *Command) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
+}
+
 type CommandArrayOutput struct{ *pulumi.OutputState }
 
 func (CommandArrayOutput) ElementType() reflect.Type {

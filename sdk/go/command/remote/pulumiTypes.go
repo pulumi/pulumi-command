@@ -66,6 +66,20 @@ type ConnectionArgs struct {
 	User pulumi.StringPtrInput `pulumi:"user"`
 }
 
+// Defaults sets the appropriate defaults for ConnectionArgs
+func (val *ConnectionArgs) Defaults() *ConnectionArgs {
+	if val == nil {
+		return nil
+	}
+	tmp := *val
+	if isZero(tmp.Port) {
+		tmp.Port = pulumi.Float64Ptr(22.0)
+	}
+	if isZero(tmp.User) {
+		tmp.User = pulumi.StringPtr("root")
+	}
+	return &tmp
+}
 func (ConnectionArgs) ElementType() reflect.Type {
 	return reflect.TypeOf((*Connection)(nil)).Elem()
 }
