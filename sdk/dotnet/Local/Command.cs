@@ -75,6 +75,12 @@ namespace Pulumi.Command.Local
         [Output("triggers")]
         public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
 
+        /// <summary>
+        /// The command to run on update, if empty, create will run again.
+        /// </summary>
+        [Output("update")]
+        public Output<string?> Update { get; private set; } = null!;
+
 
         /// <summary>
         /// Create a Command resource with the given unique name, arguments, and options.
@@ -176,6 +182,12 @@ namespace Pulumi.Command.Local
             get => _triggers ?? (_triggers = new InputList<object>());
             set => _triggers = value;
         }
+
+        /// <summary>
+        /// The command to run on update, if empty, create will run again.
+        /// </summary>
+        [Input("update")]
+        public Input<string>? Update { get; set; }
 
         public CommandArgs()
         {

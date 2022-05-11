@@ -38,6 +38,8 @@ type command struct {
 	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
+	// Optional, if empty will run Create again
+	Update      *string			   `pulumi:"update,optional"`
 	Stdin       *string            `pulumi:"stdin,optional"`
 
 	// Output
@@ -48,6 +50,20 @@ type command struct {
 // RunCreate executes the create command, sets Stdout and Stderr, and returns a unique
 // ID for the command execution
 func (c *command) RunCreate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
+	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
+	c.Stdout = stdout
+	c.Stderr = stderr
+	return id, err
+}
+
+//
+func (c *command) RunUpdate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
+	if c.Update != nil {
+		stdout, stderr, id, err := c.run(ctx, *c.Update, host, urn)
+	c.Stdout = stdout
+	c.Stderr = stderr
+	return id, err
+	}
 	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
 	c.Stdout = stdout
 	c.Stderr = stderr
