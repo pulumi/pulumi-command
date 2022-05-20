@@ -113,8 +113,8 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 
 	stdoutch := make(chan struct{})
 	stderrch := make(chan struct{})
-	go copyOutput(ctx, host, urn, stdouttee, stdoutch)
-	go copyOutput(ctx, host, urn, stderrtee, stderrch)
+	go copyOutput(ctx, host, urn, stdouttee, stdoutch, diag.Debug)
+	go copyOutput(ctx, host, urn, stderrtee, stderrch, diag.Error)
 
 	err = cmd.Start()
 	pid := cmd.Process.Pid
@@ -140,11 +140,11 @@ func (c *command) run(ctx context.Context, command string, host *provider.HostCl
 	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), id, nil
 }
 
-func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN, r io.Reader, doneCh chan<- struct{}) {
+func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		err := host.Log(ctx, diag.Debug, urn, scanner.Text())
+		err := host.Log(ctx, severity, urn, scanner.Text())
 		if err != nil {
 			return
 		}

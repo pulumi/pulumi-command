@@ -24,12 +24,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
-
 	"golang.org/x/crypto/ssh"
 
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
 )
 
 type remoteconnection struct {
@@ -175,8 +175,8 @@ func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.Host
 
 	stdoutch := make(chan struct{})
 	stderrch := make(chan struct{})
-	go copyOutput(ctx, host, urn, stdouttee, stdoutch)
-	go copyOutput(ctx, host, urn, stderrtee, stderrch)
+	go copyOutput(ctx, host, urn, stdouttee, stdoutch, diag.Debug)
+	go copyOutput(ctx, host, urn, stderrtee, stderrch, diag.Info)
 
 	err = session.Run(cmd)
 
