@@ -83,6 +83,10 @@
                     "type": "string",
                     "description": "The command to run on delete."
                 },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update, if empty, create will run again."
+                },
                 "stdout": {
                     "description": "The standard output of the command's process",
                     "type": "string"
@@ -133,6 +137,10 @@
                     "type": "string",
                     "description": "The command to run on delete."
                 },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update, if empty, create will run again."
+                },
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
                     "type": "string"
@@ -168,6 +176,10 @@
                 "delete": {
                     "description": "The command to run on delete.",
                     "type": "string"
+                },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update, if empty, create will run again."
                 },
                 "stdout": {
                     "description": "The standard output of the command's process",
@@ -212,6 +224,10 @@
                 "delete": {
                     "description": "The command to run on delete.",
                     "type": "string"
+                },
+                "update": {
+                    "type": "string",
+                    "description": "The command to run on update, if empty, create will run again."
                 },
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",

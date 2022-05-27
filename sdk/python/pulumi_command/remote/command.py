@@ -20,7 +20,8 @@ class CommandArgs:
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
+                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 update: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a Command resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
@@ -29,6 +30,7 @@ class CommandArgs:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
+        :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
         """
         pulumi.set(__self__, "connection", connection)
         if create is not None:
@@ -41,6 +43,8 @@ class CommandArgs:
             pulumi.set(__self__, "stdin", stdin)
         if triggers is not None:
             pulumi.set(__self__, "triggers", triggers)
+        if update is not None:
+            pulumi.set(__self__, "update", update)
 
     @property
     @pulumi.getter
@@ -114,6 +118,18 @@ class CommandArgs:
     def triggers(self, value: Optional[pulumi.Input[Sequence[Any]]]):
         pulumi.set(self, "triggers", value)
 
+    @property
+    @pulumi.getter
+    def update(self) -> Optional[pulumi.Input[str]]:
+        """
+        The command to run on update, if empty, create will run again.
+        """
+        return pulumi.get(self, "update")
+
+    @update.setter
+    def update(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "update", value)
+
 
 class Command(pulumi.CustomResource):
     @overload
@@ -126,6 +142,7 @@ class Command(pulumi.CustomResource):
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
         A command to run on a remote host.
@@ -139,6 +156,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
+        :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
         """
         ...
     @overload
@@ -171,6 +189,7 @@ class Command(pulumi.CustomResource):
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         if opts is None:
             opts = pulumi.ResourceOptions()
@@ -191,6 +210,7 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["environment"] = environment
             __props__.__dict__["stdin"] = stdin
             __props__.__dict__["triggers"] = triggers
+            __props__.__dict__["update"] = update
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
         super(Command, __self__).__init__(
@@ -223,6 +243,7 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["stdin"] = None
         __props__.__dict__["stdout"] = None
         __props__.__dict__["triggers"] = None
+        __props__.__dict__["update"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
 
     @property
@@ -288,4 +309,12 @@ class Command(pulumi.CustomResource):
         Trigger replacements on changes to this input.
         """
         return pulumi.get(self, "triggers")
+
+    @property
+    @pulumi.getter
+    def update(self) -> pulumi.Output[Optional[str]]:
+        """
+        The command to run on update, if empty, create will run again.
+        """
+        return pulumi.get(self, "update")
 

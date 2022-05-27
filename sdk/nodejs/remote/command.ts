@@ -68,6 +68,10 @@ export class Command extends pulumi.CustomResource {
      * Trigger replacements on changes to this input.
      */
     public readonly triggers!: pulumi.Output<any[] | undefined>;
+    /**
+     * The command to run on update, if empty, create will run again.
+     */
+    public readonly update!: pulumi.Output<string | undefined>;
 
     /**
      * Create a Command resource with the given unique name, arguments, and options.
@@ -89,6 +93,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["environment"] = args ? args.environment : undefined;
             resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
+            resourceInputs["update"] = args ? args.update : undefined;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {
@@ -100,6 +105,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["stdin"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
             resourceInputs["triggers"] = undefined /*out*/;
+            resourceInputs["update"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(Command.__pulumiType, name, resourceInputs, opts);
@@ -134,4 +140,8 @@ export interface CommandArgs {
      * Trigger replacements on changes to this input.
      */
     triggers?: pulumi.Input<any[]>;
+    /**
+     * The command to run on update, if empty, create will run again.
+     */
+    update?: pulumi.Input<string>;
 }

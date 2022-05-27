@@ -148,6 +148,7 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 		"interpreter": false,
 		"create":      false,
 		"delete":      false,
+		"update":      false,
 		"stdin":       false,
 		"localPath":   false,
 		"remotePath":  false,
@@ -283,13 +284,62 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	ctx = k.addContext(ctx)
 	defer k.removeContext(ctx)
 	urn := resource.URN(req.GetUrn())
+	ty := urn.Type()
 	if err := check(urn); err != nil {
 		return nil, err
 	}
 
-	// Updates are currently no-ops.  The `create` command does not re-run except on replacement.
+	inputProps, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	if err != nil {
+		return nil, err
+	}
+	inputs := inputProps.Mappable()
+
+	var outputs map[string]interface{}
+
+	switch ty {
+	case "command:local:Command":
+		var cmd command
+		err = mapper.MapI(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = cmd.RunUpdate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
+	case "command:remote:Command":
+		var cmd command
+		err = mapper.MapI(inputs, &cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = cmd.RunUpdate(ctx, k.host, urn)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
+	}
+	outputProperties, err := plugin.MarshalProperties(
+		resource.NewPropertyMapFromMap(outputs),
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+	)
+	if err != nil {
+		return nil, err
+	}
 	return &pulumirpc.UpdateResponse{
-		Properties: req.GetNews(),
+		Properties: outputProperties,
 	}, nil
 }
 

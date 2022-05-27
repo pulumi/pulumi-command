@@ -99,6 +99,7 @@ type remotecommand struct {
 	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
+	Update      *string            `pulumi:"update,optional"`
 	Stdin       *string            `pulumi:"stdin,optional"`
 
 	// Output
@@ -122,6 +123,19 @@ func (c *remotecommand) RunDelete(ctx context.Context, host *provider.HostClient
 	}
 	_, _, _, err := c.run(ctx, *c.Delete, host, urn)
 	return err
+}
+
+func (c *remotecommand) RunUpdate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
+	if c.Update != nil {
+		stdout, stderr, id, err := c.run(ctx, *c.Update, host, urn)
+	c.Stdout = stdout
+	c.Stderr = stderr
+	return id, err
+	}
+	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
+	c.Stdout = stdout
+	c.Stderr = stderr
+	return id, err
 }
 
 func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {

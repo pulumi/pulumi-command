@@ -85,6 +85,26 @@ func TestSimple(t *testing.T) {
 					Additive:      true,
 					ExpectFailure: true,
 				},
+				{
+					Dir:           filepath.Join("simple", "update-change"),
+					Additive:      true,
+					ExpectFailure: true,
+				},
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
+func TestSimpleWithUpdate(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                    filepath.Join(getCwd(t), "simple-with-update"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
+			EditDirs: []integration.EditDir{
+				{
+					Dir:           filepath.Join("simple-with-update", "update-change"),
+					Additive:      true,
+				},
 			},
 		})
 	integration.ProgramTest(t, &test)
