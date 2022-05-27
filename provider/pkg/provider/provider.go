@@ -34,19 +34,22 @@ import (
 )
 
 type commandProvider struct {
-	host        *provider.HostClient
-	name        string
-	version     string
-	cancelFuncs map[context.Context]context.CancelFunc
+	host         *provider.HostClient
+	name         string
+	version      string
+	pulumiSchema []byte
+	cancelFuncs  map[context.Context]context.CancelFunc
 }
 
-func makeProvider(host *provider.HostClient, name, version string) (pulumirpc.ResourceProviderServer, error) {
+func makeProvider(host *provider.HostClient, name, version string,
+	pulumiSchema []byte) (pulumirpc.ResourceProviderServer, error) {
 	// Return the new provider
 	return &commandProvider{
-		host:        host,
-		name:        name,
-		version:     version,
-		cancelFuncs: make(map[context.Context]context.CancelFunc),
+		host:         host,
+		name:         name,
+		version:      version,
+		pulumiSchema: pulumiSchema,
+		cancelFuncs:  make(map[context.Context]context.CancelFunc),
 	}, nil
 }
 
@@ -409,7 +412,11 @@ func (k *commandProvider) GetPluginInfo(context.Context, *pbempty.Empty) (*pulum
 
 // GetSchema returns the JSON-serialized schema for the provider.
 func (k *commandProvider) GetSchema(ctx context.Context, req *pulumirpc.GetSchemaRequest) (*pulumirpc.GetSchemaResponse, error) {
-	return &pulumirpc.GetSchemaResponse{}, nil
+	if v := req.GetVersion(); v != 0 {
+		return nil, fmt.Errorf("unsupported schema version %d", v)
+	}
+
+	return &pulumirpc.GetSchemaResponse{Schema: string(k.pulumiSchema)}, nil
 }
 
 // Cancel signals the provider to gracefully shut down and abort any ongoing resource operations.

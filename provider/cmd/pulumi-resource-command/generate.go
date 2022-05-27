@@ -12,21 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package provider
+//go:build ignore
+// +build ignore
+
+package main
 
 import (
-	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/util/cmdutil"
-	rpc "github.com/pulumi/pulumi/sdk/v3/proto/go"
+	"fmt"
+	"io/ioutil"
+	"log"
 )
 
-// Serve launches the gRPC server for the resource provider.
-func Serve(providerName, version string, pulumiSchema []byte) {
-	// Start gRPC service.
-	err := provider.Main(providerName, func(host *provider.HostClient) (rpc.ResourceProviderServer, error) {
-		return makeProvider(host, providerName, version, pulumiSchema)
-	})
+func main() {
+	schemaContents, err := ioutil.ReadFile("./schema.json")
 	if err != nil {
-		cmdutil.ExitError(err.Error())
+		log.Fatal(err)
+	}
+
+	err = ioutil.WriteFile("./schema.go", []byte(fmt.Sprintf(`package main
+var pulumiSchema = %#v
+`, schemaContents)), 0600)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
