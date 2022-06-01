@@ -11,6 +11,8 @@ yarn.lock
 ci-scripts
 /nuget/
 sdk/dotnet/version.txt
+.DS_Store
+/provider/cmd/pulumi-resource-command/schema.go
 
 rsa*
 password.txt
