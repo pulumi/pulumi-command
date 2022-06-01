@@ -13,6 +13,7 @@ ci-scripts
 sdk/dotnet/version.txt
 .DS_Store
 /provider/cmd/pulumi-resource-command/schema.go
+dist/
 
 rsa*
 password.txt
