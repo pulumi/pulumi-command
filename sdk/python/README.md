@@ -280,7 +280,7 @@ const cleanupKubernetesNamespaces = new local.Command("cleanupKubernetesNamespac
 
 ### Dependencies
 
-- Go 1.16
+- Go 1.17
 - NodeJS 10.X.X or later
 - Python 3.6 or later
 - .NET Core 3.1
