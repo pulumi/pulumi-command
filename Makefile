@@ -23,7 +23,7 @@ ensure::
 	cd sdk && go mod tidy
 	cd examples && go mod tidy
 
-gen::
+codegen::
 	(cd provider && go build -o $(WORKING_DIR)/bin/${CODEGEN} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" ${PROJECT}/${PROVIDER_PATH}/cmd/$(CODEGEN))
 	(cd provider && VERSION=${VERSION} go generate cmd/${PROVIDER}/main.go)
 
@@ -71,7 +71,7 @@ python_sdk::
 		cd ./bin && python3 setup.py build sdist
 
 .PHONY: build
-build:: gen provider dotnet_sdk go_sdk nodejs_sdk python_sdk
+build:: codegen provider dotnet_sdk go_sdk nodejs_sdk python_sdk
 
 # Required for the codegen action that runs in pulumi/pulumi
 only_build:: build

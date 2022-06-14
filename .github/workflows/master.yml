@@ -125,7 +125,7 @@ jobs:
       - name: Install Pulumi CLI
         uses: pulumi/setup-pulumi@v2
       - name: Build codegen binaries
-        run: make gen
+        run: make codegen
       - name: Build provider binary
         run: make provider
       - name: Check worktree clean
