@@ -51,9 +51,6 @@ jobs:
           if ! git diff-files --quiet; then
             echo ::set-output name=changes::1
           fi
-      # - name: Build codegen binaries
-      #   if: steps.gomod.outputs.changes != 0
-      #   run: make gen
       - name: Gen, provider, sdks
         if: steps.gomod.outputs.changes != 0
         run: make build

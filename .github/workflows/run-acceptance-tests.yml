@@ -67,7 +67,7 @@ jobs:
       # - name: Initialize submodules
       #   run: make init_submodules
       - name: Build codegen binaries
-        run: make gen
+        run: make codegen
       # - name: Build Schema
       #   run: make generate_schema
       # - name: Check Schema is Valid
