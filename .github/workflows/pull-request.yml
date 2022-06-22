@@ -1,9 +1,6 @@
-name: command-dispatch
+name: pull-request
 on:
-  issue_comment:
-    types:
-    - created
-    - edited
+  pull_request_target: {}
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PROVIDER: command
@@ -19,20 +16,20 @@ env:
   AWS_REGION: us-west-2
   PULUMI_API: https://api.pulumi-staging.io
 jobs:
-  command-dispatch-for-testing:
+  comment-on-pr:
     runs-on: ubuntu-latest
-    name: command-dispatch-for-testing
+    name: comment-on-pr
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v2
       with:
         lfs: true
-    - uses: peter-evans/slash-command-dispatch@v2
+    - name: Comment PR
+      uses: thollander/actions-comment-pull-request@v1
       with:
-        token: ${{ secrets.PULUMI_BOT_TOKEN }}
-        reaction-token: ${{ secrets.GITHUB_TOKEN }}
-        commands: run-acceptance-tests
-        permission: write
-        issue-type: pull-request
-        repository: pulumi/pulumi-command
-    if: ${{ github.event.issue.pull_request }}
+        message: >
+          PR is now waiting for a maintainer to run the acceptance tests.
+
+          **Note for the maintainer:** To run the acceptance tests, please comment */run-acceptance-tests* on the PR
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    if: github.event.pull_request.head.repo.full_name != github.repository
