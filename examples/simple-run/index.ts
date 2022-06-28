@@ -15,9 +15,21 @@ const secretFile = local.runOutput({
     assetPaths: ["password.txt"]
 });
 
+const globTest = local.runOutput({
+    command: "pwd",
+    dir: process.cwd(),
+    archivePaths: [
+        "*",
+        "!yarn.lock",
+        "*.txt",
+        "hello.txt",
+    ]
+})
+
 export const plainOutput = plainFile.stdout;
 export const plainAssets = plainFile.assets;
 export const plainArchive = plainFile.archive;
 export const secretOutput = secretFile.stdout;
 export const secretAssets = secretFile.assets;
 export const secretArchive = secretFile.archive;
+export const globTestAssets = globTest.archive;

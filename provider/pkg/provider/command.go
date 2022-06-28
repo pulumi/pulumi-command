@@ -181,13 +181,21 @@ func (c *commandContext) run(ctx context.Context, command string, host *provider
 	}
 
 	if c.AssetPaths != nil {
-		assets := globAssets(cmd.Dir, *c.AssetPaths)
+		assets, err := globAssets(cmd.Dir, *c.AssetPaths)
+		if err != nil {
+			return "", "", "", err
+		}
 		c.Assets = &assets
 	}
 
 	if c.ArchivePaths != nil {
 		archiveAssets := map[string]interface{}{}
-		for path, asset := range globAssets(cmd.Dir, *c.ArchivePaths) {
+		assets, err := globAssets(cmd.Dir, *c.ArchivePaths)
+		if err != nil {
+			return "", "", "", err
+		}
+
+		for path, asset := range assets {
 			archiveAssets[path] = asset
 		}
 
@@ -201,26 +209,42 @@ func (c *commandContext) run(ctx context.Context, command string, host *provider
 	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), id, nil
 }
 
-func globAssets(dir string, globs []string) map[string]*resource.Asset {
+func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {
 	assets := map[string]*resource.Asset{}
-	fs.WalkDir(os.DirFS(dir), ".", func(p string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(os.DirFS(dir), ".", func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		relPath := strings.TrimPrefix(p, "./")
+		if d.IsDir() {
+			return nil
+		}
 		for _, pathGlob := range globs {
-			matched, err := path.Match(pathGlob, relPath)
+			isExclude := strings.HasPrefix(pathGlob, "!")
+			if isExclude {
+				pathGlob = strings.TrimPrefix(pathGlob, "!")
+			}
+			matched, err := path.Match(pathGlob, p)
 			if err != nil {
 				return err
 			}
-			if matched {
-				assets[relPath], err = resource.NewPathAsset(path.Join(dir, p))
-				return err
+			if !matched {
+				continue
+			}
+			if isExclude {
+				delete(assets, p)
+			} else {
+				assets[p], err = resource.NewPathAsset(path.Join(dir, p))
+				if err != nil {
+					return err
+				}
 			}
 		}
 		return nil
 	})
-	return assets
+	if err != nil {
+		return nil, err
+	}
+	return assets, nil
 }
 
 func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
