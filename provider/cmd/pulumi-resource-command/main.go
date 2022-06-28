@@ -17,12 +17,15 @@
 package main
 
 import (
+	_ "embed"
+
 	"github.com/pulumi/pulumi-command/provider/pkg/provider"
 	"github.com/pulumi/pulumi-command/provider/pkg/version"
 )
 
-var providerName = "command"
+//go:embed schema-embed.json
+var pulumiSchema []byte
 
 func main() {
-	provider.Serve(providerName, version.Version, pulumiSchema)
+	provider.Serve("command", version.Version, pulumiSchema)
 }
