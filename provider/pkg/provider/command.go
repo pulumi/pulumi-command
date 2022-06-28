@@ -20,8 +20,10 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
+	"path"
 	"runtime"
 	"strings"
 
@@ -32,14 +34,18 @@ import (
 
 type commandContext struct {
 	// Input
-	Interpreter *[]string          `pulumi:"interpreter,optional"`
-	Dir         *string            `pulumi:"dir,optional"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Stdin       *string            `pulumi:"stdin,optional"`
+	Interpreter  *[]string          `pulumi:"interpreter,optional"`
+	Dir          *string            `pulumi:"dir,optional"`
+	Environment  *map[string]string `pulumi:"environment,optional"`
+	Stdin        *string            `pulumi:"stdin,optional"`
+	AssetPaths   *[]string          `pulumi:"assetPaths,optional"`
+	ArchivePaths *[]string          `pulumi:"archivePaths,optional"`
 
 	// Output
-	Stdout string `pulumi:"stdout"`
-	Stderr string `pulumi:"stderr"`
+	Stdout  string                      `pulumi:"stdout"`
+	Stderr  string                      `pulumi:"stderr"`
+	Assets  *map[string]*resource.Asset `pulumi:"assets,optional"`
+	Archive *resource.Archive           `pulumi:"archive,optional"`
 }
 
 type run struct {
@@ -49,20 +55,11 @@ type run struct {
 
 type command struct {
 	commandContext
-	// Input
-	Interpreter *[]string          `pulumi:"interpreter,optional"`
-	Dir         *string            `pulumi:"dir,optional"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]interface{}     `pulumi:"triggers,optional"`
-	Create      string             `pulumi:"create"`
-	Delete      *string            `pulumi:"delete,optional"`
+	Triggers *[]interface{} `pulumi:"triggers,optional"`
+	Create   string         `pulumi:"create"`
+	Delete   *string        `pulumi:"delete,optional"`
 	// Optional, if empty will run Create again
 	Update *string `pulumi:"update,optional"`
-	Stdin  *string `pulumi:"stdin,optional"`
-
-	// Output
-	Stdout string `pulumi:"stdout"`
-	Stderr string `pulumi:"stderr"`
 }
 
 func (c *run) RunCommand(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
@@ -134,6 +131,11 @@ func (c *commandContext) run(ctx context.Context, command string, host *provider
 	cmd.Stderr = stderrw
 	if c.Dir != nil {
 		cmd.Dir = *c.Dir
+	} else {
+		cmd.Dir, err = os.Getwd()
+		if err != nil {
+			return "", "", "", err
+		}
 	}
 	cmd.Env = os.Environ()
 	if c.Environment != nil {
@@ -178,7 +180,47 @@ func (c *commandContext) run(ctx context.Context, command string, host *provider
 		return "", "", "", err
 	}
 
+	if c.AssetPaths != nil {
+		assets := globAssets(cmd.Dir, *c.AssetPaths)
+		c.Assets = &assets
+	}
+
+	if c.ArchivePaths != nil {
+		archiveAssets := map[string]interface{}{}
+		for path, asset := range globAssets(cmd.Dir, *c.ArchivePaths) {
+			archiveAssets[path] = asset
+		}
+
+		archive, err := resource.NewAssetArchive(archiveAssets)
+		if err != nil {
+			return "", "", "", err
+		}
+		c.Archive = archive
+	}
+
 	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), id, nil
+}
+
+func globAssets(dir string, globs []string) map[string]*resource.Asset {
+	assets := map[string]*resource.Asset{}
+	fs.WalkDir(os.DirFS(dir), ".", func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		relPath := strings.TrimPrefix(p, "./")
+		for _, pathGlob := range globs {
+			matched, err := path.Match(pathGlob, relPath)
+			if err != nil {
+				return err
+			}
+			if matched {
+				assets[relPath], err = resource.NewPathAsset(path.Join(dir, p))
+				return err
+			}
+		}
+		return nil
+	})
+	return assets
 }
 
 func copyOutput(ctx context.Context, host *provider.HostClient, urn resource.URN, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {

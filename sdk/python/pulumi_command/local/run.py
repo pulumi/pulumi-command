@@ -18,9 +18,12 @@ __all__ = [
 
 @pulumi.output_type
 class RunResult:
-    def __init__(__self__, assets=None, command=None, dir=None, environment=None, interpreter=None, stderr=None, stdin=None, stdout=None):
-        if assets and not isinstance(assets, pulumi.Archive):
-            raise TypeError("Expected argument 'assets' to be a pulumi.Archive")
+    def __init__(__self__, archive=None, assets=None, command=None, dir=None, environment=None, interpreter=None, stderr=None, stdin=None, stdout=None):
+        if archive and not isinstance(archive, pulumi.Archive):
+            raise TypeError("Expected argument 'archive' to be a pulumi.Archive")
+        pulumi.set(__self__, "archive", archive)
+        if assets and not isinstance(assets, dict):
+            raise TypeError("Expected argument 'assets' to be a dict")
         pulumi.set(__self__, "assets", assets)
         if command and not isinstance(command, str):
             raise TypeError("Expected argument 'command' to be a str")
@@ -46,9 +49,18 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def assets(self) -> Optional[pulumi.Archive]:
+    def archive(self) -> Optional[pulumi.Archive]:
         """
-        An archive of assets found after running the command.
+        An archive asset containing files found after running the command.
+        """
+        return pulumi.get(self, "archive")
+
+    @property
+    @pulumi.getter
+    def assets(self) -> Optional[Mapping[str, Union[pulumi.Asset, pulumi.Archive]]]:
+        """
+        A map of assets found after running the command.
+        The key is the relative path from the command dir
         """
         return pulumi.get(self, "assets")
 
@@ -116,6 +128,7 @@ class AwaitableRunResult(RunResult):
         if False:
             yield self
         return RunResult(
+            archive=self.archive,
             assets=self.assets,
             command=self.command,
             dir=self.dir,
@@ -126,7 +139,8 @@ class AwaitableRunResult(RunResult):
             stdout=self.stdout)
 
 
-def run(assets: Optional[Sequence[str]] = None,
+def run(archive_paths: Optional[Sequence[str]] = None,
+        asset_paths: Optional[Sequence[str]] = None,
         command: Optional[str] = None,
         dir: Optional[str] = None,
         environment: Optional[Mapping[str, str]] = None,
@@ -138,7 +152,8 @@ def run(assets: Optional[Sequence[str]] = None,
     This command will always be run on any preview or deployment
 
 
-    :param Sequence[str] assets: A list of glob paths to search after the command completes and return as an archive
+    :param Sequence[str] archive_paths: A list of path globs to return as a single archive asset after the command completes.
+    :param Sequence[str] asset_paths: A list of path globs to read after the command completes.
     :param str command: The command to run.
     :param str dir: The working directory in which to run the command from.
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
@@ -147,7 +162,8 @@ def run(assets: Optional[Sequence[str]] = None,
     :param str stdin: Pass a string to the command's process as standard in
     """
     __args__ = dict()
-    __args__['assets'] = assets
+    __args__['archivePaths'] = archive_paths
+    __args__['assetPaths'] = asset_paths
     __args__['command'] = command
     __args__['dir'] = dir
     __args__['environment'] = environment
@@ -157,6 +173,7 @@ def run(assets: Optional[Sequence[str]] = None,
     __ret__ = pulumi.runtime.invoke('command:local:run', __args__, opts=opts, typ=RunResult).value
 
     return AwaitableRunResult(
+        archive=__ret__.archive,
         assets=__ret__.assets,
         command=__ret__.command,
         dir=__ret__.dir,
@@ -168,7 +185,8 @@ def run(assets: Optional[Sequence[str]] = None,
 
 
 @_utilities.lift_output_func(run)
-def run_output(assets: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
+def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
+               asset_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
                command: Optional[pulumi.Input[str]] = None,
                dir: Optional[pulumi.Input[Optional[str]]] = None,
                environment: Optional[pulumi.Input[Optional[Mapping[str, str]]]] = None,
@@ -180,7 +198,8 @@ def run_output(assets: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
     This command will always be run on any preview or deployment
 
 
-    :param Sequence[str] assets: A list of glob paths to search after the command completes and return as an archive
+    :param Sequence[str] archive_paths: A list of path globs to return as a single archive asset after the command completes.
+    :param Sequence[str] asset_paths: A list of path globs to read after the command completes.
     :param str command: The command to run.
     :param str dir: The working directory in which to run the command from.
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.

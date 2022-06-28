@@ -317,8 +317,15 @@
                             "type": "string"
                         }
                     },
-                    "assets": {
-                        "description": "A list of glob paths to search after the command completes and return as an archive",
+                    "assetPaths": {
+                        "description": "A list of path globs to read after the command completes.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "archivePaths": {
+                        "description": "A list of path globs to return as a single archive asset after the command completes.",
                         "type": "array",
                         "items": {
                             "type": "string"
@@ -372,7 +379,14 @@
                         "type": "string"
                     },
                     "assets": {
-                        "description": "An archive of assets found after running the command.",
+                        "description": "A map of assets found after running the command.\nThe key is the relative path from the command dir",
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Asset"
+                        }
+                    },
+                    "archive": {
+                        "description": "An archive asset containing files found after running the command.",
                         "$ref": "pulumi.json#/Archive"
                     }
                 },

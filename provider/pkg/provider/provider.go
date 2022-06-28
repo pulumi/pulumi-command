@@ -107,7 +107,7 @@ func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeReque
 		err = mapper.MapI(args, &cmd)
 		cmd.RunCommand(ctx, k.host, "")
 
-		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		outputs, err = mapper.New(&mapper.Opts{}).Encode(cmd)
 		if err != nil {
 			return nil, err
 		}

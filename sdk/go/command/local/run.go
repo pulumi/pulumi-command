@@ -22,8 +22,10 @@ func Run(ctx *pulumi.Context, args *RunArgs, opts ...pulumi.InvokeOption) (*RunR
 }
 
 type RunArgs struct {
-	// A list of glob paths to search after the command completes and return as an archive
-	Assets []string `pulumi:"assets"`
+	// A list of path globs to return as a single archive asset after the command completes.
+	ArchivePaths []string `pulumi:"archivePaths"`
+	// A list of path globs to read after the command completes.
+	AssetPaths []string `pulumi:"assetPaths"`
 	// The command to run.
 	Command string `pulumi:"command"`
 	// The working directory in which to run the command from.
@@ -38,8 +40,11 @@ type RunArgs struct {
 }
 
 type RunResult struct {
-	// An archive of assets found after running the command.
-	Assets pulumi.Archive `pulumi:"assets"`
+	// An archive asset containing files found after running the command.
+	Archive pulumi.Archive `pulumi:"archive"`
+	// A map of assets found after running the command.
+	// The key is the relative path from the command dir
+	Assets map[string]pulumi.AssetOrArchive `pulumi:"assets"`
 	// The command to run.
 	Command string `pulumi:"command"`
 	// The directory from which the command was run from.
@@ -71,8 +76,10 @@ func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOpt
 }
 
 type RunOutputArgs struct {
-	// A list of glob paths to search after the command completes and return as an archive
-	Assets pulumi.StringArrayInput `pulumi:"assets"`
+	// A list of path globs to return as a single archive asset after the command completes.
+	ArchivePaths pulumi.StringArrayInput `pulumi:"archivePaths"`
+	// A list of path globs to read after the command completes.
+	AssetPaths pulumi.StringArrayInput `pulumi:"assetPaths"`
 	// The command to run.
 	Command pulumi.StringInput `pulumi:"command"`
 	// The working directory in which to run the command from.
@@ -104,9 +111,15 @@ func (o RunResultOutput) ToRunResultOutputWithContext(ctx context.Context) RunRe
 	return o
 }
 
-// An archive of assets found after running the command.
-func (o RunResultOutput) Assets() pulumi.ArchiveOutput {
-	return o.ApplyT(func(v RunResult) pulumi.Archive { return v.Assets }).(pulumi.ArchiveOutput)
+// An archive asset containing files found after running the command.
+func (o RunResultOutput) Archive() pulumi.ArchiveOutput {
+	return o.ApplyT(func(v RunResult) pulumi.Archive { return v.Archive }).(pulumi.ArchiveOutput)
+}
+
+// A map of assets found after running the command.
+// The key is the relative path from the command dir
+func (o RunResultOutput) Assets() pulumi.AssetOrArchiveMapOutput {
+	return o.ApplyT(func(v RunResult) map[string]pulumi.AssetOrArchive { return v.Assets }).(pulumi.AssetOrArchiveMapOutput)
 }
 
 // The command to run.

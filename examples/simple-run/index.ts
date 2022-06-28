@@ -6,15 +6,18 @@ const pw = new random.RandomPassword("pw", { length: 10 });
 
 const plainFile = local.runOutput({
     command: `echo "Hello world!" > hello.txt`,
-    assets: ["hello.txt"]
+    assetPaths: ["*.txt"],
+    archivePaths: ["*.txt"],
 });
 
 const secretFile = local.runOutput({
     command: interpolate`echo "${pw.result}" > password.txt`,
-    assets: ["password.txt"]
+    assetPaths: ["password.txt"]
 });
 
 export const plainOutput = plainFile.stdout;
 export const plainAssets = plainFile.assets;
+export const plainArchive = plainFile.archive;
 export const secretOutput = secretFile.stdout;
 export const secretAssets = secretFile.assets;
+export const secretArchive = secretFile.archive;

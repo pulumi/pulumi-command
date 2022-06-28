@@ -29,16 +29,28 @@ namespace Pulumi.Command.Local
 
     public sealed class RunArgs : Pulumi.InvokeArgs
     {
-        [Input("assets")]
-        private List<string>? _assets;
+        [Input("archivePaths")]
+        private List<string>? _archivePaths;
 
         /// <summary>
-        /// A list of glob paths to search after the command completes and return as an archive
+        /// A list of path globs to return as a single archive asset after the command completes.
         /// </summary>
-        public List<string> Assets
+        public List<string> ArchivePaths
         {
-            get => _assets ?? (_assets = new List<string>());
-            set => _assets = value;
+            get => _archivePaths ?? (_archivePaths = new List<string>());
+            set => _archivePaths = value;
+        }
+
+        [Input("assetPaths")]
+        private List<string>? _assetPaths;
+
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// </summary>
+        public List<string> AssetPaths
+        {
+            get => _assetPaths ?? (_assetPaths = new List<string>());
+            set => _assetPaths = value;
         }
 
         /// <summary>
@@ -91,16 +103,28 @@ namespace Pulumi.Command.Local
 
     public sealed class RunInvokeArgs : Pulumi.InvokeArgs
     {
-        [Input("assets")]
-        private InputList<string>? _assets;
+        [Input("archivePaths")]
+        private InputList<string>? _archivePaths;
 
         /// <summary>
-        /// A list of glob paths to search after the command completes and return as an archive
+        /// A list of path globs to return as a single archive asset after the command completes.
         /// </summary>
-        public InputList<string> Assets
+        public InputList<string> ArchivePaths
         {
-            get => _assets ?? (_assets = new InputList<string>());
-            set => _assets = value;
+            get => _archivePaths ?? (_archivePaths = new InputList<string>());
+            set => _archivePaths = value;
+        }
+
+        [Input("assetPaths")]
+        private InputList<string>? _assetPaths;
+
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// </summary>
+        public InputList<string> AssetPaths
+        {
+            get => _assetPaths ?? (_assetPaths = new InputList<string>());
+            set => _assetPaths = value;
         }
 
         /// <summary>
@@ -156,9 +180,14 @@ namespace Pulumi.Command.Local
     public sealed class RunResult
     {
         /// <summary>
-        /// An archive of assets found after running the command.
+        /// An archive asset containing files found after running the command.
         /// </summary>
-        public readonly Archive? Assets;
+        public readonly Archive? Archive;
+        /// <summary>
+        /// A map of assets found after running the command.
+        /// The key is the relative path from the command dir
+        /// </summary>
+        public readonly ImmutableDictionary<string, AssetOrArchive>? Assets;
         /// <summary>
         /// The command to run.
         /// </summary>
@@ -191,7 +220,9 @@ namespace Pulumi.Command.Local
 
         [OutputConstructor]
         private RunResult(
-            Archive? assets,
+            Archive? archive,
+
+            ImmutableDictionary<string, AssetOrArchive>? assets,
 
             string command,
 
@@ -207,6 +238,7 @@ namespace Pulumi.Command.Local
 
             string? stdout)
         {
+            Archive = archive;
             Assets = assets;
             Command = command;
             Dir = dir;

@@ -15,7 +15,8 @@ export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResu
 
     opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
     return pulumi.runtime.invoke("command:local:run", {
-        "assets": args.assets,
+        "archivePaths": args.archivePaths,
+        "assetPaths": args.assetPaths,
         "command": args.command,
         "dir": args.dir,
         "environment": args.environment,
@@ -26,9 +27,13 @@ export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResu
 
 export interface RunArgs {
     /**
-     * A list of glob paths to search after the command completes and return as an archive
+     * A list of path globs to return as a single archive asset after the command completes.
      */
-    assets?: string[];
+    archivePaths?: string[];
+    /**
+     * A list of path globs to read after the command completes.
+     */
+    assetPaths?: string[];
     /**
      * The command to run.
      */
@@ -54,9 +59,14 @@ export interface RunArgs {
 
 export interface RunResult {
     /**
-     * An archive of assets found after running the command.
+     * An archive asset containing files found after running the command.
      */
-    readonly assets?: pulumi.asset.Archive;
+    readonly archive?: pulumi.asset.Archive;
+    /**
+     * A map of assets found after running the command.
+     * The key is the relative path from the command dir
+     */
+    readonly assets?: {[key: string]: pulumi.asset.Asset | pulumi.asset.Archive};
     /**
      * The command to run.
      */
@@ -94,9 +104,13 @@ export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOptions): pul
 
 export interface RunOutputArgs {
     /**
-     * A list of glob paths to search after the command completes and return as an archive
+     * A list of path globs to return as a single archive asset after the command completes.
      */
-    assets?: pulumi.Input<pulumi.Input<string>[]>;
+    archivePaths?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * A list of path globs to read after the command completes.
+     */
+    assetPaths?: pulumi.Input<pulumi.Input<string>[]>;
     /**
      * The command to run.
      */
