@@ -30,7 +30,25 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
+type commandContext struct {
+	// Input
+	Interpreter *[]string          `pulumi:"interpreter,optional"`
+	Dir         *string            `pulumi:"dir,optional"`
+	Environment *map[string]string `pulumi:"environment,optional"`
+	Stdin       *string            `pulumi:"stdin,optional"`
+
+	// Output
+	Stdout string `pulumi:"stdout"`
+	Stderr string `pulumi:"stderr"`
+}
+
+type run struct {
+	commandContext
+	Command string `pulumi:"command"`
+}
+
 type command struct {
+	commandContext
 	// Input
 	Interpreter *[]string          `pulumi:"interpreter,optional"`
 	Dir         *string            `pulumi:"dir,optional"`
@@ -39,12 +57,19 @@ type command struct {
 	Create      string             `pulumi:"create"`
 	Delete      *string            `pulumi:"delete,optional"`
 	// Optional, if empty will run Create again
-	Update      *string			   `pulumi:"update,optional"`
-	Stdin       *string            `pulumi:"stdin,optional"`
+	Update *string `pulumi:"update,optional"`
+	Stdin  *string `pulumi:"stdin,optional"`
 
 	// Output
 	Stdout string `pulumi:"stdout"`
 	Stderr string `pulumi:"stderr"`
+}
+
+func (c *run) RunCommand(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
+	stdout, stderr, id, err := c.run(ctx, c.Command, host, urn)
+	c.Stdout = stdout
+	c.Stderr = stderr
+	return id, err
 }
 
 // RunCreate executes the create command, sets Stdout and Stderr, and returns a unique
@@ -60,9 +85,9 @@ func (c *command) RunCreate(ctx context.Context, host *provider.HostClient, urn 
 func (c *command) RunUpdate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
 	if c.Update != nil {
 		stdout, stderr, id, err := c.run(ctx, *c.Update, host, urn)
-	c.Stdout = stdout
-	c.Stderr = stderr
-	return id, err
+		c.Stdout = stdout
+		c.Stderr = stderr
+		return id, err
 	}
 	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
 	c.Stdout = stdout
@@ -82,7 +107,7 @@ func (c *command) RunDelete(ctx context.Context, host *provider.HostClient, urn 
 
 // run executes the create command, sets Stdout and Stderr, and returns a unique
 // ID for the command execution
-func (c *command) run(ctx context.Context, command string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {
+func (c *commandContext) run(ctx context.Context, command string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {
 	var args []string
 	if c.Interpreter != nil && len(*c.Interpreter) > 0 {
 		args = append(args, *c.Interpreter...)

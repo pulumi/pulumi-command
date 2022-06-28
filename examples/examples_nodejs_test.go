@@ -102,8 +102,8 @@ func TestSimpleWithUpdate(t *testing.T) {
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
 			EditDirs: []integration.EditDir{
 				{
-					Dir:           filepath.Join("simple-with-update", "update-change"),
-					Additive:      true,
+					Dir:      filepath.Join("simple-with-update", "update-change"),
+					Additive: true,
 				},
 			},
 		})
@@ -160,6 +160,14 @@ func TestLambda(t *testing.T) {
 				assert.True(t, ok)
 				assert.Len(t, out, 10)
 			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
+func TestSimpleRun(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "simple-run"),
 		})
 	integration.ProgramTest(t, &test)
 }

@@ -294,6 +294,92 @@
             ]
         }
     },
+    "functions": {
+        "command:local:run": {
+            "description": "A local command to be executed.\nThis command will always be run on any preview or deployment",
+            "inputs": {
+                "properties": {
+                    "interpreter": {
+                        "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "dir": {
+                        "description": "The working directory in which to run the command from.",
+                        "type": "string"
+                    },
+                    "environment": {
+                        "description": "Additional environment variables available to the command's process.",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "assets": {
+                        "description": "A list of glob paths to search after the command completes and return as an archive",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "command": {
+                        "type": "string",
+                        "description": "The command to run."
+                    },
+                    "stdin": {
+                        "description": "Pass a string to the command's process as standard in",
+                        "type": "string"
+                    }
+                },
+                "required": ["command"]
+            },
+            "outputs": {
+                "properties": {
+                    "interpreter": {
+                        "description": "The program and arguments to run the command.\nFor example: `[\"/bin/sh\", \"-c\"]`",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "dir": {
+                        "description": "The directory from which the command was run from.",
+                        "type": "string"
+                    },
+                    "environment": {
+                        "description": "Additional environment variables available to the command's process.",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "command": {
+                        "type": "string",
+                        "description": "The command to run."
+                    },
+                    "stdout": {
+                        "description": "The standard output of the command's process",
+                        "type": "string"
+                    },
+                    "stderr": {
+                        "description": "The standard error of the command's process",
+                        "type": "string"
+                    },
+                    "stdin": {
+                        "description": "String passed to the command's process as standard in.",
+                        "type": "string"
+                    },
+                    "assets": {
+                        "description": "An archive of assets found after running the command.",
+                        "$ref": "pulumi.json#/Archive"
+                    }
+                },
+                "required": ["command", "stdin", "stderr"]
+            }
+        }
+    },
     "language": {
         "csharp": {
             "packageReferences": {

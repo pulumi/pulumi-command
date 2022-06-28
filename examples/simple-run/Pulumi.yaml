@@ -1,0 +1,3 @@
+name: command-simple-run
+runtime: nodejs
+description: A simple command example

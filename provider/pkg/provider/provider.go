@@ -89,9 +89,43 @@ func (k *commandProvider) Configure(_ context.Context, req *pulumirpc.ConfigureR
 }
 
 // Invoke dynamically executes a built-in function in the provider.
-func (k *commandProvider) Invoke(_ context.Context, req *pulumirpc.InvokeRequest) (*pulumirpc.InvokeResponse, error) {
+func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeRequest) (*pulumirpc.InvokeResponse, error) {
+	k.addContext(ctx)
+	defer k.removeContext(ctx)
 	tok := req.GetTok()
-	return nil, fmt.Errorf("unknown Invoke token %q", tok)
+	argProps, err := plugin.UnmarshalProperties(req.GetArgs(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	if err != nil {
+		return nil, err
+	}
+	args := argProps.Mappable()
+
+	var outputs map[string]interface{}
+
+	switch tok {
+	case "command:local:run":
+		var cmd run
+		err = mapper.MapI(args, &cmd)
+		cmd.RunCommand(ctx, k.host, "")
+
+		outputs, err = mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true}).Encode(cmd)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("unknown Invoke token %q", tok)
+	}
+
+	outputProperties, err := plugin.MarshalProperties(
+		resource.NewPropertyMapFromMap(outputs),
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pulumirpc.InvokeResponse{
+		Return: outputProperties,
+	}, nil
 }
 
 // StreamInvoke dynamically executes a built-in function in the provider. The result is streamed
