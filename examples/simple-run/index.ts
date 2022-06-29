@@ -6,8 +6,8 @@ const pw = new random.RandomPassword("pw", { length: 10 });
 
 const plainFile = local.runOutput({
     command: `echo "Hello world!" > hello.txt`,
-    assetPaths: ["*.txt"],
-    archivePaths: ["*.txt"],
+    assetPaths: ["*.txt", "!**password**"],
+    archivePaths: ["*.txt", "!**password**"],
 });
 
 const secretFile = local.runOutput({

@@ -168,6 +168,11 @@ func TestSimpleRun(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), "simple-run"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				assets, ok := stack.Outputs["plainAssets"].(map[string]interface{})
+				assert.True(t, ok)
+				assert.Len(t, assets, 1)
+			},
 		})
 	integration.ProgramTest(t, &test)
 }
