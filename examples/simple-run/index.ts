@@ -19,10 +19,10 @@ const globTest = local.runOutput({
     command: "pwd",
     dir: process.cwd(),
     archivePaths: [
+        "**/*.txt",
         "*",
         "!yarn.lock",
-        "*.txt",
-        "hello.txt",
+        "!**password**",
     ]
 })
 

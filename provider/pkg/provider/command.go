@@ -27,6 +27,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/gobwas/glob"
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
@@ -211,6 +212,19 @@ func (c *commandContext) run(ctx context.Context, command string, host *provider
 
 func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {
 	assets := map[string]*resource.Asset{}
+	compiledGlobs := make([]glob.Glob, len(globs))
+	isGlobExclude := make([]bool, len(globs))
+	for i, g := range globs {
+		isExclude := strings.HasPrefix(g, "!")
+		g = strings.TrimPrefix(g, "!")
+		compiled, err := glob.Compile(g, '/')
+		if err != nil {
+			return nil, err
+		}
+		compiledGlobs[i] = compiled
+		isGlobExclude[i] = isExclude
+	}
+
 	err := fs.WalkDir(os.DirFS(dir), ".", func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -218,19 +232,12 @@ func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) 
 		if d.IsDir() {
 			return nil
 		}
-		for _, pathGlob := range globs {
-			isExclude := strings.HasPrefix(pathGlob, "!")
-			if isExclude {
-				pathGlob = strings.TrimPrefix(pathGlob, "!")
-			}
-			matched, err := path.Match(pathGlob, p)
-			if err != nil {
-				return err
-			}
+		for i, g := range compiledGlobs {
+			matched := g.Match(p)
 			if !matched {
 				continue
 			}
-			if isExclude {
+			if isGlobExclude[i] {
 				delete(assets, p)
 			} else {
 				assets[p], err = resource.NewPathAsset(path.Join(dir, p))
