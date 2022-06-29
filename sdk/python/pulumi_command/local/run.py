@@ -149,7 +149,7 @@ def run(archive_paths: Optional[Sequence[str]] = None,
         opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableRunResult:
     """
     A local command to be executed.
-    This command will always be run on any preview or deployment
+    This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
 
 
     :param Sequence[str] archive_paths: A list of path globs to return as a single archive asset after the command completes.
@@ -195,7 +195,7 @@ def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = 
                opts: Optional[pulumi.InvokeOptions] = None) -> pulumi.Output[RunResult]:
     """
     A local command to be executed.
-    This command will always be run on any preview or deployment
+    This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
 
 
     :param Sequence[str] archive_paths: A list of path globs to return as a single archive asset after the command completes.

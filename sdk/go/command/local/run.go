@@ -11,7 +11,7 @@ import (
 )
 
 // A local command to be executed.
-// This command will always be run on any preview or deployment
+// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
 func Run(ctx *pulumi.Context, args *RunArgs, opts ...pulumi.InvokeOption) (*RunResult, error) {
 	var rv RunResult
 	err := ctx.Invoke("command:local:run", args, &rv, opts...)

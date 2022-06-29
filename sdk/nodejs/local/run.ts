@@ -6,7 +6,7 @@ import * as utilities from "../utilities";
 
 /**
  * A local command to be executed.
- * This command will always be run on any preview or deployment
+ * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
  */
 export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResult> {
     if (!opts) {

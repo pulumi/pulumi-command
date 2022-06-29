@@ -335,7 +335,7 @@
     },
     "functions": {
         "command:local:run": {
-            "description": "A local command to be executed.\nThis command will always be run on any preview or deployment",
+            "description": "A local command to be executed.\nThis command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.",
             "inputs": {
                 "properties": {
                     "interpreter": {
