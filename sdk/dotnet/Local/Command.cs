@@ -20,6 +20,31 @@ namespace Pulumi.Command.Local
     public partial class Command : Pulumi.CustomResource
     {
         /// <summary>
+        /// An archive asset containing files found after running the command.
+        /// </summary>
+        [Output("archive")]
+        public Output<Archive?> Archive { get; private set; } = null!;
+
+        /// <summary>
+        /// A list of path globs to return as a single archive asset after the command completes.
+        /// </summary>
+        [Output("archivePaths")]
+        public Output<ImmutableArray<string>> ArchivePaths { get; private set; } = null!;
+
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// </summary>
+        [Output("assetPaths")]
+        public Output<ImmutableArray<string>> AssetPaths { get; private set; } = null!;
+
+        /// <summary>
+        /// A map of assets found after running the command.
+        /// The key is the relative path from the command dir
+        /// </summary>
+        [Output("assets")]
+        public Output<ImmutableDictionary<string, AssetOrArchive>?> Assets { get; private set; } = null!;
+
+        /// <summary>
         /// The command to run on create.
         /// </summary>
         [Output("create")]
@@ -126,6 +151,30 @@ namespace Pulumi.Command.Local
 
     public sealed class CommandArgs : Pulumi.ResourceArgs
     {
+        [Input("archivePaths")]
+        private InputList<string>? _archivePaths;
+
+        /// <summary>
+        /// A list of path globs to return as a single archive asset after the command completes.
+        /// </summary>
+        public InputList<string> ArchivePaths
+        {
+            get => _archivePaths ?? (_archivePaths = new InputList<string>());
+            set => _archivePaths = value;
+        }
+
+        [Input("assetPaths")]
+        private InputList<string>? _assetPaths;
+
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// </summary>
+        public InputList<string> AssetPaths
+        {
+            get => _assetPaths ?? (_assetPaths = new InputList<string>());
+            set => _assetPaths = value;
+        }
+
         /// <summary>
         /// The command to run on create.
         /// </summary>

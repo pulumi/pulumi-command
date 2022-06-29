@@ -18,6 +18,15 @@ import (
 type Command struct {
 	pulumi.CustomResourceState
 
+	// An archive asset containing files found after running the command.
+	Archive pulumi.ArchiveOutput `pulumi:"archive"`
+	// A list of path globs to return as a single archive asset after the command completes.
+	ArchivePaths pulumi.StringArrayOutput `pulumi:"archivePaths"`
+	// A list of path globs to read after the command completes.
+	AssetPaths pulumi.StringArrayOutput `pulumi:"assetPaths"`
+	// A map of assets found after running the command.
+	// The key is the relative path from the command dir
+	Assets pulumi.AssetOrArchiveMapOutput `pulumi:"assets"`
 	// The command to run on create.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
 	// The command to run on delete.
@@ -81,6 +90,10 @@ func (CommandState) ElementType() reflect.Type {
 }
 
 type commandArgs struct {
+	// A list of path globs to return as a single archive asset after the command completes.
+	ArchivePaths []string `pulumi:"archivePaths"`
+	// A list of path globs to read after the command completes.
+	AssetPaths []string `pulumi:"assetPaths"`
 	// The command to run on create.
 	Create *string `pulumi:"create"`
 	// The command to run on delete.
@@ -101,6 +114,10 @@ type commandArgs struct {
 
 // The set of arguments for constructing a Command resource.
 type CommandArgs struct {
+	// A list of path globs to return as a single archive asset after the command completes.
+	ArchivePaths pulumi.StringArrayInput
+	// A list of path globs to read after the command completes.
+	AssetPaths pulumi.StringArrayInput
 	// The command to run on create.
 	Create pulumi.StringPtrInput
 	// The command to run on delete.
@@ -204,6 +221,27 @@ func (o CommandOutput) ToCommandOutput() CommandOutput {
 
 func (o CommandOutput) ToCommandOutputWithContext(ctx context.Context) CommandOutput {
 	return o
+}
+
+// An archive asset containing files found after running the command.
+func (o CommandOutput) Archive() pulumi.ArchiveOutput {
+	return o.ApplyT(func(v *Command) pulumi.ArchiveOutput { return v.Archive }).(pulumi.ArchiveOutput)
+}
+
+// A list of path globs to return as a single archive asset after the command completes.
+func (o CommandOutput) ArchivePaths() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.ArchivePaths }).(pulumi.StringArrayOutput)
+}
+
+// A list of path globs to read after the command completes.
+func (o CommandOutput) AssetPaths() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.AssetPaths }).(pulumi.StringArrayOutput)
+}
+
+// A map of assets found after running the command.
+// The key is the relative path from the command dir
+func (o CommandOutput) Assets() pulumi.AssetOrArchiveMapOutput {
+	return o.ApplyT(func(v *Command) pulumi.AssetOrArchiveMapOutput { return v.Assets }).(pulumi.AssetOrArchiveMapOutput)
 }
 
 // The command to run on create.

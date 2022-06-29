@@ -98,6 +98,31 @@
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
                     "type": "string"
+                },
+                "assetPaths": {
+                    "description": "A list of path globs to read after the command completes.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "archivePaths": {
+                    "description": "A list of path globs to return as a single archive asset after the command completes.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "assets": {
+                    "description": "A map of assets found after running the command.\nThe key is the relative path from the command dir",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Asset"
+                    }
+                },
+                "archive": {
+                    "description": "An archive asset containing files found after running the command.",
+                    "$ref": "pulumi.json#/Archive"
                 }
             },
             "required": [
@@ -144,6 +169,20 @@
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
                     "type": "string"
+                },
+                "assetPaths": {
+                    "description": "A list of path globs to read after the command completes.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "archivePaths": {
+                    "description": "A list of path globs to return as a single archive asset after the command completes.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             },
             "requiredInputs": []
