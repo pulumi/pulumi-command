@@ -5,10 +5,10 @@ go 1.18
 require (
 	github.com/golang/protobuf v1.5.2
 	github.com/pkg/sftp v1.13.4
-	github.com/pulumi/pulumi/pkg/v3 v3.35.1
-	github.com/pulumi/pulumi/sdk/v3 v3.35.1
+	github.com/pulumi/pulumi/pkg/v3 v3.35.2
+	github.com/pulumi/pulumi/sdk/v3 v3.35.2
 	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898
-	google.golang.org/grpc v1.45.0
+	google.golang.org/grpc v1.47.0
 )
 
 require (
@@ -79,7 +79,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.11.1 // indirect
+	github.com/hashicorp/hcl/v2 v2.12.0 // indirect
 	github.com/hashicorp/vault/api v1.1.1 // indirect
 	github.com/hashicorp/vault/sdk v0.2.1 // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
@@ -154,7 +154,7 @@ require (
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/frand v1.4.2 // indirect
 	sourcegraph.com/sourcegraph/appdash v0.0.0-20211028080628-e2786a622600 // indirect
 )
