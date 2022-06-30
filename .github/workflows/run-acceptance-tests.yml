@@ -1,5 +1,6 @@
 name: run-acceptance-tests
 on:
+  workflow_dispatch:
   repository_dispatch:
     types:
     - run-acceptance-tests-command
