@@ -23,8 +23,44 @@ func Run(ctx *pulumi.Context, args *RunArgs, opts ...pulumi.InvokeOption) (*RunR
 
 type RunArgs struct {
 	// A list of path globs to return as a single archive asset after the command completes.
+	//
+	// When specifying glob patterns the following rules apply:
+	// - We only include files not directories for assets and archives.
+	// - Path separators are `/` on all platforms - including Windows.
+	// - Patterns starting with `!` are 'exclude' rules.
+	// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+	// - `*` matches anything except `/`
+	// - `**` matches anything, _including_ `/`
+	// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+	// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+	//
+	// #### Example
+	//
+	// Given the rules:
+	//
+	// When evaluating against this folder:
+	//
+	// The following paths will be returned:
 	ArchivePaths []string `pulumi:"archivePaths"`
 	// A list of path globs to read after the command completes.
+	//
+	// When specifying glob patterns the following rules apply:
+	// - We only include files not directories for assets and archives.
+	// - Path separators are `/` on all platforms - including Windows.
+	// - Patterns starting with `!` are 'exclude' rules.
+	// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+	// - `*` matches anything except `/`
+	// - `**` matches anything, _including_ `/`
+	// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+	// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+	//
+	// #### Example
+	//
+	// Given the rules:
+	//
+	// When evaluating against this folder:
+	//
+	// The following paths will be returned:
 	AssetPaths []string `pulumi:"assetPaths"`
 	// The command to run.
 	Command string `pulumi:"command"`
@@ -77,8 +113,44 @@ func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOpt
 
 type RunOutputArgs struct {
 	// A list of path globs to return as a single archive asset after the command completes.
+	//
+	// When specifying glob patterns the following rules apply:
+	// - We only include files not directories for assets and archives.
+	// - Path separators are `/` on all platforms - including Windows.
+	// - Patterns starting with `!` are 'exclude' rules.
+	// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+	// - `*` matches anything except `/`
+	// - `**` matches anything, _including_ `/`
+	// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+	// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+	//
+	// #### Example
+	//
+	// Given the rules:
+	//
+	// When evaluating against this folder:
+	//
+	// The following paths will be returned:
 	ArchivePaths pulumi.StringArrayInput `pulumi:"archivePaths"`
 	// A list of path globs to read after the command completes.
+	//
+	// When specifying glob patterns the following rules apply:
+	// - We only include files not directories for assets and archives.
+	// - Path separators are `/` on all platforms - including Windows.
+	// - Patterns starting with `!` are 'exclude' rules.
+	// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+	// - `*` matches anything except `/`
+	// - `**` matches anything, _including_ `/`
+	// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+	// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+	//
+	// #### Example
+	//
+	// Given the rules:
+	//
+	// When evaluating against this folder:
+	//
+	// The following paths will be returned:
 	AssetPaths pulumi.StringArrayInput `pulumi:"assetPaths"`
 	// The command to run.
 	Command pulumi.StringInput `pulumi:"command"`

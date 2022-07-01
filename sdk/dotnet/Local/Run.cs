@@ -34,6 +34,43 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// A list of path globs to return as a single archive asset after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
         /// </summary>
         public List<string> ArchivePaths
         {
@@ -46,6 +83,43 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// A list of path globs to read after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
         /// </summary>
         public List<string> AssetPaths
         {
@@ -108,6 +182,43 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// A list of path globs to return as a single archive asset after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
         /// </summary>
         public InputList<string> ArchivePaths
         {
@@ -120,6 +231,43 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// A list of path globs to read after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
         /// </summary>
         public InputList<string> AssetPaths
         {

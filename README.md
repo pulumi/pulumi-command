@@ -276,6 +276,60 @@ const cleanupKubernetesNamespaces = new local.Command("cleanupKubernetesNamespac
 });
 ```
 
+### Working with Assets and Paths
+
+When a local command creates assets as part of its execution, these can be captured by specifying `assetPaths` or `archivePaths`.
+
+```typescript
+const lambdaBuild = local.runOutput({
+    dir: "../my-function",
+    command: `yarn && yarn build`,
+    archivePaths: ["dist/**"],
+});
+
+new aws.lambda.Function("my-function", {
+    code: lambdaBuild.archive,
+   // ...
+});
+```
+
+When using the `assetPaths` and `archivePaths`, they take a list of 'globs'.
+- We only include files not directories for assets and archives.
+- Path separators are `/` on all platforms - including Windows.
+- Patterns starting with `!` are 'exclude' rules.
+- Rules are evaluated in order, so exclude rules should be after inclusion rules.
+- `*` matches anything except `/`
+- `**` matches anything, _including_ `/`
+- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+#### Asset Paths Example
+
+Given the rules:
+```yaml
+- "assets/**"
+- "src/**.js"
+- "!**secret.*"
+```
+
+When evaluating against this folder:
+
+```yaml
+- assets/
+  - logos/
+    - logo.svg
+- src/
+  - index.js
+  - secret.js
+```
+
+The following paths will be returned:
+
+```yaml
+- assets/logos/logo.svg
+- src/index.js
+```
+
 ## Building
 
 ### Dependencies
