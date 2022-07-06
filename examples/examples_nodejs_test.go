@@ -31,6 +31,14 @@ func TestRandom(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestLambdaTs(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "lambda-ts"),
+		})
+	integration.ProgramTest(t, &test)
+}
+
 func TestStdin(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
