@@ -151,10 +151,10 @@ func TestEc2RemoteTs(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestLambda(t *testing.T) {
+func TestLambdaInvoke(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "lambda"),
+			Dir: filepath.Join(getCwd(t), "lambda-invoke"),
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				out, ok := stack.Outputs["output"].(string)
 				assert.True(t, ok)
