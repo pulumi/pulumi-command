@@ -6,8 +6,8 @@ require (
 	github.com/gobwas/glob v0.2.3
 	github.com/golang/protobuf v1.5.2
 	github.com/pkg/sftp v1.13.4
-	github.com/pulumi/pulumi/pkg/v3 v3.35.2
-	github.com/pulumi/pulumi/sdk/v3 v3.35.2
+	github.com/pulumi/pulumi/pkg/v3 v3.35.3
+	github.com/pulumi/pulumi/sdk/v3 v3.35.3
 	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898
 	google.golang.org/grpc v1.47.0
 )
