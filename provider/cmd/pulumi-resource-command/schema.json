@@ -98,6 +98,31 @@
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
                     "type": "string"
+                },
+                "assetPaths": {
+                    "description": "A list of path globs to read after the command completes.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "archivePaths": {
+                    "description": "A list of path globs to return as a single archive asset after the command completes.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "assets": {
+                    "description": "A map of assets found after running the command.\nThe key is the relative path from the command dir",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Asset"
+                    }
+                },
+                "archive": {
+                    "description": "An archive asset containing files found after running the command.",
+                    "$ref": "pulumi.json#/Archive"
                 }
             },
             "required": [
@@ -144,6 +169,20 @@
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
                     "type": "string"
+                },
+                "assetPaths": {
+                    "description": "A list of path globs to read after the command completes.\n\nWhen specifying glob patterns the following rules apply:\n- We only include files not directories for assets and archives.\n- Path separators are `/` on all platforms - including Windows.\n- Patterns starting with `!` are 'exclude' rules.\n- Rules are evaluated in order, so exclude rules should be after inclusion rules.\n- `*` matches anything except `/`\n- `**` matches anything, _including_ `/`\n- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.\n- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)\n\n#### Example\n\nGiven the rules:\n```yaml\n- \"assets/**\"\n- \"src/**.js\"\n- \"!**secret.*\"\n```\n\nWhen evaluating against this folder:\n\n```yaml\n- assets/\n  - logos/\n    - logo.svg\n- src/\n  - index.js\n  - secret.js\n```\n\nThe following paths will be returned:\n\n```yaml\n- assets/logos/logo.svg\n- src/index.js\n```",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "archivePaths": {
+                    "description": "A list of path globs to return as a single archive asset after the command completes.\n\nWhen specifying glob patterns the following rules apply:\n- We only include files not directories for assets and archives.\n- Path separators are `/` on all platforms - including Windows.\n- Patterns starting with `!` are 'exclude' rules.\n- Rules are evaluated in order, so exclude rules should be after inclusion rules.\n- `*` matches anything except `/`\n- `**` matches anything, _including_ `/`\n- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.\n- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)\n\n#### Example\n\nGiven the rules:\n```yaml\n- \"assets/**\"\n- \"src/**.js\"\n- \"!**secret.*\"\n```\n\nWhen evaluating against this folder:\n\n```yaml\n- assets/\n  - logos/\n    - logo.svg\n- src/\n  - index.js\n  - secret.js\n```\n\nThe following paths will be returned:\n\n```yaml\n- assets/logos/logo.svg\n- src/index.js\n```",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             },
             "requiredInputs": []
@@ -292,6 +331,106 @@
                 "localPath",
                 "remotePath"
             ]
+        }
+    },
+    "functions": {
+        "command:local:run": {
+            "description": "A local command to be executed.\nThis command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.",
+            "inputs": {
+                "properties": {
+                    "interpreter": {
+                        "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "dir": {
+                        "description": "The working directory in which to run the command from.",
+                        "type": "string"
+                    },
+                    "environment": {
+                        "description": "Additional environment variables available to the command's process.",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "assetPaths": {
+                        "description": "A list of path globs to read after the command completes.\n\nWhen specifying glob patterns the following rules apply:\n- We only include files not directories for assets and archives.\n- Path separators are `/` on all platforms - including Windows.\n- Patterns starting with `!` are 'exclude' rules.\n- Rules are evaluated in order, so exclude rules should be after inclusion rules.\n- `*` matches anything except `/`\n- `**` matches anything, _including_ `/`\n- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.\n- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)\n\n#### Example\n\nGiven the rules:\n```yaml\n- \"assets/**\"\n- \"src/**.js\"\n- \"!**secret.*\"\n```\n\nWhen evaluating against this folder:\n\n```yaml\n- assets/\n  - logos/\n    - logo.svg\n- src/\n  - index.js\n  - secret.js\n```\n\nThe following paths will be returned:\n\n```yaml\n- assets/logos/logo.svg\n- src/index.js\n```",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "archivePaths": {
+                        "description": "A list of path globs to return as a single archive asset after the command completes.\n\nWhen specifying glob patterns the following rules apply:\n- We only include files not directories for assets and archives.\n- Path separators are `/` on all platforms - including Windows.\n- Patterns starting with `!` are 'exclude' rules.\n- Rules are evaluated in order, so exclude rules should be after inclusion rules.\n- `*` matches anything except `/`\n- `**` matches anything, _including_ `/`\n- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.\n- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)\n\n#### Example\n\nGiven the rules:\n```yaml\n- \"assets/**\"\n- \"src/**.js\"\n- \"!**secret.*\"\n```\n\nWhen evaluating against this folder:\n\n```yaml\n- assets/\n  - logos/\n    - logo.svg\n- src/\n  - index.js\n  - secret.js\n```\n\nThe following paths will be returned:\n\n```yaml\n- assets/logos/logo.svg\n- src/index.js\n```",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "command": {
+                        "type": "string",
+                        "description": "The command to run."
+                    },
+                    "stdin": {
+                        "description": "Pass a string to the command's process as standard in",
+                        "type": "string"
+                    }
+                },
+                "required": ["command"]
+            },
+            "outputs": {
+                "properties": {
+                    "interpreter": {
+                        "description": "The program and arguments to run the command.\nFor example: `[\"/bin/sh\", \"-c\"]`",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "dir": {
+                        "description": "The directory from which the command was run from.",
+                        "type": "string"
+                    },
+                    "environment": {
+                        "description": "Additional environment variables available to the command's process.",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "command": {
+                        "type": "string",
+                        "description": "The command to run."
+                    },
+                    "stdout": {
+                        "description": "The standard output of the command's process",
+                        "type": "string"
+                    },
+                    "stderr": {
+                        "description": "The standard error of the command's process",
+                        "type": "string"
+                    },
+                    "stdin": {
+                        "description": "String passed to the command's process as standard in.",
+                        "type": "string"
+                    },
+                    "assets": {
+                        "description": "A map of assets found after running the command.\nThe key is the relative path from the command dir",
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Asset"
+                        }
+                    },
+                    "archive": {
+                        "description": "An archive asset containing files found after running the command.",
+                        "$ref": "pulumi.json#/Archive"
+                    }
+                },
+                "required": ["command", "stdin", "stderr"]
+            }
         }
     },
     "language": {

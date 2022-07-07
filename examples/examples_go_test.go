@@ -33,6 +33,9 @@ func TestStdinGo(t *testing.T) {
 				out, ok := stack.Outputs["output"].(string)
 				assert.True(t, ok)
 				assert.Equal(t, "the quick brown fox", out)
+				assets, ok := stack.Outputs["assets"].(map[string]interface{})
+				assert.True(t, ok)
+				assert.Len(t, assets, 1)
 			},
 		})
 	integration.ProgramTest(t, &test)

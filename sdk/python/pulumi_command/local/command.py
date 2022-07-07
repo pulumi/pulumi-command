@@ -14,6 +14,8 @@ __all__ = ['CommandArgs', 'Command']
 @pulumi.input_type
 class CommandArgs:
     def __init__(__self__, *,
+                 archive_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 asset_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  dir: Optional[pulumi.Input[str]] = None,
@@ -24,6 +26,82 @@ class CommandArgs:
                  update: Optional[pulumi.Input[str]] = None):
         """
         The set of arguments for constructing a Command resource.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] archive_paths: A list of path globs to return as a single archive asset after the command completes.
+               
+               When specifying glob patterns the following rules apply:
+               - We only include files not directories for assets and archives.
+               - Path separators are `/` on all platforms - including Windows.
+               - Patterns starting with `!` are 'exclude' rules.
+               - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+               - `*` matches anything except `/`
+               - `**` matches anything, _including_ `/`
+               - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+               - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+               
+               #### Example
+               
+               Given the rules:
+               ```yaml
+               - "assets/**"
+               - "src/**.js"
+               - "!**secret.*"
+               ```
+               
+               When evaluating against this folder:
+               
+               ```yaml
+               - assets/
+                 - logos/
+                   - logo.svg
+               - src/
+                 - index.js
+                 - secret.js
+               ```
+               
+               The following paths will be returned:
+               
+               ```yaml
+               - assets/logos/logo.svg
+               - src/index.js
+               ```
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] asset_paths: A list of path globs to read after the command completes.
+               
+               When specifying glob patterns the following rules apply:
+               - We only include files not directories for assets and archives.
+               - Path separators are `/` on all platforms - including Windows.
+               - Patterns starting with `!` are 'exclude' rules.
+               - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+               - `*` matches anything except `/`
+               - `**` matches anything, _including_ `/`
+               - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+               - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+               
+               #### Example
+               
+               Given the rules:
+               ```yaml
+               - "assets/**"
+               - "src/**.js"
+               - "!**secret.*"
+               ```
+               
+               When evaluating against this folder:
+               
+               ```yaml
+               - assets/
+                 - logos/
+                   - logo.svg
+               - src/
+                 - index.js
+                 - secret.js
+               ```
+               
+               The following paths will be returned:
+               
+               ```yaml
+               - assets/logos/logo.svg
+               - src/index.js
+               ```
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[str] dir: The working directory in which to run the command from.
@@ -33,6 +111,10 @@ class CommandArgs:
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
         """
+        if archive_paths is not None:
+            pulumi.set(__self__, "archive_paths", archive_paths)
+        if asset_paths is not None:
+            pulumi.set(__self__, "asset_paths", asset_paths)
         if create is not None:
             pulumi.set(__self__, "create", create)
         if delete is not None:
@@ -49,6 +131,104 @@ class CommandArgs:
             pulumi.set(__self__, "triggers", triggers)
         if update is not None:
             pulumi.set(__self__, "update", update)
+
+    @property
+    @pulumi.getter(name="archivePaths")
+    def archive_paths(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        """
+        A list of path globs to return as a single archive asset after the command completes.
+
+        When specifying glob patterns the following rules apply:
+        - We only include files not directories for assets and archives.
+        - Path separators are `/` on all platforms - including Windows.
+        - Patterns starting with `!` are 'exclude' rules.
+        - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        - `*` matches anything except `/`
+        - `**` matches anything, _including_ `/`
+        - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+        #### Example
+
+        Given the rules:
+        ```yaml
+        - "assets/**"
+        - "src/**.js"
+        - "!**secret.*"
+        ```
+
+        When evaluating against this folder:
+
+        ```yaml
+        - assets/
+          - logos/
+            - logo.svg
+        - src/
+          - index.js
+          - secret.js
+        ```
+
+        The following paths will be returned:
+
+        ```yaml
+        - assets/logos/logo.svg
+        - src/index.js
+        ```
+        """
+        return pulumi.get(self, "archive_paths")
+
+    @archive_paths.setter
+    def archive_paths(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "archive_paths", value)
+
+    @property
+    @pulumi.getter(name="assetPaths")
+    def asset_paths(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]:
+        """
+        A list of path globs to read after the command completes.
+
+        When specifying glob patterns the following rules apply:
+        - We only include files not directories for assets and archives.
+        - Path separators are `/` on all platforms - including Windows.
+        - Patterns starting with `!` are 'exclude' rules.
+        - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        - `*` matches anything except `/`
+        - `**` matches anything, _including_ `/`
+        - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+        #### Example
+
+        Given the rules:
+        ```yaml
+        - "assets/**"
+        - "src/**.js"
+        - "!**secret.*"
+        ```
+
+        When evaluating against this folder:
+
+        ```yaml
+        - assets/
+          - logos/
+            - logo.svg
+        - src/
+          - index.js
+          - secret.js
+        ```
+
+        The following paths will be returned:
+
+        ```yaml
+        - assets/logos/logo.svg
+        - src/index.js
+        ```
+        """
+        return pulumi.get(self, "asset_paths")
+
+    @asset_paths.setter
+    def asset_paths(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]]):
+        pulumi.set(self, "asset_paths", value)
 
     @property
     @pulumi.getter
@@ -150,6 +330,8 @@ class Command(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 archive_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 asset_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  dir: Optional[pulumi.Input[str]] = None,
@@ -168,6 +350,82 @@ class Command(pulumi.CustomResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] archive_paths: A list of path globs to return as a single archive asset after the command completes.
+               
+               When specifying glob patterns the following rules apply:
+               - We only include files not directories for assets and archives.
+               - Path separators are `/` on all platforms - including Windows.
+               - Patterns starting with `!` are 'exclude' rules.
+               - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+               - `*` matches anything except `/`
+               - `**` matches anything, _including_ `/`
+               - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+               - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+               
+               #### Example
+               
+               Given the rules:
+               ```yaml
+               - "assets/**"
+               - "src/**.js"
+               - "!**secret.*"
+               ```
+               
+               When evaluating against this folder:
+               
+               ```yaml
+               - assets/
+                 - logos/
+                   - logo.svg
+               - src/
+                 - index.js
+                 - secret.js
+               ```
+               
+               The following paths will be returned:
+               
+               ```yaml
+               - assets/logos/logo.svg
+               - src/index.js
+               ```
+        :param pulumi.Input[Sequence[pulumi.Input[str]]] asset_paths: A list of path globs to read after the command completes.
+               
+               When specifying glob patterns the following rules apply:
+               - We only include files not directories for assets and archives.
+               - Path separators are `/` on all platforms - including Windows.
+               - Patterns starting with `!` are 'exclude' rules.
+               - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+               - `*` matches anything except `/`
+               - `**` matches anything, _including_ `/`
+               - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+               - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+               
+               #### Example
+               
+               Given the rules:
+               ```yaml
+               - "assets/**"
+               - "src/**.js"
+               - "!**secret.*"
+               ```
+               
+               When evaluating against this folder:
+               
+               ```yaml
+               - assets/
+                 - logos/
+                   - logo.svg
+               - src/
+                 - index.js
+                 - secret.js
+               ```
+               
+               The following paths will be returned:
+               
+               ```yaml
+               - assets/logos/logo.svg
+               - src/index.js
+               ```
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[str] dir: The working directory in which to run the command from.
@@ -205,6 +463,8 @@ class Command(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 archive_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 asset_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  dir: Optional[pulumi.Input[str]] = None,
@@ -222,6 +482,8 @@ class Command(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = CommandArgs.__new__(CommandArgs)
 
+            __props__.__dict__["archive_paths"] = archive_paths
+            __props__.__dict__["asset_paths"] = asset_paths
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
             __props__.__dict__["dir"] = dir
@@ -230,6 +492,8 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["stdin"] = stdin
             __props__.__dict__["triggers"] = triggers
             __props__.__dict__["update"] = update
+            __props__.__dict__["archive"] = None
+            __props__.__dict__["assets"] = None
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
         super(Command, __self__).__init__(
@@ -254,6 +518,10 @@ class Command(pulumi.CustomResource):
 
         __props__ = CommandArgs.__new__(CommandArgs)
 
+        __props__.__dict__["archive"] = None
+        __props__.__dict__["archive_paths"] = None
+        __props__.__dict__["asset_paths"] = None
+        __props__.__dict__["assets"] = None
         __props__.__dict__["create"] = None
         __props__.__dict__["delete"] = None
         __props__.__dict__["dir"] = None
@@ -265,6 +533,39 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["triggers"] = None
         __props__.__dict__["update"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
+
+    @property
+    @pulumi.getter
+    def archive(self) -> pulumi.Output[Optional[pulumi.Archive]]:
+        """
+        An archive asset containing files found after running the command.
+        """
+        return pulumi.get(self, "archive")
+
+    @property
+    @pulumi.getter(name="archivePaths")
+    def archive_paths(self) -> pulumi.Output[Optional[Sequence[str]]]:
+        """
+        A list of path globs to return as a single archive asset after the command completes.
+        """
+        return pulumi.get(self, "archive_paths")
+
+    @property
+    @pulumi.getter(name="assetPaths")
+    def asset_paths(self) -> pulumi.Output[Optional[Sequence[str]]]:
+        """
+        A list of path globs to read after the command completes.
+        """
+        return pulumi.get(self, "asset_paths")
+
+    @property
+    @pulumi.getter
+    def assets(self) -> pulumi.Output[Optional[Mapping[str, Union[pulumi.Asset, pulumi.Archive]]]]:
+        """
+        A map of assets found after running the command.
+        The key is the relative path from the command dir
+        """
+        return pulumi.get(self, "assets")
 
     @property
     @pulumi.getter

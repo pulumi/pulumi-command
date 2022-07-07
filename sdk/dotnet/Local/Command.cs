@@ -20,6 +20,31 @@ namespace Pulumi.Command.Local
     public partial class Command : Pulumi.CustomResource
     {
         /// <summary>
+        /// An archive asset containing files found after running the command.
+        /// </summary>
+        [Output("archive")]
+        public Output<Archive?> Archive { get; private set; } = null!;
+
+        /// <summary>
+        /// A list of path globs to return as a single archive asset after the command completes.
+        /// </summary>
+        [Output("archivePaths")]
+        public Output<ImmutableArray<string>> ArchivePaths { get; private set; } = null!;
+
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// </summary>
+        [Output("assetPaths")]
+        public Output<ImmutableArray<string>> AssetPaths { get; private set; } = null!;
+
+        /// <summary>
+        /// A map of assets found after running the command.
+        /// The key is the relative path from the command dir
+        /// </summary>
+        [Output("assets")]
+        public Output<ImmutableDictionary<string, AssetOrArchive>?> Assets { get; private set; } = null!;
+
+        /// <summary>
         /// The command to run on create.
         /// </summary>
         [Output("create")]
@@ -126,6 +151,104 @@ namespace Pulumi.Command.Local
 
     public sealed class CommandArgs : Pulumi.ResourceArgs
     {
+        [Input("archivePaths")]
+        private InputList<string>? _archivePaths;
+
+        /// <summary>
+        /// A list of path globs to return as a single archive asset after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
+        /// </summary>
+        public InputList<string> ArchivePaths
+        {
+            get => _archivePaths ?? (_archivePaths = new InputList<string>());
+            set => _archivePaths = value;
+        }
+
+        [Input("assetPaths")]
+        private InputList<string>? _assetPaths;
+
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
+        /// </summary>
+        public InputList<string> AssetPaths
+        {
+            get => _assetPaths ?? (_assetPaths = new InputList<string>());
+            set => _assetPaths = value;
+        }
+
         /// <summary>
         /// The command to run on create.
         /// </summary>

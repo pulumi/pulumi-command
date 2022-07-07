@@ -1,0 +1,9 @@
+{
+  "name": "lambda-ts",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "@types/aws-lambda": "^8.10.101"
+  }
+}

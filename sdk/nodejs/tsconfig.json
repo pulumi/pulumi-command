@@ -16,6 +16,7 @@
         "index.ts",
         "local/command.ts",
         "local/index.ts",
+        "local/run.ts",
         "provider.ts",
         "remote/command.ts",
         "remote/copyFile.ts",

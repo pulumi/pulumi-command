@@ -31,6 +31,14 @@ func TestRandom(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestLambdaTs(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "lambda-ts"),
+		})
+	integration.ProgramTest(t, &test)
+}
+
 func TestStdin(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -102,8 +110,8 @@ func TestSimpleWithUpdate(t *testing.T) {
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
 			EditDirs: []integration.EditDir{
 				{
-					Dir:           filepath.Join("simple-with-update", "update-change"),
-					Additive:      true,
+					Dir:      filepath.Join("simple-with-update", "update-change"),
+					Additive: true,
 				},
 			},
 		})
@@ -151,14 +159,27 @@ func TestEc2RemoteTs(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestLambda(t *testing.T) {
+func TestLambdaInvoke(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "lambda"),
+			Dir: filepath.Join(getCwd(t), "lambda-invoke"),
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				out, ok := stack.Outputs["output"].(string)
 				assert.True(t, ok)
 				assert.Len(t, out, 10)
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
+func TestSimpleRun(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "simple-run"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				assets, ok := stack.Outputs["plainAssets"].(map[string]interface{})
+				assert.True(t, ok)
+				assert.Len(t, assets, 1)
 			},
 		})
 	integration.ProgramTest(t, &test)

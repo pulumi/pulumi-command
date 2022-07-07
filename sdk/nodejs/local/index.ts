@@ -6,6 +6,7 @@ import * as utilities from "../utilities";
 
 // Export members:
 export * from "./command";
+export * from "./run";
 
 // Import resources to register:
 import { Command } from "./command";

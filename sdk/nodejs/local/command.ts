@@ -39,6 +39,23 @@ export class Command extends pulumi.CustomResource {
     }
 
     /**
+     * An archive asset containing files found after running the command.
+     */
+    public /*out*/ readonly archive!: pulumi.Output<pulumi.asset.Archive | undefined>;
+    /**
+     * A list of path globs to return as a single archive asset after the command completes.
+     */
+    public readonly archivePaths!: pulumi.Output<string[] | undefined>;
+    /**
+     * A list of path globs to read after the command completes.
+     */
+    public readonly assetPaths!: pulumi.Output<string[] | undefined>;
+    /**
+     * A map of assets found after running the command.
+     * The key is the relative path from the command dir
+     */
+    public /*out*/ readonly assets!: pulumi.Output<{[key: string]: pulumi.asset.Asset | pulumi.asset.Archive} | undefined>;
+    /**
      * The command to run on create.
      */
     public readonly create!: pulumi.Output<string | undefined>;
@@ -92,6 +109,8 @@ export class Command extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
+            resourceInputs["archivePaths"] = args ? args.archivePaths : undefined;
+            resourceInputs["assetPaths"] = args ? args.assetPaths : undefined;
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;
             resourceInputs["dir"] = args ? args.dir : undefined;
@@ -100,9 +119,15 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["archive"] = undefined /*out*/;
+            resourceInputs["assets"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {
+            resourceInputs["archive"] = undefined /*out*/;
+            resourceInputs["archivePaths"] = undefined /*out*/;
+            resourceInputs["assetPaths"] = undefined /*out*/;
+            resourceInputs["assets"] = undefined /*out*/;
             resourceInputs["create"] = undefined /*out*/;
             resourceInputs["delete"] = undefined /*out*/;
             resourceInputs["dir"] = undefined /*out*/;
@@ -123,6 +148,88 @@ export class Command extends pulumi.CustomResource {
  * The set of arguments for constructing a Command resource.
  */
 export interface CommandArgs {
+    /**
+     * A list of path globs to return as a single archive asset after the command completes.
+     *
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are 'exclude' rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     *
+     * #### Example
+     *
+     * Given the rules:
+     * ```yaml
+     * - "assets/**"
+     * - "src/**.js"
+     * - "!**secret.*"
+     * ```
+     *
+     * When evaluating against this folder:
+     *
+     * ```yaml
+     * - assets/
+     *   - logos/
+     *     - logo.svg
+     * - src/
+     *   - index.js
+     *   - secret.js
+     * ```
+     *
+     * The following paths will be returned:
+     *
+     * ```yaml
+     * - assets/logos/logo.svg
+     * - src/index.js
+     * ```
+     */
+    archivePaths?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * A list of path globs to read after the command completes.
+     *
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are 'exclude' rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     *
+     * #### Example
+     *
+     * Given the rules:
+     * ```yaml
+     * - "assets/**"
+     * - "src/**.js"
+     * - "!**secret.*"
+     * ```
+     *
+     * When evaluating against this folder:
+     *
+     * ```yaml
+     * - assets/
+     *   - logos/
+     *     - logo.svg
+     * - src/
+     *   - index.js
+     *   - secret.js
+     * ```
+     *
+     * The following paths will be returned:
+     *
+     * ```yaml
+     * - assets/logos/logo.svg
+     * - src/index.js
+     * ```
+     */
+    assetPaths?: pulumi.Input<pulumi.Input<string>[]>;
     /**
      * The command to run on create.
      */
