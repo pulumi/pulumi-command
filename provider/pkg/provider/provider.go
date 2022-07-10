@@ -352,7 +352,7 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 			return nil, err
 		}
 	case "command:remote:Command":
-		var cmd command
+		var cmd remotecommand
 		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
 			return nil, err
