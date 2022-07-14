@@ -1,17 +1,8 @@
-name: build
+name: prerelease
 on:
   push:
-    branches:
-    - master
-    - main
-    - feature-**
-    paths-ignore:
-    - CHANGELOG.md
-    tags-ignore:
-    - v*
-    - sdk/*
-    - "**"
-  workflow_dispatch: {}
+    tags:
+    - v*.*.*-**
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PROVIDER: command
@@ -88,7 +79,7 @@ jobs:
         author_name: Failure in building provider prerequisites
         fields: repo,commit,author,action
         status: ${{ job.status }}
-  build_sdks:
+  build_sdk:
     needs: prerequisites
     runs-on: ubuntu-latest
     strategy:
@@ -107,7 +98,7 @@ jobs:
         - python
         - dotnet
         - go
-    name: build_sdks
+    name: build_sdk
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v2
