@@ -14,7 +14,7 @@ namespace Pulumi.Command.Remote
     /// The connection is established via ssh.
     /// </summary>
     [CommandResourceType("command:remote:Command")]
-    public partial class Command : Pulumi.CustomResource
+    public partial class Command : global::Pulumi.CustomResource
     {
         /// <summary>
         /// The parameters with which to connect to the remote host
@@ -113,7 +113,7 @@ namespace Pulumi.Command.Remote
         }
     }
 
-    public sealed class CommandArgs : Pulumi.ResourceArgs
+    public sealed class CommandArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The parameters with which to connect to the remote host.
@@ -172,5 +172,6 @@ namespace Pulumi.Command.Remote
         public CommandArgs()
         {
         }
+        public static new CommandArgs Empty => new CommandArgs();
     }
 }

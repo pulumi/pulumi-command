@@ -13,7 +13,7 @@ namespace Pulumi.Command.Remote.Inputs
     /// <summary>
     /// Instructions for how to connect to a remote endpoint.
     /// </summary>
-    public sealed class ConnectionArgs : Pulumi.ResourceArgs
+    public sealed class ConnectionArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The address of the resource to connect to.
@@ -50,5 +50,6 @@ namespace Pulumi.Command.Remote.Inputs
             Port = 22;
             User = "root";
         }
+        public static new ConnectionArgs Empty => new ConnectionArgs();
     }
 }

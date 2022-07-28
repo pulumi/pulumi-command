@@ -17,7 +17,7 @@ namespace Pulumi.Command.Local
     /// of the `Command` resource.
     /// </summary>
     [CommandResourceType("command:local:Command")]
-    public partial class Command : Pulumi.CustomResource
+    public partial class Command : global::Pulumi.CustomResource
     {
         /// <summary>
         /// An archive asset containing files found after running the command.
@@ -149,7 +149,7 @@ namespace Pulumi.Command.Local
         }
     }
 
-    public sealed class CommandArgs : Pulumi.ResourceArgs
+    public sealed class CommandArgs : global::Pulumi.ResourceArgs
     {
         [Input("archivePaths")]
         private InputList<string>? _archivePaths;
@@ -315,5 +315,6 @@ namespace Pulumi.Command.Local
         public CommandArgs()
         {
         }
+        public static new CommandArgs Empty => new CommandArgs();
     }
 }
