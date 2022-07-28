@@ -13,7 +13,7 @@ namespace Pulumi.Command.Remote
     /// Copy a local file to a remote host.
     /// </summary>
     [CommandResourceType("command:remote:CopyFile")]
-    public partial class CopyFile : Pulumi.CustomResource
+    public partial class CopyFile : global::Pulumi.CustomResource
     {
         /// <summary>
         /// The parameters with which to connect to the remote host.
@@ -82,7 +82,7 @@ namespace Pulumi.Command.Remote
         }
     }
 
-    public sealed class CopyFileArgs : Pulumi.ResourceArgs
+    public sealed class CopyFileArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
         /// The parameters with which to connect to the remote host.
@@ -117,5 +117,6 @@ namespace Pulumi.Command.Remote
         public CopyFileArgs()
         {
         }
+        public static new CopyFileArgs Empty => new CopyFileArgs();
     }
 }

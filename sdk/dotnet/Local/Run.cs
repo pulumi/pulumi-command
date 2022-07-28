@@ -27,7 +27,7 @@ namespace Pulumi.Command.Local
     }
 
 
-    public sealed class RunArgs : Pulumi.InvokeArgs
+    public sealed class RunArgs : global::Pulumi.InvokeArgs
     {
         [Input("archivePaths")]
         private List<string>? _archivePaths;
@@ -173,9 +173,10 @@ namespace Pulumi.Command.Local
         public RunArgs()
         {
         }
+        public static new RunArgs Empty => new RunArgs();
     }
 
-    public sealed class RunInvokeArgs : Pulumi.InvokeArgs
+    public sealed class RunInvokeArgs : global::Pulumi.InvokeArgs
     {
         [Input("archivePaths")]
         private InputList<string>? _archivePaths;
@@ -321,6 +322,7 @@ namespace Pulumi.Command.Local
         public RunInvokeArgs()
         {
         }
+        public static new RunInvokeArgs Empty => new RunInvokeArgs();
     }
 
 

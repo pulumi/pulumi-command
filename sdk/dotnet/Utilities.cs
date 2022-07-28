@@ -74,7 +74,7 @@ namespace Pulumi.Command
         }
     }
 
-    internal sealed class CommandResourceTypeAttribute : Pulumi.ResourceTypeAttribute
+    internal sealed class CommandResourceTypeAttribute : global::Pulumi.ResourceTypeAttribute
     {
         public CommandResourceTypeAttribute(string type) : base(type, Utilities.Version)
         {
