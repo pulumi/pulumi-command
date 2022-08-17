@@ -22,6 +22,8 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/mapper"
 
+	p "github.com/pulumi/pulumi-go-provider"
+	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/plugin"
@@ -31,7 +33,20 @@ import (
 	pulumirpc "github.com/pulumi/pulumi/sdk/v3/proto/go"
 
 	pbempty "github.com/golang/protobuf/ptypes/empty"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/remote"
 )
+
+func Provider() p.Provider {
+	return infer.NewProvider().
+		WithResources(
+			infer.Resource[*local.Command, local.CommandArgs, local.CommandState](),
+			infer.Resource[*remote.Command, remote.CommandArgs, remote.CommandState](),
+			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
+		).
+		WithFunctions(infer.Function[*local.Run, local.RunArgs, local.RunState]())
+}
 
 type commandProvider struct {
 	host         *provider.HostClient

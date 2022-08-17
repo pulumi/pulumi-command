@@ -22,13 +22,18 @@ import (
 	"os"
 	"path/filepath"
 
-	providerVersion "github.com/pulumi/pulumi-command/provider/pkg/version"
+	"github.com/blang/semver"
+	p "github.com/pulumi/pulumi-go-provider"
+	"github.com/pulumi/pulumi-go-provider/integration"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
 	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
 	nodejsgen "github.com/pulumi/pulumi/pkg/v3/codegen/nodejs"
 	pythongen "github.com/pulumi/pulumi/pkg/v3/codegen/python"
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
+
+	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
+	providerVersion "github.com/pulumi/pulumi-command/provider/pkg/version"
 )
 
 // TemplateDir is the path to the base directory for code generator templates.
@@ -65,7 +70,7 @@ func main() {
 		return
 	}
 
-	language, inputFile := Language(args[0]), args[1]
+	language := Language(args[0])
 
 	BaseDir = args[2]
 	TemplateDir = filepath.Join(BaseDir, "provider", "pkg", "gen")
@@ -74,30 +79,40 @@ func main() {
 	switch language {
 	case NodeJS:
 		templateDir := filepath.Join(TemplateDir, "nodejs-templates")
-		writeNodeJSClient(readSchema(inputFile, version), outdir, templateDir)
+		writeNodeJSClient(readSchema(version), outdir, templateDir)
 	case Python:
 		templateDir := filepath.Join(TemplateDir, "python-templates")
-		writePythonClient(readSchema(inputFile, version), outdir, templateDir)
+		writePythonClient(readSchema(version), outdir, templateDir)
 	case DotNet:
 		templateDir := filepath.Join(TemplateDir, "dotnet-templates")
-		writeDotnetClient(readSchema(inputFile, version), outdir, templateDir)
+		writeDotnetClient(readSchema(version), outdir, templateDir)
 	case Go:
 		templateDir := filepath.Join(TemplateDir, "_go-templates")
-		writeGoClient(readSchema(inputFile, version), outdir, templateDir)
+		writeGoClient(readSchema(version), outdir, templateDir)
+	case "schema":
+		targetDir := filepath.Join(BaseDir, "schema.json")
+		s, err := integration.NewServer("command", semver.MustParse(version), command.Provider()).GetSchema(p.GetSchemaRequest{})
+		if err != nil {
+			panic(err)
+		}
+		err = os.WriteFile(targetDir, []byte(s.Schema), 0600)
+		if err != nil {
+			panic(err)
+		}
 	default:
 		panic(fmt.Sprintf("Unrecognized language '%s'", language))
 	}
 }
 
-func readSchema(schemaPath string, version string) *schema.Package {
+func readSchema(version string) *schema.Package {
 	// Read in, decode, and import the schema.
-	schemaBytes, err := ioutil.ReadFile(schemaPath)
+	s, err := integration.NewServer("command", semver.MustParse(version), command.Provider()).GetSchema(p.GetSchemaRequest{})
 	if err != nil {
 		panic(err)
 	}
 
 	var pkgSpec schema.PackageSpec
-	if err = json.Unmarshal(schemaBytes, &pkgSpec); err != nil {
+	if err = json.Unmarshal([]byte(s.Schema), &pkgSpec); err != nil {
 		panic(err)
 	}
 	pkgSpec.Version = version
