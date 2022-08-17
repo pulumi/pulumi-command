@@ -16,6 +16,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
@@ -25,7 +26,11 @@ import (
 )
 
 func main() {
-	err := p.RunProvider("command", semver.MustParse(version.Version), command.Provider())
+	version := version.Version
+	if strings.HasPrefix(version, "v") {
+		version = version[1:]
+	}
+	err := p.RunProvider("command", semver.MustParse(version), command.Provider())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s", err.Error())
 		os.Exit(1)

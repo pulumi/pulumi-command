@@ -7,8 +7,6 @@ import (
 
 type Run struct{}
 
-var _ = (infer.Fn[RunArgs, RunState])((*Run)(nil))
-
 func (r *Run) Annotated(a infer.Annotator) {
 	a.Describe(&r, "A local command to be executed.\n"+
 		"This command will always be run on any preview or deployment. "+

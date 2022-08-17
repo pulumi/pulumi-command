@@ -35,19 +35,19 @@ type CommandArgs struct {
 }
 
 func (c *CommandArgs) Annotate(a infer.Annotator) {
-	a.Describe(&c.Connection, "The parameters with which to connect to the remote host")
+	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Create, "The command to run on create.")
-	a.Describe(&c.Delete, "The command to run on create.")
+	a.Describe(&c.Delete, "The command to run on delete.")
 	a.Describe(&c.Update, "The command to run on update, if empty, create will run again.")
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 }
 
 type CommandState struct {
 	CommandArgs
-	Stdout string `pulumi:stdout`
-	Stderr string `pulumi:stderr`
+	Stdout string `pulumi:"stdout"`
+	Stderr string `pulumi:"stderr"`
 }
 
 func (c *CommandState) Annotate(a infer.Annotator) {

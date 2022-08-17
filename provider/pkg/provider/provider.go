@@ -15,6 +15,8 @@
 package provider
 
 import (
+	"strings"
+
 	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
@@ -31,10 +33,35 @@ func Provider() p.Provider {
 			infer.Resource[*remote.Command, remote.CommandArgs, remote.CommandState](),
 			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
 		).
-		WithFunctions(infer.Function[*local.Run, local.RunArgs, local.RunState]())
+		WithFunctions(infer.Function[*local.Run, local.RunArgs, local.RunState]()).
+		WithLanguageMap(map[string]any{
+			"csharp": map[string]any{
+				"packageReferences": map[string]string{
+					"Pulumi": "3.*",
+				},
+			},
+			"go": map[string]any{
+				"generateResourceContainerTypes": true,
+				"importBasePath":                 "github.com/pulumi/pulumi-command/sdk/go/command",
+			},
+			"nodejs": map[string]any{
+				"dependencies": map[string]string{
+					"@pulumi/pulumi": "^3.0.0",
+				},
+			},
+			"python": map[string]any{
+				"requires": map[string]string{
+					"pulumi": ">=3.0.0,<4.0.0",
+				},
+			},
+		})
 }
 
 func Schema(version string) (string, error) {
-	s, err := integration.NewServer("command", semver.MustParse(version), Provider()).GetSchema(p.GetSchemaRequest{})
+	if strings.HasPrefix(version, "v") {
+		version = version[1:]
+	}
+	s, err := integration.NewServer("command", semver.MustParse(version), Provider()).
+		GetSchema(p.GetSchemaRequest{})
 	return s.Schema, err
 }

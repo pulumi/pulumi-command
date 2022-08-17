@@ -94,10 +94,10 @@ The following paths will be returned:
 }
 
 type BaseState struct {
-	Stdout  string                      `pulumi:stdout`
-	Stderr  string                      `pulumi:stderr`
-	Assets  *map[string]*resource.Asset `pulumi:assets,optional`
-	Archive *resource.Archive           `pulumi"archive,optional`
+	Stdout  string                      `pulumi:"stdout"`
+	Stderr  string                      `pulumi:"stderr"`
+	Assets  *map[string]*resource.Asset `pulumi:"assets,optional"`
+	Archive *resource.Archive           `pulumi:"archive,optional"`
 }
 
 func (c *BaseState) Annotate(a infer.Annotator) {
