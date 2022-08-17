@@ -44,7 +44,7 @@ func (val *Connection) Defaults() *Connection {
 // ConnectionInput is an input type that accepts ConnectionArgs and ConnectionOutput values.
 // You can construct a concrete instance of `ConnectionInput` via:
 //
-//          ConnectionArgs{...}
+//	ConnectionArgs{...}
 type ConnectionInput interface {
 	pulumi.Input
 
