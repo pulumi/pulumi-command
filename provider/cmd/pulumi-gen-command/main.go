@@ -22,9 +22,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/blang/semver"
-	p "github.com/pulumi/pulumi-go-provider"
-	"github.com/pulumi/pulumi-go-provider/integration"
 	dotnetgen "github.com/pulumi/pulumi/pkg/v3/codegen/dotnet"
 	gogen "github.com/pulumi/pulumi/pkg/v3/codegen/go"
 	nodejsgen "github.com/pulumi/pulumi/pkg/v3/codegen/nodejs"
@@ -91,11 +88,11 @@ func main() {
 		writeGoClient(readSchema(version), outdir, templateDir)
 	case "schema":
 		targetDir := filepath.Join(BaseDir, "schema.json")
-		s, err := integration.NewServer("command", semver.MustParse(version), command.Provider()).GetSchema(p.GetSchemaRequest{})
+		s, err := command.Schema(version)
 		if err != nil {
 			panic(err)
 		}
-		err = os.WriteFile(targetDir, []byte(s.Schema), 0600)
+		err = os.WriteFile(targetDir, []byte(s), 0600)
 		if err != nil {
 			panic(err)
 		}
@@ -106,16 +103,15 @@ func main() {
 
 func readSchema(version string) *schema.Package {
 	// Read in, decode, and import the schema.
-	s, err := integration.NewServer("command", semver.MustParse(version), command.Provider()).GetSchema(p.GetSchemaRequest{})
+	s, err := command.Schema(version)
 	if err != nil {
 		panic(err)
 	}
 
 	var pkgSpec schema.PackageSpec
-	if err = json.Unmarshal([]byte(s.Schema), &pkgSpec); err != nil {
+	if err = json.Unmarshal([]byte(s), &pkgSpec); err != nil {
 		panic(err)
 	}
-	pkgSpec.Version = version
 
 	pkg, err := schema.ImportSpec(pkgSpec, nil)
 	if err != nil {

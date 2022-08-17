@@ -25,6 +25,8 @@ import (
 	"os"
 
 	"github.com/pulumi/pulumi/pkg/v3/codegen/schema"
+
+	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
 )
 
 func main() {
@@ -33,7 +35,7 @@ func main() {
 		log.Fatal("version not found")
 	}
 
-	schemaContents, err := ioutil.ReadFile("./schema.json")
+	schemaContents, err := command.Schema(version)
 	if err != nil {
 		log.Fatal(err)
 	}
