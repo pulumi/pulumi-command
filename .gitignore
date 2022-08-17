@@ -12,7 +12,6 @@ ci-scripts
 /nuget/
 sdk/dotnet/version.txt
 .DS_Store
-/provider/cmd/pulumi-resource-command/schema.go
 /provider/cmd/pulumi-resource-command/schema-embed.json
 dist/
 
@@ -23,3 +22,9 @@ private_ip.txt
 out.txt
 examples/**/venv/
 examples/**/__pycache__/
+
+sdk/java/build
+sdk/java/.gradle
+sdk/java/gradle
+sdk/java/gradlew
+sdk/java/gradlew.bat

@@ -122,7 +122,7 @@ func (i *CopyFile) ToCopyFileOutputWithContext(ctx context.Context) CopyFileOutp
 // CopyFileArrayInput is an input type that accepts CopyFileArray and CopyFileArrayOutput values.
 // You can construct a concrete instance of `CopyFileArrayInput` via:
 //
-//          CopyFileArray{ CopyFileArgs{...} }
+//	CopyFileArray{ CopyFileArgs{...} }
 type CopyFileArrayInput interface {
 	pulumi.Input
 
@@ -147,7 +147,7 @@ func (i CopyFileArray) ToCopyFileArrayOutputWithContext(ctx context.Context) Cop
 // CopyFileMapInput is an input type that accepts CopyFileMap and CopyFileMapOutput values.
 // You can construct a concrete instance of `CopyFileMapInput` via:
 //
-//          CopyFileMap{ "key": CopyFileArgs{...} }
+//	CopyFileMap{ "key": CopyFileArgs{...} }
 type CopyFileMapInput interface {
 	pulumi.Input
 
