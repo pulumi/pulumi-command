@@ -34,6 +34,18 @@ func Provider() p.Provider {
 			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
 		).
 		WithFunctions(infer.Function[*local.Run, local.RunArgs, local.RunState]()).
+		WithDisplayName("Command").
+		WithDescription("The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.").
+		WithKeywords([]string{
+			"pulumi",
+			"command",
+			"category/utility",
+			"kind/native"}).
+		WithHomepage("https://pulumi.com").
+		WithLicense("Apache-2.0").
+		WithRepository("https://github.com/pulumi/pulumi-command").
+		WithPublisher("Pulumi").
+		WithLogoURL("https://raw.githubusercontent.com/pulumi/pulumi-command/master/assets/logo.svg").
 		WithLanguageMap(map[string]any{
 			"csharp": map[string]any{
 				"packageReferences": map[string]string{

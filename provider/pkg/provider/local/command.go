@@ -59,7 +59,7 @@ When specifying glob patterns the following rules apply:
 - Patterns starting with `+"`!`"+` are 'exclude' rules.
 - Rules are evaluated in order, so exclude rules should be after inclusion rules.
 - `+"`*`"+` matches anything except `+"`/`"+`
-- `+"`**`"+` matches anything, _including_ `+`"/"`+`
+- `+"`**`"+` matches anything, _including_ `+"`/`"+`
 - All returned paths are relative to the working directory (without leading `+"`./`"+`) e.g. `+"`file.text` or `subfolder/file.txt`"+`.
 - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
 

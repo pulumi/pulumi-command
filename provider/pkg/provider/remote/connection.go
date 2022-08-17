@@ -12,11 +12,11 @@ import (
 )
 
 type Connection struct {
-	User       string  `pulumi:"user,optional"`
-	Password   *string `pulumi:"password,optional"`
-	Host       string  `pulumi:"host"`
-	Port       *int    `pulumi:"port,optional"`
-	PrivateKey *string `pulumi:"privateKey,optional"`
+	User       string   `pulumi:"user,optional"`
+	Password   *string  `pulumi:"password,optional"`
+	Host       string   `pulumi:"host"`
+	Port       *float64 `pulumi:"port,optional"`
+	PrivateKey *string  `pulumi:"privateKey,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
