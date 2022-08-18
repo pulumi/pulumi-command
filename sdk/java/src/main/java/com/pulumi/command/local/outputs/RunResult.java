@@ -21,18 +21,61 @@ public final class RunResult {
      */
     private final @Nullable Archive archive;
     /**
+     * @return A list of path globs to return as a single archive asset after the command completes.
+     * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
+     * 
+     */
+    private final @Nullable List<String> archivePaths;
+    /**
+     * @return A list of path globs to read after the command completes.
+     * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
+     * 
+     */
+    private final @Nullable List<String> assetPaths;
+    /**
      * @return A map of assets found after running the command.
      * The key is the relative path from the command dir
      * 
      */
     private final @Nullable Map<String,AssetOrArchive> assets;
-    /**
-     * @return The command to run.
-     * 
-     */
     private final String command;
     /**
-     * @return The directory from which the command was run from.
+     * @return The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     private final @Nullable String dir;
@@ -43,7 +86,7 @@ public final class RunResult {
     private final @Nullable Map<String,String> environment;
     /**
      * @return The program and arguments to run the command.
-     * For example: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`
+     * On Linux and macOS, defaults to: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`. On Windows, defaults to: `[&#34;cmd&#34;, &#34;/C&#34;]`
      * 
      */
     private final @Nullable List<String> interpreter;
@@ -53,28 +96,32 @@ public final class RunResult {
      */
     private final String stderr;
     /**
-     * @return String passed to the command&#39;s process as standard in.
+     * @return Pass a string to the command&#39;s process as standard in
      * 
      */
-    private final String stdin;
+    private final @Nullable String stdin;
     /**
      * @return The standard output of the command&#39;s process
      * 
      */
-    private final @Nullable String stdout;
+    private final String stdout;
 
     @CustomType.Constructor
     private RunResult(
         @CustomType.Parameter("archive") @Nullable Archive archive,
+        @CustomType.Parameter("archivePaths") @Nullable List<String> archivePaths,
+        @CustomType.Parameter("assetPaths") @Nullable List<String> assetPaths,
         @CustomType.Parameter("assets") @Nullable Map<String,AssetOrArchive> assets,
         @CustomType.Parameter("command") String command,
         @CustomType.Parameter("dir") @Nullable String dir,
         @CustomType.Parameter("environment") @Nullable Map<String,String> environment,
         @CustomType.Parameter("interpreter") @Nullable List<String> interpreter,
         @CustomType.Parameter("stderr") String stderr,
-        @CustomType.Parameter("stdin") String stdin,
-        @CustomType.Parameter("stdout") @Nullable String stdout) {
+        @CustomType.Parameter("stdin") @Nullable String stdin,
+        @CustomType.Parameter("stdout") String stdout) {
         this.archive = archive;
+        this.archivePaths = archivePaths;
+        this.assetPaths = assetPaths;
         this.assets = assets;
         this.command = command;
         this.dir = dir;
@@ -93,6 +140,56 @@ public final class RunResult {
         return Optional.ofNullable(this.archive);
     }
     /**
+     * @return A list of path globs to return as a single archive asset after the command completes.
+     * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
+     * 
+     */
+    public List<String> archivePaths() {
+        return this.archivePaths == null ? List.of() : this.archivePaths;
+    }
+    /**
+     * @return A list of path globs to read after the command completes.
+     * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
+     * 
+     */
+    public List<String> assetPaths() {
+        return this.assetPaths == null ? List.of() : this.assetPaths;
+    }
+    /**
      * @return A map of assets found after running the command.
      * The key is the relative path from the command dir
      * 
@@ -100,15 +197,12 @@ public final class RunResult {
     public Map<String,AssetOrArchive> assets() {
         return this.assets == null ? Map.of() : this.assets;
     }
-    /**
-     * @return The command to run.
-     * 
-     */
     public String command() {
         return this.command;
     }
     /**
-     * @return The directory from which the command was run from.
+     * @return The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     public Optional<String> dir() {
@@ -123,7 +217,7 @@ public final class RunResult {
     }
     /**
      * @return The program and arguments to run the command.
-     * For example: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`
+     * On Linux and macOS, defaults to: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`. On Windows, defaults to: `[&#34;cmd&#34;, &#34;/C&#34;]`
      * 
      */
     public List<String> interpreter() {
@@ -137,18 +231,18 @@ public final class RunResult {
         return this.stderr;
     }
     /**
-     * @return String passed to the command&#39;s process as standard in.
+     * @return Pass a string to the command&#39;s process as standard in
      * 
      */
-    public String stdin() {
-        return this.stdin;
+    public Optional<String> stdin() {
+        return Optional.ofNullable(this.stdin);
     }
     /**
      * @return The standard output of the command&#39;s process
      * 
      */
-    public Optional<String> stdout() {
-        return Optional.ofNullable(this.stdout);
+    public String stdout() {
+        return this.stdout;
     }
 
     public static Builder builder() {
@@ -161,14 +255,16 @@ public final class RunResult {
 
     public static final class Builder {
         private @Nullable Archive archive;
+        private @Nullable List<String> archivePaths;
+        private @Nullable List<String> assetPaths;
         private @Nullable Map<String,AssetOrArchive> assets;
         private String command;
         private @Nullable String dir;
         private @Nullable Map<String,String> environment;
         private @Nullable List<String> interpreter;
         private String stderr;
-        private String stdin;
-        private @Nullable String stdout;
+        private @Nullable String stdin;
+        private String stdout;
 
         public Builder() {
     	      // Empty
@@ -177,6 +273,8 @@ public final class RunResult {
         public Builder(RunResult defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.archive = defaults.archive;
+    	      this.archivePaths = defaults.archivePaths;
+    	      this.assetPaths = defaults.assetPaths;
     	      this.assets = defaults.assets;
     	      this.command = defaults.command;
     	      this.dir = defaults.dir;
@@ -190,6 +288,20 @@ public final class RunResult {
         public Builder archive(@Nullable Archive archive) {
             this.archive = archive;
             return this;
+        }
+        public Builder archivePaths(@Nullable List<String> archivePaths) {
+            this.archivePaths = archivePaths;
+            return this;
+        }
+        public Builder archivePaths(String... archivePaths) {
+            return archivePaths(List.of(archivePaths));
+        }
+        public Builder assetPaths(@Nullable List<String> assetPaths) {
+            this.assetPaths = assetPaths;
+            return this;
+        }
+        public Builder assetPaths(String... assetPaths) {
+            return assetPaths(List.of(assetPaths));
         }
         public Builder assets(@Nullable Map<String,AssetOrArchive> assets) {
             this.assets = assets;
@@ -218,15 +330,15 @@ public final class RunResult {
             this.stderr = Objects.requireNonNull(stderr);
             return this;
         }
-        public Builder stdin(String stdin) {
-            this.stdin = Objects.requireNonNull(stdin);
+        public Builder stdin(@Nullable String stdin) {
+            this.stdin = stdin;
             return this;
         }
-        public Builder stdout(@Nullable String stdout) {
-            this.stdout = stdout;
+        public Builder stdout(String stdout) {
+            this.stdout = Objects.requireNonNull(stdout);
             return this;
         }        public RunResult build() {
-            return new RunResult(archive, assets, command, dir, environment, interpreter, stderr, stdin, stdout);
+            return new RunResult(archive, archivePaths, assetPaths, assets, command, dir, environment, interpreter, stderr, stdin, stdout);
         }
     }
 }
