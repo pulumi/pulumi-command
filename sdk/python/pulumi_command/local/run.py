@@ -244,7 +244,9 @@ def run(archive_paths: Optional[Sequence[str]] = None,
         stdin: Optional[str] = None,
         opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableRunResult:
     """
-    Use this data source to access information about an existing resource.
+    A local command to be executed.
+    This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+
 
     :param Sequence[str] archive_paths: A list of path globs to return as a single archive asset after the command completes.
            
@@ -364,7 +366,9 @@ def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = 
                stdin: Optional[pulumi.Input[Optional[str]]] = None,
                opts: Optional[pulumi.InvokeOptions] = None) -> pulumi.Output[RunResult]:
     """
-    Use this data source to access information about an existing resource.
+    A local command to be executed.
+    This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+
 
     :param Sequence[str] archive_paths: A list of path globs to return as a single archive asset after the command completes.
            
