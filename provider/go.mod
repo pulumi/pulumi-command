@@ -2,19 +2,15 @@ module github.com/pulumi/pulumi-command/provider
 
 go 1.18
 
-replace github.com/pulumi/pulumi-go-provider => ../../pulumi-go-provider
-
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gobwas/glob v0.2.3
-	github.com/golang/protobuf v1.5.2
 	github.com/pkg/sftp v1.13.4
-	github.com/pulumi/pulumi-go-provider v0.5.0
-	github.com/pulumi/pulumi-go-provider/integration v0.0.0-20220817092244-e444efb1706a
+	github.com/pulumi/pulumi-go-provider v0.6.0
+	github.com/pulumi/pulumi-go-provider/integration v0.6.0
 	github.com/pulumi/pulumi/pkg/v3 v3.37.2
 	github.com/pulumi/pulumi/sdk/v3 v3.37.2
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
-	google.golang.org/grpc v1.47.0
 )
 
 require (
@@ -67,6 +63,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
@@ -151,6 +148,7 @@ require (
 	google.golang.org/api v0.74.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220405205423-9d709892a2bf // indirect
+	google.golang.org/grpc v1.47.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/AlecAivazis/survey.v1 v1.8.9-0.20200217094205-6773bdf39b7f // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
