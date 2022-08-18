@@ -11,19 +11,11 @@ namespace Pulumi.Command.Local
 {
     public static class Run
     {
-        /// <summary>
-        /// A local command to be executed.
-        /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
-        /// </summary>
         public static Task<RunResult> InvokeAsync(RunArgs args, InvokeOptions? options = null)
-            => Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:run", args ?? new RunArgs(), options.WithDefaults());
+            => Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:Run", args ?? new RunArgs(), options.WithDefaults());
 
-        /// <summary>
-        /// A local command to be executed.
-        /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
-        /// </summary>
         public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOptions? options = null)
-            => Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
+            => Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:Run", args ?? new RunInvokeArgs(), options.WithDefaults());
     }
 
 
@@ -127,14 +119,12 @@ namespace Pulumi.Command.Local
             set => _assetPaths = value;
         }
 
-        /// <summary>
-        /// The command to run.
-        /// </summary>
         [Input("command", required: true)]
         public string Command { get; set; } = null!;
 
         /// <summary>
-        /// The working directory in which to run the command from.
+        /// The directory from which to run the command from. If `dir` does not exist, then
+        /// `Command` will fail.
         /// </summary>
         [Input("dir")]
         public string? Dir { get; set; }
@@ -276,14 +266,12 @@ namespace Pulumi.Command.Local
             set => _assetPaths = value;
         }
 
-        /// <summary>
-        /// The command to run.
-        /// </summary>
         [Input("command", required: true)]
         public Input<string> Command { get; set; } = null!;
 
         /// <summary>
-        /// The working directory in which to run the command from.
+        /// The directory from which to run the command from. If `dir` does not exist, then
+        /// `Command` will fail.
         /// </summary>
         [Input("dir")]
         public Input<string>? Dir { get; set; }
@@ -334,16 +322,96 @@ namespace Pulumi.Command.Local
         /// </summary>
         public readonly Archive? Archive;
         /// <summary>
+        /// A list of path globs to return as a single archive asset after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
+        /// </summary>
+        public readonly ImmutableArray<string> ArchivePaths;
+        /// <summary>
+        /// A list of path globs to read after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
+        /// </summary>
+        public readonly ImmutableArray<string> AssetPaths;
+        /// <summary>
         /// A map of assets found after running the command.
         /// The key is the relative path from the command dir
         /// </summary>
         public readonly ImmutableDictionary<string, AssetOrArchive>? Assets;
-        /// <summary>
-        /// The command to run.
-        /// </summary>
         public readonly string Command;
         /// <summary>
-        /// The directory from which the command was run from.
+        /// The directory from which to run the command from. If `dir` does not exist, then
+        /// `Command` will fail.
         /// </summary>
         public readonly string? Dir;
         /// <summary>
@@ -352,7 +420,7 @@ namespace Pulumi.Command.Local
         public readonly ImmutableDictionary<string, string>? Environment;
         /// <summary>
         /// The program and arguments to run the command.
-        /// For example: `["/bin/sh", "-c"]`
+        /// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         /// </summary>
         public readonly ImmutableArray<string> Interpreter;
         /// <summary>
@@ -360,17 +428,21 @@ namespace Pulumi.Command.Local
         /// </summary>
         public readonly string Stderr;
         /// <summary>
-        /// String passed to the command's process as standard in.
+        /// Pass a string to the command's process as standard in
         /// </summary>
-        public readonly string Stdin;
+        public readonly string? Stdin;
         /// <summary>
         /// The standard output of the command's process
         /// </summary>
-        public readonly string? Stdout;
+        public readonly string Stdout;
 
         [OutputConstructor]
         private RunResult(
             Archive? archive,
+
+            ImmutableArray<string> archivePaths,
+
+            ImmutableArray<string> assetPaths,
 
             ImmutableDictionary<string, AssetOrArchive>? assets,
 
@@ -384,11 +456,13 @@ namespace Pulumi.Command.Local
 
             string stderr,
 
-            string stdin,
+            string? stdin,
 
-            string? stdout)
+            string stdout)
         {
             Archive = archive;
+            ArchivePaths = archivePaths;
+            AssetPaths = assetPaths;
             Assets = assets;
             Command = command;
             Dir = dir;

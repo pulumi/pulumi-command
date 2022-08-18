@@ -104,11 +104,13 @@ class CommandArgs:
                ```
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[str] dir: The working directory in which to run the command from.
+        :param pulumi.Input[str] dir: The directory from which to run the command from. If `dir` does not exist, then
+               `Command` will fail.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
         """
         if archive_paths is not None:
@@ -258,7 +260,8 @@ class CommandArgs:
     @pulumi.getter
     def dir(self) -> Optional[pulumi.Input[str]]:
         """
-        The working directory in which to run the command from.
+        The directory from which to run the command from. If `dir` does not exist, then
+        `Command` will fail.
         """
         return pulumi.get(self, "dir")
 
@@ -306,6 +309,9 @@ class CommandArgs:
     @property
     @pulumi.getter
     def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
+        """
+        Trigger replacements on changes to this input.
+        """
         return pulumi.get(self, "triggers")
 
     @triggers.setter
@@ -428,11 +434,13 @@ class Command(pulumi.CustomResource):
                ```
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[str] dir: The working directory in which to run the command from.
+        :param pulumi.Input[str] dir: The directory from which to run the command from. If `dir` does not exist, then
+               `Command` will fail.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
         """
         ...
@@ -496,6 +504,8 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["assets"] = None
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
+        replace_on_changes = pulumi.ResourceOptions(replace_on_changes=["triggers[*]"])
+        opts = pulumi.ResourceOptions.merge(opts, replace_on_changes)
         super(Command, __self__).__init__(
             'command:local:Command',
             resource_name,
@@ -547,6 +557,43 @@ class Command(pulumi.CustomResource):
     def archive_paths(self) -> pulumi.Output[Optional[Sequence[str]]]:
         """
         A list of path globs to return as a single archive asset after the command completes.
+
+        When specifying glob patterns the following rules apply:
+        - We only include files not directories for assets and archives.
+        - Path separators are `/` on all platforms - including Windows.
+        - Patterns starting with `!` are 'exclude' rules.
+        - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        - `*` matches anything except `/`
+        - `**` matches anything, _including_ `/`
+        - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+        #### Example
+
+        Given the rules:
+        ```yaml
+        - "assets/**"
+        - "src/**.js"
+        - "!**secret.*"
+        ```
+
+        When evaluating against this folder:
+
+        ```yaml
+        - assets/
+          - logos/
+            - logo.svg
+        - src/
+          - index.js
+          - secret.js
+        ```
+
+        The following paths will be returned:
+
+        ```yaml
+        - assets/logos/logo.svg
+        - src/index.js
+        ```
         """
         return pulumi.get(self, "archive_paths")
 
@@ -555,6 +602,43 @@ class Command(pulumi.CustomResource):
     def asset_paths(self) -> pulumi.Output[Optional[Sequence[str]]]:
         """
         A list of path globs to read after the command completes.
+
+        When specifying glob patterns the following rules apply:
+        - We only include files not directories for assets and archives.
+        - Path separators are `/` on all platforms - including Windows.
+        - Patterns starting with `!` are 'exclude' rules.
+        - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        - `*` matches anything except `/`
+        - `**` matches anything, _including_ `/`
+        - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+        #### Example
+
+        Given the rules:
+        ```yaml
+        - "assets/**"
+        - "src/**.js"
+        - "!**secret.*"
+        ```
+
+        When evaluating against this folder:
+
+        ```yaml
+        - assets/
+          - logos/
+            - logo.svg
+        - src/
+          - index.js
+          - secret.js
+        ```
+
+        The following paths will be returned:
+
+        ```yaml
+        - assets/logos/logo.svg
+        - src/index.js
+        ```
         """
         return pulumi.get(self, "asset_paths")
 
@@ -605,7 +689,7 @@ class Command(pulumi.CustomResource):
     def interpreter(self) -> pulumi.Output[Optional[Sequence[str]]]:
         """
         The program and arguments to run the command.
-        For example: `["/bin/sh", "-c"]`
+        On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         """
         return pulumi.get(self, "interpreter")
 

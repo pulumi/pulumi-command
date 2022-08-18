@@ -44,10 +44,84 @@ export class Command extends pulumi.CustomResource {
     public /*out*/ readonly archive!: pulumi.Output<pulumi.asset.Archive | undefined>;
     /**
      * A list of path globs to return as a single archive asset after the command completes.
+     *
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are 'exclude' rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     *
+     * #### Example
+     *
+     * Given the rules:
+     * ```yaml
+     * - "assets/**"
+     * - "src/**.js"
+     * - "!**secret.*"
+     * ```
+     *
+     * When evaluating against this folder:
+     *
+     * ```yaml
+     * - assets/
+     *   - logos/
+     *     - logo.svg
+     * - src/
+     *   - index.js
+     *   - secret.js
+     * ```
+     *
+     * The following paths will be returned:
+     *
+     * ```yaml
+     * - assets/logos/logo.svg
+     * - src/index.js
+     * ```
      */
     public readonly archivePaths!: pulumi.Output<string[] | undefined>;
     /**
      * A list of path globs to read after the command completes.
+     *
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are 'exclude' rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     *
+     * #### Example
+     *
+     * Given the rules:
+     * ```yaml
+     * - "assets/**"
+     * - "src/**.js"
+     * - "!**secret.*"
+     * ```
+     *
+     * When evaluating against this folder:
+     *
+     * ```yaml
+     * - assets/
+     *   - logos/
+     *     - logo.svg
+     * - src/
+     *   - index.js
+     *   - secret.js
+     * ```
+     *
+     * The following paths will be returned:
+     *
+     * ```yaml
+     * - assets/logos/logo.svg
+     * - src/index.js
+     * ```
      */
     public readonly assetPaths!: pulumi.Output<string[] | undefined>;
     /**
@@ -74,7 +148,7 @@ export class Command extends pulumi.CustomResource {
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
     /**
      * The program and arguments to run the command.
-     * For example: `["/bin/sh", "-c"]`
+     * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     public readonly interpreter!: pulumi.Output<string[] | undefined>;
     /**
@@ -140,6 +214,8 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["update"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
+        const replaceOnChanges = { replaceOnChanges: ["triggers[*]"] };
+        opts = pulumi.mergeOptions(opts, replaceOnChanges);
         super(Command.__pulumiType, name, resourceInputs, opts);
     }
 }
@@ -239,7 +315,8 @@ export interface CommandArgs {
      */
     delete?: pulumi.Input<string>;
     /**
-     * The working directory in which to run the command from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      */
     dir?: pulumi.Input<string>;
     /**
@@ -255,6 +332,9 @@ export interface CommandArgs {
      * Pass a string to the command's process as standard in
      */
     stdin?: pulumi.Input<string>;
+    /**
+     * Trigger replacements on changes to this input.
+     */
     triggers?: pulumi.Input<any[]>;
     /**
      * The command to run on update, if empty, create will run again.

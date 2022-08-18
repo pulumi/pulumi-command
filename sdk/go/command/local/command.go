@@ -21,8 +21,44 @@ type Command struct {
 	// An archive asset containing files found after running the command.
 	Archive pulumi.ArchiveOutput `pulumi:"archive"`
 	// A list of path globs to return as a single archive asset after the command completes.
+	//
+	// When specifying glob patterns the following rules apply:
+	// - We only include files not directories for assets and archives.
+	// - Path separators are `/` on all platforms - including Windows.
+	// - Patterns starting with `!` are 'exclude' rules.
+	// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+	// - `*` matches anything except `/`
+	// - `**` matches anything, _including_ `/`
+	// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+	// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+	//
+	// #### Example
+	//
+	// Given the rules:
+	//
+	// When evaluating against this folder:
+	//
+	// The following paths will be returned:
 	ArchivePaths pulumi.StringArrayOutput `pulumi:"archivePaths"`
 	// A list of path globs to read after the command completes.
+	//
+	// When specifying glob patterns the following rules apply:
+	// - We only include files not directories for assets and archives.
+	// - Path separators are `/` on all platforms - including Windows.
+	// - Patterns starting with `!` are 'exclude' rules.
+	// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+	// - `*` matches anything except `/`
+	// - `**` matches anything, _including_ `/`
+	// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+	// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+	//
+	// #### Example
+	//
+	// Given the rules:
+	//
+	// When evaluating against this folder:
+	//
+	// The following paths will be returned:
 	AssetPaths pulumi.StringArrayOutput `pulumi:"assetPaths"`
 	// A map of assets found after running the command.
 	// The key is the relative path from the command dir
@@ -37,7 +73,7 @@ type Command struct {
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The program and arguments to run the command.
-	// For example: `["/bin/sh", "-c"]`
+	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
@@ -58,6 +94,10 @@ func NewCommand(ctx *pulumi.Context,
 		args = &CommandArgs{}
 	}
 
+	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
+		"triggers[*]",
+	})
+	opts = append(opts, replaceOnChanges)
 	var resource Command
 	err := ctx.RegisterResource("command:local:Command", name, args, &resource, opts...)
 	if err != nil {
@@ -134,7 +174,8 @@ type commandArgs struct {
 	Create *string `pulumi:"create"`
 	// The command to run on delete.
 	Delete *string `pulumi:"delete"`
-	// The working directory in which to run the command from.
+	// The directory from which to run the command from. If `dir` does not exist, then
+	// `Command` will fail.
 	Dir *string `pulumi:"dir"`
 	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
@@ -142,7 +183,8 @@ type commandArgs struct {
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
 	// Pass a string to the command's process as standard in
-	Stdin    *string       `pulumi:"stdin"`
+	Stdin *string `pulumi:"stdin"`
+	// Trigger replacements on changes to this input.
 	Triggers []interface{} `pulumi:"triggers"`
 	// The command to run on update, if empty, create will run again.
 	Update *string `pulumi:"update"`
@@ -194,7 +236,8 @@ type CommandArgs struct {
 	Create pulumi.StringPtrInput
 	// The command to run on delete.
 	Delete pulumi.StringPtrInput
-	// The working directory in which to run the command from.
+	// The directory from which to run the command from. If `dir` does not exist, then
+	// `Command` will fail.
 	Dir pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
@@ -202,7 +245,8 @@ type CommandArgs struct {
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput
 	// Pass a string to the command's process as standard in
-	Stdin    pulumi.StringPtrInput
+	Stdin pulumi.StringPtrInput
+	// Trigger replacements on changes to this input.
 	Triggers pulumi.ArrayInput
 	// The command to run on update, if empty, create will run again.
 	Update pulumi.StringPtrInput
@@ -301,11 +345,47 @@ func (o CommandOutput) Archive() pulumi.ArchiveOutput {
 }
 
 // A list of path globs to return as a single archive asset after the command completes.
+//
+// When specifying glob patterns the following rules apply:
+// - We only include files not directories for assets and archives.
+// - Path separators are `/` on all platforms - including Windows.
+// - Patterns starting with `!` are 'exclude' rules.
+// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+// - `*` matches anything except `/`
+// - `**` matches anything, _including_ `/`
+// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+//
+// #### Example
+//
+// Given the rules:
+//
+// When evaluating against this folder:
+//
+// The following paths will be returned:
 func (o CommandOutput) ArchivePaths() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.ArchivePaths }).(pulumi.StringArrayOutput)
 }
 
 // A list of path globs to read after the command completes.
+//
+// When specifying glob patterns the following rules apply:
+// - We only include files not directories for assets and archives.
+// - Path separators are `/` on all platforms - including Windows.
+// - Patterns starting with `!` are 'exclude' rules.
+// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+// - `*` matches anything except `/`
+// - `**` matches anything, _including_ `/`
+// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+//
+// #### Example
+//
+// Given the rules:
+//
+// When evaluating against this folder:
+//
+// The following paths will be returned:
 func (o CommandOutput) AssetPaths() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.AssetPaths }).(pulumi.StringArrayOutput)
 }
@@ -338,7 +418,7 @@ func (o CommandOutput) Environment() pulumi.StringMapOutput {
 }
 
 // The program and arguments to run the command.
-// For example: `["/bin/sh", "-c"]`
+// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 func (o CommandOutput) Interpreter() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.Interpreter }).(pulumi.StringArrayOutput)
 }

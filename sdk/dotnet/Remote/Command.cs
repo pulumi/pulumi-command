@@ -17,10 +17,10 @@ namespace Pulumi.Command.Remote
     public partial class Command : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// The parameters with which to connect to the remote host
+        /// The parameters with which to connect to the remote host.
         /// </summary>
         [Output("connection")]
-        public Output<Outputs.Connection?> Connection { get; private set; } = null!;
+        public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
         /// The command to run on create.
@@ -93,6 +93,10 @@ namespace Pulumi.Command.Remote
             var defaultOptions = new CustomResourceOptions
             {
                 Version = Utilities.Version,
+                ReplaceOnChanges =
+                {
+                    "triggers[*]",
+                },
             };
             var merged = CustomResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.

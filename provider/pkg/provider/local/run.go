@@ -7,7 +7,7 @@ import (
 
 type Run struct{}
 
-func (r *Run) Annotated(a infer.Annotator) {
+func (r *Run) Annotate(a infer.Annotator) {
 	a.Describe(&r, "A local command to be executed.\n"+
 		"This command will always be run on any preview or deployment. "+
 		"Use `local.Command` to avoid duplicating executions.")
