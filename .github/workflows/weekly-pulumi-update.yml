@@ -15,6 +15,11 @@ env:
   TRAVIS_OS_NAME: linux
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
+  PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+  PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+  SIGNING_KEY_ID: ${{ secrets.JAVA_SIGNING_KEY_ID }}
+  SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
+  SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
   AWS_REGION: us-west-2
   PULUMI_API: https://api.pulumi-staging.io
 jobs:
@@ -24,7 +29,7 @@ jobs:
       fail-fast: true
       matrix:
         goversion:
-        - 1.18.x
+        - 1.19.x
         dotnetversion:
         - 3.1.301
         pythonversion:
@@ -124,7 +129,7 @@ jobs:
     - name: Create PR
       id: create-pr
       if: steps.gomod.outputs.changes != 0
-      uses: repo-sync/pull-request@v2
+      uses: repo-sync/pull-request@v2.6.2
       with:
         source_branch: update-pulumi/${{ github.run_id }}-${{ github.run_number }}
         destination_branch: master

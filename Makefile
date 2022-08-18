@@ -10,7 +10,10 @@ PROVIDER        := pulumi-resource-${PACK}
 CODEGEN         := pulumi-gen-${PACK}
 VERSION         ?= $(shell pulumictl get version)
 PROVIDER_PATH   := provider
-VERSION_PATH     := ${PROVIDER_PATH}/pkg/version.Version
+VERSION_PATH    := ${PROVIDER_PATH}/pkg/version.Version
+
+JAVA_GEN 		 := pulumi-java-gen
+JAVA_GEN_VERSION := v0.5.0
 
 SCHEMA_FILE     := provider/cmd/pulumi-resource-command/schema.json
 GOPATH			:= $(shell go env GOPATH)
@@ -70,8 +73,17 @@ python_sdk::
 		rm ./bin/setup.py.bak && \
 		cd ./bin && python3 setup.py build sdist
 
+bin/pulumi-java-gen::
+	$(shell pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java)
+
+java_sdk:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
+java_sdk:: bin/pulumi-java-gen
+	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema $(SCHEMA_FILE) --out sdk/java  --build gradle-nexus
+	cd sdk/java/ && \
+		gradle --console=plain build
+
 .PHONY: build
-build:: codegen provider dotnet_sdk go_sdk nodejs_sdk python_sdk
+build:: codegen provider dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 
 # Required for the codegen action that runs in pulumi/pulumi
 only_build:: build
@@ -86,7 +98,7 @@ install:: install_nodejs_sdk install_dotnet_sdk
 	cp $(WORKING_DIR)/bin/${PROVIDER} ${GOPATH}/bin
 
 
-GO_TEST 	 := go test -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
+GO_TEST := go test -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
 
 test_all::
 	cd provider/pkg && $(GO_TEST) ./...
@@ -104,6 +116,9 @@ install_python_sdk::
 	#target intentionally blank
 
 install_go_sdk::
+	#target intentionally blank
+
+install_java_sdk::
 	#target intentionally blank
 
 install_nodejs_sdk::
