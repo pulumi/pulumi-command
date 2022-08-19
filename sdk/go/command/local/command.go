@@ -94,10 +94,6 @@ func NewCommand(ctx *pulumi.Context,
 		args = &CommandArgs{}
 	}
 
-	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
-		"triggers[*]",
-	})
-	opts = append(opts, replaceOnChanges)
 	var resource Command
 	err := ctx.RegisterResource("command:local:Command", name, args, &resource, opts...)
 	if err != nil {
@@ -278,7 +274,7 @@ func (i *Command) ToCommandOutputWithContext(ctx context.Context) CommandOutput 
 // CommandArrayInput is an input type that accepts CommandArray and CommandArrayOutput values.
 // You can construct a concrete instance of `CommandArrayInput` via:
 //
-//	CommandArray{ CommandArgs{...} }
+//          CommandArray{ CommandArgs{...} }
 type CommandArrayInput interface {
 	pulumi.Input
 
@@ -303,7 +299,7 @@ func (i CommandArray) ToCommandArrayOutputWithContext(ctx context.Context) Comma
 // CommandMapInput is an input type that accepts CommandMap and CommandMapOutput values.
 // You can construct a concrete instance of `CommandMapInput` via:
 //
-//	CommandMap{ "key": CommandArgs{...} }
+//          CommandMap{ "key": CommandArgs{...} }
 type CommandMapInput interface {
 	pulumi.Input
 

@@ -211,8 +211,6 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["update"] = update
             __props__.__dict__["stderr"] = None
             __props__.__dict__["stdout"] = None
-        replace_on_changes = pulumi.ResourceOptions(replace_on_changes=["triggers[*]"])
-        opts = pulumi.ResourceOptions.merge(opts, replace_on_changes)
         super(Command, __self__).__init__(
             'command:remote:Command',
             resource_name,
