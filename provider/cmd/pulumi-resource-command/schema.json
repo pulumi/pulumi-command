@@ -218,7 +218,8 @@
       "properties": {
         "connection": {
           "$ref": "#/types/command:remote:Connection",
-          "description": "The parameters with which to connect to the remote host."
+          "description": "The parameters with which to connect to the remote host.",
+          "replaceOnChanges": true
         },
         "create": {
           "type": "string",
@@ -268,7 +269,8 @@
       "inputProperties": {
         "connection": {
           "$ref": "#/types/command:remote:Connection",
-          "description": "The parameters with which to connect to the remote host."
+          "description": "The parameters with which to connect to the remote host.",
+          "replaceOnChanges": true
         },
         "create": {
           "type": "string",
