@@ -2,6 +2,8 @@ module github.com/pulumi/pulumi-command/provider
 
 go 1.18
 
+replace github.com/pulumi/pulumi-go-provider => ../../pulumi-go-provider
+
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gobwas/glob v0.2.3

@@ -47,6 +47,11 @@ func NewCommand(ctx *pulumi.Context,
 		return nil, errors.New("invalid value for required argument 'Connection'")
 	}
 	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
+	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
+		"connection",
+		"triggers[*]",
+	})
+	opts = append(opts, replaceOnChanges)
 	var resource Command
 	err := ctx.RegisterResource("command:remote:Command", name, args, &resource, opts...)
 	if err != nil {

@@ -145,7 +145,7 @@ The key is the relative path from the command dir`)
 
 type CommandArgs struct {
 	BaseArgs
-	Triggers *[]any  `pulumi:"triggers,optional"`
+	Triggers *[]any  `pulumi:"triggers,optional" provider:"replaceOnChanges"`
 	Create   *string `pulumi:"create,optional"`
 	Delete   *string `pulumi:"delete,optional"`
 	Update   *string `pulumi:"update,optional"`
