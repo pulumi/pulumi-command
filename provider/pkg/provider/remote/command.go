@@ -63,7 +63,9 @@ func (*Command) Create(ctx p.Context, name string, input CommandArgs, preview bo
 	if s.Create != nil {
 		cmd = *s.Create
 	}
-	s.Stdout, s.Stderr, id, err = s.run(ctx, cmd)
+	if !preview {
+		s.Stdout, s.Stderr, id, err = s.run(ctx, cmd)
+	}
 	return id, s, err
 }
 
@@ -73,10 +75,12 @@ func (*Command) Update(ctx p.Context, id string, olds CommandState, news Command
 		return state, nil
 	}
 	var err error
-	if news.Update != nil {
-		state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Update)
-	} else if news.Create != nil {
-		state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Create)
+	if !preview {
+		if news.Update != nil {
+			state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Update)
+		} else if news.Create != nil {
+			state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Create)
+		}
 	}
 	return state, err
 }

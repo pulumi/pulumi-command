@@ -68,6 +68,9 @@ func (*CopyFile) Create(ctx p.Context, name string, input CopyFileArgs, preview 
 		_, err = dst.ReadFrom(src)
 		return err
 	}
+	if preview {
+		return "", CopyFileState{input}, nil
+	}
 	if err := inner(); err != nil {
 		return "", CopyFileState{input}, err
 	}
