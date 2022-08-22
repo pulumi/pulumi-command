@@ -12,11 +12,11 @@ import (
 )
 
 type Connection struct {
-	User       string   `pulumi:"user,optional"`
-	Password   *string  `pulumi:"password,optional"`
-	Host       string   `pulumi:"host"`
-	Port       *float64 `pulumi:"port,optional"`
-	PrivateKey *string  `pulumi:"privateKey,optional"`
+	User       string  `pulumi:"user,optional"`
+	Password   *string `pulumi:"password,optional"`
+	Host       string  `pulumi:"host"`
+	Port       float64 `pulumi:"port,optional"`
+	PrivateKey *string `pulumi:"privateKey,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -62,7 +62,7 @@ func (con Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)),
+				net.JoinHostPort(con.Host, fmt.Sprintf("%.0f", con.Port)),
 				config)
 			if err != nil {
 				if try > 10 {
