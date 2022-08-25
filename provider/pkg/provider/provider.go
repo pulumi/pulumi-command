@@ -462,6 +462,8 @@ func (k *commandProvider) GetSchema(ctx context.Context, req *pulumirpc.GetSchem
 // to the host to decide how long to wait after Cancel is called before (e.g.)
 // hard-closing any gRPC connection.
 func (k *commandProvider) Cancel(context.Context, *pbempty.Empty) (*pbempty.Empty, error) {
+	k.providerMutex.Lock()
+	defer k.providerMutex.Unlock()
 	for _, cancel := range k.cancelFuncs {
 		cancel()
 	}
@@ -477,5 +479,7 @@ func (k *commandProvider) addContext(c context.Context) context.Context {
 }
 
 func (k *commandProvider) removeContext(c context.Context) {
+	k.providerMutex.Lock()
+	defer k.providerMutex.Unlock()
 	delete(k.cancelFuncs, c)
 }
