@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/mapper"
@@ -34,22 +35,24 @@ import (
 )
 
 type commandProvider struct {
-	host         *provider.HostClient
-	name         string
-	version      string
-	pulumiSchema []byte
-	cancelFuncs  map[context.Context]context.CancelFunc
+	host          *provider.HostClient
+	name          string
+	version       string
+	pulumiSchema  []byte
+	cancelFuncs   map[context.Context]context.CancelFunc
+	providerMutex *sync.Mutex
 }
 
 func makeProvider(host *provider.HostClient, name, version string,
 	pulumiSchema []byte) (pulumirpc.ResourceProviderServer, error) {
 	// Return the new provider
 	return &commandProvider{
-		host:         host,
-		name:         name,
-		version:      version,
-		pulumiSchema: pulumiSchema,
-		cancelFuncs:  make(map[context.Context]context.CancelFunc),
+		host:          host,
+		name:          name,
+		version:       version,
+		pulumiSchema:  pulumiSchema,
+		cancelFuncs:   make(map[context.Context]context.CancelFunc),
+		providerMutex: &sync.Mutex{},
 	}, nil
 }
 
@@ -459,6 +462,8 @@ func (k *commandProvider) GetSchema(ctx context.Context, req *pulumirpc.GetSchem
 // to the host to decide how long to wait after Cancel is called before (e.g.)
 // hard-closing any gRPC connection.
 func (k *commandProvider) Cancel(context.Context, *pbempty.Empty) (*pbempty.Empty, error) {
+	k.providerMutex.Lock()
+	defer k.providerMutex.Unlock()
 	for _, cancel := range k.cancelFuncs {
 		cancel()
 	}
@@ -466,11 +471,15 @@ func (k *commandProvider) Cancel(context.Context, *pbempty.Empty) (*pbempty.Empt
 }
 
 func (k *commandProvider) addContext(c context.Context) context.Context {
+	k.providerMutex.Lock()
+	defer k.providerMutex.Unlock()
 	newctx, fn := context.WithCancel(c)
 	k.cancelFuncs[newctx] = fn
 	return newctx
 }
 
 func (k *commandProvider) removeContext(c context.Context) {
+	k.providerMutex.Lock()
+	defer k.providerMutex.Unlock()
 	delete(k.cancelFuncs, c)
 }
