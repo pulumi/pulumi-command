@@ -5,12 +5,16 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "../utilities";
 
 // Export members:
-export * from "./command";
-export * from "./copyFile";
+export { CommandArgs } from "./command";
+export type Command = import("./command").Command;
+export const Command: typeof import("./command").Command = null as any;
 
-// Import resources to register:
-import { Command } from "./command";
-import { CopyFile } from "./copyFile";
+export { CopyFileArgs } from "./copyFile";
+export type CopyFile = import("./copyFile").CopyFile;
+export const CopyFile: typeof import("./copyFile").CopyFile = null as any;
+
+utilities.lazyLoad(exports, ["Command"], () => require("./command"));
+utilities.lazyLoad(exports, ["CopyFile"], () => require("./copyFile"));
 
 const _module = {
     version: utilities.getVersion(),
