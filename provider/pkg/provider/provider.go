@@ -315,7 +315,7 @@ func (k *commandProvider) Read(ctx context.Context, req *pulumirpc.ReadRequest) 
 	return &pulumirpc.ReadResponse{
 		Id:         req.GetId(),
 		Inputs:     req.GetInputs(),
-		Properties: req.GetInputs(),
+		Properties: req.GetProperties(),
 	}, nil
 }
 
