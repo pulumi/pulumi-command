@@ -79,7 +79,6 @@ func (c *command) RunCreate(ctx context.Context, host *provider.HostClient, urn 
 	return id, err
 }
 
-//
 func (c *command) RunUpdate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
 	if c.Update != nil {
 		stdout, stderr, id, err := c.run(ctx, *c.Update, host, urn)
@@ -131,6 +130,14 @@ func (c *commandContext) run(ctx context.Context, command string, host *provider
 	cmd.Stdout = stdoutw
 	cmd.Stderr = stderrw
 	if c.Dir != nil {
+		// Check if exists and is a directory.
+		stat, err := os.Stat(*c.Dir)
+		if err != nil {
+			return "", "", "", fmt.Errorf("error looking up directory: %q", err)
+		}
+		if !stat.IsDir() {
+			return "", "", "", fmt.Errorf("%s is not a directory", *c.Dir)
+		}
 		cmd.Dir = *c.Dir
 	} else {
 		cmd.Dir, err = os.Getwd()
