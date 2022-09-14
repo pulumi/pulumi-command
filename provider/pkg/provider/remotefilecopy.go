@@ -48,7 +48,11 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 		if err != nil {
 			return err
 		}
-		client, err := c.Connection.Dial(ctx, config)
+		proxyConfig, err := c.Connection.ProxySShConfig()
+		if err != nil {
+			return err
+		}
+		client, err := c.Connection.Dial(ctx, proxyConfig, config)
 		if err != nil {
 			return err
 		}

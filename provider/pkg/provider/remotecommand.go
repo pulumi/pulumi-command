@@ -38,6 +38,12 @@ type remoteconnection struct {
 	Host       string  `pulumi:"host"`
 	Port       int     `pulumi:"port,optional"`
 	PrivateKey *string `pulumi:"privateKey,optional"`
+	// Connection information for a bastion host.
+	ProxyUser       string  `pulumi:"proxyUser,optional"`
+	ProxyPassword   *string `pulumi:"proxyPassword,optional"`
+	ProxyHost       string  `pulumi:"proxyHost,optional"`
+	ProxyPort       int     `pulumi:"proxyPort,optional"`
+	ProxyPrivateKey *string `pulumi:"proxyPrivateKey,optional"`
 }
 
 // Generate an ssh config from a connection specification.
@@ -66,15 +72,70 @@ func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
+// Generate an ssh config from the proxy connection specification.
+func (con remoteconnection) ProxySShConfig() (*ssh.ClientConfig, error) {
+	config := &ssh.ClientConfig{
+		User:            con.ProxyUser,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	if con.ProxyPrivateKey != nil {
+		signer, err := ssh.ParsePrivateKey([]byte(*con.ProxyPrivateKey))
+		if err != nil {
+			return nil, err
+		}
+		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
+	}
+	if con.ProxyPassword != nil {
+		config.Auth = append(config.Auth, ssh.Password(*con.ProxyPassword))
+		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
+			for i := range questions {
+				answers[i] = *con.ProxyPassword
+			}
+			return answers, err
+		}))
+	}
+
+	return config, nil
+}
+
 // Dial a ssh client connection from a ssh client configuration, retrying as necessary.
-func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
+func (con remoteconnection) Dial(ctx context.Context, proxyConfig *ssh.ClientConfig, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
+	var proxyClient *ssh.Client
 	var err error
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
-			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)),
-				config)
+			if proxyConfig != nil {
+				proxyClient, err = ssh.Dial("tcp", net.JoinHostPort(con.ProxyHost, fmt.Sprintf("%d", con.ProxyPort)), proxyConfig)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+
+				endpoint := net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port))
+				netConn, err := proxyClient.Dial("tcp", endpoint)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+
+				targetConn, channel, req, err := ssh.NewClientConn(netConn, endpoint, config)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+
+				client = ssh.NewClient(targetConn, channel, req)
+				return true, nil, nil
+			}
+
+			client, err = ssh.Dial("tcp", net.JoinHostPort(con.Host, fmt.Sprintf("%d", con.Port)), config)
 			if err != nil {
 				if try > 10 {
 					return true, nil, err
@@ -128,9 +189,9 @@ func (c *remotecommand) RunDelete(ctx context.Context, host *provider.HostClient
 func (c *remotecommand) RunUpdate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
 	if c.Update != nil {
 		stdout, stderr, id, err := c.run(ctx, *c.Update, host, urn)
-	c.Stdout = stdout
-	c.Stderr = stderr
-	return id, err
+		c.Stdout = stdout
+		c.Stderr = stderr
+		return id, err
 	}
 	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
 	c.Stdout = stdout
@@ -144,7 +205,12 @@ func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.Host
 		return "", "", "", err
 	}
 
-	client, err := c.Connection.Dial(ctx, config)
+	proxyConfig, err := c.Connection.ProxySShConfig()
+	if err != nil {
+		return "", "", "", err
+	}
+
+	client, err := c.Connection.Dial(ctx, proxyConfig, config)
 	if err != nil {
 		return "", "", "", err
 	}
