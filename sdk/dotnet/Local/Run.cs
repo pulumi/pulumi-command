@@ -16,14 +16,14 @@ namespace Pulumi.Command.Local
         /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
         /// </summary>
         public static Task<RunResult> InvokeAsync(RunArgs args, InvokeOptions? options = null)
-            => Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:run", args ?? new RunArgs(), options.WithDefaults());
+            => global::Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:run", args ?? new RunArgs(), options.WithDefaults());
 
         /// <summary>
         /// A local command to be executed.
         /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
         /// </summary>
         public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOptions? options = null)
-            => Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
+            => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
     }
 
 
