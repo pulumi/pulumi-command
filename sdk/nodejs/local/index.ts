@@ -8,13 +8,13 @@ import * as utilities from "../utilities";
 export { CommandArgs } from "./command";
 export type Command = import("./command").Command;
 export const Command: typeof import("./command").Command = null as any;
+utilities.lazyLoad(exports, ["Command"], () => require("./command"));
 
 export { RunArgs, RunResult, RunOutputArgs } from "./run";
 export const run: typeof import("./run").run = null as any;
 export const runOutput: typeof import("./run").runOutput = null as any;
-
-utilities.lazyLoad(exports, ["Command"], () => require("./command"));
 utilities.lazyLoad(exports, ["run","runOutput"], () => require("./run"));
+
 
 const _module = {
     version: utilities.getVersion(),
