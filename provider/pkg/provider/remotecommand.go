@@ -105,7 +105,7 @@ func (con remoteconnection) Dial(ctx context.Context, proxyConfig *ssh.ClientCon
 	var err error
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
-			if proxyConfig != nil {
+			if con.ProxyHost != "" {
 				proxyClient, err = ssh.Dial("tcp", net.JoinHostPort(con.ProxyHost, fmt.Sprintf("%d", con.ProxyPort)), proxyConfig)
 				if err != nil {
 					if try > 10 {
