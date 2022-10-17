@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
 
 	"github.com/pulumi/pulumi/pkg/v3/resource/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
@@ -32,12 +33,18 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
 )
 
+const (
+	sshAgentSocketEnvVar = "SSH_AUTH_SOCK"
+)
+
 type remoteconnection struct {
-	User       string  `pulumi:"user,optional"`
-	Password   *string `pulumi:"password,optional"`
-	Host       string  `pulumi:"host"`
-	Port       int     `pulumi:"port,optional"`
-	PrivateKey *string `pulumi:"privateKey,optional"`
+	User               string  `pulumi:"user,optional"`
+	Password           *string `pulumi:"password,optional"`
+	Host               string  `pulumi:"host"`
+	Port               int     `pulumi:"port,optional"`
+	PrivateKey         *string `pulumi:"privateKey,optional"`
+	PrivateKeyPassword *string `pulumi:"privateKeyPassword,optional"`
+	AgentSocketPath    *string `pulumi:"agentSocketPath,optional"`
 }
 
 // Generate an ssh config from a connection specification.
@@ -47,7 +54,13 @@ func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	if con.PrivateKey != nil {
-		signer, err := ssh.ParsePrivateKey([]byte(*con.PrivateKey))
+		var signer ssh.Signer
+		var err error
+		if con.PrivateKeyPassword != nil {
+			signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(*con.PrivateKey), []byte(*con.PrivateKeyPassword))
+		} else {
+			signer, err = ssh.ParsePrivateKey([]byte(*con.PrivateKey))
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -61,6 +74,20 @@ func (con remoteconnection) SShConfig() (*ssh.ClientConfig, error) {
 			}
 			return answers, err
 		}))
+	}
+	var sshAgentSocketPath *string
+	if con.AgentSocketPath != nil {
+		sshAgentSocketPath = con.AgentSocketPath
+	}
+	if envAgentSocketPath := os.Getenv(sshAgentSocketEnvVar); sshAgentSocketPath == nil && envAgentSocketPath != "" {
+		sshAgentSocketPath = &envAgentSocketPath
+	}
+	if sshAgentSocketPath != nil {
+		conn, err := net.Dial("unix", *sshAgentSocketPath)
+		if err != nil {
+			return nil, err
+		}
+		config.Auth = append(config.Auth, ssh.PublicKeysCallback(agent.NewClient(conn).Signers))
 	}
 
 	return config, nil
@@ -128,9 +155,9 @@ func (c *remotecommand) RunDelete(ctx context.Context, host *provider.HostClient
 func (c *remotecommand) RunUpdate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
 	if c.Update != nil {
 		stdout, stderr, id, err := c.run(ctx, *c.Update, host, urn)
-	c.Stdout = stdout
-	c.Stderr = stderr
-	return id, err
+		c.Stdout = stdout
+		c.Stderr = stderr
+		return id, err
 	}
 	stdout, stderr, id, err := c.run(ctx, c.Create, host, urn)
 	c.Stdout = stdout
