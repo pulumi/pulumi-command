@@ -13,6 +13,11 @@ import javax.annotation.Nullable;
 @CustomType
 public final class Connection {
     /**
+     * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+     * 
+     */
+    private final @Nullable String agentSocketPath;
+    /**
      * @return The address of the resource to connect to.
      * 
      */
@@ -33,6 +38,11 @@ public final class Connection {
      */
     private final @Nullable String privateKey;
     /**
+     * @return The password to use in case the private key is encrypted.
+     * 
+     */
+    private final @Nullable String privateKeyPassword;
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -40,18 +50,29 @@ public final class Connection {
 
     @CustomType.Constructor
     private Connection(
+        @CustomType.Parameter("agentSocketPath") @Nullable String agentSocketPath,
         @CustomType.Parameter("host") String host,
         @CustomType.Parameter("password") @Nullable String password,
         @CustomType.Parameter("port") @Nullable Double port,
         @CustomType.Parameter("privateKey") @Nullable String privateKey,
+        @CustomType.Parameter("privateKeyPassword") @Nullable String privateKeyPassword,
         @CustomType.Parameter("user") @Nullable String user) {
+        this.agentSocketPath = agentSocketPath;
         this.host = host;
         this.password = password;
         this.port = port;
         this.privateKey = privateKey;
+        this.privateKeyPassword = privateKeyPassword;
         this.user = user;
     }
 
+    /**
+     * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+     * 
+     */
+    public Optional<String> agentSocketPath() {
+        return Optional.ofNullable(this.agentSocketPath);
+    }
     /**
      * @return The address of the resource to connect to.
      * 
@@ -81,6 +102,13 @@ public final class Connection {
         return Optional.ofNullable(this.privateKey);
     }
     /**
+     * @return The password to use in case the private key is encrypted.
+     * 
+     */
+    public Optional<String> privateKeyPassword() {
+        return Optional.ofNullable(this.privateKeyPassword);
+    }
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -97,10 +125,12 @@ public final class Connection {
     }
 
     public static final class Builder {
+        private @Nullable String agentSocketPath;
         private String host;
         private @Nullable String password;
         private @Nullable Double port;
         private @Nullable String privateKey;
+        private @Nullable String privateKeyPassword;
         private @Nullable String user;
 
         public Builder() {
@@ -109,13 +139,19 @@ public final class Connection {
 
         public Builder(Connection defaults) {
     	      Objects.requireNonNull(defaults);
+    	      this.agentSocketPath = defaults.agentSocketPath;
     	      this.host = defaults.host;
     	      this.password = defaults.password;
     	      this.port = defaults.port;
     	      this.privateKey = defaults.privateKey;
+    	      this.privateKeyPassword = defaults.privateKeyPassword;
     	      this.user = defaults.user;
         }
 
+        public Builder agentSocketPath(@Nullable String agentSocketPath) {
+            this.agentSocketPath = agentSocketPath;
+            return this;
+        }
         public Builder host(String host) {
             this.host = Objects.requireNonNull(host);
             return this;
@@ -132,11 +168,15 @@ public final class Connection {
             this.privateKey = privateKey;
             return this;
         }
+        public Builder privateKeyPassword(@Nullable String privateKeyPassword) {
+            this.privateKeyPassword = privateKeyPassword;
+            return this;
+        }
         public Builder user(@Nullable String user) {
             this.user = user;
             return this;
         }        public Connection build() {
-            return new Connection(host, password, port, privateKey, user);
+            return new Connection(agentSocketPath, host, password, port, privateKey, privateKeyPassword, user);
         }
     }
 }

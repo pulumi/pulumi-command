@@ -16,6 +16,12 @@ namespace Pulumi.Command.Remote.Inputs
     public sealed class ConnectionArgs : global::Pulumi.ResourceArgs
     {
         /// <summary>
+        /// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+        /// </summary>
+        [Input("agentSocketPath")]
+        public Input<string>? AgentSocketPath { get; set; }
+
+        /// <summary>
         /// The address of the resource to connect to.
         /// </summary>
         [Input("host", required: true)]
@@ -38,6 +44,12 @@ namespace Pulumi.Command.Remote.Inputs
         /// </summary>
         [Input("privateKey")]
         public Input<string>? PrivateKey { get; set; }
+
+        /// <summary>
+        /// The password to use in case the private key is encrypted.
+        /// </summary>
+        [Input("privateKeyPassword")]
+        public Input<string>? PrivateKeyPassword { get; set; }
 
         /// <summary>
         /// The user that we should use for the connection.

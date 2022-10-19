@@ -39,6 +39,14 @@
                 "privateKey": {
                     "type": "string",
                     "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+                },
+                "privateKeyPassword": {
+                    "type": "string",
+                    "description": "The password to use in case the private key is encrypted."
+                },
+                "agentSocketPath": {
+                    "type": "string",
+                    "description": "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present."
                 }
             },
             "required": [
