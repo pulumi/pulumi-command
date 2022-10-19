@@ -7,7 +7,6 @@ NODE_MODULE_NAME := @pulumi/command
 NUGET_PKG_NAME   := Pulumi.Command
 
 PROVIDER        := pulumi-resource-${PACK}
-CODEGEN         := pulumi-gen-${PACK}
 VERSION         ?= $(shell pulumictl get version)
 PROVIDER_PATH   := provider
 VERSION_PATH    := ${PROVIDER_PATH}/pkg/version.Version
@@ -26,10 +25,6 @@ ensure::
 	cd sdk && go mod tidy
 	cd examples && go mod tidy
 
-codegen::
-	(cd provider && go build -o $(WORKING_DIR)/bin/${CODEGEN} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" ${PROJECT}/${PROVIDER_PATH}/cmd/$(CODEGEN))
-	(cd provider && VERSION=${VERSION} go generate cmd/${PROVIDER}/main.go)
-
 provider::
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))
 
@@ -42,19 +37,19 @@ test_provider::
 dotnet_sdk:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 dotnet_sdk::
 	rm -rf sdk/dotnet
-	$(WORKING_DIR)/bin/$(CODEGEN) -version=${DOTNET_VERSION} dotnet $(SCHEMA_FILE) $(CURDIR)
+	pulumi package gen-sdk --language dotnet $(SCHEMA_FILE)
 	cd ${PACKDIR}/dotnet/&& \
 		echo "${DOTNET_VERSION}" >version.txt && \
 		dotnet build /p:Version=${DOTNET_VERSION}
 
 go_sdk::
 	rm -rf sdk/go
-	$(WORKING_DIR)/bin/$(CODEGEN) -version=${VERSION} go $(SCHEMA_FILE) $(CURDIR)
+	pulumi package gen-sdk --language go $(SCHEMA_FILE)
 
 nodejs_sdk:: VERSION := $(shell pulumictl get version --language javascript)
 nodejs_sdk::
 	rm -rf sdk/nodejs
-	$(WORKING_DIR)/bin/$(CODEGEN) -version=${VERSION} nodejs $(SCHEMA_FILE) $(CURDIR)
+	pulumi package gen-sdk --language nodejs $(SCHEMA_FILE)
 	cd ${PACKDIR}/nodejs/ && \
 		yarn install && \
 		yarn run tsc
@@ -64,7 +59,7 @@ nodejs_sdk::
 python_sdk:: PYPI_VERSION := $(shell pulumictl get version --language python)
 python_sdk::
 	rm -rf sdk/python
-	$(WORKING_DIR)/bin/$(CODEGEN) -version=${VERSION} python $(SCHEMA_FILE) $(CURDIR)
+	pulumi package gen-sdk --language python $(SCHEMA_FILE)
 	cp README.md ${PACKDIR}/python/
 	cd ${PACKDIR}/python/ && \
 		python3 setup.py clean --all 2>/dev/null && \
@@ -83,7 +78,7 @@ java_sdk:: bin/pulumi-java-gen
 		gradle --console=plain build
 
 .PHONY: build
-build:: codegen provider dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
+build:: provider dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 
 # Required for the codegen action that runs in pulumi/pulumi
 only_build:: build
