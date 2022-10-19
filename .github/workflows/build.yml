@@ -63,7 +63,7 @@ jobs:
       with:
         go-version: ${{matrix.goversion}}
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.7.1
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -133,7 +133,7 @@ jobs:
       with:
         go-version: ${{matrix.goversion}}
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.7.1
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -231,7 +231,7 @@ jobs:
       with:
         go-version: ${{matrix.goversion}}
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.7.1
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -295,7 +295,7 @@ jobs:
         role-session-name: ${{ env.PROVIDER }}@githubActions
         role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
     - name: Install gotestfmt
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.7.1
       with:
         repo: haveyoudebuggedit/gotestfmt
     - name: Run tests
@@ -330,7 +330,7 @@ jobs:
       with:
         go-version: ${{matrix.goversion}}
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.7.1
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -395,7 +395,7 @@ jobs:
       with:
         go-version: ${{matrix.goversion}}
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.7.1
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
