@@ -154,6 +154,40 @@ func TestEc2RemoteTs(t *testing.T) {
 				Dir:      filepath.Join("ec2_remote", "replace_instance"),
 				Additive: true,
 			}},
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				isEncrypted := func(v interface{}) bool {
+					if m, ok := v.(map[string]interface{}); ok {
+						sigKey := m[resource.SigKey]
+						if sigKey == nil {
+							return false
+						}
+
+						v, vOk := sigKey.(string)
+						if !vOk {
+							return false
+						}
+
+						if v != resource.SecretSig {
+							return false
+						}
+
+						ciphertext := m["ciphertext"]
+						if ciphertext == nil {
+							return false
+						}
+
+						_, cOk := ciphertext.(string)
+						return cOk
+					}
+
+					return false
+				}
+
+				assertEncryptedValue := func(m map[string]interface{}, key string) {
+					assert.Truef(t, isEncrypted(m[key]), "%s value should be encrypted", key)
+				}
+				assertEncryptedValue(stack.Outputs, "connectionSecret")
+			},
 		})
 
 	integration.ProgramTest(t, &test)

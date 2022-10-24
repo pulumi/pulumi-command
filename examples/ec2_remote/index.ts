@@ -68,6 +68,7 @@ const catSize = new remote.Command("checkSize", {
     create: "cat size.ts",
 }, { dependsOn: sizeFile })
 
+export const connectionSecret = hostname.connection;
 export const confirmSize = catSize.stdout;
 export const publicIp = server.publicIp;
 export const publicHostName = server.publicDns;

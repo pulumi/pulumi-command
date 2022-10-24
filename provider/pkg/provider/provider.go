@@ -88,7 +88,7 @@ func (k *commandProvider) DiffConfig(ctx context.Context, req *pulumirpc.DiffReq
 
 // Configure configures the resource provider with "globals" that control its behavior.
 func (k *commandProvider) Configure(_ context.Context, req *pulumirpc.ConfigureRequest) (*pulumirpc.ConfigureResponse, error) {
-	return &pulumirpc.ConfigureResponse{}, nil
+	return &pulumirpc.ConfigureResponse{AcceptSecrets: true}, nil
 }
 
 // Invoke dynamically executes a built-in function in the provider.
@@ -96,7 +96,7 @@ func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeReque
 	k.addContext(ctx)
 	defer k.removeContext(ctx)
 	tok := req.GetTok()
-	argProps, err := plugin.UnmarshalProperties(req.GetArgs(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	argProps, err := plugin.UnmarshalProperties(req.GetArgs(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeReque
 
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
-		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true},
 	)
 	if err != nil {
 		return nil, err
@@ -170,12 +170,12 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 		return nil, err
 	}
 
-	olds, err := plugin.UnmarshalProperties(req.GetOlds(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	olds, err := plugin.UnmarshalProperties(req.GetOlds(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
 
-	news, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	news, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +230,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		return nil, err
 	}
 
-	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +292,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
-		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true},
 	)
 	if err != nil {
 		return nil, err
@@ -329,7 +329,7 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 		return nil, err
 	}
 
-	inputProps, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	inputProps, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -373,7 +373,7 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
-		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
+		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true},
 	)
 	if err != nil {
 		return nil, err
@@ -394,7 +394,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		return nil, err
 	}
 
-	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
+	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
