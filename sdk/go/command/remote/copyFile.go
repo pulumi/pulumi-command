@@ -42,9 +42,6 @@ func NewCopyFile(ctx *pulumi.Context,
 		return nil, errors.New("invalid value for required argument 'RemotePath'")
 	}
 	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
-	if args.Connection != nil {
-		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionOutput)
-	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"connection",
 	})

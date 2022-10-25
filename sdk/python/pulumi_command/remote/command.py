@@ -202,7 +202,7 @@ class Command(pulumi.CustomResource):
 
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
-            __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
+            __props__.__dict__["connection"] = connection
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
             __props__.__dict__["environment"] = environment

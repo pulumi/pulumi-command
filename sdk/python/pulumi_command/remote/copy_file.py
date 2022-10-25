@@ -141,7 +141,7 @@ class CopyFile(pulumi.CustomResource):
 
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
-            __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
+            __props__.__dict__["connection"] = connection
             if local_path is None and not opts.urn:
                 raise TypeError("Missing required property 'local_path'")
             __props__.__dict__["local_path"] = local_path
