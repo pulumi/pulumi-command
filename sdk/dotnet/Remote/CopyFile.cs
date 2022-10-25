@@ -88,11 +88,21 @@ namespace Pulumi.Command.Remote
 
     public sealed class CopyFileArgs : global::Pulumi.ResourceArgs
     {
+        [Input("connection", required: true)]
+        private Input<Inputs.ConnectionArgs>? _connection;
+
         /// <summary>
         /// The parameters with which to connect to the remote host.
         /// </summary>
-        [Input("connection", required: true)]
-        public Input<Inputs.ConnectionArgs> Connection { get; set; } = null!;
+        public Input<Inputs.ConnectionArgs>? Connection
+        {
+            get => _connection;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _connection = Output.Tuple<Input<Inputs.ConnectionArgs>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
 
         /// <summary>
         /// The path of the file to be copied.

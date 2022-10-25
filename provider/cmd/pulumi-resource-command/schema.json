@@ -249,6 +249,7 @@
             "inputProperties": {
                 "connection": {
                     "description": "The parameters with which to connect to the remote host.",
+                    "secret": true,
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "environment": {
@@ -291,6 +292,7 @@
             "inputProperties": {
                 "connection": {
                     "description": "The parameters with which to connect to the remote host.",
+                    "secret": true,
                     "$ref": "#/types/command:remote:Connection"
                 },
                 "triggers": {
