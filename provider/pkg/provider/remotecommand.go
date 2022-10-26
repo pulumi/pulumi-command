@@ -119,7 +119,7 @@ func (con remoteconnection) Dial(ctx context.Context, config *ssh.ClientConfig) 
 
 type remotecommand struct {
 	// Input
-	Connection  remoteconnection   `pulumi:"connection"`
+	Connection  *remoteconnection  `pulumi:"connection"`
 	Interpreter *[]string          `pulumi:"interpreter,optional"`
 	Dir         *string            `pulumi:"dir,optional"`
 	Environment *map[string]string `pulumi:"environment,optional"`
@@ -166,12 +166,13 @@ func (c *remotecommand) RunUpdate(ctx context.Context, host *provider.HostClient
 }
 
 func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {
-	config, err := c.Connection.SShConfig()
+	remoteConnection := c.Connection
+	config, err := remoteConnection.SShConfig()
 	if err != nil {
 		return "", "", "", err
 	}
 
-	client, err := c.Connection.Dial(ctx, config)
+	client, err := remoteConnection.Dial(ctx, config)
 	if err != nil {
 		return "", "", "", err
 	}

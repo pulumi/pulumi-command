@@ -89,7 +89,7 @@ func (k *commandProvider) DiffConfig(ctx context.Context, req *pulumirpc.DiffReq
 
 // Configure configures the resource provider with "globals" that control its behavior.
 func (k *commandProvider) Configure(_ context.Context, req *pulumirpc.ConfigureRequest) (*pulumirpc.ConfigureResponse, error) {
-	k.acceptSecrets = req.GetAcceptSecrets()
+	k.acceptSecrets = false // req.GetAcceptSecrets()
 	return &pulumirpc.ConfigureResponse{AcceptSecrets: k.acceptSecrets}, nil
 }
 
@@ -120,6 +120,12 @@ func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeReque
 		return nil, fmt.Errorf("unknown Invoke token %q", tok)
 	}
 
+	for k, v := range outputs {
+		if _, exists := args[k]; exists {
+			continue
+		}
+		outputs[k] = v
+	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
 		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true},
@@ -222,42 +228,6 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 	}, nil
 }
 
-func decodeSecret(s *resource.Secret) interface{} {
-	if s == nil {
-		return nil
-	}
-	e := s.Element
-	return e.V
-}
-
-func decodeAny(inputs interface{}) interface{} {
-	switch valT := inputs.(type) {
-	case map[string]interface{}:
-		return decodeMap(valT)
-	case []interface{}:
-		return decodeList(valT)
-	case *resource.Secret:
-		return decodeSecret(valT)
-	}
-	return inputs
-}
-
-func decodeList(inputs []interface{}) []interface{} {
-	decoded := make([]interface{}, 0, len(inputs))
-	for _, val := range inputs {
-		decoded = append(decoded, decodeAny(val))
-	}
-	return decoded
-}
-
-func decodeMap(inputs map[string]interface{}) map[string]interface{} {
-	decoded := make(map[string]interface{})
-	for key, val := range inputs {
-		decoded[key] = decodeAny(val)
-	}
-	return decoded
-}
-
 // Create allocates a new instance of the provided resource and returns its unique ID afterwards.
 func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateRequest) (*pulumirpc.CreateResponse, error) {
 	ctx = k.addContext(ctx)
@@ -273,7 +243,6 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		return nil, err
 	}
 	inputs := inputProps.Mappable()
-	decoded := decodeMap(inputs)
 
 	var id string
 	var outputs map[string]interface{}
@@ -281,7 +250,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 	switch ty {
 	case "command:local:Command":
 		var cmd command
-		err = mapper.MapI(decoded, &cmd)
+		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -297,7 +266,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 	case "command:remote:Command":
 		var cmd remotecommand
-		err = mapper.MapI(decoded, &cmd)
+		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -313,7 +282,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 	case "command:remote:CopyFile":
 		var cpf remotefilecopy
-		err = mapper.MapI(decoded, &cpf)
+		err = mapper.MapI(inputs, &cpf)
 		if err != nil {
 			return nil, err
 		}
@@ -329,6 +298,12 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 	}
 
+	for k, v := range outputs {
+		if _, exists := inputs[k]; exists {
+			continue
+		}
+		outputs[k] = v
+	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
 		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true},
@@ -373,14 +348,13 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 		return nil, err
 	}
 	inputs := inputProps.Mappable()
-	decoded := decodeMap(inputs)
 
 	var outputs map[string]interface{}
 
 	switch ty {
 	case "command:local:Command":
 		var cmd command
-		err = mapper.MapI(decoded, &cmd)
+		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -396,7 +370,7 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 		}
 	case "command:remote:Command":
 		var cmd remotecommand
-		err = mapper.MapI(decoded, &cmd)
+		err = mapper.MapI(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -410,6 +384,12 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 		if err != nil {
 			return nil, err
 		}
+	}
+	for k, v := range outputs {
+		if _, exists := inputs[k]; exists {
+			continue
+		}
+		outputs[k] = v
 	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
@@ -439,14 +419,13 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		return nil, err
 	}
 	inputs := inputProps.Mappable()
-	decoded := decodeMap(inputs)
 
 	decoder := mapper.New(&mapper.Opts{IgnoreMissing: true, IgnoreUnrecognized: true})
 
 	switch ty {
 	case "command:local:Command":
 		var cmd command
-		err = decoder.Decode(decoded, &cmd)
+		err = decoder.Decode(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -457,7 +436,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		}
 	case "command:remote:Command":
 		var cmd remotecommand
-		err = decoder.Decode(decoded, &cmd)
+		err = decoder.Decode(inputs, &cmd)
 		if err != nil {
 			return nil, err
 		}
@@ -468,7 +447,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		}
 	case "command:remote:CopyFile":
 		var cpf remotefilecopy
-		err = decoder.Decode(decoded, &cpf)
+		err = decoder.Decode(inputs, &cpf)
 		if err != nil {
 			return nil, err
 		}

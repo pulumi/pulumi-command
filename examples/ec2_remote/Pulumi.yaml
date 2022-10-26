@@ -1,3 +1,7 @@
 name: command-ec2-remote
 runtime: nodejs
 description: A simple command example
+plugins:
+  providers:
+    - name: command
+      path: /home/kdixler/go/src/github.com/pulumi/pulumi-command/bin
