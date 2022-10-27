@@ -71,7 +71,6 @@ const catSize = new remote.Command("checkSize", {
     create: "cat size.ts",
 }, { dependsOn: sizeFile })
 
-
 export const connectionSecret = hostname.connection;
 export const secretEnv = hostname.environment;
 export const confirmSize = catSize.stdout;
