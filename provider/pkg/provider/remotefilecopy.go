@@ -28,10 +28,10 @@ import (
 
 type remotefilecopy struct {
 	// Input
-	Connection remoteconnection `pulumi:"connection"`
-	Triggers   *[]interface{}   `pulumi:"triggers,optional"`
-	LocalPath  string           `pulumi:"localPath"`
-	RemotePath string           `pulumi:"remotePath"`
+	Connection *remoteconnection `pulumi:"connection"`
+	Triggers   *[]interface{}    `pulumi:"triggers,optional"`
+	LocalPath  string            `pulumi:"localPath"`
+	RemotePath string            `pulumi:"remotePath"`
 }
 
 func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
