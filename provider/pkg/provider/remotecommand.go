@@ -166,13 +166,12 @@ func (c *remotecommand) RunUpdate(ctx context.Context, host *provider.HostClient
 }
 
 func (c *remotecommand) run(ctx context.Context, cmd string, host *provider.HostClient, urn resource.URN) (string, string, string, error) {
-	remoteConnection := c.Connection
-	config, err := remoteConnection.SShConfig()
+	config, err := c.Connection.SShConfig()
 	if err != nil {
 		return "", "", "", err
 	}
 
-	client, err := remoteConnection.Dial(ctx, config)
+	client, err := c.Connection.Dial(ctx, config)
 	if err != nil {
 		return "", "", "", err
 	}

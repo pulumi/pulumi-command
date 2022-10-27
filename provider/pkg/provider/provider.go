@@ -38,7 +38,6 @@ type commandProvider struct {
 	host          *provider.HostClient
 	name          string
 	version       string
-	acceptSecrets bool
 	pulumiSchema  []byte
 	cancelFuncs   map[context.Context]context.CancelFunc
 	providerMutex *sync.Mutex
@@ -89,8 +88,7 @@ func (k *commandProvider) DiffConfig(ctx context.Context, req *pulumirpc.DiffReq
 
 // Configure configures the resource provider with "globals" that control its behavior.
 func (k *commandProvider) Configure(_ context.Context, req *pulumirpc.ConfigureRequest) (*pulumirpc.ConfigureResponse, error) {
-	k.acceptSecrets = false // req.GetAcceptSecrets()
-	return &pulumirpc.ConfigureResponse{AcceptSecrets: k.acceptSecrets}, nil
+	return &pulumirpc.ConfigureResponse{}, nil
 }
 
 // Invoke dynamically executes a built-in function in the provider.
@@ -98,7 +96,7 @@ func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeReque
 	k.addContext(ctx)
 	defer k.removeContext(ctx)
 	tok := req.GetTok()
-	argProps, err := plugin.UnmarshalProperties(req.GetArgs(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true})
+	argProps, err := plugin.UnmarshalProperties(req.GetArgs(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -120,15 +118,9 @@ func (k *commandProvider) Invoke(ctx context.Context, req *pulumirpc.InvokeReque
 		return nil, fmt.Errorf("unknown Invoke token %q", tok)
 	}
 
-	for k, v := range outputs {
-		if _, exists := args[k]; exists {
-			continue
-		}
-		outputs[k] = v
-	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
-		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true},
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
 	)
 	if err != nil {
 		return nil, err
@@ -178,12 +170,12 @@ func (k *commandProvider) Diff(ctx context.Context, req *pulumirpc.DiffRequest) 
 		return nil, err
 	}
 
-	olds, err := plugin.UnmarshalProperties(req.GetOlds(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true})
+	olds, err := plugin.UnmarshalProperties(req.GetOlds(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
 
-	news, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true})
+	news, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +230,7 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		return nil, err
 	}
 
-	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true})
+	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -298,15 +290,9 @@ func (k *commandProvider) Create(ctx context.Context, req *pulumirpc.CreateReque
 		}
 	}
 
-	for k, v := range outputs {
-		if _, exists := inputs[k]; exists {
-			continue
-		}
-		outputs[k] = v
-	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
-		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true},
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
 	)
 	if err != nil {
 		return nil, err
@@ -343,7 +329,7 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 		return nil, err
 	}
 
-	inputProps, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true})
+	inputProps, err := plugin.UnmarshalProperties(req.GetNews(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}
@@ -385,15 +371,9 @@ func (k *commandProvider) Update(ctx context.Context, req *pulumirpc.UpdateReque
 			return nil, err
 		}
 	}
-	for k, v := range outputs {
-		if _, exists := inputs[k]; exists {
-			continue
-		}
-		outputs[k] = v
-	}
 	outputProperties, err := plugin.MarshalProperties(
 		resource.NewPropertyMapFromMap(outputs),
-		plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true},
+		plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true},
 	)
 	if err != nil {
 		return nil, err
@@ -414,7 +394,7 @@ func (k *commandProvider) Delete(ctx context.Context, req *pulumirpc.DeleteReque
 		return nil, err
 	}
 
-	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, KeepSecrets: k.acceptSecrets, SkipNulls: true})
+	inputProps, err := plugin.UnmarshalProperties(req.GetProperties(), plugin.MarshalOptions{KeepUnknowns: true, SkipNulls: true})
 	if err != nil {
 		return nil, err
 	}

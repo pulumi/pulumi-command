@@ -35,11 +35,8 @@ type remotefilecopy struct {
 }
 
 func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClient, urn resource.URN) (string, error) {
-
-	remoteConnection := c.Connection
-
 	host.Log(ctx, diag.Debug, urn,
-		fmt.Sprintf("Creating file: %s:%s from local file %s", remoteConnection.Host, c.RemotePath, c.LocalPath))
+		fmt.Sprintf("Creating file: %s:%s from local file %s", c.Connection.Host, c.RemotePath, c.LocalPath))
 	inner := func() error {
 		src, err := os.Open(c.LocalPath)
 		if err != nil {
@@ -47,11 +44,11 @@ func (c *remotefilecopy) RunCreate(ctx context.Context, host *provider.HostClien
 		}
 		defer src.Close()
 
-		config, err := remoteConnection.SShConfig()
+		config, err := c.Connection.SShConfig()
 		if err != nil {
 			return err
 		}
-		client, err := remoteConnection.Dial(ctx, config)
+		client, err := c.Connection.Dial(ctx, config)
 		if err != nil {
 			return err
 		}
