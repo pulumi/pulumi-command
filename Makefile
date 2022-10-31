@@ -74,11 +74,12 @@ python_sdk::
 		cd ./bin && python3 setup.py build sdist
 
 bin/pulumi-java-gen::
-	$(shell pulumictl download-binary -n pulumi-language-java -v $(JAVA_GEN_VERSION) -r pulumi/pulumi-java)
+	echo pulumi-java-gen is no longer necessary
 
 java_sdk:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
-java_sdk:: bin/pulumi-java-gen
-	$(WORKING_DIR)/bin/$(JAVA_GEN) generate --schema $(SCHEMA_FILE) --out sdk/java  --build gradle-nexus
+java_sdk::
+	rm -rf sdk/java
+	pulumi package gen-sdk --language java $(SCHEMA_FILE)
 	cd sdk/java/ && \
 		gradle --console=plain build
 
