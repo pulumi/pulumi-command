@@ -7,13 +7,9 @@ NODE_MODULE_NAME := @pulumi/command
 NUGET_PKG_NAME   := Pulumi.Command
 
 PROVIDER        := pulumi-resource-${PACK}
-CODEGEN         := pulumi-gen-${PACK}
 VERSION         ?= $(shell pulumictl get version)
 PROVIDER_PATH   := provider
 VERSION_PATH    := ${PROVIDER_PATH}/pkg/version.Version
-
-JAVA_GEN 		 := pulumi-java-gen
-JAVA_GEN_VERSION := v0.5.0
 
 SCHEMA_FILE     := provider/cmd/pulumi-resource-command/schema.json
 GOPATH			:= $(shell go env GOPATH)
@@ -27,7 +23,6 @@ ensure::
 	cd examples && go mod tidy
 
 codegen::
-	(cd provider && go build -o $(WORKING_DIR)/bin/${CODEGEN} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" ${PROJECT}/${PROVIDER_PATH}/cmd/$(CODEGEN))
 	(cd provider && VERSION=${VERSION} go generate cmd/${PROVIDER}/main.go)
 
 provider::
