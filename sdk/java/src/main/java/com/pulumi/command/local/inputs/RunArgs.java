@@ -119,30 +119,24 @@ public final class RunArgs extends com.pulumi.resources.InvokeArgs {
         return Optional.ofNullable(this.assetPaths);
     }
 
-    /**
-     * The command to run.
-     * 
-     */
     @Import(name="command", required=true)
     private Output<String> command;
 
-    /**
-     * @return The command to run.
-     * 
-     */
     public Output<String> command() {
         return this.command;
     }
 
     /**
-     * The working directory in which to run the command from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     @Import(name="dir")
     private @Nullable Output<String> dir;
 
     /**
-     * @return The working directory in which to run the command from.
+     * @return The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     public Optional<Output<String>> dir() {
@@ -396,29 +390,18 @@ public final class RunArgs extends com.pulumi.resources.InvokeArgs {
             return assetPaths(List.of(assetPaths));
         }
 
-        /**
-         * @param command The command to run.
-         * 
-         * @return builder
-         * 
-         */
         public Builder command(Output<String> command) {
             $.command = command;
             return this;
         }
 
-        /**
-         * @param command The command to run.
-         * 
-         * @return builder
-         * 
-         */
         public Builder command(String command) {
             return command(Output.of(command));
         }
 
         /**
-         * @param dir The working directory in which to run the command from.
+         * @param dir The directory from which to run the command from. If `dir` does not exist, then
+         * `Command` will fail.
          * 
          * @return builder
          * 
@@ -429,7 +412,8 @@ public final class RunArgs extends com.pulumi.resources.InvokeArgs {
         }
 
         /**
-         * @param dir The working directory in which to run the command from.
+         * @param dir The directory from which to run the command from. If `dir` does not exist, then
+         * `Command` will fail.
          * 
          * @return builder
          * 

@@ -17,25 +17,19 @@ __all__ = [
 class ConnectionArgs:
     def __init__(__self__, *,
                  host: pulumi.Input[str],
-                 agent_socket_path: Optional[pulumi.Input[str]] = None,
                  password: Optional[pulumi.Input[str]] = None,
                  port: Optional[pulumi.Input[float]] = None,
                  private_key: Optional[pulumi.Input[str]] = None,
-                 private_key_password: Optional[pulumi.Input[str]] = None,
                  user: Optional[pulumi.Input[str]] = None):
         """
         Instructions for how to connect to a remote endpoint.
         :param pulumi.Input[str] host: The address of the resource to connect to.
-        :param pulumi.Input[str] agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param pulumi.Input[str] password: The password we should use for the connection.
         :param pulumi.Input[float] port: The port to connect to.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        :param pulumi.Input[str] private_key_password: The password to use in case the private key is encrypted.
         :param pulumi.Input[str] user: The user that we should use for the connection.
         """
         pulumi.set(__self__, "host", host)
-        if agent_socket_path is not None:
-            pulumi.set(__self__, "agent_socket_path", agent_socket_path)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if port is None:
@@ -44,8 +38,6 @@ class ConnectionArgs:
             pulumi.set(__self__, "port", port)
         if private_key is not None:
             pulumi.set(__self__, "private_key", private_key)
-        if private_key_password is not None:
-            pulumi.set(__self__, "private_key_password", private_key_password)
         if user is None:
             user = 'root'
         if user is not None:
@@ -62,18 +54,6 @@ class ConnectionArgs:
     @host.setter
     def host(self, value: pulumi.Input[str]):
         pulumi.set(self, "host", value)
-
-    @property
-    @pulumi.getter(name="agentSocketPath")
-    def agent_socket_path(self) -> Optional[pulumi.Input[str]]:
-        """
-        SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-        """
-        return pulumi.get(self, "agent_socket_path")
-
-    @agent_socket_path.setter
-    def agent_socket_path(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "agent_socket_path", value)
 
     @property
     @pulumi.getter
@@ -110,18 +90,6 @@ class ConnectionArgs:
     @private_key.setter
     def private_key(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "private_key", value)
-
-    @property
-    @pulumi.getter(name="privateKeyPassword")
-    def private_key_password(self) -> Optional[pulumi.Input[str]]:
-        """
-        The password to use in case the private key is encrypted.
-        """
-        return pulumi.get(self, "private_key_password")
-
-    @private_key_password.setter
-    def private_key_password(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "private_key_password", value)
 
     @property
     @pulumi.getter

@@ -27,12 +27,86 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// A list of path globs to return as a single archive asset after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
         /// </summary>
         [Output("archivePaths")]
         public Output<ImmutableArray<string>> ArchivePaths { get; private set; } = null!;
 
         /// <summary>
         /// A list of path globs to read after the command completes.
+        /// 
+        /// When specifying glob patterns the following rules apply:
+        /// - We only include files not directories for assets and archives.
+        /// - Path separators are `/` on all platforms - including Windows.
+        /// - Patterns starting with `!` are 'exclude' rules.
+        /// - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        /// - `*` matches anything except `/`
+        /// - `**` matches anything, _including_ `/`
+        /// - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        /// - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+        /// 
+        /// #### Example
+        /// 
+        /// Given the rules:
+        /// ```yaml
+        /// - "assets/**"
+        /// - "src/**.js"
+        /// - "!**secret.*"
+        /// ```
+        /// 
+        /// When evaluating against this folder:
+        /// 
+        /// ```yaml
+        /// - assets/
+        ///   - logos/
+        ///     - logo.svg
+        /// - src/
+        ///   - index.js
+        ///   - secret.js
+        /// ```
+        /// 
+        /// The following paths will be returned:
+        /// 
+        /// ```yaml
+        /// - assets/logos/logo.svg
+        /// - src/index.js
+        /// ```
         /// </summary>
         [Output("assetPaths")]
         public Output<ImmutableArray<string>> AssetPaths { get; private set; } = null!;
@@ -71,7 +145,7 @@ namespace Pulumi.Command.Local
 
         /// <summary>
         /// The program and arguments to run the command.
-        /// For example: `["/bin/sh", "-c"]`
+        /// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         /// </summary>
         [Output("interpreter")]
         public Output<ImmutableArray<string>> Interpreter { get; private set; } = null!;
@@ -129,6 +203,10 @@ namespace Pulumi.Command.Local
             var defaultOptions = new CustomResourceOptions
             {
                 Version = Utilities.Version,
+                ReplaceOnChanges =
+                {
+                    "triggers[*]",
+                },
             };
             var merged = CustomResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.
@@ -262,7 +340,8 @@ namespace Pulumi.Command.Local
         public Input<string>? Delete { get; set; }
 
         /// <summary>
-        /// The working directory in which to run the command from.
+        /// The directory from which to run the command from. If `dir` does not exist, then
+        /// `Command` will fail.
         /// </summary>
         [Input("dir")]
         public Input<string>? Dir { get; set; }
@@ -300,6 +379,10 @@ namespace Pulumi.Command.Local
 
         [Input("triggers")]
         private InputList<object>? _triggers;
+
+        /// <summary>
+        /// Trigger replacements on changes to this input.
+        /// </summary>
         public InputList<object> Triggers
         {
             get => _triggers ?? (_triggers = new InputList<object>());

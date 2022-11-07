@@ -13,10 +13,6 @@ export namespace remote {
      */
     export interface ConnectionArgs {
         /**
-         * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-         */
-        agentSocketPath?: pulumi.Input<string>;
-        /**
          * The address of the resource to connect to.
          */
         host: pulumi.Input<string>;
@@ -32,10 +28,6 @@ export namespace remote {
          * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
          */
         privateKey?: pulumi.Input<string>;
-        /**
-         * The password to use in case the private key is encrypted.
-         */
-        privateKeyPassword?: pulumi.Input<string>;
         /**
          * The user that we should use for the connection.
          */

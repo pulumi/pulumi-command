@@ -1,11 +1,3 @@
-[![Actions Status](https://github.com/pulumi/pulumi-command/workflows/master/badge.svg)](https://github.com/pulumi/pulumi-command/actions)
-[![Slack](http://www.pulumi.com/images/docs/badges/slack.svg)](https://slack.pulumi.com)
-[![NPM version](https://badge.fury.io/js/%40pulumi%2Fcommand.svg)](https://www.npmjs.com/package/@pulumi/command)
-[![Python version](https://badge.fury.io/py/pulumi-command.svg)](https://pypi.org/project/pulumi-command)
-[![NuGet version](https://badge.fury.io/nu/pulumi.command.svg)](https://badge.fury.io/nu/pulumi.command)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/pulumi/pulumi-command/sdk/go)](https://pkg.go.dev/github.com/pulumi/pulumi-command/sdk/go)
-[![License](https://img.shields.io/npm/l/%40pulumi%2Fpulumi.svg)](https://github.com/pulumi/pulumi-command/blob/master/LICENSE)
-
 # Pulumi Command Provider (preview)
 
 The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.  Resources in the command package support running scripts on `create` and `destroy` operations, supporting stateful local and remote command execution.

@@ -151,14 +151,16 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The working directory in which to run the command from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     @Import(name="dir")
     private @Nullable Output<String> dir;
 
     /**
-     * @return The working directory in which to run the command from.
+     * @return The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     public Optional<Output<String>> dir() {
@@ -212,9 +214,17 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.stdin);
     }
 
+    /**
+     * Trigger replacements on changes to this input.
+     * 
+     */
     @Import(name="triggers")
     private @Nullable Output<List<Object>> triggers;
 
+    /**
+     * @return Trigger replacements on changes to this input.
+     * 
+     */
     public Optional<Output<List<Object>>> triggers() {
         return Optional.ofNullable(this.triggers);
     }
@@ -480,7 +490,8 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param dir The working directory in which to run the command from.
+         * @param dir The directory from which to run the command from. If `dir` does not exist, then
+         * `Command` will fail.
          * 
          * @return builder
          * 
@@ -491,7 +502,8 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param dir The working directory in which to run the command from.
+         * @param dir The directory from which to run the command from. If `dir` does not exist, then
+         * `Command` will fail.
          * 
          * @return builder
          * 
@@ -576,15 +588,33 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
             return stdin(Output.of(stdin));
         }
 
+        /**
+         * @param triggers Trigger replacements on changes to this input.
+         * 
+         * @return builder
+         * 
+         */
         public Builder triggers(@Nullable Output<List<Object>> triggers) {
             $.triggers = triggers;
             return this;
         }
 
+        /**
+         * @param triggers Trigger replacements on changes to this input.
+         * 
+         * @return builder
+         * 
+         */
         public Builder triggers(List<Object> triggers) {
             return triggers(Output.of(triggers));
         }
 
+        /**
+         * @param triggers Trigger replacements on changes to this input.
+         * 
+         * @return builder
+         * 
+         */
         public Builder triggers(Object... triggers) {
             return triggers(List.of(triggers));
         }

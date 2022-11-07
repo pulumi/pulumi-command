@@ -73,7 +73,7 @@ export class CopyFile extends pulumi.CustomResource {
             if ((!args || args.remotePath === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'remotePath'");
             }
-            resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
+            resourceInputs["connection"] = args ? (args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined) : undefined;
             resourceInputs["localPath"] = args ? args.localPath : undefined;
             resourceInputs["remotePath"] = args ? args.remotePath : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
@@ -84,8 +84,6 @@ export class CopyFile extends pulumi.CustomResource {
             resourceInputs["triggers"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
-        const secretOpts = { additionalSecretOutputs: ["connection"] };
-        opts = pulumi.mergeOptions(opts, secretOpts);
         super(CopyFile.__pulumiType, name, resourceInputs, opts);
     }
 }

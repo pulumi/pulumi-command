@@ -36,7 +36,7 @@ public final class LocalFunctions {
      * 
      */
     public static Output<RunResult> run(RunArgs args, InvokeOptions options) {
-        return Deployment.getInstance().invoke("command:local:run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
+        return Deployment.getInstance().invoke("command:local:Run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
     }
     /**
      * A local command to be executed.
@@ -44,6 +44,6 @@ public final class LocalFunctions {
      * 
      */
     public static CompletableFuture<RunResult> runPlain(RunPlainArgs args, InvokeOptions options) {
-        return Deployment.getInstance().invokeAsync("command:local:run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
+        return Deployment.getInstance().invokeAsync("command:local:Run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
     }
 }

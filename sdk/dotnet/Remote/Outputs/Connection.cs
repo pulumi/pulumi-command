@@ -17,10 +17,6 @@ namespace Pulumi.Command.Remote.Outputs
     public sealed class Connection
     {
         /// <summary>
-        /// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-        /// </summary>
-        public readonly string? AgentSocketPath;
-        /// <summary>
         /// The address of the resource to connect to.
         /// </summary>
         public readonly string Host;
@@ -37,18 +33,12 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly string? PrivateKey;
         /// <summary>
-        /// The password to use in case the private key is encrypted.
-        /// </summary>
-        public readonly string? PrivateKeyPassword;
-        /// <summary>
         /// The user that we should use for the connection.
         /// </summary>
         public readonly string? User;
 
         [OutputConstructor]
         private Connection(
-            string? agentSocketPath,
-
             string host,
 
             string? password,
@@ -57,16 +47,12 @@ namespace Pulumi.Command.Remote.Outputs
 
             string? privateKey,
 
-            string? privateKeyPassword,
-
             string? user)
         {
-            AgentSocketPath = agentSocketPath;
             Host = host;
             Password = password;
             Port = port;
             PrivateKey = privateKey;
-            PrivateKeyPassword = privateKeyPassword;
             User = user;
         }
     }

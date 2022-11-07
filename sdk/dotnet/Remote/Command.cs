@@ -17,10 +17,10 @@ namespace Pulumi.Command.Remote
     public partial class Command : global::Pulumi.CustomResource
     {
         /// <summary>
-        /// The parameters with which to connect to the remote host
+        /// The parameters with which to connect to the remote host.
         /// </summary>
         [Output("connection")]
-        public Output<Outputs.Connection?> Connection { get; private set; } = null!;
+        public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
         /// The command to run on create.
@@ -93,9 +93,10 @@ namespace Pulumi.Command.Remote
             var defaultOptions = new CustomResourceOptions
             {
                 Version = Utilities.Version,
-                AdditionalSecretOutputs =
+                ReplaceOnChanges =
                 {
                     "connection",
+                    "triggers[*]",
                 },
             };
             var merged = CustomResourceOptions.Merge(defaultOptions, options);
@@ -119,21 +120,11 @@ namespace Pulumi.Command.Remote
 
     public sealed class CommandArgs : global::Pulumi.ResourceArgs
     {
-        [Input("connection", required: true)]
-        private Input<Inputs.ConnectionArgs>? _connection;
-
         /// <summary>
         /// The parameters with which to connect to the remote host.
         /// </summary>
-        public Input<Inputs.ConnectionArgs>? Connection
-        {
-            get => _connection;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _connection = Output.Tuple<Input<Inputs.ConnectionArgs>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
-        }
+        [Input("connection", required: true)]
+        public Input<Inputs.ConnectionArgs> Connection { get; set; } = null!;
 
         /// <summary>
         /// The command to run on create.

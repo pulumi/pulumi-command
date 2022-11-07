@@ -7,6 +7,7 @@ NODE_MODULE_NAME := @pulumi/command
 NUGET_PKG_NAME   := Pulumi.Command
 
 PROVIDER        := pulumi-resource-${PACK}
+CODEGEN         := pulumi-gen-${PACK}
 VERSION         ?= $(shell pulumictl get version)
 PROVIDER_PATH   := provider
 VERSION_PATH    := ${PROVIDER_PATH}/pkg/version.Version
@@ -24,6 +25,8 @@ ensure::
 
 codegen::
 	(cd provider && VERSION=${VERSION} go generate cmd/${PROVIDER}/main.go)
+	(cd provider && go build -o $(WORKING_DIR)/bin/${CODEGEN} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" ${PROJECT}/${PROVIDER_PATH}/cmd/$(CODEGEN))
+	$(WORKING_DIR)/bin/${CODEGEN} $(SCHEMA_FILE) --version ${VERSION} 
 
 provider::
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))

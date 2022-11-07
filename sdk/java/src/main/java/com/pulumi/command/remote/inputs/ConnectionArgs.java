@@ -22,21 +22,6 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     public static final ConnectionArgs Empty = new ConnectionArgs();
 
     /**
-     * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-     * 
-     */
-    @Import(name="agentSocketPath")
-    private @Nullable Output<String> agentSocketPath;
-
-    /**
-     * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-     * 
-     */
-    public Optional<Output<String>> agentSocketPath() {
-        return Optional.ofNullable(this.agentSocketPath);
-    }
-
-    /**
      * The address of the resource to connect to.
      * 
      */
@@ -97,21 +82,6 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The password to use in case the private key is encrypted.
-     * 
-     */
-    @Import(name="privateKeyPassword")
-    private @Nullable Output<String> privateKeyPassword;
-
-    /**
-     * @return The password to use in case the private key is encrypted.
-     * 
-     */
-    public Optional<Output<String>> privateKeyPassword() {
-        return Optional.ofNullable(this.privateKeyPassword);
-    }
-
-    /**
      * The user that we should use for the connection.
      * 
      */
@@ -129,12 +99,10 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     private ConnectionArgs() {}
 
     private ConnectionArgs(ConnectionArgs $) {
-        this.agentSocketPath = $.agentSocketPath;
         this.host = $.host;
         this.password = $.password;
         this.port = $.port;
         this.privateKey = $.privateKey;
-        this.privateKeyPassword = $.privateKeyPassword;
         this.user = $.user;
     }
 
@@ -154,27 +122,6 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(ConnectionArgs defaults) {
             $ = new ConnectionArgs(Objects.requireNonNull(defaults));
-        }
-
-        /**
-         * @param agentSocketPath SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder agentSocketPath(@Nullable Output<String> agentSocketPath) {
-            $.agentSocketPath = agentSocketPath;
-            return this;
-        }
-
-        /**
-         * @param agentSocketPath SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder agentSocketPath(String agentSocketPath) {
-            return agentSocketPath(Output.of(agentSocketPath));
         }
 
         /**
@@ -259,27 +206,6 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder privateKey(String privateKey) {
             return privateKey(Output.of(privateKey));
-        }
-
-        /**
-         * @param privateKeyPassword The password to use in case the private key is encrypted.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder privateKeyPassword(@Nullable Output<String> privateKeyPassword) {
-            $.privateKeyPassword = privateKeyPassword;
-            return this;
-        }
-
-        /**
-         * @param privateKeyPassword The password to use in case the private key is encrypted.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder privateKeyPassword(String privateKeyPassword) {
-            return privateKeyPassword(Output.of(privateKeyPassword));
         }
 
         /**

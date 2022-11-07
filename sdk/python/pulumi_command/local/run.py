@@ -18,10 +18,16 @@ __all__ = [
 
 @pulumi.output_type
 class RunResult:
-    def __init__(__self__, archive=None, assets=None, command=None, dir=None, environment=None, interpreter=None, stderr=None, stdin=None, stdout=None):
+    def __init__(__self__, archive=None, archive_paths=None, asset_paths=None, assets=None, command=None, dir=None, environment=None, interpreter=None, stderr=None, stdin=None, stdout=None):
         if archive and not isinstance(archive, pulumi.Archive):
             raise TypeError("Expected argument 'archive' to be a pulumi.Archive")
         pulumi.set(__self__, "archive", archive)
+        if archive_paths and not isinstance(archive_paths, list):
+            raise TypeError("Expected argument 'archive_paths' to be a list")
+        pulumi.set(__self__, "archive_paths", archive_paths)
+        if asset_paths and not isinstance(asset_paths, list):
+            raise TypeError("Expected argument 'asset_paths' to be a list")
+        pulumi.set(__self__, "asset_paths", asset_paths)
         if assets and not isinstance(assets, dict):
             raise TypeError("Expected argument 'assets' to be a dict")
         pulumi.set(__self__, "assets", assets)
@@ -56,6 +62,96 @@ class RunResult:
         return pulumi.get(self, "archive")
 
     @property
+    @pulumi.getter(name="archivePaths")
+    def archive_paths(self) -> Optional[Sequence[str]]:
+        """
+        A list of path globs to return as a single archive asset after the command completes.
+
+        When specifying glob patterns the following rules apply:
+        - We only include files not directories for assets and archives.
+        - Path separators are `/` on all platforms - including Windows.
+        - Patterns starting with `!` are 'exclude' rules.
+        - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        - `*` matches anything except `/`
+        - `**` matches anything, _including_ `/`
+        - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+        #### Example
+
+        Given the rules:
+        ```yaml
+        - "assets/**"
+        - "src/**.js"
+        - "!**secret.*"
+        ```
+
+        When evaluating against this folder:
+
+        ```yaml
+        - assets/
+          - logos/
+            - logo.svg
+        - src/
+          - index.js
+          - secret.js
+        ```
+
+        The following paths will be returned:
+
+        ```yaml
+        - assets/logos/logo.svg
+        - src/index.js
+        ```
+        """
+        return pulumi.get(self, "archive_paths")
+
+    @property
+    @pulumi.getter(name="assetPaths")
+    def asset_paths(self) -> Optional[Sequence[str]]:
+        """
+        A list of path globs to read after the command completes.
+
+        When specifying glob patterns the following rules apply:
+        - We only include files not directories for assets and archives.
+        - Path separators are `/` on all platforms - including Windows.
+        - Patterns starting with `!` are 'exclude' rules.
+        - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+        - `*` matches anything except `/`
+        - `**` matches anything, _including_ `/`
+        - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+        - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+
+        #### Example
+
+        Given the rules:
+        ```yaml
+        - "assets/**"
+        - "src/**.js"
+        - "!**secret.*"
+        ```
+
+        When evaluating against this folder:
+
+        ```yaml
+        - assets/
+          - logos/
+            - logo.svg
+        - src/
+          - index.js
+          - secret.js
+        ```
+
+        The following paths will be returned:
+
+        ```yaml
+        - assets/logos/logo.svg
+        - src/index.js
+        ```
+        """
+        return pulumi.get(self, "asset_paths")
+
+    @property
     @pulumi.getter
     def assets(self) -> Optional[Mapping[str, Union[pulumi.Asset, pulumi.Archive]]]:
         """
@@ -67,16 +163,14 @@ class RunResult:
     @property
     @pulumi.getter
     def command(self) -> str:
-        """
-        The command to run.
-        """
         return pulumi.get(self, "command")
 
     @property
     @pulumi.getter
     def dir(self) -> Optional[str]:
         """
-        The directory from which the command was run from.
+        The directory from which to run the command from. If `dir` does not exist, then
+        `Command` will fail.
         """
         return pulumi.get(self, "dir")
 
@@ -93,7 +187,7 @@ class RunResult:
     def interpreter(self) -> Optional[Sequence[str]]:
         """
         The program and arguments to run the command.
-        For example: `["/bin/sh", "-c"]`
+        On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         """
         return pulumi.get(self, "interpreter")
 
@@ -107,15 +201,15 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def stdin(self) -> str:
+    def stdin(self) -> Optional[str]:
         """
-        String passed to the command's process as standard in.
+        Pass a string to the command's process as standard in
         """
         return pulumi.get(self, "stdin")
 
     @property
     @pulumi.getter
-    def stdout(self) -> Optional[str]:
+    def stdout(self) -> str:
         """
         The standard output of the command's process
         """
@@ -129,6 +223,8 @@ class AwaitableRunResult(RunResult):
             yield self
         return RunResult(
             archive=self.archive,
+            archive_paths=self.archive_paths,
+            asset_paths=self.asset_paths,
             assets=self.assets,
             command=self.command,
             dir=self.dir,
@@ -228,8 +324,8 @@ def run(archive_paths: Optional[Sequence[str]] = None,
            - assets/logos/logo.svg
            - src/index.js
            ```
-    :param str command: The command to run.
-    :param str dir: The working directory in which to run the command from.
+    :param str dir: The directory from which to run the command from. If `dir` does not exist, then
+           `Command` will fail.
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -244,10 +340,12 @@ def run(archive_paths: Optional[Sequence[str]] = None,
     __args__['interpreter'] = interpreter
     __args__['stdin'] = stdin
     opts = pulumi.InvokeOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
-    __ret__ = pulumi.runtime.invoke('command:local:run', __args__, opts=opts, typ=RunResult).value
+    __ret__ = pulumi.runtime.invoke('command:local:Run', __args__, opts=opts, typ=RunResult).value
 
     return AwaitableRunResult(
         archive=__ret__.archive,
+        archive_paths=__ret__.archive_paths,
+        asset_paths=__ret__.asset_paths,
         assets=__ret__.assets,
         command=__ret__.command,
         dir=__ret__.dir,
@@ -348,8 +446,8 @@ def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = 
            - assets/logos/logo.svg
            - src/index.js
            ```
-    :param str command: The command to run.
-    :param str dir: The working directory in which to run the command from.
+    :param str dir: The directory from which to run the command from. If `dir` does not exist, then
+           `Command` will fail.
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
