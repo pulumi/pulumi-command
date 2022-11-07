@@ -33,7 +33,9 @@ func Provider() p.Provider {
 			infer.Resource[*remote.Command, remote.CommandArgs, remote.CommandState](),
 			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
 		).
-		WithFunctions(infer.Function[*local.Run, local.RunArgs, local.RunState]()).
+		WithFunctions(
+			infer.Function[*local.Run, local.RunArgs, local.RunState](),
+		).
 		WithDisplayName("Command").
 		WithDescription("The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.").
 		WithKeywords([]string{
@@ -64,6 +66,14 @@ func Provider() p.Provider {
 			"python": map[string]any{
 				"requires": map[string]string{
 					"pulumi": ">=3.0.0,<4.0.0",
+				},
+			},
+			"java": map[string]any{
+				"buildFiles": "gradle",
+				"dependencies": map[string]any{
+					"com.pulumi:pulumi":               "0.6.0",
+					"com.google.code.gson:gson":       "2.8.9",
+					"com.google.code.findbugs:jsr305": "3.0.2",
 				},
 			},
 		})

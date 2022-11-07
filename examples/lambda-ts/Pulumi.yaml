@@ -6,3 +6,7 @@ template:
     aws:region:
       description: The AWS region to deploy into
       default: us-east-2
+plugins:
+  providers:
+    - name: command
+      path: ../../bin

@@ -51,7 +51,7 @@ const (
 
 func main() {
 	flag.Usage = func() {
-		const usageFormat = "Usage: %s <language> <swagger-or-schema-file> <root-pulumi-kubernetes-dir>"
+		const usageFormat = "Usage: %s <schema-file>"
 		_, err := fmt.Fprintf(flag.CommandLine.Output(), usageFormat, os.Args[0])
 		contract.IgnoreError(err)
 		flag.PrintDefaults()
@@ -62,42 +62,19 @@ func main() {
 
 	flag.Parse()
 	args := flag.Args()
-	if len(args) < 3 {
+	if len(args) < 1 {
 		flag.Usage()
 		return
 	}
+	s, err := command.Schema(version)
+	if err != nil {
+		panic(err)
+	}
 
-	language := Language(args[0])
-
-	BaseDir = args[2]
-	TemplateDir = filepath.Join(BaseDir, "provider", "pkg", "gen")
-	outdir := filepath.Join(BaseDir, "sdk", string(language))
-
-	switch language {
-	case NodeJS:
-		templateDir := filepath.Join(TemplateDir, "nodejs-templates")
-		writeNodeJSClient(readSchema(version), outdir, templateDir)
-	case Python:
-		templateDir := filepath.Join(TemplateDir, "python-templates")
-		writePythonClient(readSchema(version), outdir, templateDir)
-	case DotNet:
-		templateDir := filepath.Join(TemplateDir, "dotnet-templates")
-		writeDotnetClient(readSchema(version), outdir, templateDir)
-	case Go:
-		templateDir := filepath.Join(TemplateDir, "_go-templates")
-		writeGoClient(readSchema(version), outdir, templateDir)
-	case "schema":
-		targetDir := filepath.Join(BaseDir, "schema.json")
-		s, err := command.Schema(version)
-		if err != nil {
-			panic(err)
-		}
-		err = os.WriteFile(targetDir, []byte(s), 0600)
-		if err != nil {
-			panic(err)
-		}
-	default:
-		panic(fmt.Sprintf("Unrecognized language '%s'", language))
+	schemaPath := args[0]
+	err = os.WriteFile(schemaPath, []byte(s), 0600)
+	if err != nil {
+		panic(err)
 	}
 }
 

@@ -1,4 +1,4 @@
-import { interpolate, Config } from "@pulumi/pulumi";
+import { interpolate, Config, secret } from "@pulumi/pulumi";
 import { local, remote, types } from "@pulumi/command";
 import * as aws from "@pulumi/aws";
 import * as fs from "fs";
@@ -24,7 +24,7 @@ const ami = aws.ec2.getAmiOutput({
     mostRecent: true,
     filters: [{
         name: "name",
-        values: ["amzn2-ami-hvm-2.0.????????-x86_64-gp2"],
+        values: ["amzn-ami-hvm-*-x86_64-gp2"],
     }],
 });
 
@@ -44,6 +44,9 @@ const connection: types.input.remote.ConnectionArgs = {
 const hostname = new remote.Command("hostname", {
     connection,
     create: "hostname",
+    environment: secret({
+      "secret-key": secret("super-secret-value")
+    }),
 });
 
 new remote.Command("remotePrivateIP", {
@@ -68,6 +71,8 @@ const catSize = new remote.Command("checkSize", {
     create: "cat size.ts",
 }, { dependsOn: sizeFile })
 
+export const connectionSecret = hostname.connection;
+export const secretEnv = hostname.environment;
 export const confirmSize = catSize.stdout;
 export const publicIp = server.publicIp;
 export const publicHostName = server.publicDns;
