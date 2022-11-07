@@ -448,6 +448,7 @@
     "language": {
         "java": {
             "buildFiles": "gradle",
+            "gradleNexusPublishPluginVersion": "1.1.0",
             "dependencies": {
                 "com.pulumi:pulumi": "0.6.0",
                 "com.google.code.gson:gson": "2.8.9",
