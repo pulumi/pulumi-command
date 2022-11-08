@@ -15,6 +15,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -49,6 +50,30 @@ const (
 	Python Language = "python"
 )
 
+// copied from encoding/json for use with JSONMarshal above
+func MarshalIndent(v any) ([]byte, error) {
+
+	// json.Marshal normally escapes HTML. This one doesn't
+	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(v)
+	if err != nil {
+		return nil, err
+	}
+	b := buffer.Bytes()
+
+	// serialize and pretty print
+	var buf bytes.Buffer
+	prefix, indent := "", "    "
+	err = json.Indent(&buf, b, prefix, indent)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
 func main() {
 	flag.Usage = func() {
 		const usageFormat = "Usage: %s <schema-file>"
@@ -81,7 +106,8 @@ func main() {
 	// remove version key
 	delete(arg, "version")
 
-	out, err := json.MarshalIndent(arg, "", "    ")
+	// use custom marshal indent to skip html escaping
+	out, err := MarshalIndent(arg)
 	if err != nil {
 		panic(err)
 	}
