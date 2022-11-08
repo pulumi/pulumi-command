@@ -25,7 +25,7 @@ The connection is established via ssh.`)
 }
 
 type CommandArgs struct {
-	Connection  Connection         `pulumi:"connection" provider:"replaceOnChanges"`
+	Connection  *Connection        `pulumi:"connection" provider:"replaceOnChanges,secret"`
 	Environment *map[string]string `pulumi:"environment,optional"`
 	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
 	Create      *string            `pulumi:"create,optional"`

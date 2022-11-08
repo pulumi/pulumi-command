@@ -141,7 +141,7 @@ class CopyFile(pulumi.CustomResource):
 
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
-            __props__.__dict__["connection"] = connection
+            __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
             if local_path is None and not opts.urn:
                 raise TypeError("Missing required property 'local_path'")
             __props__.__dict__["local_path"] = local_path
@@ -149,6 +149,8 @@ class CopyFile(pulumi.CustomResource):
                 raise TypeError("Missing required property 'remote_path'")
             __props__.__dict__["remote_path"] = remote_path
             __props__.__dict__["triggers"] = triggers
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["connection"])
+        opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(CopyFile, __self__).__init__(
             'command:remote:CopyFile',
             resource_name,
