@@ -77,6 +77,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// remove version key
+	delete(arg, "version")
+
 	out, err := json.MarshalIndent(arg, "", "    ")
 	if err != nil {
 		panic(err)

@@ -491,6 +491,5 @@
             ],
             "type": "object"
         }
-    },
-    "version": "0.6.1-alpha.1667926070+c1b7af0d.dirty"
+    }
 }
