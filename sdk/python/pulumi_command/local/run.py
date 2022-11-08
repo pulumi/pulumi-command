@@ -176,7 +176,7 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def environment(self) -> Optional[Mapping[str, str]]:
+    def environment(self) -> Optional[Mapping[str, Any]]:
         """
         Additional environment variables available to the command's process.
         """
@@ -239,7 +239,7 @@ def run(archive_paths: Optional[Sequence[str]] = None,
         asset_paths: Optional[Sequence[str]] = None,
         command: Optional[str] = None,
         dir: Optional[str] = None,
-        environment: Optional[Mapping[str, str]] = None,
+        environment: Optional[Mapping[str, Any]] = None,
         interpreter: Optional[Sequence[str]] = None,
         stdin: Optional[str] = None,
         opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableRunResult:
@@ -326,7 +326,7 @@ def run(archive_paths: Optional[Sequence[str]] = None,
            ```
     :param str dir: The directory from which to run the command from. If `dir` does not exist, then
            `Command` will fail.
-    :param Mapping[str, str] environment: Additional environment variables available to the command's process.
+    :param Mapping[str, Any] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
     :param str stdin: Pass a string to the command's process as standard in
@@ -361,7 +361,7 @@ def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = 
                asset_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
                command: Optional[pulumi.Input[str]] = None,
                dir: Optional[pulumi.Input[Optional[str]]] = None,
-               environment: Optional[pulumi.Input[Optional[Mapping[str, str]]]] = None,
+               environment: Optional[pulumi.Input[Optional[Mapping[str, Any]]]] = None,
                interpreter: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
                stdin: Optional[pulumi.Input[Optional[str]]] = None,
                opts: Optional[pulumi.InvokeOptions] = None) -> pulumi.Output[RunResult]:
@@ -448,7 +448,7 @@ def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = 
            ```
     :param str dir: The directory from which to run the command from. If `dir` does not exist, then
            `Command` will fail.
-    :param Mapping[str, str] environment: Additional environment variables available to the command's process.
+    :param Mapping[str, Any] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
     :param str stdin: Pass a string to the command's process as standard in

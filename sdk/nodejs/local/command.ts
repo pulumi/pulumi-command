@@ -145,7 +145,7 @@ export class Command extends pulumi.CustomResource {
     /**
      * Additional environment variables available to the command's process.
      */
-    public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
+    public readonly environment!: pulumi.Output<{[key: string]: any} | undefined>;
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -322,7 +322,7 @@ export interface CommandArgs {
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    environment?: pulumi.Input<{[key: string]: any}>;
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`

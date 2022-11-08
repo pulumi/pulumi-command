@@ -70,14 +70,14 @@ public class Command extends com.pulumi.resources.CustomResource {
      * Additional environment variables available to the command&#39;s process.
      * 
      */
-    @Export(name="environment", refs={Map.class,String.class}, tree="[0,1,1]")
-    private Output</* @Nullable */ Map<String,String>> environment;
+    @Export(name="environment", refs={Map.class,String.class,Object.class}, tree="[0,1,2]")
+    private Output</* @Nullable */ Map<String,Object>> environment;
 
     /**
      * @return Additional environment variables available to the command&#39;s process.
      * 
      */
-    public Output<Optional<Map<String,String>>> environment() {
+    public Output<Optional<Map<String,Object>>> environment() {
         return Codegen.optional(this.environment);
     }
     /**

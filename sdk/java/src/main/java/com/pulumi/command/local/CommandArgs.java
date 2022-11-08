@@ -172,13 +172,13 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
      * 
      */
     @Import(name="environment")
-    private @Nullable Output<Map<String,String>> environment;
+    private @Nullable Output<Map<String,Object>> environment;
 
     /**
      * @return Additional environment variables available to the command&#39;s process.
      * 
      */
-    public Optional<Output<Map<String,String>>> environment() {
+    public Optional<Output<Map<String,Object>>> environment() {
         return Optional.ofNullable(this.environment);
     }
 
@@ -518,7 +518,7 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder environment(@Nullable Output<Map<String,String>> environment) {
+        public Builder environment(@Nullable Output<Map<String,Object>> environment) {
             $.environment = environment;
             return this;
         }
@@ -529,7 +529,7 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
          * @return builder
          * 
          */
-        public Builder environment(Map<String,String> environment) {
+        public Builder environment(Map<String,Object> environment) {
             return environment(Output.of(environment));
         }
 

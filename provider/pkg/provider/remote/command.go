@@ -25,13 +25,13 @@ The connection is established via ssh.`)
 }
 
 type CommandArgs struct {
-	Connection  *Connection        `pulumi:"connection" provider:"replaceOnChanges,secret"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	Create      *string            `pulumi:"create,optional"`
-	Delete      *string            `pulumi:"delete,optional"`
-	Update      *string            `pulumi:"update,optional"`
-	Stdin       *string            `pulumi:"stdin,optional"`
+	Connection  *Connection             `pulumi:"connection" provider:"replaceOnChanges,secret"`
+	Environment *map[string]interface{} `pulumi:"environment,optional"`
+	Triggers    *[]any                  `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Create      *string                 `pulumi:"create,optional"`
+	Delete      *string                 `pulumi:"delete,optional"`
+	Update      *string                 `pulumi:"update,optional"`
+	Stdin       *string                 `pulumi:"stdin,optional"`
 }
 
 func (c *CommandArgs) Annotate(a infer.Annotator) {
@@ -112,7 +112,7 @@ func (c *CommandState) run(ctx p.Context, cmd string) (string, string, string, e
 
 	if c.Environment != nil {
 		for k, v := range *c.Environment {
-			session.Setenv(k, v)
+			session.Setenv(k, v.(string))
 		}
 	}
 

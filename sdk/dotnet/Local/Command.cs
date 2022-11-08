@@ -141,7 +141,7 @@ namespace Pulumi.Command.Local
         /// Additional environment variables available to the command's process.
         /// </summary>
         [Output("environment")]
-        public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>?> Environment { get; private set; } = null!;
 
         /// <summary>
         /// The program and arguments to run the command.
@@ -347,14 +347,14 @@ namespace Pulumi.Command.Local
         public Input<string>? Dir { get; set; }
 
         [Input("environment")]
-        private InputMap<string>? _environment;
+        private InputMap<object>? _environment;
 
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public InputMap<string> Environment
+        public InputMap<object> Environment
         {
-            get => _environment ?? (_environment = new InputMap<string>());
+            get => _environment ?? (_environment = new InputMap<object>());
             set => _environment = value;
         }
 

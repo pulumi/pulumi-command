@@ -4,6 +4,7 @@
 package com.pulumi.command.local.inputs;
 
 import com.pulumi.core.annotations.Import;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -147,13 +148,13 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
      * 
      */
     @Import(name="environment")
-    private @Nullable Map<String,String> environment;
+    private @Nullable Map<String,Object> environment;
 
     /**
      * @return Additional environment variables available to the command&#39;s process.
      * 
      */
-    public Optional<Map<String,String>> environment() {
+    public Optional<Map<String,Object>> environment() {
         return Optional.ofNullable(this.environment);
     }
 
@@ -356,7 +357,7 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
          * @return builder
          * 
          */
-        public Builder environment(@Nullable Map<String,String> environment) {
+        public Builder environment(@Nullable Map<String,Object> environment) {
             $.environment = environment;
             return this;
         }

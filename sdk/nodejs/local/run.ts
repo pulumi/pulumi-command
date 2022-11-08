@@ -117,7 +117,7 @@ export interface RunArgs {
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: {[key: string]: string};
+    environment?: {[key: string]: any};
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -230,7 +230,7 @@ export interface RunResult {
     /**
      * Additional environment variables available to the command's process.
      */
-    readonly environment?: {[key: string]: string};
+    readonly environment?: {[key: string]: any};
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -346,7 +346,7 @@ export interface RunOutputArgs {
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    environment?: pulumi.Input<{[key: string]: any}>;
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`

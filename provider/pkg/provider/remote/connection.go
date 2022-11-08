@@ -40,7 +40,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 }
 
-func (con Connection) SShConfig() (*ssh.ClientConfig, error) {
+func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
@@ -86,7 +86,7 @@ func (con Connection) SShConfig() (*ssh.ClientConfig, error) {
 }
 
 // Dial a ssh client connection from a ssh client configuration, retrying as necessary.
-func (con Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
+func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
 	var err error
 	_, _, err = retry.Until(ctx, retry.Acceptor{

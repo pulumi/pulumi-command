@@ -138,14 +138,14 @@ namespace Pulumi.Command.Local
         public string? Dir { get; set; }
 
         [Input("environment")]
-        private Dictionary<string, string>? _environment;
+        private Dictionary<string, object>? _environment;
 
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public Dictionary<string, string> Environment
+        public Dictionary<string, object> Environment
         {
-            get => _environment ?? (_environment = new Dictionary<string, string>());
+            get => _environment ?? (_environment = new Dictionary<string, object>());
             set => _environment = value;
         }
 
@@ -285,14 +285,14 @@ namespace Pulumi.Command.Local
         public Input<string>? Dir { get; set; }
 
         [Input("environment")]
-        private InputMap<string>? _environment;
+        private InputMap<object>? _environment;
 
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public InputMap<string> Environment
+        public InputMap<object> Environment
         {
-            get => _environment ?? (_environment = new InputMap<string>());
+            get => _environment ?? (_environment = new InputMap<object>());
             set => _environment = value;
         }
 
@@ -425,7 +425,7 @@ namespace Pulumi.Command.Local
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public readonly ImmutableDictionary<string, string>? Environment;
+        public readonly ImmutableDictionary<string, object>? Environment;
         /// <summary>
         /// The program and arguments to run the command.
         /// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -458,7 +458,7 @@ namespace Pulumi.Command.Local
 
             string? dir,
 
-            ImmutableDictionary<string, string>? environment,
+            ImmutableDictionary<string, object>? environment,
 
             ImmutableArray<string> interpreter,
 

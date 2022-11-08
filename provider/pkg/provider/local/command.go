@@ -35,12 +35,12 @@ of the `+"`Command`"+` resource.`)
 }
 
 type BaseArgs struct {
-	Interpreter  *[]string          `pulumi:"interpreter,optional"`
-	Dir          *string            `pulumi:"dir,optional"`
-	Environment  *map[string]string `pulumi:"environment,optional"`
-	Stdin        *string            `pulumi:"stdin,optional"`
-	AssetPaths   *[]string          `pulumi:"assetPaths,optional"`
-	ArchivePaths *[]string          `pulumi:"archivePaths,optional"`
+	Interpreter  *[]string               `pulumi:"interpreter,optional"`
+	Dir          *string                 `pulumi:"dir,optional"`
+	Environment  *map[string]interface{} `pulumi:"environment,optional"`
+	Stdin        *string                 `pulumi:"stdin,optional"`
+	AssetPaths   *[]string               `pulumi:"assetPaths,optional"`
+	ArchivePaths *[]string               `pulumi:"archivePaths,optional"`
 }
 
 func (c *BaseArgs) Annotate(a infer.Annotator) {

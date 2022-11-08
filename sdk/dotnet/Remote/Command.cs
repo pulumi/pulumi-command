@@ -38,7 +38,7 @@ namespace Pulumi.Command.Remote
         /// Additional environment variables available to the command's process.
         /// </summary>
         [Output("environment")]
-        public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>?> Environment { get; private set; } = null!;
 
         /// <summary>
         /// The standard error of the command's process
@@ -153,14 +153,14 @@ namespace Pulumi.Command.Remote
         public Input<string>? Delete { get; set; }
 
         [Input("environment")]
-        private InputMap<string>? _environment;
+        private InputMap<object>? _environment;
 
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public InputMap<string> Environment
+        public InputMap<object> Environment
         {
-            get => _environment ?? (_environment = new InputMap<string>());
+            get => _environment ?? (_environment = new InputMap<object>());
             set => _environment = value;
         }
 

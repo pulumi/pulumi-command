@@ -30,7 +30,7 @@
                     },
                     "environment": {
                         "additionalProperties": {
-                            "type": "string"
+                            "$ref": "pulumi.json#/Any"
                         },
                         "description": "Additional environment variables available to the command's process.",
                         "type": "object"
@@ -88,7 +88,7 @@
                     },
                     "environment": {
                         "additionalProperties": {
-                            "type": "string"
+                            "$ref": "pulumi.json#/Any"
                         },
                         "description": "Additional environment variables available to the command's process.",
                         "type": "object"
@@ -197,7 +197,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "type": "string"
+                        "$ref": "pulumi.json#/Any"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"
@@ -266,7 +266,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "type": "string"
+                        "$ref": "pulumi.json#/Any"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"
@@ -327,7 +327,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "type": "string"
+                        "$ref": "pulumi.json#/Any"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"
@@ -366,7 +366,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "type": "string"
+                        "$ref": "pulumi.json#/Any"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"

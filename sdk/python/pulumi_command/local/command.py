@@ -19,7 +19,7 @@ class CommandArgs:
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  dir: Optional[pulumi.Input[str]] = None,
-                 environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 environment: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
@@ -106,7 +106,7 @@ class CommandArgs:
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[str] dir: The directory from which to run the command from. If `dir` does not exist, then
                `Command` will fail.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
+        :param pulumi.Input[Mapping[str, Any]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
@@ -271,14 +271,14 @@ class CommandArgs:
 
     @property
     @pulumi.getter
-    def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
+    def environment(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
         """
         Additional environment variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 
     @environment.setter
-    def environment(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
+    def environment(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
         pulumi.set(self, "environment", value)
 
     @property
@@ -341,7 +341,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  dir: Optional[pulumi.Input[str]] = None,
-                 environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 environment: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
@@ -436,7 +436,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[str] delete: The command to run on delete.
         :param pulumi.Input[str] dir: The directory from which to run the command from. If `dir` does not exist, then
                `Command` will fail.
-        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
+        :param pulumi.Input[Mapping[str, Any]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
@@ -476,7 +476,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  dir: Optional[pulumi.Input[str]] = None,
-                 environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 environment: Optional[pulumi.Input[Mapping[str, Any]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
@@ -678,7 +678,7 @@ class Command(pulumi.CustomResource):
 
     @property
     @pulumi.getter
-    def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
+    def environment(self) -> pulumi.Output[Optional[Mapping[str, Any]]]:
         """
         Additional environment variables available to the command's process.
         """
