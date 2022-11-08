@@ -71,8 +71,19 @@ func main() {
 		panic(err)
 	}
 
+	// sort keys
+	var arg map[string]any
+	err = json.Unmarshal([]byte(s), &arg)
+	if err != nil {
+		panic(err)
+	}
+	out, err := json.MarshalIndent(arg, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+
 	schemaPath := args[0]
-	err = os.WriteFile(schemaPath, []byte(s), 0600)
+	err = os.WriteFile(schemaPath, out, 0600)
 	if err != nil {
 		panic(err)
 	}
