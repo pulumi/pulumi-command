@@ -3,20 +3,28 @@ package remote
 import (
 	"fmt"
 	"net"
+	"os"
 	"time"
 
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
+)
+
+const (
+	sshAgentSocketEnvVar = "SSH_AUTH_SOCK"
 )
 
 type Connection struct {
-	User       string  `pulumi:"user,optional"`
-	Password   *string `pulumi:"password,optional"`
-	Host       string  `pulumi:"host"`
-	Port       float64 `pulumi:"port,optional"`
-	PrivateKey *string `pulumi:"privateKey,optional"`
+	User               string  `pulumi:"user,optional"`
+	Password           *string `pulumi:"password,optional"`
+	Host               string  `pulumi:"host"`
+	Port               float64 `pulumi:"port,optional"`
+	PrivateKey         *string `pulumi:"privateKey,optional"`
+	PrivateKeyPassword *string `pulumi:"privateKeyPassword,optional"`
+	AgentSocketPath    *string `pulumi:"agentSocketPath,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -28,6 +36,8 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.Port, "The port to connect to.")
 	a.SetDefault(&c.Port, 22)
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
+	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
+	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 }
 
 func (con Connection) SShConfig() (*ssh.ClientConfig, error) {
@@ -36,7 +46,13 @@ func (con Connection) SShConfig() (*ssh.ClientConfig, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	if con.PrivateKey != nil {
-		signer, err := ssh.ParsePrivateKey([]byte(*con.PrivateKey))
+		var signer ssh.Signer
+		var err error
+		if con.PrivateKeyPassword != nil {
+			signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(*con.PrivateKey), []byte(*con.PrivateKeyPassword))
+		} else {
+			signer, err = ssh.ParsePrivateKey([]byte(*con.PrivateKey))
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -50,6 +66,20 @@ func (con Connection) SShConfig() (*ssh.ClientConfig, error) {
 			}
 			return answers, err
 		}))
+	}
+	var sshAgentSocketPath *string
+	if con.AgentSocketPath != nil {
+		sshAgentSocketPath = con.AgentSocketPath
+	}
+	if envAgentSocketPath := os.Getenv(sshAgentSocketEnvVar); sshAgentSocketPath == nil && envAgentSocketPath != "" {
+		sshAgentSocketPath = &envAgentSocketPath
+	}
+	if sshAgentSocketPath != nil {
+		conn, err := net.Dial("unix", *sshAgentSocketPath)
+		if err != nil {
+			return nil, err
+		}
+		config.Auth = append(config.Auth, ssh.PublicKeysCallback(agent.NewClient(conn).Signers))
 	}
 
 	return config, nil

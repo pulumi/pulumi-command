@@ -13,6 +13,11 @@ import javax.annotation.Nullable;
 @CustomType
 public final class Connection {
     /**
+     * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+     * 
+     */
+    private @Nullable String agentSocketPath;
+    /**
      * @return The address of the resource to connect to.
      * 
      */
@@ -33,12 +38,24 @@ public final class Connection {
      */
     private @Nullable String privateKey;
     /**
+     * @return The password to use in case the private key is encrypted.
+     * 
+     */
+    private @Nullable String privateKeyPassword;
+    /**
      * @return The user that we should use for the connection.
      * 
      */
     private @Nullable String user;
 
     private Connection() {}
+    /**
+     * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+     * 
+     */
+    public Optional<String> agentSocketPath() {
+        return Optional.ofNullable(this.agentSocketPath);
+    }
     /**
      * @return The address of the resource to connect to.
      * 
@@ -68,6 +85,13 @@ public final class Connection {
         return Optional.ofNullable(this.privateKey);
     }
     /**
+     * @return The password to use in case the private key is encrypted.
+     * 
+     */
+    public Optional<String> privateKeyPassword() {
+        return Optional.ofNullable(this.privateKeyPassword);
+    }
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -84,21 +108,30 @@ public final class Connection {
     }
     @CustomType.Builder
     public static final class Builder {
+        private @Nullable String agentSocketPath;
         private String host;
         private @Nullable String password;
         private @Nullable Double port;
         private @Nullable String privateKey;
+        private @Nullable String privateKeyPassword;
         private @Nullable String user;
         public Builder() {}
         public Builder(Connection defaults) {
     	      Objects.requireNonNull(defaults);
+    	      this.agentSocketPath = defaults.agentSocketPath;
     	      this.host = defaults.host;
     	      this.password = defaults.password;
     	      this.port = defaults.port;
     	      this.privateKey = defaults.privateKey;
+    	      this.privateKeyPassword = defaults.privateKeyPassword;
     	      this.user = defaults.user;
         }
 
+        @CustomType.Setter
+        public Builder agentSocketPath(@Nullable String agentSocketPath) {
+            this.agentSocketPath = agentSocketPath;
+            return this;
+        }
         @CustomType.Setter
         public Builder host(String host) {
             this.host = Objects.requireNonNull(host);
@@ -120,16 +153,23 @@ public final class Connection {
             return this;
         }
         @CustomType.Setter
+        public Builder privateKeyPassword(@Nullable String privateKeyPassword) {
+            this.privateKeyPassword = privateKeyPassword;
+            return this;
+        }
+        @CustomType.Setter
         public Builder user(@Nullable String user) {
             this.user = user;
             return this;
         }
         public Connection build() {
             final var o = new Connection();
+            o.agentSocketPath = agentSocketPath;
             o.host = host;
             o.password = password;
             o.port = port;
             o.privateKey = privateKey;
+            o.privateKeyPassword = privateKeyPassword;
             o.user = user;
             return o;
         }

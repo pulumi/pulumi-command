@@ -467,6 +467,10 @@
         "command:remote:Connection": {
             "description": "Instructions for how to connect to a remote endpoint.",
             "properties": {
+                "agentSocketPath": {
+                    "description": "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.",
+                    "type": "string"
+                },
                 "host": {
                     "description": "The address of the resource to connect to.",
                     "type": "string"
@@ -482,6 +486,10 @@
                 },
                 "privateKey": {
                     "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+                    "type": "string"
+                },
+                "privateKeyPassword": {
+                    "description": "The password to use in case the private key is encrypted.",
                     "type": "string"
                 },
                 "user": {
