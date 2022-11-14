@@ -6,7 +6,6 @@ package com.pulumi.command.local.outputs;
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.core.annotations.CustomType;
-import java.lang.Object;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +83,7 @@ public final class RunResult {
      * @return Additional environment variables available to the command&#39;s process.
      * 
      */
-    private @Nullable Map<String,Object> environment;
+    private @Nullable Map<String,String> environment;
     /**
      * @return The program and arguments to run the command.
      * On Linux and macOS, defaults to: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`. On Windows, defaults to: `[&#34;cmd&#34;, &#34;/C&#34;]`
@@ -188,7 +187,7 @@ public final class RunResult {
      * @return Additional environment variables available to the command&#39;s process.
      * 
      */
-    public Map<String,Object> environment() {
+    public Map<String,String> environment() {
         return this.environment == null ? Map.of() : this.environment;
     }
     /**
@@ -236,7 +235,7 @@ public final class RunResult {
         private @Nullable Map<String,AssetOrArchive> assets;
         private String command;
         private @Nullable String dir;
-        private @Nullable Map<String,Object> environment;
+        private @Nullable Map<String,String> environment;
         private @Nullable List<String> interpreter;
         private String stderr;
         private @Nullable String stdin;
@@ -294,7 +293,7 @@ public final class RunResult {
             return this;
         }
         @CustomType.Setter
-        public Builder environment(@Nullable Map<String,Object> environment) {
+        public Builder environment(@Nullable Map<String,String> environment) {
             this.environment = environment;
             return this;
         }

@@ -14,7 +14,7 @@ export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResu
     }
 
     opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
-    return pulumi.runtime.invoke("command:local:Run", {
+    return pulumi.runtime.invoke("command:local:run", {
         "archivePaths": args.archivePaths,
         "assetPaths": args.assetPaths,
         "command": args.command,
@@ -117,7 +117,7 @@ export interface RunArgs {
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: {[key: string]: any};
+    environment?: {[key: string]: string};
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -230,7 +230,7 @@ export interface RunResult {
     /**
      * Additional environment variables available to the command's process.
      */
-    readonly environment?: {[key: string]: any};
+    readonly environment?: {[key: string]: string};
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -346,7 +346,7 @@ export interface RunOutputArgs {
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: pulumi.Input<{[key: string]: any}>;
+    environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`

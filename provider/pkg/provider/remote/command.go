@@ -16,8 +16,9 @@ import (
 
 type Command struct{}
 
-var _ = (infer.CustomDelete[CommandState])((*Command)(nil))
+var _ = (infer.CustomResource[CommandArgs, CommandState])((*Command)(nil))
 var _ = (infer.CustomUpdate[CommandArgs, CommandState])((*Command)(nil))
+var _ = (infer.CustomDelete[CommandState])((*Command)(nil))
 
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, `A command to run on a remote host.
@@ -25,13 +26,13 @@ The connection is established via ssh.`)
 }
 
 type CommandArgs struct {
-	Connection  *Connection             `pulumi:"connection" provider:"replaceOnChanges,secret"`
-	Environment *map[string]interface{} `pulumi:"environment,optional"`
-	Triggers    *[]any                  `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	Create      *string                 `pulumi:"create,optional"`
-	Delete      *string                 `pulumi:"delete,optional"`
-	Update      *string                 `pulumi:"update,optional"`
-	Stdin       *string                 `pulumi:"stdin,optional"`
+	Connection  *Connection        `pulumi:"connection" provider:"replaceOnChanges,secret"`
+	Environment *map[string]string `pulumi:"environment,optional"`
+	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Create      *string            `pulumi:"create,optional"`
+	Delete      *string            `pulumi:"delete,optional"`
+	Update      *string            `pulumi:"update,optional"`
+	Stdin       *string            `pulumi:"stdin,optional"`
 }
 
 func (c *CommandArgs) Annotate(a infer.Annotator) {
@@ -44,10 +45,19 @@ func (c *CommandArgs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 }
 
-type CommandState struct {
-	CommandArgs
+type BaseState struct {
 	Stdout string `pulumi:"stdout"`
 	Stderr string `pulumi:"stderr"`
+}
+
+func (c *BaseState) Annotate(a infer.Annotator) {
+	a.Describe(&c.Stdout, "The standard output of the command's process")
+	a.Describe(&c.Stderr, "The standard error of the command's process")
+}
+
+type CommandState struct {
+	CommandArgs
+	BaseState
 }
 
 func (c *CommandState) Annotate(a infer.Annotator) {
@@ -56,17 +66,28 @@ func (c *CommandState) Annotate(a infer.Annotator) {
 }
 
 func (*Command) Create(ctx p.Context, name string, input CommandArgs, preview bool) (string, CommandState, error) {
-	s := CommandState{CommandArgs: input}
-	var id string
+	state := CommandState{CommandArgs: input}
 	var err error
+	id, err := resource.NewUniqueHex(name, 8, 0)
+	if err != nil {
+		return "", state, err
+	}
+	if preview {
+		return id, state, nil
+	}
+
+	if state.Create == nil {
+		return id, state, nil
+	}
 	cmd := ""
-	if s.Create != nil {
-		cmd = *s.Create
+	if state.Create != nil {
+		cmd = *state.Create
 	}
+
 	if !preview {
-		s.Stdout, s.Stderr, id, err = s.run(ctx, cmd)
+		state.Stdout, state.Stderr, err = state.run(ctx, cmd)
 	}
-	return id, s, err
+	return id, state, err
 }
 
 func (*Command) Update(ctx p.Context, id string, olds CommandState, news CommandArgs, preview bool) (CommandState, error) {
@@ -77,9 +98,9 @@ func (*Command) Update(ctx p.Context, id string, olds CommandState, news Command
 	var err error
 	if !preview {
 		if news.Update != nil {
-			state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Update)
+			state.Stdout, state.Stderr, err = state.run(ctx, *news.Update)
 		} else if news.Create != nil {
-			state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Create)
+			state.Stdout, state.Stderr, err = state.run(ctx, *news.Create)
 		}
 	}
 	return state, err
@@ -89,30 +110,30 @@ func (*Command) Delete(ctx p.Context, id string, props CommandState) error {
 	if props.Delete == nil {
 		return nil
 	}
-	_, _, _, err := props.run(ctx, *props.Delete)
+	_, _, err := props.run(ctx, *props.Delete)
 	return err
 }
 
-func (c *CommandState) run(ctx p.Context, cmd string) (string, string, string, error) {
+func (c *CommandState) run(ctx p.Context, cmd string) (string, string, error) {
 	config, err := c.Connection.SShConfig()
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 
 	client, err := c.Connection.Dial(ctx, config)
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 
 	session, err := client.NewSession()
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 	defer session.Close()
 
 	if c.Environment != nil {
 		for k, v := range *c.Environment {
-			session.Setenv(k, v.(string))
+			session.Setenv(k, v)
 		}
 	}
 
@@ -120,18 +141,13 @@ func (c *CommandState) run(ctx p.Context, cmd string) (string, string, string, e
 		session.Stdin = strings.NewReader(*c.Stdin)
 	}
 
-	id, err := resource.NewUniqueHex("", 8, 0)
-	if err != nil {
-		return "", "", "", err
-	}
-
 	stdoutr, stdoutw, err := os.Pipe()
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 	stderrr, stderrw, err := os.Pipe()
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 	session.Stdout = stdoutw
 	session.Stderr = stderrw
@@ -155,5 +171,5 @@ func (c *CommandState) run(ctx p.Context, cmd string) (string, string, string, e
 	<-stdoutch
 	<-stderrch
 
-	return stdoutbuf.String(), stderrbuf.String(), id, err
+	return stdoutbuf.String(), stderrbuf.String(), err
 }

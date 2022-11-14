@@ -31,7 +31,7 @@ func (*Run) Call(ctx p.Context, input RunArgs) (RunState, error) {
 			BaseArgs: input.BaseArgs,
 		},
 	}
-	r.Stdout, r.Stderr, _, err = (state).run(ctx, input.Command)
+	r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
 	r.BaseState = state.BaseState
 	return r, err
 }

@@ -52,7 +52,7 @@ export class Command extends pulumi.CustomResource {
     /**
      * Additional environment variables available to the command's process.
      */
-    public readonly environment!: pulumi.Output<{[key: string]: any} | undefined>;
+    public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
     /**
      * The standard error of the command's process
      */
@@ -136,7 +136,7 @@ export interface CommandArgs {
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: pulumi.Input<{[key: string]: any}>;
+    environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
     /**
      * Pass a string to the command's process as standard in
      */

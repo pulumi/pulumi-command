@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
 
 	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
@@ -30,7 +29,7 @@ func main() {
 	if strings.HasPrefix(version, "v") {
 		version = version[1:]
 	}
-	err := p.RunProvider("command", semver.MustParse(version), command.Provider())
+	err := p.RunProvider("command", version, command.Provider())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s", err.Error())
 		os.Exit(1)

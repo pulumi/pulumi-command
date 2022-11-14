@@ -3,7 +3,7 @@
     "description": "The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
     "displayName": "Command",
     "functions": {
-        "command:local:Run": {
+        "command:local:run": {
             "description": "A local command to be executed.\nThis command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.",
             "inputs": {
                 "properties": {
@@ -30,7 +30,7 @@
                     },
                     "environment": {
                         "additionalProperties": {
-                            "$ref": "pulumi.json#/Any"
+                            "type": "string"
                         },
                         "description": "Additional environment variables available to the command's process.",
                         "type": "object"
@@ -88,7 +88,7 @@
                     },
                     "environment": {
                         "additionalProperties": {
-                            "$ref": "pulumi.json#/Any"
+                            "type": "string"
                         },
                         "description": "Additional environment variables available to the command's process.",
                         "type": "object"
@@ -197,7 +197,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "$ref": "pulumi.json#/Any"
+                        "type": "string"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"
@@ -266,7 +266,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "$ref": "pulumi.json#/Any"
+                        "type": "string"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"
@@ -327,7 +327,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "$ref": "pulumi.json#/Any"
+                        "type": "string"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"
@@ -366,7 +366,7 @@
                 },
                 "environment": {
                     "additionalProperties": {
-                        "$ref": "pulumi.json#/Any"
+                        "type": "string"
                     },
                     "description": "Additional environment variables available to the command's process.",
                     "type": "object"

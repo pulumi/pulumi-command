@@ -20,6 +20,7 @@ import (
 	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
+	"github.com/pulumi/pulumi-go-provider/middleware/schema"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/remote"
@@ -27,57 +28,61 @@ import (
 )
 
 func Provider() p.Provider {
-	return infer.NewProvider().
-		WithResources(
+	return infer.Provider(infer.Options{
+		Resources: []infer.InferredResource{
 			infer.Resource[*local.Command, local.CommandArgs, local.CommandState](),
 			infer.Resource[*remote.Command, remote.CommandArgs, remote.CommandState](),
 			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
-		).
-		WithFunctions(
+		},
+		Functions: []infer.InferredFunction{
 			infer.Function[*local.Run, local.RunArgs, local.RunState](),
-		).
-		WithDisplayName("Command").
-		WithDescription("The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.").
-		WithKeywords([]string{
-			"pulumi",
-			"command",
-			"category/utility",
-			"kind/native"}).
-		WithHomepage("https://pulumi.com").
-		WithLicense("Apache-2.0").
-		WithRepository("https://github.com/pulumi/pulumi-command").
-		WithPublisher("Pulumi").
-		WithLogoURL("https://raw.githubusercontent.com/pulumi/pulumi-command/master/assets/logo.svg").
-		WithLanguageMap(map[string]any{
-			"csharp": map[string]any{
-				"packageReferences": map[string]string{
-					"Pulumi": "3.*",
+		},
+		Metadata: schema.Metadata{
+			DisplayName: "Command",
+			Description: "The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
+			Keywords: []string{
+				"pulumi",
+				"command",
+				"category/utility",
+				"kind/native",
+			},
+			Homepage:   "https://pulumi.com",
+			License:    "Apache-2.0",
+			Repository: "https://github.com/pulumi/pulumi-command",
+			Publisher:  "Pulumi",
+			LogoURL:    "https://raw.githubusercontent.com/pulumi/pulumi-command/master/assets/logo.svg",
+			LanguageMap: map[string]any{
+				"csharp": map[string]any{
+					"packageReferences": map[string]string{
+						"Pulumi": "3.*",
+					},
+				},
+				"go": map[string]any{
+					"generateResourceContainerTypes": true,
+					"importBasePath":                 "github.com/pulumi/pulumi-command/sdk/go/command",
+				},
+				"nodejs": map[string]any{
+					"dependencies": map[string]string{
+						"@pulumi/pulumi": "^3.0.0",
+					},
+				},
+				"python": map[string]any{
+					"requires": map[string]string{
+						"pulumi": ">=3.0.0,<4.0.0",
+					},
+				},
+				"java": map[string]any{
+					"buildFiles":                      "gradle",
+					"gradleNexusPublishPluginVersion": "1.1.0",
+					"dependencies": map[string]any{
+						"com.pulumi:pulumi":               "0.6.0",
+						"com.google.code.gson:gson":       "2.8.9",
+						"com.google.code.findbugs:jsr305": "3.0.2",
+					},
 				},
 			},
-			"go": map[string]any{
-				"generateResourceContainerTypes": true,
-				"importBasePath":                 "github.com/pulumi/pulumi-command/sdk/go/command",
-			},
-			"nodejs": map[string]any{
-				"dependencies": map[string]string{
-					"@pulumi/pulumi": "^3.0.0",
-				},
-			},
-			"python": map[string]any{
-				"requires": map[string]string{
-					"pulumi": ">=3.0.0,<4.0.0",
-				},
-			},
-			"java": map[string]any{
-				"buildFiles":                      "gradle",
-				"gradleNexusPublishPluginVersion": "1.1.0",
-				"dependencies": map[string]any{
-					"com.pulumi:pulumi":               "0.6.0",
-					"com.google.code.gson:gson":       "2.8.9",
-					"com.google.code.findbugs:jsr305": "3.0.2",
-				},
-			},
-		})
+		},
+	})
 }
 
 func Schema(version string) (string, error) {

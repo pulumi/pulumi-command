@@ -14,7 +14,7 @@ import (
 // This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
 func Run(ctx *pulumi.Context, args *RunArgs, opts ...pulumi.InvokeOption) (*RunResult, error) {
 	var rv RunResult
-	err := ctx.Invoke("command:local:Run", args, &rv, opts...)
+	err := ctx.Invoke("command:local:run", args, &rv, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ type RunArgs struct {
 	// `Command` will fail.
 	Dir *string `pulumi:"dir"`
 	// Additional environment variables available to the command's process.
-	Environment map[string]interface{} `pulumi:"environment"`
+	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
@@ -126,7 +126,7 @@ type RunResult struct {
 	// `Command` will fail.
 	Dir *string `pulumi:"dir"`
 	// Additional environment variables available to the command's process.
-	Environment map[string]interface{} `pulumi:"environment"`
+	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
@@ -197,7 +197,7 @@ type RunOutputArgs struct {
 	// `Command` will fail.
 	Dir pulumi.StringPtrInput `pulumi:"dir"`
 	// Additional environment variables available to the command's process.
-	Environment pulumi.MapInput `pulumi:"environment"`
+	Environment pulumi.StringMapInput `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput `pulumi:"interpreter"`
@@ -291,8 +291,8 @@ func (o RunResultOutput) Dir() pulumi.StringPtrOutput {
 }
 
 // Additional environment variables available to the command's process.
-func (o RunResultOutput) Environment() pulumi.MapOutput {
-	return o.ApplyT(func(v RunResult) map[string]interface{} { return v.Environment }).(pulumi.MapOutput)
+func (o RunResultOutput) Environment() pulumi.StringMapOutput {
+	return o.ApplyT(func(v RunResult) map[string]string { return v.Environment }).(pulumi.StringMapOutput)
 }
 
 // The program and arguments to run the command.

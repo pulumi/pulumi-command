@@ -18,13 +18,13 @@ const (
 )
 
 type Connection struct {
-	User               string  `pulumi:"user,optional"`
-	Password           *string `pulumi:"password,optional"`
-	Host               string  `pulumi:"host"`
-	Port               float64 `pulumi:"port,optional"`
-	PrivateKey         *string `pulumi:"privateKey,optional"`
-	PrivateKeyPassword *string `pulumi:"privateKeyPassword,optional"`
-	AgentSocketPath    *string `pulumi:"agentSocketPath,optional"`
+	User               *string  `pulumi:"user,optional"`
+	Password           *string  `pulumi:"password,optional"`
+	Host               *string  `pulumi:"host"`
+	Port               *float64 `pulumi:"port,optional"`
+	PrivateKey         *string  `pulumi:"privateKey,optional"`
+	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
+	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -42,7 +42,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 
 func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
-		User:            con.User,
+		User:            *con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	if con.PrivateKey != nil {
@@ -92,7 +92,7 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(con.Host, fmt.Sprintf("%.0f", con.Port)),
+				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
 				config)
 			if err != nil {
 				if try > 10 {

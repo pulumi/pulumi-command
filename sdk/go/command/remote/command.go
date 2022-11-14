@@ -23,7 +23,7 @@ type Command struct {
 	// The command to run on delete.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
-	Environment pulumi.MapOutput `pulumi:"environment"`
+	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
@@ -98,7 +98,7 @@ type commandArgs struct {
 	// The command to run on delete.
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
-	Environment map[string]interface{} `pulumi:"environment"`
+	Environment map[string]string `pulumi:"environment"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
 	// Trigger replacements on changes to this input.
@@ -116,7 +116,7 @@ type CommandArgs struct {
 	// The command to run on delete.
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
-	Environment pulumi.MapInput
+	Environment pulumi.StringMapInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
 	// Trigger replacements on changes to this input.
@@ -228,8 +228,8 @@ func (o CommandOutput) Delete() pulumi.StringPtrOutput {
 }
 
 // Additional environment variables available to the command's process.
-func (o CommandOutput) Environment() pulumi.MapOutput {
-	return o.ApplyT(func(v *Command) pulumi.MapOutput { return v.Environment }).(pulumi.MapOutput)
+func (o CommandOutput) Environment() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringMapOutput { return v.Environment }).(pulumi.StringMapOutput)
 }
 
 // The standard error of the command's process

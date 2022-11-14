@@ -35,12 +35,12 @@ of the `+"`Command`"+` resource.`)
 }
 
 type BaseArgs struct {
-	Interpreter  *[]string               `pulumi:"interpreter,optional"`
-	Dir          *string                 `pulumi:"dir,optional"`
-	Environment  *map[string]interface{} `pulumi:"environment,optional"`
-	Stdin        *string                 `pulumi:"stdin,optional"`
-	AssetPaths   *[]string               `pulumi:"assetPaths,optional"`
-	ArchivePaths *[]string               `pulumi:"archivePaths,optional"`
+	Interpreter  *[]string          `pulumi:"interpreter,optional"`
+	Dir          *string            `pulumi:"dir,optional"`
+	Environment  *map[string]string `pulumi:"environment,optional"`
+	Stdin        *string            `pulumi:"stdin,optional"`
+	AssetPaths   *[]string          `pulumi:"assetPaths,optional"`
+	ArchivePaths *[]string          `pulumi:"archivePaths,optional"`
 }
 
 func (c *BaseArgs) Annotate(a infer.Annotator) {
@@ -152,6 +152,7 @@ type CommandArgs struct {
 }
 
 func (c *CommandArgs) Annotate(a infer.Annotator) {
+	c.BaseArgs.Annotate(a)
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Create, "The command to run on create.")
 	a.Describe(&c.Delete, "The command to run on delete.")
@@ -163,18 +164,21 @@ type CommandState struct {
 	BaseState
 }
 
-func (c *Command) Create(ctx p.Context, name string, input CommandArgs, preview bool) (id string, output CommandState, err error) {
+func (c *Command) Create(ctx p.Context, name string, input CommandArgs, preview bool) (string, CommandState, error) {
 	state := CommandState{CommandArgs: input}
+	id, err := resource.NewUniqueHex(name, 8, 0)
+	if err != nil {
+		return id, state, err
+	}
+
 	if preview {
-		return "", state, nil
+		return id, state, nil
 	}
-	cmd := ""
-	if input.Create != nil {
-		cmd = *input.Create
+	if input.Create == nil {
+		return id, state, nil
 	}
-	stdout, stderr, id, err := state.run(ctx, cmd)
-	state.Stdout = stdout
-	state.Stderr = stderr
+	cmd := *input.Create
+	state.Stdout, state.Stderr, err = state.run(ctx, cmd)
 	return id, state, err
 }
 
@@ -185,9 +189,9 @@ func (c *Command) Update(ctx p.Context, id string, olds CommandState, news Comma
 	}
 	var err error
 	if news.Update != nil {
-		state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Update)
+		state.Stdout, state.Stderr, err = state.run(ctx, *news.Update)
 	} else if news.Create != nil {
-		state.Stdout, state.Stderr, _, err = state.run(ctx, *news.Create)
+		state.Stdout, state.Stderr, err = state.run(ctx, *news.Create)
 	}
 	return state, err
 }
@@ -196,11 +200,11 @@ func (c *Command) Delete(ctx p.Context, id string, props CommandState) error {
 	if props.Delete == nil {
 		return nil
 	}
-	_, _, _, err := props.run(ctx, *props.Delete)
+	_, _, err := props.run(ctx, *props.Delete)
 	return err
 }
 
-func (c *CommandState) run(ctx p.Context, command string) (string, string, string, error) {
+func (c *CommandState) run(ctx p.Context, command string) (string, string, error) {
 	var args []string
 	if c.Interpreter != nil && len(*c.Interpreter) > 0 {
 		args = append(args, *c.Interpreter...)
@@ -215,11 +219,11 @@ func (c *CommandState) run(ctx p.Context, command string) (string, string, strin
 
 	stdoutr, stdoutw, err := os.Pipe()
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 	stderrr, stderrw, err := os.Pipe()
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
@@ -230,7 +234,7 @@ func (c *CommandState) run(ctx p.Context, command string) (string, string, strin
 	} else {
 		cmd.Dir, err = os.Getwd()
 		if err != nil {
-			return "", "", "", err
+			return "", "", err
 		}
 	}
 	cmd.Env = os.Environ()
@@ -256,7 +260,6 @@ func (c *CommandState) run(ctx p.Context, command string) (string, string, strin
 	go util.CopyOutput(ctx, stderrtee, stderrch, diag.Error)
 
 	err = cmd.Start()
-	pid := cmd.Process.Pid
 	if err == nil {
 		err = cmd.Wait()
 	}
@@ -268,18 +271,13 @@ func (c *CommandState) run(ctx p.Context, command string) (string, string, strin
 	<-stderrch
 
 	if err != nil {
-		return "", "", "", err
-	}
-
-	id, err := resource.NewUniqueHex(fmt.Sprintf("%d", pid), 8, 0)
-	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 
 	if c.AssetPaths != nil {
 		assets, err := globAssets(cmd.Dir, *c.AssetPaths)
 		if err != nil {
-			return "", "", "", err
+			return "", "", err
 		}
 		c.Assets = &assets
 	}
@@ -288,7 +286,7 @@ func (c *CommandState) run(ctx p.Context, command string) (string, string, strin
 		archiveAssets := map[string]interface{}{}
 		assets, err := globAssets(cmd.Dir, *c.ArchivePaths)
 		if err != nil {
-			return "", "", "", err
+			return "", "", err
 		}
 
 		for path, asset := range assets {
@@ -297,12 +295,12 @@ func (c *CommandState) run(ctx p.Context, command string) (string, string, strin
 
 		archive, err := resource.NewAssetArchive(archiveAssets)
 		if err != nil {
-			return "", "", "", err
+			return "", "", err
 		}
 		c.Archive = archive
 	}
 
-	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), id, nil
+	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), nil
 }
 
 func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {

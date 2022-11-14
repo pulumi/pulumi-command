@@ -19,7 +19,7 @@ class CommandArgs:
                  connection: pulumi.Input['ConnectionArgs'],
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
-                 environment: Optional[pulumi.Input[Mapping[str, Any]]] = None,
+                 environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None):
@@ -28,7 +28,7 @@ class CommandArgs:
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[Mapping[str, Any]] environment: Additional environment variables available to the command's process.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
@@ -85,14 +85,14 @@ class CommandArgs:
 
     @property
     @pulumi.getter
-    def environment(self) -> Optional[pulumi.Input[Mapping[str, Any]]]:
+    def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
         Additional environment variables available to the command's process.
         """
         return pulumi.get(self, "environment")
 
     @environment.setter
-    def environment(self, value: Optional[pulumi.Input[Mapping[str, Any]]]):
+    def environment(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]):
         pulumi.set(self, "environment", value)
 
     @property
@@ -140,7 +140,7 @@ class Command(pulumi.CustomResource):
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
-                 environment: Optional[pulumi.Input[Mapping[str, Any]]] = None,
+                 environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -154,7 +154,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] create: The command to run on create.
         :param pulumi.Input[str] delete: The command to run on delete.
-        :param pulumi.Input[Mapping[str, Any]] environment: Additional environment variables available to the command's process.
+        :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
@@ -187,7 +187,7 @@ class Command(pulumi.CustomResource):
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
-                 environment: Optional[pulumi.Input[Mapping[str, Any]]] = None,
+                 environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -274,7 +274,7 @@ class Command(pulumi.CustomResource):
 
     @property
     @pulumi.getter
-    def environment(self) -> pulumi.Output[Optional[Mapping[str, Any]]]:
+    def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
         """
         Additional environment variables available to the command's process.
         """

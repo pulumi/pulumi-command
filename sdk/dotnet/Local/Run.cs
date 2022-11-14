@@ -16,14 +16,14 @@ namespace Pulumi.Command.Local
         /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
         /// </summary>
         public static Task<RunResult> InvokeAsync(RunArgs args, InvokeOptions? options = null)
-            => global::Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:Run", args ?? new RunArgs(), options.WithDefaults());
+            => global::Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:run", args ?? new RunArgs(), options.WithDefaults());
 
         /// <summary>
         /// A local command to be executed.
         /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
         /// </summary>
         public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOptions? options = null)
-            => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:Run", args ?? new RunInvokeArgs(), options.WithDefaults());
+            => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
     }
 
 
@@ -138,14 +138,14 @@ namespace Pulumi.Command.Local
         public string? Dir { get; set; }
 
         [Input("environment")]
-        private Dictionary<string, object>? _environment;
+        private Dictionary<string, string>? _environment;
 
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public Dictionary<string, object> Environment
+        public Dictionary<string, string> Environment
         {
-            get => _environment ?? (_environment = new Dictionary<string, object>());
+            get => _environment ?? (_environment = new Dictionary<string, string>());
             set => _environment = value;
         }
 
@@ -285,14 +285,14 @@ namespace Pulumi.Command.Local
         public Input<string>? Dir { get; set; }
 
         [Input("environment")]
-        private InputMap<object>? _environment;
+        private InputMap<string>? _environment;
 
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public InputMap<object> Environment
+        public InputMap<string> Environment
         {
-            get => _environment ?? (_environment = new InputMap<object>());
+            get => _environment ?? (_environment = new InputMap<string>());
             set => _environment = value;
         }
 
@@ -425,7 +425,7 @@ namespace Pulumi.Command.Local
         /// <summary>
         /// Additional environment variables available to the command's process.
         /// </summary>
-        public readonly ImmutableDictionary<string, object>? Environment;
+        public readonly ImmutableDictionary<string, string>? Environment;
         /// <summary>
         /// The program and arguments to run the command.
         /// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
@@ -458,7 +458,7 @@ namespace Pulumi.Command.Local
 
             string? dir,
 
-            ImmutableDictionary<string, object>? environment,
+            ImmutableDictionary<string, string>? environment,
 
             ImmutableArray<string> interpreter,
 

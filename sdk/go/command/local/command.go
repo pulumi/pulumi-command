@@ -71,7 +71,7 @@ type Command struct {
 	// `Command` will fail.
 	Dir pulumi.StringPtrOutput `pulumi:"dir"`
 	// Additional environment variables available to the command's process.
-	Environment pulumi.MapOutput `pulumi:"environment"`
+	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
@@ -178,7 +178,7 @@ type commandArgs struct {
 	// `Command` will fail.
 	Dir *string `pulumi:"dir"`
 	// Additional environment variables available to the command's process.
-	Environment map[string]interface{} `pulumi:"environment"`
+	Environment map[string]string `pulumi:"environment"`
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
@@ -240,7 +240,7 @@ type CommandArgs struct {
 	// `Command` will fail.
 	Dir pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
-	Environment pulumi.MapInput
+	Environment pulumi.StringMapInput
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput
@@ -413,8 +413,8 @@ func (o CommandOutput) Dir() pulumi.StringPtrOutput {
 }
 
 // Additional environment variables available to the command's process.
-func (o CommandOutput) Environment() pulumi.MapOutput {
-	return o.ApplyT(func(v *Command) pulumi.MapOutput { return v.Environment }).(pulumi.MapOutput)
+func (o CommandOutput) Environment() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *Command) pulumi.StringMapOutput { return v.Environment }).(pulumi.StringMapOutput)
 }
 
 // The program and arguments to run the command.
