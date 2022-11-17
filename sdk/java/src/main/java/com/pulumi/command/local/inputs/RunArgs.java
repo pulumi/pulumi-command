@@ -119,9 +119,17 @@ public final class RunArgs extends com.pulumi.resources.InvokeArgs {
         return Optional.ofNullable(this.assetPaths);
     }
 
+    /**
+     * The command to run.
+     * 
+     */
     @Import(name="command", required=true)
     private Output<String> command;
 
+    /**
+     * @return The command to run.
+     * 
+     */
     public Output<String> command() {
         return this.command;
     }
@@ -390,11 +398,23 @@ public final class RunArgs extends com.pulumi.resources.InvokeArgs {
             return assetPaths(List.of(assetPaths));
         }
 
+        /**
+         * @param command The command to run.
+         * 
+         * @return builder
+         * 
+         */
         public Builder command(Output<String> command) {
             $.command = command;
             return this;
         }
 
+        /**
+         * @param command The command to run.
+         * 
+         * @return builder
+         * 
+         */
         public Builder command(String command) {
             return command(Output.of(command));
         }

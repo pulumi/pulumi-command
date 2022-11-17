@@ -62,7 +62,8 @@ type RunArgs struct {
 	//
 	// The following paths will be returned:
 	AssetPaths []string `pulumi:"assetPaths"`
-	Command    string   `pulumi:"command"`
+	// The command to run.
+	Command string `pulumi:"command"`
 	// The directory from which to run the command from. If `dir` does not exist, then
 	// `Command` will fail.
 	Dir *string `pulumi:"dir"`
@@ -120,8 +121,9 @@ type RunResult struct {
 	AssetPaths []string `pulumi:"assetPaths"`
 	// A map of assets found after running the command.
 	// The key is the relative path from the command dir
-	Assets  map[string]pulumi.AssetOrArchive `pulumi:"assets"`
-	Command string                           `pulumi:"command"`
+	Assets map[string]pulumi.AssetOrArchive `pulumi:"assets"`
+	// The command to run.
+	Command string `pulumi:"command"`
 	// The directory from which to run the command from. If `dir` does not exist, then
 	// `Command` will fail.
 	Dir *string `pulumi:"dir"`
@@ -133,9 +135,9 @@ type RunResult struct {
 	// The standard error of the command's process
 	Stderr string `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
-	Stdin *string `pulumi:"stdin"`
+	Stdin string `pulumi:"stdin"`
 	// The standard output of the command's process
-	Stdout string `pulumi:"stdout"`
+	Stdout *string `pulumi:"stdout"`
 }
 
 func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOption) RunResultOutput {
@@ -192,7 +194,8 @@ type RunOutputArgs struct {
 	//
 	// The following paths will be returned:
 	AssetPaths pulumi.StringArrayInput `pulumi:"assetPaths"`
-	Command    pulumi.StringInput      `pulumi:"command"`
+	// The command to run.
+	Command pulumi.StringInput `pulumi:"command"`
 	// The directory from which to run the command from. If `dir` does not exist, then
 	// `Command` will fail.
 	Dir pulumi.StringPtrInput `pulumi:"dir"`
@@ -280,6 +283,7 @@ func (o RunResultOutput) Assets() pulumi.AssetOrArchiveMapOutput {
 	return o.ApplyT(func(v RunResult) map[string]pulumi.AssetOrArchive { return v.Assets }).(pulumi.AssetOrArchiveMapOutput)
 }
 
+// The command to run.
 func (o RunResultOutput) Command() pulumi.StringOutput {
 	return o.ApplyT(func(v RunResult) string { return v.Command }).(pulumi.StringOutput)
 }
@@ -307,13 +311,13 @@ func (o RunResultOutput) Stderr() pulumi.StringOutput {
 }
 
 // Pass a string to the command's process as standard in
-func (o RunResultOutput) Stdin() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v RunResult) *string { return v.Stdin }).(pulumi.StringPtrOutput)
+func (o RunResultOutput) Stdin() pulumi.StringOutput {
+	return o.ApplyT(func(v RunResult) string { return v.Stdin }).(pulumi.StringOutput)
 }
 
 // The standard output of the command's process
-func (o RunResultOutput) Stdout() pulumi.StringOutput {
-	return o.ApplyT(func(v RunResult) string { return v.Stdout }).(pulumi.StringOutput)
+func (o RunResultOutput) Stdout() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v RunResult) *string { return v.Stdout }).(pulumi.StringPtrOutput)
 }
 
 func init() {

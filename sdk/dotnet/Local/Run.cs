@@ -127,6 +127,9 @@ namespace Pulumi.Command.Local
             set => _assetPaths = value;
         }
 
+        /// <summary>
+        /// The command to run.
+        /// </summary>
         [Input("command", required: true)]
         public string Command { get; set; } = null!;
 
@@ -274,6 +277,9 @@ namespace Pulumi.Command.Local
             set => _assetPaths = value;
         }
 
+        /// <summary>
+        /// The command to run.
+        /// </summary>
         [Input("command", required: true)]
         public Input<string> Command { get; set; } = null!;
 
@@ -416,6 +422,9 @@ namespace Pulumi.Command.Local
         /// The key is the relative path from the command dir
         /// </summary>
         public readonly ImmutableDictionary<string, AssetOrArchive>? Assets;
+        /// <summary>
+        /// The command to run.
+        /// </summary>
         public readonly string Command;
         /// <summary>
         /// The directory from which to run the command from. If `dir` does not exist, then
@@ -438,11 +447,11 @@ namespace Pulumi.Command.Local
         /// <summary>
         /// Pass a string to the command's process as standard in
         /// </summary>
-        public readonly string? Stdin;
+        public readonly string Stdin;
         /// <summary>
         /// The standard output of the command's process
         /// </summary>
-        public readonly string Stdout;
+        public readonly string? Stdout;
 
         [OutputConstructor]
         private RunResult(
@@ -464,9 +473,9 @@ namespace Pulumi.Command.Local
 
             string stderr,
 
-            string? stdin,
+            string stdin,
 
-            string stdout)
+            string? stdout)
         {
             Archive = archive;
             ArchivePaths = archivePaths;

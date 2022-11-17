@@ -72,6 +72,10 @@ public final class RunResult {
      * 
      */
     private @Nullable Map<String,AssetOrArchive> assets;
+    /**
+     * @return The command to run.
+     * 
+     */
     private String command;
     /**
      * @return The directory from which to run the command from. If `dir` does not exist, then
@@ -99,12 +103,12 @@ public final class RunResult {
      * @return Pass a string to the command&#39;s process as standard in
      * 
      */
-    private @Nullable String stdin;
+    private String stdin;
     /**
      * @return The standard output of the command&#39;s process
      * 
      */
-    private String stdout;
+    private @Nullable String stdout;
 
     private RunResult() {}
     /**
@@ -172,6 +176,10 @@ public final class RunResult {
     public Map<String,AssetOrArchive> assets() {
         return this.assets == null ? Map.of() : this.assets;
     }
+    /**
+     * @return The command to run.
+     * 
+     */
     public String command() {
         return this.command;
     }
@@ -209,15 +217,15 @@ public final class RunResult {
      * @return Pass a string to the command&#39;s process as standard in
      * 
      */
-    public Optional<String> stdin() {
-        return Optional.ofNullable(this.stdin);
+    public String stdin() {
+        return this.stdin;
     }
     /**
      * @return The standard output of the command&#39;s process
      * 
      */
-    public String stdout() {
-        return this.stdout;
+    public Optional<String> stdout() {
+        return Optional.ofNullable(this.stdout);
     }
 
     public static Builder builder() {
@@ -238,8 +246,8 @@ public final class RunResult {
         private @Nullable Map<String,String> environment;
         private @Nullable List<String> interpreter;
         private String stderr;
-        private @Nullable String stdin;
-        private String stdout;
+        private String stdin;
+        private @Nullable String stdout;
         public Builder() {}
         public Builder(RunResult defaults) {
     	      Objects.requireNonNull(defaults);
@@ -311,13 +319,13 @@ public final class RunResult {
             return this;
         }
         @CustomType.Setter
-        public Builder stdin(@Nullable String stdin) {
-            this.stdin = stdin;
+        public Builder stdin(String stdin) {
+            this.stdin = Objects.requireNonNull(stdin);
             return this;
         }
         @CustomType.Setter
-        public Builder stdout(String stdout) {
-            this.stdout = Objects.requireNonNull(stdout);
+        public Builder stdout(@Nullable String stdout) {
+            this.stdout = stdout;
             return this;
         }
         public RunResult build() {

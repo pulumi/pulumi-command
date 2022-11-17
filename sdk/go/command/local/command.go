@@ -94,10 +94,6 @@ func NewCommand(ctx *pulumi.Context,
 		args = &CommandArgs{}
 	}
 
-	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
-		"triggers[*]",
-	})
-	opts = append(opts, replaceOnChanges)
 	var resource Command
 	err := ctx.RegisterResource("command:local:Command", name, args, &resource, opts...)
 	if err != nil {

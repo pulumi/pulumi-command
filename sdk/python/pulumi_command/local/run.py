@@ -163,6 +163,9 @@ class RunResult:
     @property
     @pulumi.getter
     def command(self) -> str:
+        """
+        The command to run.
+        """
         return pulumi.get(self, "command")
 
     @property
@@ -201,7 +204,7 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def stdin(self) -> Optional[str]:
+    def stdin(self) -> str:
         """
         Pass a string to the command's process as standard in
         """
@@ -209,7 +212,7 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def stdout(self) -> str:
+    def stdout(self) -> Optional[str]:
         """
         The standard output of the command's process
         """
@@ -324,6 +327,7 @@ def run(archive_paths: Optional[Sequence[str]] = None,
            - assets/logos/logo.svg
            - src/index.js
            ```
+    :param str command: The command to run.
     :param str dir: The directory from which to run the command from. If `dir` does not exist, then
            `Command` will fail.
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
@@ -446,6 +450,7 @@ def run_output(archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = 
            - assets/logos/logo.svg
            - src/index.js
            ```
+    :param str command: The command to run.
     :param str dir: The directory from which to run the command from. If `dir` does not exist, then
            `Command` will fail.
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.

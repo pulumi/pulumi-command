@@ -16,7 +16,7 @@ __all__ = ['CommandArgs', 'Command']
 @pulumi.input_type
 class CommandArgs:
     def __init__(__self__, *,
-                 connection: pulumi.Input['ConnectionArgs'],
+                 connection: Optional[pulumi.Input['ConnectionArgs']] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -33,7 +33,8 @@ class CommandArgs:
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
         """
-        pulumi.set(__self__, "connection", connection)
+        if connection is not None:
+            pulumi.set(__self__, "connection", connection)
         if create is not None:
             pulumi.set(__self__, "create", create)
         if delete is not None:
@@ -49,14 +50,14 @@ class CommandArgs:
 
     @property
     @pulumi.getter
-    def connection(self) -> pulumi.Input['ConnectionArgs']:
+    def connection(self) -> Optional[pulumi.Input['ConnectionArgs']]:
         """
         The parameters with which to connect to the remote host.
         """
         return pulumi.get(self, "connection")
 
     @connection.setter
-    def connection(self, value: pulumi.Input['ConnectionArgs']):
+    def connection(self, value: Optional[pulumi.Input['ConnectionArgs']]):
         pulumi.set(self, "connection", value)
 
     @property
@@ -163,7 +164,7 @@ class Command(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
-                 args: CommandArgs,
+                 args: Optional[CommandArgs] = None,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         A command to run on a remote host.
@@ -200,8 +201,6 @@ class Command(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = CommandArgs.__new__(CommandArgs)
 
-            if connection is None and not opts.urn:
-                raise TypeError("Missing required property 'connection'")
             __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
@@ -213,8 +212,6 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["stdout"] = None
         secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["connection"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
-        replace_on_changes = pulumi.ResourceOptions(replace_on_changes=["connection", "triggers[*]"])
-        opts = pulumi.ResourceOptions.merge(opts, replace_on_changes)
         super(Command, __self__).__init__(
             'command:remote:Command',
             resource_name,
@@ -250,7 +247,7 @@ class Command(pulumi.CustomResource):
 
     @property
     @pulumi.getter
-    def connection(self) -> pulumi.Output['outputs.Connection']:
+    def connection(self) -> pulumi.Output[Optional['outputs.Connection']]:
         """
         The parameters with which to connect to the remote host.
         """
