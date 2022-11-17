@@ -27,13 +27,25 @@ import (
 	"github.com/pulumi/pulumi-go-provider/integration"
 )
 
+// This provider uses the `pulumi-go-provider` library to produce a code-first
+// provider definition.
 func Provider() p.Provider {
 	return infer.Provider(infer.Options{
+		// A list of `infer.Resource` that are provided by the provider.
 		Resources: []infer.InferredResource{
-			infer.Resource[*local.Command, local.CommandArgs, local.CommandState](),
+			//  infer.Resource to specify the
+			infer.Resource[
+				// 1. The CustomResource. This struct has methods such as `Create`, `Update`, `Delete`.
+				*local.Command,
+				// 2. The Arguments to the Resource. These can
+				local.CommandArgs,
+				// 3. The Data to store for the Resource.
+				local.CommandState,
+			](),
 			infer.Resource[*remote.Command, remote.CommandArgs, remote.CommandState](),
 			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
 		},
+		// Functions or invokes that are provided by the provider.
 		Functions: []infer.InferredFunction{
 			infer.Function[*local.Run, local.RunArgs, local.RunState](),
 		},

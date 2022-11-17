@@ -16,16 +16,48 @@ import (
 
 type Command struct{}
 
+// These are not required. They indicate to Go that Command implements the following interfaces.
+// If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
 var _ = (infer.CustomResource[CommandArgs, CommandState])((*Command)(nil))
 var _ = (infer.CustomUpdate[CommandArgs, CommandState])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandState])((*Command)(nil))
+var _ = (infer.ExplicitDependencies[CommandArgs, CommandState])((*Command)(nil))
 
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, `A command to run on a remote host.
 The connection is established via ssh.`)
 }
 
+// WireDependencies marks the data dependencies between Inputs and Outputs
+func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, state *CommandState) {
+	createInput := f.InputField(&args.Create)
+	updateInput := f.InputField(&args.Update)
+
+	f.OutputField(&state.Connection).DependsOn(f.InputField(&args.Connection))
+	f.OutputField(&state.Environment).DependsOn(f.InputField(&args.Environment))
+	f.OutputField(&state.Triggers).DependsOn(f.InputField(&args.Triggers))
+	f.OutputField(&state.Create).DependsOn(f.InputField(&args.Create))
+	f.OutputField(&state.Delete).DependsOn(f.InputField(&args.Delete))
+	f.OutputField(&state.Update).DependsOn(f.InputField(&args.Update))
+	f.OutputField(&state.Stdin).DependsOn(f.InputField(&args.Stdin))
+
+	f.OutputField(&state.Stdout).DependsOn(
+		createInput,
+		updateInput,
+	)
+	f.OutputField(&state.Stderr).DependsOn(
+		createInput,
+		updateInput,
+	)
+}
+
+// The arguments for a remote Command resource
 type CommandArgs struct {
+	// these field annotations allow you to
+	// pulumi:"connection" specifies the name of the field in the schema
+	// pulumi:"optional" specifies that a field is optional. This must be optional.
+	// provider:"replaceOnChanges" specifies that a resource will be marked replaceOnChanges.
+	// provider:"secret" specifies that a resource will be marked replaceOnChanges.
 	Connection  *Connection        `pulumi:"connection" provider:"replaceOnChanges,secret"`
 	Environment *map[string]string `pulumi:"environment,optional"`
 	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`

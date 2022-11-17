@@ -13,6 +13,14 @@ import (
 
 type CopyFile struct{}
 
+// These are not required. They indicate to Go that Command implements the following interfaces.
+// If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
+var _ = (infer.CustomResource[CopyFileArgs, CopyFileState])((*CopyFile)(nil))
+var _ = (infer.ExplicitDependencies[CopyFileArgs, CopyFileState])((*CopyFile)(nil))
+
+var _ = (infer.Annotated)((*CopyFile)(nil))
+
+// CopyFile implements Annotate which allows you to attach descriptions to the CopyFile resource and its fields.
 func (c *CopyFile) Annotate(a infer.Annotator) {
 	a.Describe(&c, "Copy a local file to a remote host.")
 }
@@ -31,7 +39,16 @@ func (c *CopyFileArgs) Annotate(a infer.Annotator) {
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 
-type CopyFileState struct{ CopyFileArgs }
+func (r *CopyFile) WireDependencies(f infer.FieldSelector, args *CopyFileArgs, state *CopyFileState) {
+	f.OutputField(&state.CopyFileArgs.Connection).DependsOn(f.InputField(&args.Connection))
+	f.OutputField(&state.CopyFileArgs.Triggers).DependsOn(f.InputField(&args.Triggers))
+	f.OutputField(&state.CopyFileArgs.LocalPath).DependsOn(f.InputField(&args.LocalPath))
+	f.OutputField(&state.CopyFileArgs.RemotePath).DependsOn(f.InputField(&args.RemotePath))
+}
+
+type CopyFileState struct {
+	CopyFileArgs
+}
 
 func (*CopyFile) Create(ctx p.Context, name string, input CopyFileArgs, preview bool) (string, CopyFileState, error) {
 	if preview {

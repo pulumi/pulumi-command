@@ -22,9 +22,12 @@ import (
 
 type Command struct{}
 
+// These are not required. They indicate to Go that Command implements the following interfaces.
+// If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
 var _ = (infer.CustomResource[CommandArgs, CommandState])((*Command)(nil))
 var _ = (infer.CustomUpdate[CommandArgs, CommandState])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandState])((*Command)(nil))
+var _ = (infer.ExplicitDependencies[CommandArgs, CommandState])((*Command)(nil))
 
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, `A local command to be executed.
@@ -32,6 +35,62 @@ This command can be inserted into the life cycles of other resources using the
 `+"`dependsOn`"+` or `+"`parent`"+` resource options. A command is considered to have
 failed when it finished with a non-zero exit code. This will fail the CRUD step
 of the `+"`Command`"+` resource.`)
+}
+
+func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, state *CommandState) {
+
+	// get BaseArgs
+	interpreterInput := f.InputField(&args.Interpreter)
+	dirInput := f.InputField(&args.Dir)
+	environmentInput := f.InputField(&args.Environment)
+	stdinInput := f.InputField(&args.Stdin)
+	assetPathsInput := f.InputField(&args.AssetPaths)
+	archivePathsInput := f.InputField(&args.ArchivePaths)
+
+	// set BaseArgs
+	f.OutputField(&state.Interpreter).DependsOn(interpreterInput)
+	f.OutputField(&state.Dir).DependsOn(dirInput)
+	f.OutputField(&state.Environment).DependsOn(environmentInput)
+	f.OutputField(&state.Stdin).DependsOn(stdinInput)
+	f.OutputField(&state.AssetPaths).DependsOn(assetPathsInput)
+	f.OutputField(&state.ArchivePaths).DependsOn(archivePathsInput)
+
+	// set
+	triggersInput := f.InputField(&args.Triggers)
+	createInput := f.InputField(&args.Create)
+	updateInput := f.InputField(&args.Update)
+	deleteInput := f.InputField(&args.Delete)
+
+	// set CommandArgs
+	f.OutputField(&state.Triggers).DependsOn(triggersInput)
+	f.OutputField(&state.Create).DependsOn(createInput)
+	f.OutputField(&state.Update).DependsOn(updateInput)
+	f.OutputField(&state.Delete).DependsOn(deleteInput)
+
+	f.OutputField(&state.Stdout).DependsOn(
+		triggersInput,
+		createInput,
+		updateInput,
+		deleteInput,
+		interpreterInput,
+		dirInput,
+		environmentInput,
+		stdinInput,
+		assetPathsInput,
+		archivePathsInput,
+	)
+	f.OutputField(&state.Stderr).DependsOn(
+		triggersInput,
+		createInput,
+		updateInput,
+		deleteInput,
+		interpreterInput,
+		dirInput,
+		environmentInput,
+		stdinInput,
+		assetPathsInput,
+		archivePathsInput,
+	)
 }
 
 type BaseArgs struct {

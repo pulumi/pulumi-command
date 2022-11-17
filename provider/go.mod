@@ -2,19 +2,14 @@ module github.com/pulumi/pulumi-command/provider
 
 go 1.18
 
-replace (
-	github.com/pulumi/pulumi-go-provider => ../../pulumi-go-provider
-	github.com/pulumi/pulumi-go-provider/integration => ../../pulumi-go-provider/integration
-)
-
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.4
 	github.com/pulumi/pulumi-go-provider v0.8.0
 	github.com/pulumi/pulumi-go-provider/integration v0.8.0
-	github.com/pulumi/pulumi/pkg/v3 v3.45.0
-	github.com/pulumi/pulumi/sdk/v3 v3.45.0
+	github.com/pulumi/pulumi/pkg/v3 v3.44.2
+	github.com/pulumi/pulumi/sdk/v3 v3.44.2
 	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
 )
 
