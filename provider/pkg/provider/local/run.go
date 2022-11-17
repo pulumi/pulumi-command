@@ -23,9 +23,5 @@ type RunArgs struct {
 
 type RunState struct {
 	RunArgs
-	// Marked as optional to match the old schema.
-	// See https://github.com/pulumi/pulumi-command/issues/159
-	Stdin  *string `pulumi:"stdin"`
-	Stdout *string `pulumi:"stdout,optional"`
 	BaseState
 }

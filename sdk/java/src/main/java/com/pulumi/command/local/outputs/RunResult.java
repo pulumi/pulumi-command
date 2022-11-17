@@ -103,12 +103,12 @@ public final class RunResult {
      * @return Pass a string to the command&#39;s process as standard in
      * 
      */
-    private String stdin;
+    private @Nullable String stdin;
     /**
      * @return The standard output of the command&#39;s process
      * 
      */
-    private @Nullable String stdout;
+    private String stdout;
 
     private RunResult() {}
     /**
@@ -217,15 +217,15 @@ public final class RunResult {
      * @return Pass a string to the command&#39;s process as standard in
      * 
      */
-    public String stdin() {
-        return this.stdin;
+    public Optional<String> stdin() {
+        return Optional.ofNullable(this.stdin);
     }
     /**
      * @return The standard output of the command&#39;s process
      * 
      */
-    public Optional<String> stdout() {
-        return Optional.ofNullable(this.stdout);
+    public String stdout() {
+        return this.stdout;
     }
 
     public static Builder builder() {
@@ -246,8 +246,8 @@ public final class RunResult {
         private @Nullable Map<String,String> environment;
         private @Nullable List<String> interpreter;
         private String stderr;
-        private String stdin;
-        private @Nullable String stdout;
+        private @Nullable String stdin;
+        private String stdout;
         public Builder() {}
         public Builder(RunResult defaults) {
     	      Objects.requireNonNull(defaults);
@@ -319,13 +319,13 @@ public final class RunResult {
             return this;
         }
         @CustomType.Setter
-        public Builder stdin(String stdin) {
-            this.stdin = Objects.requireNonNull(stdin);
+        public Builder stdin(@Nullable String stdin) {
+            this.stdin = stdin;
             return this;
         }
         @CustomType.Setter
-        public Builder stdout(@Nullable String stdout) {
-            this.stdout = stdout;
+        public Builder stdout(String stdout) {
+            this.stdout = Objects.requireNonNull(stdout);
             return this;
         }
         public RunResult build() {

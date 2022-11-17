@@ -204,7 +204,7 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def stdin(self) -> str:
+    def stdin(self) -> Optional[str]:
         """
         Pass a string to the command's process as standard in
         """
@@ -212,7 +212,7 @@ class RunResult:
 
     @property
     @pulumi.getter
-    def stdout(self) -> Optional[str]:
+    def stdout(self) -> str:
         """
         The standard output of the command's process
         """

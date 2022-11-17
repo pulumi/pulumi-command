@@ -135,9 +135,9 @@ type RunResult struct {
 	// The standard error of the command's process
 	Stderr string `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
-	Stdin string `pulumi:"stdin"`
+	Stdin *string `pulumi:"stdin"`
 	// The standard output of the command's process
-	Stdout *string `pulumi:"stdout"`
+	Stdout string `pulumi:"stdout"`
 }
 
 func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOption) RunResultOutput {
@@ -311,13 +311,13 @@ func (o RunResultOutput) Stderr() pulumi.StringOutput {
 }
 
 // Pass a string to the command's process as standard in
-func (o RunResultOutput) Stdin() pulumi.StringOutput {
-	return o.ApplyT(func(v RunResult) string { return v.Stdin }).(pulumi.StringOutput)
+func (o RunResultOutput) Stdin() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v RunResult) *string { return v.Stdin }).(pulumi.StringPtrOutput)
 }
 
 // The standard output of the command's process
-func (o RunResultOutput) Stdout() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v RunResult) *string { return v.Stdout }).(pulumi.StringPtrOutput)
+func (o RunResultOutput) Stdout() pulumi.StringOutput {
+	return o.ApplyT(func(v RunResult) string { return v.Stdout }).(pulumi.StringOutput)
 }
 
 func init() {

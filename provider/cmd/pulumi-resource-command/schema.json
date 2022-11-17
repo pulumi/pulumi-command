@@ -117,7 +117,7 @@
                 },
                 "required": [
                     "command",
-                    "stdin",
+                    "stdout",
                     "stderr"
                 ],
                 "type": "object"

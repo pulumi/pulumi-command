@@ -249,11 +249,11 @@ export interface RunResult {
     /**
      * Pass a string to the command's process as standard in
      */
-    readonly stdin: string;
+    readonly stdin?: string;
     /**
      * The standard output of the command's process
      */
-    readonly stdout?: string;
+    readonly stdout: string;
 }
 
 export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOptions): pulumi.Output<RunResult> {
