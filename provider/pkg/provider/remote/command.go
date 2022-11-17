@@ -58,9 +58,9 @@ type CommandArgs struct {
 	// pulumi:"optional" specifies that a field is optional. This must be optional.
 	// provider:"replaceOnChanges" specifies that a resource will be marked replaceOnChanges.
 	// provider:"secret" specifies that a resource will be marked replaceOnChanges.
-	Connection  *Connection        `pulumi:"connection" provider:"replaceOnChanges,secret"`
+	Connection  *Connection        `pulumi:"connection,optional" provider:"secret"`
 	Environment *map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Triggers    *[]any             `pulumi:"triggers,optional"`
 	Create      *string            `pulumi:"create,optional"`
 	Delete      *string            `pulumi:"delete,optional"`
 	Update      *string            `pulumi:"update,optional"`

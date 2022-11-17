@@ -7,6 +7,10 @@ import (
 
 type Run struct{}
 
+func (r *RunArgs) Annotate(a infer.Annotator) {
+	a.Describe(&r.Command, "The command to run.")
+}
+
 func (r *Run) Annotate(a infer.Annotator) {
 	a.Describe(&r, "A local command to be executed.\n"+
 		"This command will always be run on any preview or deployment. "+
@@ -64,6 +68,10 @@ type RunArgs struct {
 
 type RunState struct {
 	RunArgs
+	// Marked as optional to match the old schema.
+	// See https://github.com/pulumi/pulumi-command/issues/159
+	Stdin  *string `pulumi:"stdin"`
+	Stdout *string `pulumi:"stdout,optional"`
 	BaseState
 }
 
@@ -75,7 +83,7 @@ func (*Run) Call(ctx p.Context, input RunArgs) (RunState, error) {
 			BaseArgs: input.BaseArgs,
 		},
 	}
-	r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
+	*r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
 	r.BaseState = state.BaseState
 	return r, err
 }

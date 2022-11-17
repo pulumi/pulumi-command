@@ -108,6 +108,9 @@ export interface RunArgs {
      * ```
      */
     assetPaths?: string[];
+    /**
+     * The command to run.
+     */
     command: string;
     /**
      * The directory from which to run the command from. If `dir` does not exist, then
@@ -221,6 +224,9 @@ export interface RunResult {
      * The key is the relative path from the command dir
      */
     readonly assets?: {[key: string]: pulumi.asset.Asset | pulumi.asset.Archive};
+    /**
+     * The command to run.
+     */
     readonly command: string;
     /**
      * The directory from which to run the command from. If `dir` does not exist, then
@@ -243,11 +249,11 @@ export interface RunResult {
     /**
      * Pass a string to the command's process as standard in
      */
-    readonly stdin?: string;
+    readonly stdin: string;
     /**
      * The standard output of the command's process
      */
-    readonly stdout: string;
+    readonly stdout?: string;
 }
 
 export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOptions): pulumi.Output<RunResult> {
@@ -337,6 +343,9 @@ export interface RunOutputArgs {
      * ```
      */
     assetPaths?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * The command to run.
+     */
     command: pulumi.Input<string>;
     /**
      * The directory from which to run the command from. If `dir` does not exist, then

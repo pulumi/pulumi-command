@@ -214,8 +214,6 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["update"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
-        const replaceOnChanges = { replaceOnChanges: ["triggers[*]"] };
-        opts = pulumi.mergeOptions(opts, replaceOnChanges);
         super(Command.__pulumiType, name, resourceInputs, opts);
     }
 }

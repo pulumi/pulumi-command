@@ -22,6 +22,7 @@
                         "type": "array"
                     },
                     "command": {
+                        "description": "The command to run.",
                         "type": "string"
                     },
                     "dir": {
@@ -80,6 +81,7 @@
                         "type": "object"
                     },
                     "command": {
+                        "description": "The command to run.",
                         "type": "string"
                     },
                     "dir": {
@@ -115,7 +117,7 @@
                 },
                 "required": [
                     "command",
-                    "stdout",
+                    "stdin",
                     "stderr"
                 ],
                 "type": "object"
@@ -218,7 +220,6 @@
                     "items": {
                         "$ref": "pulumi.json#/Any"
                     },
-                    "replaceOnChanges": true,
                     "type": "array"
                 },
                 "update": {
@@ -295,7 +296,6 @@
                     "items": {
                         "$ref": "pulumi.json#/Any"
                     },
-                    "replaceOnChanges": true,
                     "type": "array"
                 },
                 "update": {
@@ -314,7 +314,6 @@
                 "connection": {
                     "$ref": "#/types/command:remote:Connection",
                     "description": "The parameters with which to connect to the remote host.",
-                    "replaceOnChanges": true,
                     "secret": true
                 },
                 "create": {
@@ -341,7 +340,6 @@
                     "items": {
                         "$ref": "pulumi.json#/Any"
                     },
-                    "replaceOnChanges": true,
                     "type": "array"
                 },
                 "update": {
@@ -353,7 +351,6 @@
                 "connection": {
                     "$ref": "#/types/command:remote:Connection",
                     "description": "The parameters with which to connect to the remote host.",
-                    "replaceOnChanges": true,
                     "secret": true
                 },
                 "create": {
@@ -388,7 +385,6 @@
                     "items": {
                         "$ref": "pulumi.json#/Any"
                     },
-                    "replaceOnChanges": true,
                     "type": "array"
                 },
                 "update": {
@@ -397,12 +393,8 @@
                 }
             },
             "required": [
-                "connection",
                 "stdout",
                 "stderr"
-            ],
-            "requiredInputs": [
-                "connection"
             ]
         },
         "command:remote:CopyFile": {
