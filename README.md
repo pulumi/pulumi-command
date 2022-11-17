@@ -53,7 +53,7 @@ import (
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 
-		random, err := local.NewCommand(ctx, "my-bucket", &local.CommandArgs{
+		random, err := local.NewCommand(ctx, "my-bucket", &local.CommandInput{
 			Create: pulumi.String("openssl rand -hex 16"),
 		})
 		if err != nil {
@@ -116,7 +116,7 @@ const server = new aws.ec2.Instance("server", {
 
 // Now set up a connection to the instance and run some provisioning operations on the instance.
 
-const connection: types.input.remote.ConnectionArgs = {
+const connection: types.input.remote.ConnectionInput = {
     host: server.publicIp,
     user: "ec2-user",
     privateKey: privateKey,

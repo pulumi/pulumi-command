@@ -21,26 +21,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
-
 	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
 	providerVersion "github.com/pulumi/pulumi-command/provider/pkg/version"
-)
-
-// TemplateDir is the path to the base directory for code generator templates.
-var TemplateDir string
-
-// BaseDir is the path to the base pulumi-kubernetes directory.
-var BaseDir string
-
-// Language is the SDK language.
-type Language string
-
-const (
-	DotNet Language = "dotnet"
-	Go     Language = "go"
-	NodeJS Language = "nodejs"
-	Python Language = "python"
 )
 
 // copied from encoding/json for use with JSONMarshal above
@@ -70,8 +52,7 @@ func MarshalIndent(v any) ([]byte, error) {
 func main() {
 	flag.Usage = func() {
 		const usageFormat = "Usage: %s <schema-file>"
-		_, err := fmt.Fprintf(flag.CommandLine.Output(), usageFormat, os.Args[0])
-		contract.IgnoreError(err)
+		fmt.Fprintf(flag.CommandLine.Output(), usageFormat, os.Args[0])
 		flag.PrintDefaults()
 	}
 

@@ -26,7 +26,7 @@ The connection is established via ssh.`)
 }
 
 // The arguments for a remote Command resource
-type CommandArgs struct {
+type CommandInputs struct {
 	// these field annotations allow you to
 	// pulumi:"connection" specifies the name of the field in the schema
 	// pulumi:"optional" specifies that a field is optional. This must be optional.
@@ -41,7 +41,7 @@ type CommandArgs struct {
 	Stdin       *string            `pulumi:"stdin,optional" provider:"replaceOnChanges"`
 }
 
-func (c *CommandArgs) Annotate(a infer.Annotator) {
+func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
@@ -51,22 +51,22 @@ func (c *CommandArgs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 }
 
-type BaseState struct {
+type BaseOutputs struct {
 	Stdout string `pulumi:"stdout"`
 	Stderr string `pulumi:"stderr"`
 }
 
-func (c *BaseState) Annotate(a infer.Annotator) {
+func (c *BaseOutputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdout, "The standard output of the command's process")
 	a.Describe(&c.Stderr, "The standard error of the command's process")
 }
 
-type CommandState struct {
-	CommandArgs
-	BaseState
+type CommandOutputs struct {
+	CommandInputs
+	BaseOutputs
 }
 
-func (c *CommandState) Annotate(a infer.Annotator) {
+func (c *CommandOutputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdout, "The standard output of the command's process")
 	a.Describe(&c.Stderr, "The standard error of the command's process")
 }

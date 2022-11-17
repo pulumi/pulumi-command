@@ -30,13 +30,13 @@ import (
 
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
-var _ = (infer.CustomResource[CommandArgs, CommandState])((*Command)(nil))
-var _ = (infer.CustomUpdate[CommandArgs, CommandState])((*Command)(nil))
-var _ = (infer.CustomDelete[CommandState])((*Command)(nil))
-var _ = (infer.ExplicitDependencies[CommandArgs, CommandState])((*Command)(nil))
+var _ = (infer.CustomResource[CommandInputs, CommandOutputs])((*Command)(nil))
+var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
+var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
+var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
 
 // WireDependencies marks the data dependencies between Inputs and Outputs
-func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, state *CommandState) {
+func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) {
 	createInput := f.InputField(&args.Create)
 	updateInput := f.InputField(&args.Update)
 
@@ -58,8 +58,8 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, sta
 	)
 }
 
-func (*Command) Create(ctx p.Context, name string, input CommandArgs, preview bool) (string, CommandState, error) {
-	state := CommandState{CommandArgs: input}
+func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
+	state := CommandOutputs{CommandInputs: input}
 	var err error
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
@@ -83,8 +83,8 @@ func (*Command) Create(ctx p.Context, name string, input CommandArgs, preview bo
 	return id, state, err
 }
 
-func (*Command) Update(ctx p.Context, id string, olds CommandState, news CommandArgs, preview bool) (CommandState, error) {
-	state := CommandState{CommandArgs: news}
+func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
+	state := CommandOutputs{CommandInputs: news}
 	if preview {
 		return state, nil
 	}
@@ -99,7 +99,7 @@ func (*Command) Update(ctx p.Context, id string, olds CommandState, news Command
 	return state, err
 }
 
-func (*Command) Delete(ctx p.Context, id string, props CommandState) error {
+func (*Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
@@ -107,7 +107,7 @@ func (*Command) Delete(ctx p.Context, id string, props CommandState) error {
 	return err
 }
 
-func (c *CommandState) run(ctx p.Context, cmd string) (string, string, error) {
+func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) {
 	config, err := c.Connection.SShConfig()
 	if err != nil {
 		return "", "", err

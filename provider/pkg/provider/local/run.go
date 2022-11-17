@@ -20,7 +20,7 @@ import (
 
 type Run struct{}
 
-func (r *RunArgs) Annotate(a infer.Annotator) {
+func (r *RunInputs) Annotate(a infer.Annotator) {
 	a.Describe(&r.Command, "The command to run.")
 }
 
@@ -30,12 +30,12 @@ func (r *Run) Annotate(a infer.Annotator) {
 		"Use `local.Command` to avoid duplicating executions.")
 }
 
-type RunArgs struct {
-	BaseArgs
+type RunInputs struct {
+	BaseInputs
 	Command string `pulumi:"command"`
 }
 
-type RunState struct {
-	RunArgs
-	BaseState
+type RunOutputs struct {
+	RunInputs
+	BaseOutputs
 }

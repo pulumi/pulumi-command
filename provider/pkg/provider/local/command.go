@@ -29,7 +29,7 @@ failed when it finished with a non-zero exit code. This will fail the CRUD step
 of the `+"`Command`"+` resource.`)
 }
 
-type BaseArgs struct {
+type BaseInputs struct {
 	Interpreter  *[]string          `pulumi:"interpreter,optional"`
 	Dir          *string            `pulumi:"dir,optional"`
 	Environment  *map[string]string `pulumi:"environment,optional"`
@@ -38,7 +38,7 @@ type BaseArgs struct {
 	ArchivePaths *[]string          `pulumi:"archivePaths,optional"`
 }
 
-func (c *BaseArgs) Annotate(a infer.Annotator) {
+func (c *BaseInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Interpreter, "The program and arguments to run the command.\n"+
 		"On Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`")
 	a.Describe(&c.Dir, "The directory from which to run the command from. If `dir` does not exist, then\n"+
@@ -123,14 +123,14 @@ The following paths will be returned:
 `+"```")
 }
 
-type BaseState struct {
+type BaseOutputs struct {
 	Stdout  string                      `pulumi:"stdout"`
 	Stderr  string                      `pulumi:"stderr"`
 	Assets  *map[string]*resource.Asset `pulumi:"assets,optional"`
 	Archive *resource.Archive           `pulumi:"archive,optional"`
 }
 
-func (c *BaseState) Annotate(a infer.Annotator) {
+func (c *BaseOutputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdout, "The standard output of the command's process")
 	a.Describe(&c.Stderr, "The standard error of the command's process")
 	a.Describe(&c.Assets, `A map of assets found after running the command.
@@ -138,23 +138,23 @@ The key is the relative path from the command dir`)
 	a.Describe(&c.Archive, `An archive asset containing files found after running the command.`)
 }
 
-type CommandArgs struct {
-	BaseArgs
+type CommandInputs struct {
+	BaseInputs
 	Triggers *[]any  `pulumi:"triggers,optional" provider:"replaceOnChanges"`
 	Create   *string `pulumi:"create,optional" provider:"replaceOnChanges"`
 	Delete   *string `pulumi:"delete,optional" `
 	Update   *string `pulumi:"update,optional" provider:"replaceOnChanges"`
 }
 
-func (c *CommandArgs) Annotate(a infer.Annotator) {
-	c.BaseArgs.Annotate(a)
+func (c *CommandInputs) Annotate(a infer.Annotator) {
+	c.BaseInputs.Annotate(a)
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Create, "The command to run on create.")
 	a.Describe(&c.Delete, "The command to run on delete.")
 	a.Describe(&c.Update, "The command to run on update, if empty, create will run again.")
 }
 
-type CommandState struct {
-	CommandArgs
-	BaseState
+type CommandOutputs struct {
+	CommandInputs
+	BaseOutputs
 }

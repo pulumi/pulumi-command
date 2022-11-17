@@ -21,10 +21,10 @@ import (
 
 // These are not required. They indicate to Go that Run implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
-var _ = (infer.ExplicitDependencies[RunArgs, RunState])((*Run)(nil))
+var _ = (infer.ExplicitDependencies[RunInputs, RunOutputs])((*Run)(nil))
 
 // WireDependencies marks the data dependencies between Inputs and Outputs
-func (r *Run) WireDependencies(f infer.FieldSelector, args *RunArgs, state *RunState) {
+func (r *Run) WireDependencies(f infer.FieldSelector, args *RunInputs, state *RunOutputs) {
 
 	interpreterInput := f.InputField(&args.Interpreter)
 	dirInput := f.InputField(&args.Dir)
@@ -63,15 +63,15 @@ func (r *Run) WireDependencies(f infer.FieldSelector, args *RunArgs, state *RunS
 	)
 }
 
-func (*Run) Call(ctx p.Context, input RunArgs) (RunState, error) {
-	r := RunState{RunArgs: input}
+func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
+	r := RunOutputs{RunInputs: input}
 	var err error
-	state := &CommandState{
-		CommandArgs: CommandArgs{
-			BaseArgs: input.BaseArgs,
+	state := &CommandOutputs{
+		CommandInputs: CommandInputs{
+			BaseInputs: input.BaseInputs,
 		},
 	}
 	r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
-	r.BaseState = state.BaseState
+	r.BaseOutputs = state.BaseOutputs
 	return r, err
 }

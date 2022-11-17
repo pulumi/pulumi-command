@@ -38,16 +38,16 @@ func NewProvider() p.Provider {
 				// 1. The CustomResource. This struct has methods such as `Create`, `Update`, `Delete`.
 				*local.Command,
 				// 2. The Arguments to the Resource. These can
-				local.CommandArgs,
+				local.CommandInputs,
 				// 3. The Data to store for the Resource.
-				local.CommandState,
+				local.CommandOutputs,
 			](),
-			infer.Resource[*remote.Command, remote.CommandArgs, remote.CommandState](),
-			infer.Resource[*remote.CopyFile, remote.CopyFileArgs, remote.CopyFileState](),
+			infer.Resource[*remote.Command, remote.CommandInputs, remote.CommandOutputs](),
+			infer.Resource[*remote.CopyFile, remote.CopyFileInputs, remote.CopyFileOutputs](),
 		},
 		// Functions or invokes that are provided by the provider.
 		Functions: []infer.InferredFunction{
-			infer.Function[*local.Run, local.RunArgs, local.RunState](),
+			infer.Function[*local.Run, local.RunInputs, local.RunOutputs](),
 		},
 		Metadata: schema.Metadata{
 			DisplayName: "Command",

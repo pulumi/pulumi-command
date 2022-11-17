@@ -27,20 +27,20 @@ func (c *CopyFile) Annotate(a infer.Annotator) {
 	a.Describe(&c, "Copy a local file to a remote host.")
 }
 
-type CopyFileArgs struct {
+type CopyFileInputs struct {
 	Connection *Connection    `pulumi:"connection" provider:"secret,replaceOnChanges"`
 	Triggers   *[]interface{} `pulumi:"triggers,optional" providers:"replaceOnDelete"`
 	LocalPath  string         `pulumi:"localPath" provider:"replaceOnChanges"`
 	RemotePath string         `pulumi:"remotePath"`
 }
 
-func (c *CopyFileArgs) Annotate(a infer.Annotator) {
+func (c *CopyFileInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.LocalPath, "The path of the file to be copied.")
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 
-type CopyFileState struct {
-	CopyFileArgs
+type CopyFileOutputs struct {
+	CopyFileInputs
 }

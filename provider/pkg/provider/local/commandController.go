@@ -36,14 +36,14 @@ import (
 
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
-var _ = (infer.CustomResource[CommandArgs, CommandState])((*Command)(nil))
-var _ = (infer.CustomUpdate[CommandArgs, CommandState])((*Command)(nil))
-var _ = (infer.CustomDelete[CommandState])((*Command)(nil))
-var _ = (infer.ExplicitDependencies[CommandArgs, CommandState])((*Command)(nil))
+var _ = (infer.CustomResource[CommandInputs, CommandOutputs])((*Command)(nil))
+var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
+var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
+var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
 
-func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, state *CommandState) {
+func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) {
 
-	// get BaseArgs
+	// get BaseInputs
 	interpreterInput := f.InputField(&args.Interpreter)
 	dirInput := f.InputField(&args.Dir)
 	environmentInput := f.InputField(&args.Environment)
@@ -51,7 +51,7 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, sta
 	assetPathsInput := f.InputField(&args.AssetPaths)
 	archivePathsInput := f.InputField(&args.ArchivePaths)
 
-	// set BaseArgs
+	// set BaseInputs
 	f.OutputField(&state.Interpreter).DependsOn(interpreterInput)
 	f.OutputField(&state.Dir).DependsOn(dirInput)
 	f.OutputField(&state.Environment).DependsOn(environmentInput)
@@ -65,7 +65,7 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, sta
 	updateInput := f.InputField(&args.Update)
 	deleteInput := f.InputField(&args.Delete)
 
-	// set CommandArgs
+	// set CommandInputs
 	f.OutputField(&state.Triggers).DependsOn(triggersInput)
 	f.OutputField(&state.Create).DependsOn(createInput)
 	f.OutputField(&state.Update).DependsOn(updateInput)
@@ -97,8 +97,8 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandArgs, sta
 	)
 }
 
-func (c *Command) Create(ctx p.Context, name string, input CommandArgs, preview bool) (string, CommandState, error) {
-	state := CommandState{CommandArgs: input}
+func (c *Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
+	state := CommandOutputs{CommandInputs: input}
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
 		return id, state, err
@@ -115,8 +115,8 @@ func (c *Command) Create(ctx p.Context, name string, input CommandArgs, preview 
 	return id, state, err
 }
 
-func (c *Command) Update(ctx p.Context, id string, olds CommandState, news CommandArgs, preview bool) (CommandState, error) {
-	state := CommandState{CommandArgs: news}
+func (c *Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
+	state := CommandOutputs{CommandInputs: news}
 	if preview {
 		return state, nil
 	}
@@ -129,7 +129,7 @@ func (c *Command) Update(ctx p.Context, id string, olds CommandState, news Comma
 	return state, err
 }
 
-func (c *Command) Delete(ctx p.Context, id string, props CommandState) error {
+func (c *Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
@@ -137,7 +137,7 @@ func (c *Command) Delete(ctx p.Context, id string, props CommandState) error {
 	return err
 }
 
-func (c *CommandState) run(ctx p.Context, command string) (string, string, error) {
+func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, error) {
 	var args []string
 	if c.Interpreter != nil && len(*c.Interpreter) > 0 {
 		args = append(args, *c.Interpreter...)
