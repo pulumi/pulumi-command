@@ -28,9 +28,9 @@ func (c *CopyFile) Annotate(a infer.Annotator) {
 }
 
 type CopyFileArgs struct {
-	Connection *Connection    `pulumi:"connection" provider:"secret"`
+	Connection *Connection    `pulumi:"connection" provider:"secret,replaceOnChanges"`
 	Triggers   *[]interface{} `pulumi:"triggers,optional" providers:"replaceOnDelete"`
-	LocalPath  string         `pulumi:"localPath"`
+	LocalPath  string         `pulumi:"localPath" provider:"replaceOnChanges"`
 	RemotePath string         `pulumi:"remotePath"`
 }
 

@@ -25,12 +25,14 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/version"
 )
 
+// A provider is a program that listens for requests.
 func main() {
 	version := version.Version
 	if strings.HasPrefix(version, "v") {
 		version = version[1:]
 	}
-	err := p.RunProvider("command", version, command.Provider())
+	commandProvider := command.NewProvider()
+	err := p.RunProvider("command", version, commandProvider)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s", err.Error())
 		os.Exit(1)

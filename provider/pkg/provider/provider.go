@@ -29,7 +29,7 @@ import (
 
 // This provider uses the `pulumi-go-provider` library to produce a code-first
 // provider definition.
-func Provider() p.Provider {
+func NewProvider() p.Provider {
 	return infer.Provider(infer.Options{
 		// A list of `infer.Resource` that are provided by the provider.
 		Resources: []infer.InferredResource{
@@ -101,7 +101,7 @@ func Schema(version string) (string, error) {
 	if strings.HasPrefix(version, "v") {
 		version = version[1:]
 	}
-	s, err := integration.NewServer("command", semver.MustParse(version), Provider()).
+	s, err := integration.NewServer("command", semver.MustParse(version), NewProvider()).
 		GetSchema(p.GetSchemaRequest{})
 	return s.Schema, err
 }

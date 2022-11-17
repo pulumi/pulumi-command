@@ -140,10 +140,10 @@ The key is the relative path from the command dir`)
 
 type CommandArgs struct {
 	BaseArgs
-	Triggers *[]any  `pulumi:"triggers,optional"`
-	Create   *string `pulumi:"create,optional"`
-	Delete   *string `pulumi:"delete,optional"`
-	Update   *string `pulumi:"update,optional"`
+	Triggers *[]any  `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Create   *string `pulumi:"create,optional" provider:"replaceOnChanges"`
+	Delete   *string `pulumi:"delete,optional" `
+	Update   *string `pulumi:"update,optional" provider:"replaceOnChanges"`
 }
 
 func (c *CommandArgs) Annotate(a infer.Annotator) {

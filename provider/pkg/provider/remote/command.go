@@ -33,12 +33,12 @@ type CommandArgs struct {
 	// provider:"replaceOnChanges" specifies that a resource will be marked replaceOnChanges.
 	// provider:"secret" specifies that a resource will be marked replaceOnChanges.
 	Connection  *Connection        `pulumi:"connection,optional" provider:"secret"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]any             `pulumi:"triggers,optional"`
-	Create      *string            `pulumi:"create,optional"`
+	Environment *map[string]string `pulumi:"environment,optional" provider:"replaceOnChanges"`
+	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Create      *string            `pulumi:"create,optional" provider:"replaceOnChanges"`
 	Delete      *string            `pulumi:"delete,optional"`
-	Update      *string            `pulumi:"update,optional"`
-	Stdin       *string            `pulumi:"stdin,optional"`
+	Update      *string            `pulumi:"update,optional" provider:"replaceOnChanges"`
+	Stdin       *string            `pulumi:"stdin,optional" provider:"replaceOnChanges"`
 }
 
 func (c *CommandArgs) Annotate(a infer.Annotator) {

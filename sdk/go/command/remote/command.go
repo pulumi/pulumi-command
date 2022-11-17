@@ -52,6 +52,14 @@ func NewCommand(ctx *pulumi.Context,
 		"connection",
 	})
 	opts = append(opts, secrets)
+	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
+		"create",
+		"environment.*",
+		"stdin",
+		"triggers[*]",
+		"update",
+	})
+	opts = append(opts, replaceOnChanges)
 	var resource Command
 	err := ctx.RegisterResource("command:remote:Command", name, args, &resource, opts...)
 	if err != nil {
