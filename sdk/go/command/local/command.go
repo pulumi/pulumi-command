@@ -95,9 +95,7 @@ func NewCommand(ctx *pulumi.Context,
 	}
 
 	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
-		"create",
 		"triggers[*]",
-		"update",
 	})
 	opts = append(opts, replaceOnChanges)
 	var resource Command

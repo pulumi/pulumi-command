@@ -205,9 +205,7 @@ namespace Pulumi.Command.Local
                 Version = Utilities.Version,
                 ReplaceOnChanges =
                 {
-                    "create",
                     "triggers[*]",
-                    "update",
                 },
             };
             var merged = CustomResourceOptions.Merge(defaultOptions, options);

@@ -7,6 +7,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/pkg/errors"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -16,7 +17,7 @@ type Command struct {
 	pulumi.CustomResourceState
 
 	// The parameters with which to connect to the remote host.
-	Connection ConnectionPtrOutput `pulumi:"connection"`
+	Connection ConnectionOutput `pulumi:"connection"`
 	// The command to run on create.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
 	// The command to run on delete.
@@ -39,25 +40,22 @@ type Command struct {
 func NewCommand(ctx *pulumi.Context,
 	name string, args *CommandArgs, opts ...pulumi.ResourceOption) (*Command, error) {
 	if args == nil {
-		args = &CommandArgs{}
+		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.Connection != nil {
-		args.Connection = args.Connection.ToConnectionPtrOutput().ApplyT(func(v *Connection) *Connection { return v.Defaults() }).(ConnectionPtrOutput)
+	if args.Connection == nil {
+		return nil, errors.New("invalid value for required argument 'Connection'")
 	}
+	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
 	if args.Connection != nil {
-		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionPtrOutput)
+		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionOutput)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"connection",
 	})
 	opts = append(opts, secrets)
 	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
-		"create",
-		"environment.*",
-		"stdin",
 		"triggers[*]",
-		"update",
 	})
 	opts = append(opts, replaceOnChanges)
 	var resource Command
@@ -93,7 +91,7 @@ func (CommandState) ElementType() reflect.Type {
 
 type commandArgs struct {
 	// The parameters with which to connect to the remote host.
-	Connection *Connection `pulumi:"connection"`
+	Connection Connection `pulumi:"connection"`
 	// The command to run on create.
 	Create *string `pulumi:"create"`
 	// The command to run on delete.
@@ -111,7 +109,7 @@ type commandArgs struct {
 // The set of arguments for constructing a Command resource.
 type CommandArgs struct {
 	// The parameters with which to connect to the remote host.
-	Connection ConnectionPtrInput
+	Connection ConnectionInput
 	// The command to run on create.
 	Create pulumi.StringPtrInput
 	// The command to run on delete.
@@ -214,8 +212,8 @@ func (o CommandOutput) ToCommandOutputWithContext(ctx context.Context) CommandOu
 }
 
 // The parameters with which to connect to the remote host.
-func (o CommandOutput) Connection() ConnectionPtrOutput {
-	return o.ApplyT(func(v *Command) ConnectionPtrOutput { return v.Connection }).(ConnectionPtrOutput)
+func (o CommandOutput) Connection() ConnectionOutput {
+	return o.ApplyT(func(v *Command) ConnectionOutput { return v.Connection }).(ConnectionOutput)
 }
 
 // The command to run on create.

@@ -27,28 +27,10 @@ import (
 	"github.com/pulumi/pulumi-go-provider/integration"
 )
 
-// This provider uses the `pulumi-go-provider` library to produce a code-first
-// provider definition.
+// This provider uses the `pulumi-go-provider` library to produce a code-first provider definition.
 func NewProvider() p.Provider {
 	return infer.Provider(infer.Options{
-		// A list of `infer.Resource` that are provided by the provider.
-		Resources: []infer.InferredResource{
-			//  infer.Resource to specify the
-			infer.Resource[
-				// 1. The CustomResource. This struct has methods such as `Create`, `Update`, `Delete`.
-				*local.Command,
-				// 2. The Arguments to the Resource. These can
-				local.CommandInputs,
-				// 3. The Data to store for the Resource.
-				local.CommandOutputs,
-			](),
-			infer.Resource[*remote.Command, remote.CommandInputs, remote.CommandOutputs](),
-			infer.Resource[*remote.CopyFile, remote.CopyFileInputs, remote.CopyFileOutputs](),
-		},
-		// Functions or invokes that are provided by the provider.
-		Functions: []infer.InferredFunction{
-			infer.Function[*local.Run, local.RunInputs, local.RunOutputs](),
-		},
+		// This is the metadata for the provider
 		Metadata: schema.Metadata{
 			DisplayName: "Command",
 			Description: "The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
@@ -63,6 +45,7 @@ func NewProvider() p.Provider {
 			Repository: "https://github.com/pulumi/pulumi-command",
 			Publisher:  "Pulumi",
 			LogoURL:    "https://raw.githubusercontent.com/pulumi/pulumi-command/master/assets/logo.svg",
+			// This contains language specific details for generating the provider's SDKs
 			LanguageMap: map[string]any{
 				"csharp": map[string]any{
 					"packageReferences": map[string]string{
@@ -94,6 +77,28 @@ func NewProvider() p.Provider {
 				},
 			},
 		},
+		// A list of `infer.Resource` that are provided by the provider.
+		Resources: []infer.InferredResource{
+			// The Command resource implementation is commented extensively for new pulumi-go-provider developers.
+			infer.Resource[
+				// 1. This type is an interface that implements the logic for the Resource
+				//    these methods include `Create`, `Update`, `Delete`, and `WireDependencies`.
+				//    `WireDependencies` should be implemented to preserve the secretness of an input
+				*local.Command,
+				// 2. The type of the Inputs/Arguments to supply to the Resource.
+				local.CommandInputs,
+				// 3. The type of the Output/Properties/Fields of a created Resource.
+				local.CommandOutputs,
+			](),
+			infer.Resource[*remote.Command, remote.CommandInputs, remote.CommandOutputs](),
+			infer.Resource[*remote.CopyFile, remote.CopyFileInputs, remote.CopyFileOutputs](),
+		},
+		// Functions or invokes that are provided by the provider.
+		Functions: []infer.InferredFunction{
+			// The Run function is commented extensively for new pulumi-go-provider developers.
+			infer.Function[*local.Run, local.RunInputs, local.RunOutputs](),
+		},
+		// Config is unused in the Command provider.
 	})
 }
 

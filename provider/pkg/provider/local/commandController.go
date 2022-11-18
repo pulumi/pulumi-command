@@ -34,8 +34,10 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-// These are not required. They indicate to Go that Command implements the following interfaces.
-// If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
+// The following statements are not required. They are type assertions to indicate to Go that Command implements the following interfaces.
+// If the function signature doesn't match or isn't implemented, we get nice compile time errors at this location.
+
+// They would normally be included in the commandController.go file, but they're located here for instructive purposes.
 var _ = (infer.CustomResource[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))

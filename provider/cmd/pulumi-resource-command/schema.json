@@ -187,7 +187,6 @@
                 },
                 "create": {
                     "description": "The command to run on create.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "delete": {
@@ -226,7 +225,6 @@
                 },
                 "update": {
                     "description": "The command to run on update, if empty, create will run again.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 }
             },
@@ -258,7 +256,6 @@
                 },
                 "create": {
                     "description": "The command to run on create.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "delete": {
@@ -305,7 +302,6 @@
                 },
                 "update": {
                     "description": "The command to run on update, if empty, create will run again.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 }
             },
@@ -324,7 +320,6 @@
                 },
                 "create": {
                     "description": "The command to run on create.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "delete": {
@@ -336,12 +331,10 @@
                         "type": "string"
                     },
                     "description": "Additional environment variables available to the command's process.",
-                    "replaceOnChanges": true,
                     "type": "object"
                 },
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "triggers": {
@@ -354,7 +347,6 @@
                 },
                 "update": {
                     "description": "The command to run on update, if empty, create will run again.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 }
             },
@@ -366,7 +358,6 @@
                 },
                 "create": {
                     "description": "The command to run on create.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "delete": {
@@ -378,7 +369,6 @@
                         "type": "string"
                     },
                     "description": "Additional environment variables available to the command's process.",
-                    "replaceOnChanges": true,
                     "type": "object"
                 },
                 "stderr": {
@@ -387,7 +377,6 @@
                 },
                 "stdin": {
                     "description": "Pass a string to the command's process as standard in",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "stdout": {
@@ -404,13 +393,16 @@
                 },
                 "update": {
                     "description": "The command to run on update, if empty, create will run again.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 }
             },
             "required": [
+                "connection",
                 "stdout",
                 "stderr"
+            ],
+            "requiredInputs": [
+                "connection"
             ]
         },
         "command:remote:CopyFile": {
@@ -419,12 +411,10 @@
                 "connection": {
                     "$ref": "#/types/command:remote:Connection",
                     "description": "The parameters with which to connect to the remote host.",
-                    "replaceOnChanges": true,
                     "secret": true
                 },
                 "localPath": {
                     "description": "The path of the file to be copied.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "remotePath": {
@@ -443,12 +433,10 @@
                 "connection": {
                     "$ref": "#/types/command:remote:Connection",
                     "description": "The parameters with which to connect to the remote host.",
-                    "replaceOnChanges": true,
                     "secret": true
                 },
                 "localPath": {
                     "description": "The path of the file to be copied.",
-                    "replaceOnChanges": true,
                     "type": "string"
                 },
                 "remotePath": {

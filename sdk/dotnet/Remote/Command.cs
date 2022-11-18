@@ -20,7 +20,7 @@ namespace Pulumi.Command.Remote
         /// The parameters with which to connect to the remote host.
         /// </summary>
         [Output("connection")]
-        public Output<Outputs.Connection?> Connection { get; private set; } = null!;
+        public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
         /// The command to run on create.
@@ -78,7 +78,7 @@ namespace Pulumi.Command.Remote
         /// <param name="name">The unique name of the resource</param>
         /// <param name="args">The arguments used to populate this resource's properties</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public Command(string name, CommandArgs? args = null, CustomResourceOptions? options = null)
+        public Command(string name, CommandArgs args, CustomResourceOptions? options = null)
             : base("command:remote:Command", name, args ?? new CommandArgs(), MakeResourceOptions(options, ""))
         {
         }
@@ -99,11 +99,7 @@ namespace Pulumi.Command.Remote
                 },
                 ReplaceOnChanges =
                 {
-                    "create",
-                    "environment.*",
-                    "stdin",
                     "triggers[*]",
-                    "update",
                 },
             };
             var merged = CustomResourceOptions.Merge(defaultOptions, options);
@@ -127,7 +123,7 @@ namespace Pulumi.Command.Remote
 
     public sealed class CommandArgs : global::Pulumi.ResourceArgs
     {
-        [Input("connection")]
+        [Input("connection", required: true)]
         private Input<Inputs.ConnectionArgs>? _connection;
 
         /// <summary>

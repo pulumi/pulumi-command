@@ -40,7 +40,7 @@ export class Command extends pulumi.CustomResource {
     /**
      * The parameters with which to connect to the remote host.
      */
-    public readonly connection!: pulumi.Output<outputs.remote.Connection | undefined>;
+    public readonly connection!: pulumi.Output<outputs.remote.Connection>;
     /**
      * The command to run on create.
      */
@@ -81,10 +81,13 @@ export class Command extends pulumi.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param opts A bag of options that control this resource's behavior.
      */
-    constructor(name: string, args?: CommandArgs, opts?: pulumi.CustomResourceOptions) {
+    constructor(name: string, args: CommandArgs, opts?: pulumi.CustomResourceOptions) {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
+            if ((!args || args.connection === undefined) && !opts.urn) {
+                throw new Error("Missing required property 'connection'");
+            }
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;
@@ -108,7 +111,7 @@ export class Command extends pulumi.CustomResource {
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         const secretOpts = { additionalSecretOutputs: ["connection"] };
         opts = pulumi.mergeOptions(opts, secretOpts);
-        const replaceOnChanges = { replaceOnChanges: ["create", "environment.*", "stdin", "triggers[*]", "update"] };
+        const replaceOnChanges = { replaceOnChanges: ["triggers[*]"] };
         opts = pulumi.mergeOptions(opts, replaceOnChanges);
         super(Command.__pulumiType, name, resourceInputs, opts);
     }
@@ -121,7 +124,7 @@ export interface CommandArgs {
     /**
      * The parameters with which to connect to the remote host.
      */
-    connection?: pulumi.Input<inputs.remote.ConnectionArgs>;
+    connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**
      * The command to run on create.
      */

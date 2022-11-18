@@ -100,47 +100,6 @@ func (i ConnectionArgs) ToConnectionOutputWithContext(ctx context.Context) Conne
 	return pulumi.ToOutputWithContext(ctx, i).(ConnectionOutput)
 }
 
-func (i ConnectionArgs) ToConnectionPtrOutput() ConnectionPtrOutput {
-	return i.ToConnectionPtrOutputWithContext(context.Background())
-}
-
-func (i ConnectionArgs) ToConnectionPtrOutputWithContext(ctx context.Context) ConnectionPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ConnectionOutput).ToConnectionPtrOutputWithContext(ctx)
-}
-
-// ConnectionPtrInput is an input type that accepts ConnectionArgs, ConnectionPtr and ConnectionPtrOutput values.
-// You can construct a concrete instance of `ConnectionPtrInput` via:
-//
-//	        ConnectionArgs{...}
-//
-//	or:
-//
-//	        nil
-type ConnectionPtrInput interface {
-	pulumi.Input
-
-	ToConnectionPtrOutput() ConnectionPtrOutput
-	ToConnectionPtrOutputWithContext(context.Context) ConnectionPtrOutput
-}
-
-type connectionPtrType ConnectionArgs
-
-func ConnectionPtr(v *ConnectionArgs) ConnectionPtrInput {
-	return (*connectionPtrType)(v)
-}
-
-func (*connectionPtrType) ElementType() reflect.Type {
-	return reflect.TypeOf((**Connection)(nil)).Elem()
-}
-
-func (i *connectionPtrType) ToConnectionPtrOutput() ConnectionPtrOutput {
-	return i.ToConnectionPtrOutputWithContext(context.Background())
-}
-
-func (i *connectionPtrType) ToConnectionPtrOutputWithContext(ctx context.Context) ConnectionPtrOutput {
-	return pulumi.ToOutputWithContext(ctx, i).(ConnectionPtrOutput)
-}
-
 // Instructions for how to connect to a remote endpoint.
 type ConnectionOutput struct{ *pulumi.OutputState }
 
@@ -154,16 +113,6 @@ func (o ConnectionOutput) ToConnectionOutput() ConnectionOutput {
 
 func (o ConnectionOutput) ToConnectionOutputWithContext(ctx context.Context) ConnectionOutput {
 	return o
-}
-
-func (o ConnectionOutput) ToConnectionPtrOutput() ConnectionPtrOutput {
-	return o.ToConnectionPtrOutputWithContext(context.Background())
-}
-
-func (o ConnectionOutput) ToConnectionPtrOutputWithContext(ctx context.Context) ConnectionPtrOutput {
-	return o.ApplyTWithContext(ctx, func(_ context.Context, v Connection) *Connection {
-		return &v
-	}).(ConnectionPtrOutput)
 }
 
 // SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
@@ -201,103 +150,7 @@ func (o ConnectionOutput) User() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.User }).(pulumi.StringPtrOutput)
 }
 
-type ConnectionPtrOutput struct{ *pulumi.OutputState }
-
-func (ConnectionPtrOutput) ElementType() reflect.Type {
-	return reflect.TypeOf((**Connection)(nil)).Elem()
-}
-
-func (o ConnectionPtrOutput) ToConnectionPtrOutput() ConnectionPtrOutput {
-	return o
-}
-
-func (o ConnectionPtrOutput) ToConnectionPtrOutputWithContext(ctx context.Context) ConnectionPtrOutput {
-	return o
-}
-
-func (o ConnectionPtrOutput) Elem() ConnectionOutput {
-	return o.ApplyT(func(v *Connection) Connection {
-		if v != nil {
-			return *v
-		}
-		var ret Connection
-		return ret
-	}).(ConnectionOutput)
-}
-
-// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-func (o ConnectionPtrOutput) AgentSocketPath() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Connection) *string {
-		if v == nil {
-			return nil
-		}
-		return v.AgentSocketPath
-	}).(pulumi.StringPtrOutput)
-}
-
-// The address of the resource to connect to.
-func (o ConnectionPtrOutput) Host() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Connection) *string {
-		if v == nil {
-			return nil
-		}
-		return &v.Host
-	}).(pulumi.StringPtrOutput)
-}
-
-// The password we should use for the connection.
-func (o ConnectionPtrOutput) Password() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Connection) *string {
-		if v == nil {
-			return nil
-		}
-		return v.Password
-	}).(pulumi.StringPtrOutput)
-}
-
-// The port to connect to.
-func (o ConnectionPtrOutput) Port() pulumi.Float64PtrOutput {
-	return o.ApplyT(func(v *Connection) *float64 {
-		if v == nil {
-			return nil
-		}
-		return v.Port
-	}).(pulumi.Float64PtrOutput)
-}
-
-// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-func (o ConnectionPtrOutput) PrivateKey() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Connection) *string {
-		if v == nil {
-			return nil
-		}
-		return v.PrivateKey
-	}).(pulumi.StringPtrOutput)
-}
-
-// The password to use in case the private key is encrypted.
-func (o ConnectionPtrOutput) PrivateKeyPassword() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Connection) *string {
-		if v == nil {
-			return nil
-		}
-		return v.PrivateKeyPassword
-	}).(pulumi.StringPtrOutput)
-}
-
-// The user that we should use for the connection.
-func (o ConnectionPtrOutput) User() pulumi.StringPtrOutput {
-	return o.ApplyT(func(v *Connection) *string {
-		if v == nil {
-			return nil
-		}
-		return v.User
-	}).(pulumi.StringPtrOutput)
-}
-
 func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*ConnectionInput)(nil)).Elem(), ConnectionArgs{})
-	pulumi.RegisterInputType(reflect.TypeOf((*ConnectionPtrInput)(nil)).Elem(), ConnectionArgs{})
 	pulumi.RegisterOutputType(ConnectionOutput{})
-	pulumi.RegisterOutputType(ConnectionPtrOutput{})
 }

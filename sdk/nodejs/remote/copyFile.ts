@@ -86,8 +86,6 @@ export class CopyFile extends pulumi.CustomResource {
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         const secretOpts = { additionalSecretOutputs: ["connection"] };
         opts = pulumi.mergeOptions(opts, secretOpts);
-        const replaceOnChanges = { replaceOnChanges: ["connection", "localPath"] };
-        opts = pulumi.mergeOptions(opts, replaceOnChanges);
         super(CopyFile.__pulumiType, name, resourceInputs, opts);
     }
 }

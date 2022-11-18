@@ -9,11 +9,8 @@ import * as utilities from "../utilities";
  * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
  */
 export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResult> {
-    if (!opts) {
-        opts = {}
-    }
 
-    opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
+    opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts || {});
     return pulumi.runtime.invoke("command:local:run", {
         "archivePaths": args.archivePaths,
         "assetPaths": args.assetPaths,
