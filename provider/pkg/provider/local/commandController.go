@@ -49,7 +49,7 @@ func (c *Command) Create(ctx p.Context, name string, input CommandInputs, previe
 	return id, state, err
 }
 
-// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// WireDependencies is relevant to secrets handling. This method indicates which Inputs
 // the Outputs are derived from. If an output is derived from a secret input, the output
 // will be a secret.
 

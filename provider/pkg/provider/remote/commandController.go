@@ -27,7 +27,7 @@ var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
 
-// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// WireDependencies is relevant to secrets handling. This method indicates which Inputs
 // the Outputs are derived from. If an output is derived from a secret input, the output
 // will be a secret.
 

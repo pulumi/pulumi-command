@@ -39,7 +39,7 @@ func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
 	return r, err
 }
 
-// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// WireDependencies is relevant to secrets handling. This method indicates which Inputs
 // the Outputs are derived from. If an output is derived from a secret input, the output
 // will be a secret.
 

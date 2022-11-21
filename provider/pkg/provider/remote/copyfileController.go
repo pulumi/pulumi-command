@@ -30,7 +30,7 @@ import (
 var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 var _ = (infer.ExplicitDependencies[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 
-// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// WireDependencies is relevant to secrets handling. This method indicates which Inputs
 // the Outputs are derived from. If an output is derived from a secret input, the output
 // will be a secret.
 
