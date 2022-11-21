@@ -22,7 +22,7 @@ import (
 // The methods are declared in the runController.go file.
 type Run struct{}
 
-// Annotate lets you provide descriptions and default values for functions and they will
+// Implementing Annotate lets you provide descriptions and default values for functions and they will
 // be visible in the provider's schema and the generated SDKs.
 func (r *Run) Annotate(a infer.Annotator) {
 	a.Describe(&r, "A local command to be executed.\n"+
@@ -35,7 +35,7 @@ type RunInputs struct {
 	Command string `pulumi:"command"`
 }
 
-// Annotate lets you provide descriptions and default values for fields and they will
+// Implementing Annotate lets you provide descriptions and default values for fields and they will
 // be visible in the provider's schema and the generated SDKs.
 func (r *RunInputs) Annotate(a infer.Annotator) {
 	a.Describe(&r.Command, "The command to run.")

@@ -20,7 +20,7 @@ import (
 
 type Command struct{}
 
-// Annotate lets you provide descriptions for resources and they will
+// Implementing Annotate lets you provide descriptions for resources and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, `A command to run on a remote host.
@@ -43,7 +43,7 @@ type CommandInputs struct {
 	Stdin       *string            `pulumi:"stdin,optional"`
 }
 
-// Annotate lets you provide descriptions and default values for arguments and they will
+// Implementing Annotate lets you provide descriptions and default values for arguments and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")

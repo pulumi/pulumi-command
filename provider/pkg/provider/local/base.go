@@ -28,6 +28,8 @@ type BaseInputs struct {
 	ArchivePaths *[]string          `pulumi:"archivePaths,optional"`
 }
 
+// Implementing Annotate lets you provide descriptions and default values for fields and they will
+// be visible in the provider's schema and the generated SDKs.
 func (c *BaseInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Interpreter, "The program and arguments to run the command.\n"+
 		"On Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`")
@@ -120,6 +122,8 @@ type BaseOutputs struct {
 	Archive *resource.Archive           `pulumi:"archive,optional"`
 }
 
+// Implementing Annotate lets you provide descriptions and default values for fields and they will
+// be visible in the provider's schema and the generated SDKs.
 func (c *BaseOutputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdout, "The standard output of the command's process")
 	a.Describe(&c.Stderr, "The standard error of the command's process")

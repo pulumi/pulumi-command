@@ -23,7 +23,7 @@ type BaseOutputs struct {
 	Stderr string `pulumi:"stderr"`
 }
 
-// Annotate lets you provide descriptions and default values for fields and they will
+// Implementing Annotate lets you provide descriptions and default values for fields and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *BaseOutputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdout, "The standard output of the command's process")

@@ -30,7 +30,7 @@ type Command struct{}
 
 var _ = (infer.Annotated)((*Command)(nil))
 
-// Annotate lets you provide descriptions and default values for resources and they will
+// Implementing Annotate lets you provide descriptions and default values for resources and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, "A local command to be executed.\n"+
