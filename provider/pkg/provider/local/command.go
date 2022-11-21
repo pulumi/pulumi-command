@@ -30,7 +30,7 @@ type Command struct{}
 
 var _ = (infer.Annotated)((*Command)(nil))
 
-// Annotate lets you provide descriptions and default values for fields and they will
+// Annotate lets you provide descriptions and default values for resources and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, "A local command to be executed.\n"+
@@ -43,14 +43,17 @@ func (c *Command) Annotate(a infer.Annotator) {
 // These are the inputs (or arguments) to a Command resource.
 type CommandInputs struct {
 	// The field tags are used to provide metadata on the schema representation.
+	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
+	// provider:"replaceOnChanges" specifies that the resource will be replaced if the field changes.
 	Triggers *[]any  `pulumi:"triggers,optional" provider:"replaceOnChanges"`
 	Create   *string `pulumi:"create,optional"`
-	Delete   *string `pulumi:"delete,optional" `
 	Update   *string `pulumi:"update,optional"`
+	Delete   *string `pulumi:"delete,optional"`
 	BaseInputs
 }
 
-// This is an the annotation method for CommandInputs.
+// Annotate lets you provide descriptions and default values for fields and they will
+// be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
 	c.BaseInputs.Annotate(a)
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")

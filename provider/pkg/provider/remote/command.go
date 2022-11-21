@@ -20,14 +20,16 @@ import (
 
 type Command struct{}
 
+// Annotate lets you provide descriptions for resources and they will
+// be visible in the provider's schema and the generated SDKs.
 func (c *Command) Annotate(a infer.Annotator) {
 	a.Describe(&c, `A command to run on a remote host.
 The connection is established via ssh.`)
 }
 
-// The arguments for a remote Command resource
+// The arguments for a remote Command resource.
 type CommandInputs struct {
-	// these field annotations allow you to
+	// the pulumi-go-provider library uses field tags to dictate behavior.
 	// pulumi:"connection" specifies the name of the field in the schema
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
 	// provider:"replaceOnChanges" specifies that the resource will be replaced if the field changes.
@@ -41,6 +43,8 @@ type CommandInputs struct {
 	Stdin       *string            `pulumi:"stdin,optional"`
 }
 
+// Annotate lets you provide descriptions and default values for arguments and they will
+// be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
@@ -51,22 +55,8 @@ func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 }
 
-type BaseOutputs struct {
-	Stdout string `pulumi:"stdout"`
-	Stderr string `pulumi:"stderr"`
-}
-
-func (c *BaseOutputs) Annotate(a infer.Annotator) {
-	a.Describe(&c.Stdout, "The standard output of the command's process")
-	a.Describe(&c.Stderr, "The standard error of the command's process")
-}
-
+// The properties for a remote Command resource.
 type CommandOutputs struct {
 	CommandInputs
 	BaseOutputs
-}
-
-func (c *CommandOutputs) Annotate(a infer.Annotator) {
-	a.Describe(&c.Stdout, "The standard output of the command's process")
-	a.Describe(&c.Stderr, "The standard error of the command's process")
 }

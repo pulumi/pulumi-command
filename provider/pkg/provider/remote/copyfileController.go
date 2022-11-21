@@ -30,6 +30,11 @@ import (
 var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 var _ = (infer.ExplicitDependencies[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 
+// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// the Outputs are derived from. If an output is derived from a secret input, the output
+// will be a secret.
+
+// This naive implementation conveys that every output is derived from all inputs.
 func (r *CopyFile) WireDependencies(f infer.FieldSelector, args *CopyFileInputs, state *CopyFileOutputs) {
 	f.OutputField(&state.CopyFileInputs.Connection).DependsOn(f.InputField(&args.Connection))
 	f.OutputField(&state.CopyFileInputs.Triggers).DependsOn(f.InputField(&args.Triggers))
@@ -37,6 +42,7 @@ func (r *CopyFile) WireDependencies(f infer.FieldSelector, args *CopyFileInputs,
 	f.OutputField(&state.CopyFileInputs.RemotePath).DependsOn(f.InputField(&args.RemotePath))
 }
 
+// This is the Create method. This will be run on every CopyFile resource creation.
 func (*CopyFile) Create(ctx p.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
 	if preview {
 		return "", CopyFileOutputs{input}, nil

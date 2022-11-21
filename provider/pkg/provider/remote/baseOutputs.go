@@ -12,36 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package local
+package remote
 
 import (
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
 
-// This is the type that implements the Run function methods.
-// The methods are declared in the runController.go file.
-type Run struct{}
-
-// Annotate lets you provide descriptions and default values for functions and they will
-// be visible in the provider's schema and the generated SDKs.
-func (r *Run) Annotate(a infer.Annotator) {
-	a.Describe(&r, "A local command to be executed.\n"+
-		"This command will always be run on any preview or deployment. "+
-		"Use `local.Command` to avoid duplicating executions.")
-}
-
-type RunInputs struct {
-	BaseInputs
-	Command string `pulumi:"command"`
+type BaseOutputs struct {
+	Stdout string `pulumi:"stdout"`
+	Stderr string `pulumi:"stderr"`
 }
 
 // Annotate lets you provide descriptions and default values for fields and they will
 // be visible in the provider's schema and the generated SDKs.
-func (r *RunInputs) Annotate(a infer.Annotator) {
-	a.Describe(&r.Command, "The command to run.")
-}
-
-type RunOutputs struct {
-	RunInputs
-	BaseOutputs
+func (c *BaseOutputs) Annotate(a infer.Annotator) {
+	a.Describe(&c.Stdout, "The standard output of the command's process")
+	a.Describe(&c.Stderr, "The standard error of the command's process")
 }

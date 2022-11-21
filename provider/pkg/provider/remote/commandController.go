@@ -15,17 +15,9 @@
 package remote
 
 import (
-	"bytes"
-	"io"
-	"os"
-	"strings"
-
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
 // These are not required. They indicate to Go that Command implements the following interfaces.
@@ -35,7 +27,11 @@ var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
 
-// WireDependencies marks the data dependencies between Inputs and Outputs
+// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// the Outputs are derived from. If an output is derived from a secret input, the output
+// will be a secret.
+
+// This naive implementation conveys that every output is derived from all inputs.
 func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) {
 	createInput := f.InputField(&args.Create)
 	updateInput := f.InputField(&args.Update)
@@ -58,6 +54,7 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, s
 	)
 }
 
+// This is the Create method. This will be run on every Command resource creation.
 func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
 	state := CommandOutputs{CommandInputs: input}
 	var err error
@@ -83,6 +80,7 @@ func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview 
 	return id, state, err
 }
 
+// The Update method will be run on every update.
 func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
 	state := CommandOutputs{CommandInputs: news}
 	if preview {
@@ -99,70 +97,11 @@ func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news Comma
 	return state, err
 }
 
+// The Delete method will run when the resource is deleted.
 func (*Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
 	_, _, err := props.run(ctx, *props.Delete)
 	return err
-}
-
-func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) {
-	config, err := c.Connection.SShConfig()
-	if err != nil {
-		return "", "", err
-	}
-
-	client, err := c.Connection.Dial(ctx, config)
-	if err != nil {
-		return "", "", err
-	}
-
-	session, err := client.NewSession()
-	if err != nil {
-		return "", "", err
-	}
-	defer session.Close()
-
-	if c.Environment != nil {
-		for k, v := range *c.Environment {
-			session.Setenv(k, v)
-		}
-	}
-
-	if c.Stdin != nil && len(*c.Stdin) > 0 {
-		session.Stdin = strings.NewReader(*c.Stdin)
-	}
-
-	stdoutr, stdoutw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	stderrr, stderrw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	session.Stdout = stdoutw
-	session.Stderr = stderrw
-
-	var stdoutbuf bytes.Buffer
-	var stderrbuf bytes.Buffer
-
-	stdouttee := io.TeeReader(stdoutr, &stdoutbuf)
-	stderrtee := io.TeeReader(stderrr, &stderrbuf)
-
-	stdoutch := make(chan struct{})
-	stderrch := make(chan struct{})
-	go util.CopyOutput(ctx, stdouttee, stdoutch, diag.Debug)
-	go util.CopyOutput(ctx, stderrtee, stderrch, diag.Info)
-
-	err = session.Run(cmd)
-
-	stdoutw.Close()
-	stderrw.Close()
-
-	<-stdoutch
-	<-stderrch
-
-	return stdoutbuf.String(), stderrbuf.String(), err
 }

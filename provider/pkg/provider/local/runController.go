@@ -20,10 +20,30 @@ import (
 )
 
 // These are not required. They indicate to Go that Run implements the following interfaces.
-// If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
+// If the function signature doesn't match or isn't implemented, we get nice compile-time
+// errors in this file on the following line.
 var _ = (infer.ExplicitDependencies[RunInputs, RunOutputs])((*Run)(nil))
 
-// WireDependencies marks the data dependencies between Inputs and Outputs
+// This is the Call method. It takes a RunInputs parameter and runs the command specified in
+// it.
+func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
+	r := RunOutputs{RunInputs: input}
+	state := &CommandOutputs{
+		CommandInputs: CommandInputs{
+			BaseInputs: input.BaseInputs,
+		},
+	}
+	var err error
+	r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
+	r.BaseOutputs = state.BaseOutputs
+	return r, err
+}
+
+// WireDependencies is relevant to secrets handling. This method indicates the what Inputs
+// the Outputs are derived from. If an output is derived from a secret input, the output
+// will be a secret.
+
+// This naive implementation conveys that every output is derived from all inputs.
 func (r *Run) WireDependencies(f infer.FieldSelector, args *RunInputs, state *RunOutputs) {
 
 	interpreterInput := f.InputField(&args.Interpreter)
@@ -61,17 +81,4 @@ func (r *Run) WireDependencies(f infer.FieldSelector, args *RunInputs, state *Ru
 		assetPathsInput,
 		archivePathsInput,
 	)
-}
-
-func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
-	r := RunOutputs{RunInputs: input}
-	var err error
-	state := &CommandOutputs{
-		CommandInputs: CommandInputs{
-			BaseInputs: input.BaseInputs,
-		},
-	}
-	r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
-	r.BaseOutputs = state.BaseOutputs
-	return r, err
 }
