@@ -29,9 +29,9 @@ The connection is established via ssh.`)
 type CommandInputs struct {
 	// these field annotations allow you to
 	// pulumi:"connection" specifies the name of the field in the schema
-	// pulumi:"optional" specifies that a field is optional. This must be optional.
-	// provider:"replaceOnChanges" specifies that a resource will be marked replaceOnChanges.
-	// provider:"secret" specifies that a resource will be marked replaceOnChanges.
+	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
+	// provider:"replaceOnChanges" specifies that the resource will be replaced if the field changes.
+	// provider:"secret" specifies that a field should be marked secret.
 	Connection  *Connection        `pulumi:"connection" provider:"secret"`
 	Environment *map[string]string `pulumi:"environment,optional"`
 	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
