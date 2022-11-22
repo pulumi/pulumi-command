@@ -25,18 +25,18 @@ import javax.annotation.Nullable;
 @ResourceType(type="command:remote:Command")
 public class Command extends com.pulumi.resources.CustomResource {
     /**
-     * The parameters with which to connect to the remote host
+     * The parameters with which to connect to the remote host.
      * 
      */
     @Export(name="connection", refs={Connection.class}, tree="[0]")
-    private Output</* @Nullable */ Connection> connection;
+    private Output<Connection> connection;
 
     /**
-     * @return The parameters with which to connect to the remote host
+     * @return The parameters with which to connect to the remote host.
      * 
      */
-    public Output<Optional<Connection>> connection() {
-        return Codegen.optional(this.connection);
+    public Output<Connection> connection() {
+        return this.connection;
     }
     /**
      * The command to run on create.

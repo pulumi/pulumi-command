@@ -9,11 +9,8 @@ import * as utilities from "../utilities";
  * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
  */
 export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResult> {
-    if (!opts) {
-        opts = {}
-    }
 
-    opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
+    opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts || {});
     return pulumi.runtime.invoke("command:local:run", {
         "archivePaths": args.archivePaths,
         "assetPaths": args.assetPaths,
@@ -113,7 +110,8 @@ export interface RunArgs {
      */
     command: string;
     /**
-     * The working directory in which to run the command from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      */
     dir?: string;
     /**
@@ -137,6 +135,88 @@ export interface RunResult {
      */
     readonly archive?: pulumi.asset.Archive;
     /**
+     * A list of path globs to return as a single archive asset after the command completes.
+     *
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are 'exclude' rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     *
+     * #### Example
+     *
+     * Given the rules:
+     * ```yaml
+     * - "assets/**"
+     * - "src/**.js"
+     * - "!**secret.*"
+     * ```
+     *
+     * When evaluating against this folder:
+     *
+     * ```yaml
+     * - assets/
+     *   - logos/
+     *     - logo.svg
+     * - src/
+     *   - index.js
+     *   - secret.js
+     * ```
+     *
+     * The following paths will be returned:
+     *
+     * ```yaml
+     * - assets/logos/logo.svg
+     * - src/index.js
+     * ```
+     */
+    readonly archivePaths?: string[];
+    /**
+     * A list of path globs to read after the command completes.
+     *
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are 'exclude' rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     *
+     * #### Example
+     *
+     * Given the rules:
+     * ```yaml
+     * - "assets/**"
+     * - "src/**.js"
+     * - "!**secret.*"
+     * ```
+     *
+     * When evaluating against this folder:
+     *
+     * ```yaml
+     * - assets/
+     *   - logos/
+     *     - logo.svg
+     * - src/
+     *   - index.js
+     *   - secret.js
+     * ```
+     *
+     * The following paths will be returned:
+     *
+     * ```yaml
+     * - assets/logos/logo.svg
+     * - src/index.js
+     * ```
+     */
+    readonly assetPaths?: string[];
+    /**
      * A map of assets found after running the command.
      * The key is the relative path from the command dir
      */
@@ -146,7 +226,8 @@ export interface RunResult {
      */
     readonly command: string;
     /**
-     * The directory from which the command was run from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      */
     readonly dir?: string;
     /**
@@ -155,7 +236,7 @@ export interface RunResult {
     readonly environment?: {[key: string]: string};
     /**
      * The program and arguments to run the command.
-     * For example: `["/bin/sh", "-c"]`
+     * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     readonly interpreter?: string[];
     /**
@@ -163,13 +244,13 @@ export interface RunResult {
      */
     readonly stderr: string;
     /**
-     * String passed to the command's process as standard in.
+     * Pass a string to the command's process as standard in
      */
-    readonly stdin: string;
+    readonly stdin?: string;
     /**
      * The standard output of the command's process
      */
-    readonly stdout?: string;
+    readonly stdout: string;
 }
 
 export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOptions): pulumi.Output<RunResult> {
@@ -264,7 +345,8 @@ export interface RunOutputArgs {
      */
     command: pulumi.Input<string>;
     /**
-     * The working directory in which to run the command from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      */
     dir?: pulumi.Input<string>;
     /**

@@ -45,12 +45,48 @@ public class Command extends com.pulumi.resources.CustomResource {
     /**
      * A list of path globs to return as a single archive asset after the command completes.
      * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
+     * 
      */
     @Export(name="archivePaths", refs={List.class,String.class}, tree="[0,1]")
     private Output</* @Nullable */ List<String>> archivePaths;
 
     /**
      * @return A list of path globs to return as a single archive asset after the command completes.
+     * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
      * 
      */
     public Output<Optional<List<String>>> archivePaths() {
@@ -59,12 +95,48 @@ public class Command extends com.pulumi.resources.CustomResource {
     /**
      * A list of path globs to read after the command completes.
      * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
+     * 
      */
     @Export(name="assetPaths", refs={List.class,String.class}, tree="[0,1]")
     private Output</* @Nullable */ List<String>> assetPaths;
 
     /**
      * @return A list of path globs to read after the command completes.
+     * 
+     * When specifying glob patterns the following rules apply:
+     * - We only include files not directories for assets and archives.
+     * - Path separators are `/` on all platforms - including Windows.
+     * - Patterns starting with `!` are &#39;exclude&#39; rules.
+     * - Rules are evaluated in order, so exclude rules should be after inclusion rules.
+     * - `*` matches anything except `/`
+     * - `**` matches anything, _including_ `/`
+     * - All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.
+     * - For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)
+     * 
+     * #### Example
+     * 
+     * Given the rules:
+     * 
+     * When evaluating against this folder:
+     * 
+     * The following paths will be returned:
      * 
      */
     public Output<Optional<List<String>>> assetPaths() {
@@ -146,7 +218,7 @@ public class Command extends com.pulumi.resources.CustomResource {
     }
     /**
      * The program and arguments to run the command.
-     * For example: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`
+     * On Linux and macOS, defaults to: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`. On Windows, defaults to: `[&#34;cmd&#34;, &#34;/C&#34;]`
      * 
      */
     @Export(name="interpreter", refs={List.class,String.class}, tree="[0,1]")
@@ -154,7 +226,7 @@ public class Command extends com.pulumi.resources.CustomResource {
 
     /**
      * @return The program and arguments to run the command.
-     * For example: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`
+     * On Linux and macOS, defaults to: `[&#34;/bin/sh&#34;, &#34;-c&#34;]`. On Windows, defaults to: `[&#34;cmd&#34;, &#34;/C&#34;]`
      * 
      */
     public Output<Optional<List<String>>> interpreter() {

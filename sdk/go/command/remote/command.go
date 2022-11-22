@@ -16,8 +16,8 @@ import (
 type Command struct {
 	pulumi.CustomResourceState
 
-	// The parameters with which to connect to the remote host
-	Connection ConnectionPtrOutput `pulumi:"connection"`
+	// The parameters with which to connect to the remote host.
+	Connection ConnectionOutput `pulumi:"connection"`
 	// The command to run on create.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
 	// The command to run on delete.
@@ -54,6 +54,10 @@ func NewCommand(ctx *pulumi.Context,
 		"connection",
 	})
 	opts = append(opts, secrets)
+	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
+		"triggers[*]",
+	})
+	opts = append(opts, replaceOnChanges)
 	var resource Command
 	err := ctx.RegisterResource("command:remote:Command", name, args, &resource, opts...)
 	if err != nil {
@@ -207,9 +211,9 @@ func (o CommandOutput) ToCommandOutputWithContext(ctx context.Context) CommandOu
 	return o
 }
 
-// The parameters with which to connect to the remote host
-func (o CommandOutput) Connection() ConnectionPtrOutput {
-	return o.ApplyT(func(v *Command) ConnectionPtrOutput { return v.Connection }).(ConnectionPtrOutput)
+// The parameters with which to connect to the remote host.
+func (o CommandOutput) Connection() ConnectionOutput {
+	return o.ApplyT(func(v *Command) ConnectionOutput { return v.Connection }).(ConnectionOutput)
 }
 
 // The command to run on create.

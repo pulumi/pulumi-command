@@ -134,14 +134,16 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
     }
 
     /**
-     * The working directory in which to run the command from.
+     * The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     @Import(name="dir")
     private @Nullable String dir;
 
     /**
-     * @return The working directory in which to run the command from.
+     * @return The directory from which to run the command from. If `dir` does not exist, then
+     * `Command` will fail.
      * 
      */
     public Optional<String> dir() {
@@ -351,7 +353,8 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         }
 
         /**
-         * @param dir The working directory in which to run the command from.
+         * @param dir The directory from which to run the command from. If `dir` does not exist, then
+         * `Command` will fail.
          * 
          * @return builder
          * 

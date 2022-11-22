@@ -1,4 +1,4 @@
-// Copyright 2016-2021, Pulumi Corporation.
+// Copyright 2016-2022, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate go run ./generate.go
-
 package main
 
 import (
-	_ "embed"
+	"fmt"
+	"os"
+	"strings"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider"
+	p "github.com/pulumi/pulumi-go-provider"
+
+	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
 	"github.com/pulumi/pulumi-command/provider/pkg/version"
 )
 
-//go:embed schema-embed.json
-var pulumiSchema []byte
-
+// A provider is a program that listens for requests from the Pulumi engine
+// to interact with cloud providers using a CRUD-based model.
 func main() {
-	provider.Serve("command", version.Version, pulumiSchema)
+	version := version.Version
+	if strings.HasPrefix(version, "v") {
+		version = version[1:]
+	}
+
+	// This method defines the provider implemented in this repository.
+	commandProvider := command.NewProvider()
+
+	// This method starts serving requests using the Command provider.
+	err := p.RunProvider("command", version, commandProvider)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s", err.Error())
+		os.Exit(1)
+	}
 }

@@ -38,9 +38,9 @@ export class Command extends pulumi.CustomResource {
     }
 
     /**
-     * The parameters with which to connect to the remote host
+     * The parameters with which to connect to the remote host.
      */
-    public readonly connection!: pulumi.Output<outputs.remote.Connection | undefined>;
+    public readonly connection!: pulumi.Output<outputs.remote.Connection>;
     /**
      * The command to run on create.
      */
@@ -111,6 +111,8 @@ export class Command extends pulumi.CustomResource {
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         const secretOpts = { additionalSecretOutputs: ["connection"] };
         opts = pulumi.mergeOptions(opts, secretOpts);
+        const replaceOnChanges = { replaceOnChanges: ["triggers[*]"] };
+        opts = pulumi.mergeOptions(opts, replaceOnChanges);
         super(Command.__pulumiType, name, resourceInputs, opts);
     }
 }

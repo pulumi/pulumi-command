@@ -213,6 +213,8 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["stdout"] = None
         secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["connection"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
+        replace_on_changes = pulumi.ResourceOptions(replace_on_changes=["triggers[*]"])
+        opts = pulumi.ResourceOptions.merge(opts, replace_on_changes)
         super(Command, __self__).__init__(
             'command:remote:Command',
             resource_name,
@@ -248,9 +250,9 @@ class Command(pulumi.CustomResource):
 
     @property
     @pulumi.getter
-    def connection(self) -> pulumi.Output[Optional['outputs.Connection']]:
+    def connection(self) -> pulumi.Output['outputs.Connection']:
         """
-        The parameters with which to connect to the remote host
+        The parameters with which to connect to the remote host.
         """
         return pulumi.get(self, "connection")
 
