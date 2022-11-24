@@ -8,7 +8,7 @@ require (
 	github.com/pkg/sftp v1.13.4
 	github.com/pulumi/pulumi-go-provider v0.8.0
 	github.com/pulumi/pulumi-go-provider/integration v0.8.0
-	github.com/pulumi/pulumi/sdk/v3 v3.47.0
+	github.com/pulumi/pulumi/sdk/v3 v3.48.0
 	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
 )
 
@@ -24,7 +24,6 @@ require (
 	github.com/djherbis/times v1.5.0 // indirect
 	github.com/edsrzf/mmap-go v1.1.0 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
-	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/go-git/go-billy/v5 v5.3.1 // indirect
 	github.com/go-git/go-git/v5 v5.4.2 // indirect
@@ -53,7 +52,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/pulumi/pulumi/pkg/v3 v3.44.2 // indirect
+	github.com/pulumi/pulumi/pkg/v3 v3.48.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
