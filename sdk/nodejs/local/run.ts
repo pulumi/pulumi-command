@@ -252,9 +252,12 @@ export interface RunResult {
      */
     readonly stdout: string;
 }
-
+/**
+ * A local command to be executed.
+ * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+ */
 export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOptions): pulumi.Output<RunResult> {
-    return pulumi.output(args).apply(a => run(a, opts))
+    return pulumi.output(args).apply((a: any) => run(a, opts))
 }
 
 export interface RunOutputArgs {
