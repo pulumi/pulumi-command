@@ -33,6 +33,9 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
+const PULUMI_COMMAND_STDOUT = "PULUMI_COMMAND_STDOUT"
+const PULUMI_COMMAND_STDERR = "PULUMI_COMMAND_STDERR"
+
 func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, error) {
 	var args []string
 	if c.Interpreter != nil && len(*c.Interpreter) > 0 {
@@ -71,6 +74,12 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 		for k, v := range *c.Environment {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 		}
+	}
+	if c.Stdout != "" {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", PULUMI_COMMAND_STDOUT, c.Stdout))
+	}
+	if c.Stderr != "" {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", PULUMI_COMMAND_STDERR, c.Stderr))
 	}
 
 	if c.Stdin != nil && len(*c.Stdin) > 0 {

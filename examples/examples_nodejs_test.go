@@ -6,6 +6,7 @@ package examples
 
 import (
 	"encoding/base64"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -26,6 +27,20 @@ func TestRandom(t *testing.T) {
 				out, ok := stack.Outputs["output"].(string)
 				assert.True(t, ok)
 				assert.Len(t, out, 32)
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
+func TestDeleteFromStdout(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "delete-from-stdout"),
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				out, ok := stack.Outputs["output"].(string)
+				assert.True(t, ok)
+				_, err := os.Stat(out)
+				assert.NoError(t, err)
 			},
 		})
 	integration.ProgramTest(t, &test)

@@ -190,7 +190,7 @@
                     "type": "string"
                 },
                 "delete": {
-                    "description": "The command to run on delete.",
+                    "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the Command resource from previous create or update steps.",
                     "type": "string"
                 },
                 "dir": {
@@ -224,7 +224,7 @@
                     "type": "array"
                 },
                 "update": {
-                    "description": "The command to run on update, if empty, create will run again.",
+                    "description": "The command to run on update, if empty, create will run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the Command resource from previous create or update steps.",
                     "type": "string"
                 }
             },
@@ -259,7 +259,7 @@
                     "type": "string"
                 },
                 "delete": {
-                    "description": "The command to run on delete.",
+                    "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the Command resource from previous create or update steps.",
                     "type": "string"
                 },
                 "dir": {
@@ -301,7 +301,7 @@
                     "type": "array"
                 },
                 "update": {
-                    "description": "The command to run on update, if empty, create will run again.",
+                    "description": "The command to run on update, if empty, create will run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the Command resource from previous create or update steps.",
                     "type": "string"
                 }
             },
