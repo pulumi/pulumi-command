@@ -48,7 +48,7 @@ func NewCommand(ctx *pulumi.Context,
 	}
 	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
 	if args.Connection != nil {
-		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionOutput)
+		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionInput)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"connection",
