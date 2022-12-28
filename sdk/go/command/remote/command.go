@@ -20,7 +20,9 @@ type Command struct {
 	Connection ConnectionOutput `pulumi:"connection"`
 	// The command to run on create.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
-	// The command to run on delete.
+	// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+	// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+	// Command resource from previous create or update steps.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
@@ -32,7 +34,10 @@ type Command struct {
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
 	// Trigger replacements on changes to this input.
 	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
-	// The command to run on update, if empty, create will run again.
+	// The command to run on update, if empty, create will
+	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+	// are set to the stdout and stderr properties of the Command resource from previous
+	// create or update steps.
 	Update pulumi.StringPtrOutput `pulumi:"update"`
 }
 
@@ -94,7 +99,9 @@ type commandArgs struct {
 	Connection Connection `pulumi:"connection"`
 	// The command to run on create.
 	Create *string `pulumi:"create"`
-	// The command to run on delete.
+	// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+	// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+	// Command resource from previous create or update steps.
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	Environment map[string]string `pulumi:"environment"`
@@ -102,7 +109,10 @@ type commandArgs struct {
 	Stdin *string `pulumi:"stdin"`
 	// Trigger replacements on changes to this input.
 	Triggers []interface{} `pulumi:"triggers"`
-	// The command to run on update, if empty, create will run again.
+	// The command to run on update, if empty, create will
+	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+	// are set to the stdout and stderr properties of the Command resource from previous
+	// create or update steps.
 	Update *string `pulumi:"update"`
 }
 
@@ -112,7 +122,9 @@ type CommandArgs struct {
 	Connection ConnectionInput
 	// The command to run on create.
 	Create pulumi.StringPtrInput
-	// The command to run on delete.
+	// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+	// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+	// Command resource from previous create or update steps.
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
 	Environment pulumi.StringMapInput
@@ -120,7 +132,10 @@ type CommandArgs struct {
 	Stdin pulumi.StringPtrInput
 	// Trigger replacements on changes to this input.
 	Triggers pulumi.ArrayInput
-	// The command to run on update, if empty, create will run again.
+	// The command to run on update, if empty, create will
+	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+	// are set to the stdout and stderr properties of the Command resource from previous
+	// create or update steps.
 	Update pulumi.StringPtrInput
 }
 
@@ -221,7 +236,9 @@ func (o CommandOutput) Create() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Create }).(pulumi.StringPtrOutput)
 }
 
-// The command to run on delete.
+// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+// Command resource from previous create or update steps.
 func (o CommandOutput) Delete() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Delete }).(pulumi.StringPtrOutput)
 }
@@ -251,7 +268,10 @@ func (o CommandOutput) Triggers() pulumi.ArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
 }
 
-// The command to run on update, if empty, create will run again.
+// The command to run on update, if empty, create will
+// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+// are set to the stdout and stderr properties of the Command resource from previous
+// create or update steps.
 func (o CommandOutput) Update() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Update }).(pulumi.StringPtrOutput)
 }

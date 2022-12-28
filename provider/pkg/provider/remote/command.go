@@ -50,8 +50,13 @@ func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Create, "The command to run on create.")
-	a.Describe(&c.Delete, "The command to run on delete.")
-	a.Describe(&c.Update, "The command to run on update, if empty, create will run again.")
+	a.Describe(&c.Delete, `The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+Command resource from previous create or update steps.`)
+	a.Describe(&c.Update, `The command to run on update, if empty, create will 
+run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+are set to the stdout and stderr properties of the Command resource from previous 
+create or update steps.`)
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 }
 

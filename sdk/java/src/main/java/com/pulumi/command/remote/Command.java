@@ -53,14 +53,18 @@ public class Command extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.create);
     }
     /**
-     * The command to run on delete.
+     * The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+     * Command resource from previous create or update steps.
      * 
      */
     @Export(name="delete", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> delete;
 
     /**
-     * @return The command to run on delete.
+     * @return The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+     * Command resource from previous create or update steps.
      * 
      */
     public Output<Optional<String>> delete() {
@@ -137,14 +141,20 @@ public class Command extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.triggers);
     }
     /**
-     * The command to run on update, if empty, create will run again.
+     * The command to run on update, if empty, create will
+     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+     * are set to the stdout and stderr properties of the Command resource from previous
+     * create or update steps.
      * 
      */
     @Export(name="update", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> update;
 
     /**
-     * @return The command to run on update, if empty, create will run again.
+     * @return The command to run on update, if empty, create will
+     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+     * are set to the stdout and stderr properties of the Command resource from previous
+     * create or update steps.
      * 
      */
     public Output<Optional<String>> update() {

@@ -48,6 +48,12 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) 
 			session.Setenv(k, v)
 		}
 	}
+	if c.Stdout != "" {
+		session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
+	}
+	if c.Stderr != "" {
+		session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
+	}
 
 	if c.Stdin != nil && len(*c.Stdin) > 0 {
 		session.Stdin = strings.NewReader(*c.Stdin)
