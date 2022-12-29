@@ -50,14 +50,18 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The command to run on delete.
+     * The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+     * Command resource from previous create or update steps.
      * 
      */
     @Import(name="delete")
     private @Nullable Output<String> delete;
 
     /**
-     * @return The command to run on delete.
+     * @return The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+     * Command resource from previous create or update steps.
      * 
      */
     public Optional<Output<String>> delete() {
@@ -110,14 +114,20 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The command to run on update, if empty, create will run again.
+     * The command to run on update, if empty, create will
+     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+     * are set to the stdout and stderr properties of the Command resource from previous
+     * create or update steps.
      * 
      */
     @Import(name="update")
     private @Nullable Output<String> update;
 
     /**
-     * @return The command to run on update, if empty, create will run again.
+     * @return The command to run on update, if empty, create will
+     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+     * are set to the stdout and stderr properties of the Command resource from previous
+     * create or update steps.
      * 
      */
     public Optional<Output<String>> update() {
@@ -197,7 +207,9 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param delete The command to run on delete.
+         * @param delete The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+         * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+         * Command resource from previous create or update steps.
          * 
          * @return builder
          * 
@@ -208,7 +220,9 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param delete The command to run on delete.
+         * @param delete The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+         * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+         * Command resource from previous create or update steps.
          * 
          * @return builder
          * 
@@ -291,7 +305,10 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param update The command to run on update, if empty, create will run again.
+         * @param update The command to run on update, if empty, create will
+         * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+         * are set to the stdout and stderr properties of the Command resource from previous
+         * create or update steps.
          * 
          * @return builder
          * 
@@ -302,7 +319,10 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param update The command to run on update, if empty, create will run again.
+         * @param update The command to run on update, if empty, create will
+         * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+         * are set to the stdout and stderr properties of the Command resource from previous
+         * create or update steps.
          * 
          * @return builder
          * 

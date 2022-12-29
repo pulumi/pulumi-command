@@ -72,6 +72,12 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 		}
 	}
+	if c.Stdout != "" {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDOUT, c.Stdout))
+	}
+	if c.Stderr != "" {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDERR, c.Stderr))
+	}
 
 	if c.Stdin != nil && len(*c.Stdin) > 0 {
 		cmd.Stdin = strings.NewReader(*c.Stdin)

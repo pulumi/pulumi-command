@@ -103,7 +103,9 @@ class CommandArgs:
                - src/index.js
                ```
         :param pulumi.Input[str] create: The command to run on create.
-        :param pulumi.Input[str] delete: The command to run on delete.
+        :param pulumi.Input[str] delete: The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+               and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+               Command resource from previous create or update steps.
         :param pulumi.Input[str] dir: The directory from which to run the command from. If `dir` does not exist, then
                `Command` will fail.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
@@ -111,7 +113,10 @@ class CommandArgs:
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
-        :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
+        :param pulumi.Input[str] update: The command to run on update, if empty, create will 
+               run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+               are set to the stdout and stderr properties of the Command resource from previous 
+               create or update steps.
         """
         if archive_paths is not None:
             pulumi.set(__self__, "archive_paths", archive_paths)
@@ -248,7 +253,9 @@ class CommandArgs:
     @pulumi.getter
     def delete(self) -> Optional[pulumi.Input[str]]:
         """
-        The command to run on delete.
+        The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+        and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+        Command resource from previous create or update steps.
         """
         return pulumi.get(self, "delete")
 
@@ -322,7 +329,10 @@ class CommandArgs:
     @pulumi.getter
     def update(self) -> Optional[pulumi.Input[str]]:
         """
-        The command to run on update, if empty, create will run again.
+        The command to run on update, if empty, create will 
+        run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+        are set to the stdout and stderr properties of the Command resource from previous 
+        create or update steps.
         """
         return pulumi.get(self, "update")
 
@@ -433,7 +443,9 @@ class Command(pulumi.CustomResource):
                - src/index.js
                ```
         :param pulumi.Input[str] create: The command to run on create.
-        :param pulumi.Input[str] delete: The command to run on delete.
+        :param pulumi.Input[str] delete: The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+               and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+               Command resource from previous create or update steps.
         :param pulumi.Input[str] dir: The directory from which to run the command from. If `dir` does not exist, then
                `Command` will fail.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
@@ -441,7 +453,10 @@ class Command(pulumi.CustomResource):
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
-        :param pulumi.Input[str] update: The command to run on update, if empty, create will run again.
+        :param pulumi.Input[str] update: The command to run on update, if empty, create will 
+               run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+               are set to the stdout and stderr properties of the Command resource from previous 
+               create or update steps.
         """
         ...
     @overload
@@ -663,7 +678,9 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def delete(self) -> pulumi.Output[Optional[str]]:
         """
-        The command to run on delete.
+        The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+        and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+        Command resource from previous create or update steps.
         """
         return pulumi.get(self, "delete")
 
@@ -729,7 +746,10 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def update(self) -> pulumi.Output[Optional[str]]:
         """
-        The command to run on update, if empty, create will run again.
+        The command to run on update, if empty, create will 
+        run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+        are set to the stdout and stderr properties of the Command resource from previous 
+        create or update steps.
         """
         return pulumi.get(self, "update")
 

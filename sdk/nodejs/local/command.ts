@@ -134,7 +134,9 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly create!: pulumi.Output<string | undefined>;
     /**
-     * The command to run on delete.
+     * The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+     * Command resource from previous create or update steps.
      */
     public readonly delete!: pulumi.Output<string | undefined>;
     /**
@@ -168,7 +170,10 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly triggers!: pulumi.Output<any[] | undefined>;
     /**
-     * The command to run on update, if empty, create will run again.
+     * The command to run on update, if empty, create will 
+     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+     * are set to the stdout and stderr properties of the Command resource from previous 
+     * create or update steps.
      */
     public readonly update!: pulumi.Output<string | undefined>;
 
@@ -311,7 +316,9 @@ export interface CommandArgs {
      */
     create?: pulumi.Input<string>;
     /**
-     * The command to run on delete.
+     * The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
+     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
+     * Command resource from previous create or update steps.
      */
     delete?: pulumi.Input<string>;
     /**
@@ -337,7 +344,10 @@ export interface CommandArgs {
      */
     triggers?: pulumi.Input<any[]>;
     /**
-     * The command to run on update, if empty, create will run again.
+     * The command to run on update, if empty, create will 
+     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
+     * are set to the stdout and stderr properties of the Command resource from previous 
+     * create or update steps.
      */
     update?: pulumi.Input<string>;
 }
