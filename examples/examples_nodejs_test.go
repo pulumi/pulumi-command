@@ -64,7 +64,7 @@ func TestStderr(t *testing.T) {
 						case diag.Error:
 							if ev.DiagnosticEvent.URN != "" {
 								assert.False(t, ev.DiagnosticEvent.Ephemeral)
-								assert.Regexp(t, "^exit status %d: running", ev.DiagnosticEvent.Message)
+								assert.Regexp(t, `^exit status \d+: running`, ev.DiagnosticEvent.Message)
 							}
 						}
 					}

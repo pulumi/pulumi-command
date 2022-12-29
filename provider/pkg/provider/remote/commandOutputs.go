@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	p "github.com/pulumi/pulumi-go-provider"
@@ -60,32 +59,17 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) 
 		session.Stdin = strings.NewReader(*c.Stdin)
 	}
 
-	stdoutr, stdoutw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	stderrr, stderrw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	session.Stdout = stdoutw
-	session.Stderr = stderrw
+	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer
+	r, w := io.Pipe()
+	session.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrbuf, w)
+	session.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
 
-	var stdoutbuf bytes.Buffer
-	var stderrbuf bytes.Buffer
-	var stdouterrbuf bytes.Buffer
-
-	stdouttee := io.TeeReader(stdoutr, &stdoutbuf)
-	stderrtee := io.TeeReader(stderrr, &stderrbuf)
-	stdouterr := io.MultiReader(stdouttee, stderrtee)
-	stdouterr = io.TeeReader(stdouterr, &stdouterrbuf)
 	stdouterrch := make(chan struct{})
-	go util.CopyOutput(ctx, stdouterr, stdouterrch, diag.Info)
+	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
 
 	err = session.Run(cmd)
 
-	stdoutw.Close()
-	stderrw.Close()
+	w.Close()
 	<-stdouterrch
 
 	if err != nil {

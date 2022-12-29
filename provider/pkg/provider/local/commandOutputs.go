@@ -46,18 +46,13 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 	}
 	args = append(args, command)
 
-	stdoutr, stdoutw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	stderrr, stderrw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
+	var err error
+	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer
+	r, w := io.Pipe()
 
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
-	cmd.Stdout = stdoutw
-	cmd.Stderr = stderrw
+	cmd.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrbuf, w)
+	cmd.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
 	if c.Dir != nil {
 		cmd.Dir = *c.Dir
 	} else {
@@ -83,24 +78,15 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 		cmd.Stdin = strings.NewReader(*c.Stdin)
 	}
 
-	var stdoutbuf bytes.Buffer
-	var stderrbuf bytes.Buffer
-	var stdouterrbuf bytes.Buffer
-
-	stdouttee := io.TeeReader(stdoutr, &stdoutbuf)
-	stderrtee := io.TeeReader(stderrr, &stderrbuf)
-	stdouterr := io.MultiReader(stdouttee, stderrtee)
-	stdouterr = io.TeeReader(stdouterr, &stdouterrbuf)
 	stdouterrch := make(chan struct{})
-	go util.CopyOutput(ctx, stdouterr, stdouterrch, diag.Info)
+	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
 
 	err = cmd.Start()
 	if err == nil {
 		err = cmd.Wait()
 	}
 
-	stdoutw.Close()
-	stderrw.Close()
+	w.Close()
 	<-stdouterrch
 
 	if err != nil {
