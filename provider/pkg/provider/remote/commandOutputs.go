@@ -16,6 +16,7 @@ package remote
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -72,22 +73,24 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) 
 
 	var stdoutbuf bytes.Buffer
 	var stderrbuf bytes.Buffer
+	var stdouterrbuf bytes.Buffer
 
 	stdouttee := io.TeeReader(stdoutr, &stdoutbuf)
 	stderrtee := io.TeeReader(stderrr, &stderrbuf)
-
-	stdoutch := make(chan struct{})
-	stderrch := make(chan struct{})
-	go util.CopyOutput(ctx, stdouttee, stdoutch, diag.Debug)
-	go util.CopyOutput(ctx, stderrtee, stderrch, diag.Info)
+	stdouterr := io.MultiReader(stdouttee, stderrtee)
+	stdouterr = io.TeeReader(stdouterr, &stdouterrbuf)
+	stdouterrch := make(chan struct{})
+	go util.CopyOutput(ctx, stdouterr, stdouterrch, diag.Info)
 
 	err = session.Run(cmd)
 
 	stdoutw.Close()
 	stderrw.Close()
+	<-stdouterrch
 
-	<-stdoutch
-	<-stderrch
+	if err != nil {
+		return "", "", fmt.Errorf("%w: running %q:\n%s", err, cmd, stdouterrbuf.String())
+	}
 
-	return stdoutbuf.String(), stderrbuf.String(), err
+	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), nil
 }

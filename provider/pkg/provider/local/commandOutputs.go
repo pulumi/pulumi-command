@@ -85,14 +85,14 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 
 	var stdoutbuf bytes.Buffer
 	var stderrbuf bytes.Buffer
+	var stdouterrbuf bytes.Buffer
 
 	stdouttee := io.TeeReader(stdoutr, &stdoutbuf)
 	stderrtee := io.TeeReader(stderrr, &stderrbuf)
-
-	stdoutch := make(chan struct{})
-	stderrch := make(chan struct{})
-	go util.CopyOutput(ctx, stdouttee, stdoutch, diag.Debug)
-	go util.CopyOutput(ctx, stderrtee, stderrch, diag.Error)
+	stdouterr := io.MultiReader(stdouttee, stderrtee)
+	stdouterr = io.TeeReader(stdouterr, &stdouterrbuf)
+	stdouterrch := make(chan struct{})
+	go util.CopyOutput(ctx, stdouterr, stdouterrch, diag.Info)
 
 	err = cmd.Start()
 	if err == nil {
@@ -101,12 +101,10 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 
 	stdoutw.Close()
 	stderrw.Close()
-
-	<-stdoutch
-	<-stderrch
+	<-stdouterrch
 
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("%w: running %q:\n%s", err, command, stdouterrbuf.String())
 	}
 
 	if c.AssetPaths != nil {

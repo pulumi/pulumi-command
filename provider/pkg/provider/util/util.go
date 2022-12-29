@@ -29,6 +29,6 @@ func CopyOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity dia
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		ctx.Log(severity, scanner.Text())
+		ctx.LogStatus(severity, scanner.Text())
 	}
 }
