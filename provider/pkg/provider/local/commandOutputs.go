@@ -48,11 +48,12 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 
 	var err error
 	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer
+	stdouterrwriter := util.ConcurrentWriter{Writer: &stdouterrbuf}
 	r, w := io.Pipe()
 
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
-	cmd.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrbuf, w)
-	cmd.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
+	cmd.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrwriter, w)
+	cmd.Stderr = io.MultiWriter(&stderrbuf, &stdouterrwriter, w)
 	if c.Dir != nil {
 		cmd.Dir = *c.Dir
 	} else {

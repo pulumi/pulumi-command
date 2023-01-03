@@ -17,6 +17,7 @@ package util
 import (
 	"bufio"
 	"io"
+	"sync"
 
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
@@ -31,4 +32,15 @@ func CopyOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity dia
 	for scanner.Scan() {
 		ctx.LogStatus(severity, scanner.Text())
 	}
+}
+
+type ConcurrentWriter struct {
+	Writer io.Writer
+	mu     sync.Mutex
+}
+
+func (w *ConcurrentWriter) Write(bs []byte) (int, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	return w.Writer.Write(bs)
 }
