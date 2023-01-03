@@ -15,6 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,6 +42,33 @@ func TestDeleteFromStdout(t *testing.T) {
 				assert.True(t, ok)
 				_, err := os.Stat(out)
 				assert.NoError(t, err)
+			},
+		})
+	integration.ProgramTest(t, &test)
+}
+
+func TestStderr(t *testing.T) {
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:                    filepath.Join(getCwd(t), "stderr"),
+			SkipPreview:            true,
+			SkipRefresh:            true,
+			SkipEmptyPreviewUpdate: true,
+			ExpectFailure:          true,
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				for _, ev := range stack.Events {
+					if ev.DiagnosticEvent != nil {
+						switch diag.Severity(ev.DiagnosticEvent.Severity) {
+						case diag.Info:
+							assert.True(t, ev.DiagnosticEvent.Ephemeral)
+						case diag.Error:
+							if ev.DiagnosticEvent.URN != "" {
+								assert.False(t, ev.DiagnosticEvent.Ephemeral)
+								assert.Regexp(t, `^exit status \d+: running`, ev.DiagnosticEvent.Message)
+							}
+						}
+					}
+				}
 			},
 		})
 	integration.ProgramTest(t, &test)

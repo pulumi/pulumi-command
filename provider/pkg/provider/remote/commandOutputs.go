@@ -16,8 +16,8 @@ package remote
 
 import (
 	"bytes"
+	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	p "github.com/pulumi/pulumi-go-provider"
@@ -59,35 +59,22 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) 
 		session.Stdin = strings.NewReader(*c.Stdin)
 	}
 
-	stdoutr, stdoutw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	stderrr, stderrw, err := os.Pipe()
-	if err != nil {
-		return "", "", err
-	}
-	session.Stdout = stdoutw
-	session.Stderr = stderrw
+	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer
+	r, w := io.Pipe()
+	session.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrbuf, w)
+	session.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
 
-	var stdoutbuf bytes.Buffer
-	var stderrbuf bytes.Buffer
-
-	stdouttee := io.TeeReader(stdoutr, &stdoutbuf)
-	stderrtee := io.TeeReader(stderrr, &stderrbuf)
-
-	stdoutch := make(chan struct{})
-	stderrch := make(chan struct{})
-	go util.CopyOutput(ctx, stdouttee, stdoutch, diag.Debug)
-	go util.CopyOutput(ctx, stderrtee, stderrch, diag.Info)
+	stdouterrch := make(chan struct{})
+	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
 
 	err = session.Run(cmd)
 
-	stdoutw.Close()
-	stderrw.Close()
+	w.Close()
+	<-stdouterrch
 
-	<-stdoutch
-	<-stderrch
+	if err != nil {
+		return "", "", fmt.Errorf("%w: running %q:\n%s", err, cmd, stdouterrbuf.String())
+	}
 
-	return stdoutbuf.String(), stderrbuf.String(), err
+	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), nil
 }

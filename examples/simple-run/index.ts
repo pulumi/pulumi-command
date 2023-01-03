@@ -2,7 +2,7 @@ import * as local from "@pulumi/command/local";
 import * as random from "@pulumi/random";
 import { interpolate } from "@pulumi/pulumi";
 
-const pw = new random.RandomPassword("pw", { length: 10 });
+const pw = new random.RandomPassword("pw", { length: 10, special: false });
 
 const plainFile = local.runOutput({
     command: `echo "Hello world!" > hello.txt`,
