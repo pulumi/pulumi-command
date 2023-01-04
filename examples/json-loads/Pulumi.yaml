@@ -1,0 +1,6 @@
+name: hack-pulumi-command-examples
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: A minimal Python Pulumi program
