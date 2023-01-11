@@ -34,7 +34,9 @@ jobs:
         goversion:
         - 1.19.x
         dotnetversion:
-        - 3.1.301
+        - |
+          6.0.x
+          3.1.301
         pythonversion:
         - "3.7"
         nodeversion:
@@ -72,6 +74,7 @@ jobs:
     - name: Tar provider binaries
       run: tar -zcf ${{ github.workspace }}/bin/provider.tar.gz -C ${{
         github.workspace}}/bin/ pulumi-resource-${{ env.PROVIDER }}
+        pulumi-gen-${{ env.PROVIDER}}
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -95,7 +98,9 @@ jobs:
         goversion:
         - 1.19.x
         dotnetversion:
-        - 3.1.301
+        - |
+          6.0.x
+          3.1.301
         pythonversion:
         - "3.7"
         nodeversion:
@@ -190,7 +195,9 @@ jobs:
         goversion:
         - 1.19.x
         dotnetversion:
-        - 3.1.301
+        - |
+          6.0.x
+          3.1.301
         pythonversion:
         - "3.7"
         nodeversion:
@@ -313,7 +320,9 @@ jobs:
         goversion:
         - 1.19.x
         dotnetversion:
-        - 3.1.301
+        - |
+          6.0.x
+          3.1.301
         pythonversion:
         - "3.7"
         nodeversion:
@@ -370,7 +379,9 @@ jobs:
         goversion:
         - 1.19.x
         dotnetversion:
-        - 3.1.301
+        - |
+          6.0.x
+          3.1.301
         pythonversion:
         - "3.7"
         nodeversion:
