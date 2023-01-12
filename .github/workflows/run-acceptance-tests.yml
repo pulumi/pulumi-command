@@ -32,7 +32,9 @@ env:
   GOVERSION: 1.19.x
   NODEVERSION: 16.x
   PYTHONVERSION: "3.7"
-  DOTNETVERSION: 3.1.301
+  DOTNETVERSION: |
+    6.0.x
+    3.1.301
   JAVAVERSION: "11"
   AWS_REGION: us-west-2
   PULUMI_API: https://api.pulumi-staging.io
