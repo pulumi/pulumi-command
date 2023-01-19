@@ -27,26 +27,17 @@ import (
 
 // copied from encoding/json for use with JSONMarshal above
 func MarshalIndent(v any) ([]byte, error) {
-
 	// json.Marshal normally escapes HTML. This one doesn't
 	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and
-	buffer := &bytes.Buffer{}
-	encoder := json.NewEncoder(buffer)
+	var buffer bytes.Buffer
+	encoder := json.NewEncoder(&buffer)
 	encoder.SetEscapeHTML(false)
+	encoder.SetIndent("", "    ")
 	err := encoder.Encode(v)
 	if err != nil {
 		return nil, err
 	}
-	b := buffer.Bytes()
-
-	// serialize and pretty print
-	var buf bytes.Buffer
-	prefix, indent := "", "    "
-	err = json.Indent(&buf, b, prefix, indent)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
+	return buffer.Bytes(), nil
 }
 
 func main() {
