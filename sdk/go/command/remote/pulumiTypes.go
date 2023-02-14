@@ -34,11 +34,11 @@ func (val *Connection) Defaults() *Connection {
 		return nil
 	}
 	tmp := *val
-	if isZero(tmp.Port) {
+	if tmp.Port == nil {
 		port_ := 22.0
 		tmp.Port = &port_
 	}
-	if isZero(tmp.User) {
+	if tmp.User == nil {
 		user_ := "root"
 		tmp.User = &user_
 	}
@@ -80,10 +80,10 @@ func (val *ConnectionArgs) Defaults() *ConnectionArgs {
 		return nil
 	}
 	tmp := *val
-	if isZero(tmp.Port) {
+	if tmp.Port == nil {
 		tmp.Port = pulumi.Float64Ptr(22.0)
 	}
-	if isZero(tmp.User) {
+	if tmp.User == nil {
 		tmp.User = pulumi.StringPtr("root")
 	}
 	return &tmp
