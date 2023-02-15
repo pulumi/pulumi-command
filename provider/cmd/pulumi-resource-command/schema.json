@@ -471,6 +471,11 @@
                     "description": "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.",
                     "type": "string"
                 },
+                "dialErrorLimit": {
+                    "default": 10,
+                    "description": "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10",
+                    "type": "integer"
+                },
                 "host": {
                     "description": "The address of the resource to connect to.",
                     "type": "string"

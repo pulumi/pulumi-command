@@ -29,6 +29,8 @@ import (
 
 const (
 	sshAgentSocketEnvVar = "SSH_AUTH_SOCK"
+	DialErrorDefault     = 10
+	DialErrorUnlimited   = -1
 )
 
 type Connection struct {
@@ -39,6 +41,7 @@ type Connection struct {
 	PrivateKey         *string  `pulumi:"privateKey,optional"`
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
+	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -52,6 +55,8 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
+	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
+	a.SetDefault(&c.DialErrorLimit, DialErrorDefault)
 }
 
 func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
@@ -109,7 +114,9 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
 				config)
 			if err != nil {
-				if try > 10 {
+				// on each try we already made a dial
+				dials := try + 1
+				if *con.DialErrorLimit > DialErrorUnlimited && dials > *con.DialErrorLimit {
 					return true, nil, err
 				}
 				return false, nil, nil

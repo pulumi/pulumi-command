@@ -5,6 +5,7 @@ package com.pulumi.command.remote.outputs;
 
 import com.pulumi.core.annotations.CustomType;
 import java.lang.Double;
+import java.lang.Integer;
 import java.lang.String;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,6 +18,11 @@ public final class Connection {
      * 
      */
     private @Nullable String agentSocketPath;
+    /**
+     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * 
+     */
+    private @Nullable Integer dialErrorLimit;
     /**
      * @return The address of the resource to connect to.
      * 
@@ -55,6 +61,13 @@ public final class Connection {
      */
     public Optional<String> agentSocketPath() {
         return Optional.ofNullable(this.agentSocketPath);
+    }
+    /**
+     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * 
+     */
+    public Optional<Integer> dialErrorLimit() {
+        return Optional.ofNullable(this.dialErrorLimit);
     }
     /**
      * @return The address of the resource to connect to.
@@ -109,6 +122,7 @@ public final class Connection {
     @CustomType.Builder
     public static final class Builder {
         private @Nullable String agentSocketPath;
+        private @Nullable Integer dialErrorLimit;
         private String host;
         private @Nullable String password;
         private @Nullable Double port;
@@ -119,6 +133,7 @@ public final class Connection {
         public Builder(Connection defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.agentSocketPath = defaults.agentSocketPath;
+    	      this.dialErrorLimit = defaults.dialErrorLimit;
     	      this.host = defaults.host;
     	      this.password = defaults.password;
     	      this.port = defaults.port;
@@ -130,6 +145,11 @@ public final class Connection {
         @CustomType.Setter
         public Builder agentSocketPath(@Nullable String agentSocketPath) {
             this.agentSocketPath = agentSocketPath;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder dialErrorLimit(@Nullable Integer dialErrorLimit) {
+            this.dialErrorLimit = dialErrorLimit;
             return this;
         }
         @CustomType.Setter
@@ -165,6 +185,7 @@ public final class Connection {
         public Connection build() {
             final var o = new Connection();
             o.agentSocketPath = agentSocketPath;
+            o.dialErrorLimit = dialErrorLimit;
             o.host = host;
             o.password = password;
             o.port = port;

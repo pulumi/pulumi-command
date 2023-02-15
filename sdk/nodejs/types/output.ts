@@ -17,6 +17,10 @@ export namespace remote {
          */
         agentSocketPath?: string;
         /**
+         * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         */
+        dialErrorLimit?: number;
+        /**
          * The address of the resource to connect to.
          */
         host: string;
@@ -47,6 +51,7 @@ export namespace remote {
     export function connectionProvideDefaults(val: Connection): Connection {
         return {
             ...val,
+            dialErrorLimit: (val.dialErrorLimit) ?? 10,
             port: (val.port) ?? 22,
             user: (val.user) ?? "root",
         };

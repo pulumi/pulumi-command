@@ -7,6 +7,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
 import java.lang.Double;
+import java.lang.Integer;
 import java.lang.String;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +35,21 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<String>> agentSocketPath() {
         return Optional.ofNullable(this.agentSocketPath);
+    }
+
+    /**
+     * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * 
+     */
+    @Import(name="dialErrorLimit")
+    private @Nullable Output<Integer> dialErrorLimit;
+
+    /**
+     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * 
+     */
+    public Optional<Output<Integer>> dialErrorLimit() {
+        return Optional.ofNullable(this.dialErrorLimit);
     }
 
     /**
@@ -130,6 +146,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
 
     private ConnectionArgs(ConnectionArgs $) {
         this.agentSocketPath = $.agentSocketPath;
+        this.dialErrorLimit = $.dialErrorLimit;
         this.host = $.host;
         this.password = $.password;
         this.port = $.port;
@@ -175,6 +192,27 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder agentSocketPath(String agentSocketPath) {
             return agentSocketPath(Output.of(agentSocketPath));
+        }
+
+        /**
+         * @param dialErrorLimit Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         * 
+         * @return builder
+         * 
+         */
+        public Builder dialErrorLimit(@Nullable Output<Integer> dialErrorLimit) {
+            $.dialErrorLimit = dialErrorLimit;
+            return this;
+        }
+
+        /**
+         * @param dialErrorLimit Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         * 
+         * @return builder
+         * 
+         */
+        public Builder dialErrorLimit(Integer dialErrorLimit) {
+            return dialErrorLimit(Output.of(dialErrorLimit));
         }
 
         /**
@@ -304,6 +342,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public ConnectionArgs build() {
+            $.dialErrorLimit = Codegen.integerProp("dialErrorLimit").output().arg($.dialErrorLimit).def(10).getNullable();
             $.host = Objects.requireNonNull($.host, "expected parameter 'host' to be non-null");
             $.port = Codegen.doubleProp("port").output().arg($.port).def(2.2e+01).getNullable();
             $.user = Codegen.stringProp("user").output().arg($.user).def("root").getNullable();
