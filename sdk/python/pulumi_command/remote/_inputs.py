@@ -18,6 +18,7 @@ class ConnectionArgs:
     def __init__(__self__, *,
                  host: pulumi.Input[str],
                  agent_socket_path: Optional[pulumi.Input[str]] = None,
+                 dial_error_limit: Optional[pulumi.Input[int]] = None,
                  password: Optional[pulumi.Input[str]] = None,
                  port: Optional[pulumi.Input[float]] = None,
                  private_key: Optional[pulumi.Input[str]] = None,
@@ -27,6 +28,7 @@ class ConnectionArgs:
         Instructions for how to connect to a remote endpoint.
         :param pulumi.Input[str] host: The address of the resource to connect to.
         :param pulumi.Input[str] agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+        :param pulumi.Input[int] dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
         :param pulumi.Input[str] password: The password we should use for the connection.
         :param pulumi.Input[float] port: The port to connect to.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
@@ -36,6 +38,10 @@ class ConnectionArgs:
         pulumi.set(__self__, "host", host)
         if agent_socket_path is not None:
             pulumi.set(__self__, "agent_socket_path", agent_socket_path)
+        if dial_error_limit is None:
+            dial_error_limit = 10
+        if dial_error_limit is not None:
+            pulumi.set(__self__, "dial_error_limit", dial_error_limit)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if port is None:
@@ -74,6 +80,18 @@ class ConnectionArgs:
     @agent_socket_path.setter
     def agent_socket_path(self, value: Optional[pulumi.Input[str]]):
         pulumi.set(self, "agent_socket_path", value)
+
+    @property
+    @pulumi.getter(name="dialErrorLimit")
+    def dial_error_limit(self) -> Optional[pulumi.Input[int]]:
+        """
+        Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+        """
+        return pulumi.get(self, "dial_error_limit")
+
+    @dial_error_limit.setter
+    def dial_error_limit(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "dial_error_limit", value)
 
     @property
     @pulumi.getter

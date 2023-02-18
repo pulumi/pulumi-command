@@ -41,6 +41,13 @@ const connection: types.input.remote.ConnectionArgs = {
     privateKey: privateKey,
 };
 
+const connectionNoDialRetry: types.input.remote.ConnectionArgs = {
+    host: server.publicIp,
+    user: "ec2-user",
+    privateKey: privateKey,
+    dialErrorLimit: -1,
+};
+
 const hostname = new remote.Command("hostname", {
     connection,
     create: "hostname",
@@ -53,6 +60,12 @@ new remote.Command("remotePrivateIP", {
     connection,
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
+}, { deleteBeforeReplace: true });
+
+new remote.Command("remoteWithNoDialRetryPrivateIP", {
+    connection: connectionNoDialRetry,
+    create: interpolate`echo ${server.privateIp} > private_ip_on_no_dial_retry.txt`,
+    delete: `rm private_ip_on_no_dial_retry.txt`,
 }, { deleteBeforeReplace: true });
 
 new local.Command("localPrivateIP", {

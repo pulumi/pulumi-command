@@ -14,6 +14,8 @@ import (
 type Connection struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
+	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+	DialErrorLimit *int `pulumi:"dialErrorLimit"`
 	// The address of the resource to connect to.
 	Host string `pulumi:"host"`
 	// The password we should use for the connection.
@@ -34,6 +36,10 @@ func (val *Connection) Defaults() *Connection {
 		return nil
 	}
 	tmp := *val
+	if tmp.DialErrorLimit == nil {
+		dialErrorLimit_ := 10
+		tmp.DialErrorLimit = &dialErrorLimit_
+	}
 	if tmp.Port == nil {
 		port_ := 22.0
 		tmp.Port = &port_
@@ -60,6 +66,8 @@ type ConnectionInput interface {
 type ConnectionArgs struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
+	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
 	// The address of the resource to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
 	// The password we should use for the connection.
@@ -80,6 +88,9 @@ func (val *ConnectionArgs) Defaults() *ConnectionArgs {
 		return nil
 	}
 	tmp := *val
+	if tmp.DialErrorLimit == nil {
+		tmp.DialErrorLimit = pulumi.IntPtr(10)
+	}
 	if tmp.Port == nil {
 		tmp.Port = pulumi.Float64Ptr(22.0)
 	}
@@ -118,6 +129,11 @@ func (o ConnectionOutput) ToConnectionOutputWithContext(ctx context.Context) Con
 // SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 func (o ConnectionOutput) AgentSocketPath() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.AgentSocketPath }).(pulumi.StringPtrOutput)
+}
+
+// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+func (o ConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v Connection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
 }
 
 // The address of the resource to connect to.
