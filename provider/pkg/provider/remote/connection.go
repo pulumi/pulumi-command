@@ -29,8 +29,11 @@ import (
 
 const (
 	sshAgentSocketEnvVar = "SSH_AUTH_SOCK"
-	DialErrorDefault     = 10
-	DialErrorUnlimited   = -1
+)
+
+var (
+	dialErrorDefault   = 10
+	dialErrorUnlimited = -1
 )
 
 type Connection struct {
@@ -56,7 +59,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
-	a.SetDefault(&c.DialErrorLimit, DialErrorDefault)
+	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
 }
 
 func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
@@ -108,6 +111,7 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
 	var err error
+	var dialErrorLimit = con.getDialErrorLimit()
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",
@@ -116,7 +120,7 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 			if err != nil {
 				// on each try we already made a dial
 				dials := try + 1
-				if *con.DialErrorLimit > DialErrorUnlimited && dials > *con.DialErrorLimit {
+				if reachedDialingErrorLimit(dials, dialErrorLimit) {
 					return true, nil, err
 				}
 				return false, nil, nil
@@ -128,4 +132,16 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 		return nil, err
 	}
 	return client, nil
+}
+
+func (con *Connection) getDialErrorLimit() int {
+	if con.DialErrorLimit == nil {
+		return dialErrorDefault
+	}
+	return *con.DialErrorLimit
+}
+
+func reachedDialingErrorLimit(dials, dialErrorLimit int) bool {
+	return dialErrorLimit > dialErrorUnlimited &&
+		dials > dialErrorLimit
 }
