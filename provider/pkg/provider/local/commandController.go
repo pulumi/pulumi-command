@@ -115,7 +115,7 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, s
 
 // The Update method will be run on every update.
 func (c *Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
-	state := CommandOutputs{CommandInputs: news}
+	state := CommandOutputs{CommandInputs: news, BaseOutputs: olds.BaseOutputs}
 	// If in preview, don't run the command.
 	if preview {
 		return state, nil
