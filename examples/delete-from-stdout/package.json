@@ -5,6 +5,7 @@
         "@types/node": "latest"
     },
     "dependencies": {
+        "@pulumi/command": "^0.7.1",
         "@pulumi/pulumi": "latest",
         "@pulumi/random": "^4.2.0"
     }
