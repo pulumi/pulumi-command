@@ -45,6 +45,11 @@ type Connection struct {
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
+	ProxyUser          *string  `pulumi:"proxyUser,optional"`
+	ProxyPassword      *string  `pulumi:"proxyPassword,optional"`
+	ProxyHost          *string  `pulumi:"proxyHost,optional"`
+	ProxyPort          *int     `pulumi:"proxyPort,optional"`
+	ProxyPrivateKey    *string  `pulumi:"proxyPrivateKey,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -59,6 +64,11 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
+	a.Describe(&c.ProxyUser, "The user that we should use for the bastion host connection.")
+	a.Describe(&c.ProxyPassword, "The password we should use for the bastion host connection.")
+	a.Describe(&c.ProxyHost, "The address of the bastion host to connect to.")
+	a.SetDefault(&c.ProxyPort, 22)
+	a.Describe(&c.ProxyPrivateKey, "The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
 }
 
@@ -107,9 +117,35 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
+func (con *Connection) ProxySShConfig() (*ssh.ClientConfig, error) {
+	config := &ssh.ClientConfig{
+		User:            *con.ProxyUser,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	if con.ProxyPrivateKey != nil {
+		signer, err := ssh.ParsePrivateKey([]byte(*con.ProxyPrivateKey))
+		if err != nil {
+			return nil, err
+		}
+		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
+	}
+	if con.ProxyPassword != nil {
+		config.Auth = append(config.Auth, ssh.Password(*con.ProxyPassword))
+		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
+			for i := range questions {
+				answers[i] = *con.ProxyPassword
+			}
+			return answers, err
+		}))
+	}
+
+	return config, nil
+}
+
 // Dial a ssh client connection from a ssh client configuration, retrying as necessary.
-func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
+func (con *Connection) Dial(ctx p.Context, proxyConfig *ssh.ClientConfig, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
+	var proxyClient *ssh.Client
 	var err error
 	var dialErrorLimit = con.getDialErrorLimit()
 	_, _, err = retry.Until(ctx, retry.Acceptor{
@@ -117,6 +153,37 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 			client, err = ssh.Dial("tcp",
 				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
 				config)
+			if *con.ProxyHost != "" {
+				proxyClient, err = ssh.Dial("tcp", net.JoinHostPort(*con.ProxyHost, fmt.Sprintf("%d", con.ProxyPort)), proxyConfig)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+
+				endpoint := net.JoinHostPort(*con.Host, fmt.Sprintf("%d", con.Port))
+				netConn, err := proxyClient.Dial("tcp", endpoint)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+
+				targetConn, channel, req, err := ssh.NewClientConn(netConn, endpoint, config)
+				if err != nil {
+					if try > 10 {
+						return true, nil, err
+					}
+					return false, nil, nil
+				}
+
+				client = ssh.NewClient(targetConn, channel, req)
+				return true, nil, nil
+			}
+
+			client, err = ssh.Dial("tcp", net.JoinHostPort(*con.Host, fmt.Sprintf("%d", con.Port)), config)
 			if err != nil {
 				// on each try we already made a dial
 				dials := try + 1
