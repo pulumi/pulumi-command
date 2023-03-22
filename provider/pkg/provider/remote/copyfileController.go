@@ -62,7 +62,13 @@ func (*CopyFile) Create(ctx p.Context, name string, input CopyFileInputs, previe
 	if err != nil {
 		return "", CopyFileOutputs{input}, err
 	}
-	client, err := input.Connection.Dial(ctx, config)
+
+	proxyConfig, err := input.Connection.ProxySShConfig()
+	if err != nil {
+		return "", CopyFileOutputs{input}, err
+	}
+
+	client, err := input.Connection.Dial(ctx, proxyConfig, config)
 	if err != nil {
 		return "", CopyFileOutputs{input}, err
 	}
