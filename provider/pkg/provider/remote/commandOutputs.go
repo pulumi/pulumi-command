@@ -32,7 +32,12 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 		return err
 	}
 
-	client, err := c.Connection.Dial(ctx, config)
+	proxyConfig, err := c.Connection.ProxySShConfig()
+	if err != nil {
+		return "", "", err
+	}
+
+	client, err := c.Connection.Dial(ctx, proxyConfig, config)
 	if err != nil {
 		return err
 	}
