@@ -21,6 +21,10 @@ export namespace remote {
          */
         dialErrorLimit?: number;
         /**
+         * Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+         */
+        dialTimeout?: number;
+        /**
          * The address of the resource to connect to.
          */
         host: string;

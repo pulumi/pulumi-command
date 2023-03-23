@@ -28,6 +28,12 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<int>? DialErrorLimit { get; set; }
 
         /// <summary>
+        /// Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+        /// </summary>
+        [Input("dialTimeout")]
+        public Input<double>? DialTimeout { get; set; }
+
+        /// <summary>
         /// The address of the resource to connect to.
         /// </summary>
         [Input("host", required: true)]

@@ -46,6 +46,7 @@ type Connection struct {
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
+	DialTimeout        *float64 `pulumi:"dialTimeout,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -61,6 +62,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
+	a.Describe(&c.DialTimeout, "Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.")
 }
 
 func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
@@ -106,6 +108,9 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 		}
 		config.Auth = append(config.Auth, ssh.PublicKeysCallback(agent.NewClient(conn).Signers))
 	}
+	if con.DialTimeout != nil {
+		config.Timeout = time.Duration(*con.DialTimeout * float64(time.Second))
+	}
 
 	return config, nil
 }
@@ -114,7 +119,7 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
 	var err error
-	var dialErrorLimit = con.getDialErrorLimit()
+	dialErrorLimit := con.getDialErrorLimit()
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",

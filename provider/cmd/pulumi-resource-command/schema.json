@@ -476,6 +476,10 @@
                     "description": "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10",
                     "type": "integer"
                 },
+                "dialTimeout": {
+                    "description": "Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.",
+                    "type": "number"
+                },
                 "host": {
                     "description": "The address of the resource to connect to.",
                     "type": "string"

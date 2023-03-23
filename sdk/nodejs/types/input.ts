@@ -21,6 +21,10 @@ export namespace remote {
          */
         dialErrorLimit?: pulumi.Input<number>;
         /**
+         * Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+         */
+        dialTimeout?: pulumi.Input<number>;
+        /**
          * The address of the resource to connect to.
          */
         host: pulumi.Input<string>;

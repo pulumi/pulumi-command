@@ -25,6 +25,10 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly int? DialErrorLimit;
         /// <summary>
+        /// Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+        /// </summary>
+        public readonly double? DialTimeout;
+        /// <summary>
         /// The address of the resource to connect to.
         /// </summary>
         public readonly string Host;
@@ -55,6 +59,8 @@ namespace Pulumi.Command.Remote.Outputs
 
             int? dialErrorLimit,
 
+            double? dialTimeout,
+
             string host,
 
             string? password,
@@ -69,6 +75,7 @@ namespace Pulumi.Command.Remote.Outputs
         {
             AgentSocketPath = agentSocketPath;
             DialErrorLimit = dialErrorLimit;
+            DialTimeout = dialTimeout;
             Host = host;
             Password = password;
             Port = port;

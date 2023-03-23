@@ -19,6 +19,7 @@ class ConnectionArgs:
                  host: pulumi.Input[str],
                  agent_socket_path: Optional[pulumi.Input[str]] = None,
                  dial_error_limit: Optional[pulumi.Input[int]] = None,
+                 dial_timeout: Optional[pulumi.Input[float]] = None,
                  password: Optional[pulumi.Input[str]] = None,
                  port: Optional[pulumi.Input[float]] = None,
                  private_key: Optional[pulumi.Input[str]] = None,
@@ -29,6 +30,7 @@ class ConnectionArgs:
         :param pulumi.Input[str] host: The address of the resource to connect to.
         :param pulumi.Input[str] agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param pulumi.Input[int] dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+        :param pulumi.Input[float] dial_timeout: Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
         :param pulumi.Input[str] password: The password we should use for the connection.
         :param pulumi.Input[float] port: The port to connect to.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
@@ -42,6 +44,8 @@ class ConnectionArgs:
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if dial_timeout is not None:
+            pulumi.set(__self__, "dial_timeout", dial_timeout)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if port is None:
@@ -92,6 +96,18 @@ class ConnectionArgs:
     @dial_error_limit.setter
     def dial_error_limit(self, value: Optional[pulumi.Input[int]]):
         pulumi.set(self, "dial_error_limit", value)
+
+    @property
+    @pulumi.getter(name="dialTimeout")
+    def dial_timeout(self) -> Optional[pulumi.Input[float]]:
+        """
+        Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+        """
+        return pulumi.get(self, "dial_timeout")
+
+    @dial_timeout.setter
+    def dial_timeout(self, value: Optional[pulumi.Input[float]]):
+        pulumi.set(self, "dial_timeout", value)
 
     @property
     @pulumi.getter

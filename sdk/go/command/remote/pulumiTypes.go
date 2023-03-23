@@ -19,6 +19,8 @@ type Connection struct {
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
+	// Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+	DialTimeout *float64 `pulumi:"dialTimeout"`
 	// The address of the resource to connect to.
 	Host string `pulumi:"host"`
 	// The password we should use for the connection.
@@ -71,6 +73,8 @@ type ConnectionArgs struct {
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
+	// Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+	DialTimeout pulumi.Float64PtrInput `pulumi:"dialTimeout"`
 	// The address of the resource to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
 	// The password we should use for the connection.
@@ -137,6 +141,11 @@ func (o ConnectionOutput) AgentSocketPath() pulumi.StringPtrOutput {
 // Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
 func (o ConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v Connection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
+}
+
+// Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+func (o ConnectionOutput) DialTimeout() pulumi.Float64PtrOutput {
+	return o.ApplyT(func(v Connection) *float64 { return v.DialTimeout }).(pulumi.Float64PtrOutput)
 }
 
 // The address of the resource to connect to.

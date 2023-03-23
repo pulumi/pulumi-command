@@ -24,6 +24,11 @@ public final class Connection {
      */
     private @Nullable Integer dialErrorLimit;
     /**
+     * @return Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+     * 
+     */
+    private @Nullable Double dialTimeout;
+    /**
      * @return The address of the resource to connect to.
      * 
      */
@@ -68,6 +73,13 @@ public final class Connection {
      */
     public Optional<Integer> dialErrorLimit() {
         return Optional.ofNullable(this.dialErrorLimit);
+    }
+    /**
+     * @return Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+     * 
+     */
+    public Optional<Double> dialTimeout() {
+        return Optional.ofNullable(this.dialTimeout);
     }
     /**
      * @return The address of the resource to connect to.
@@ -123,6 +135,7 @@ public final class Connection {
     public static final class Builder {
         private @Nullable String agentSocketPath;
         private @Nullable Integer dialErrorLimit;
+        private @Nullable Double dialTimeout;
         private String host;
         private @Nullable String password;
         private @Nullable Double port;
@@ -134,6 +147,7 @@ public final class Connection {
     	      Objects.requireNonNull(defaults);
     	      this.agentSocketPath = defaults.agentSocketPath;
     	      this.dialErrorLimit = defaults.dialErrorLimit;
+    	      this.dialTimeout = defaults.dialTimeout;
     	      this.host = defaults.host;
     	      this.password = defaults.password;
     	      this.port = defaults.port;
@@ -150,6 +164,11 @@ public final class Connection {
         @CustomType.Setter
         public Builder dialErrorLimit(@Nullable Integer dialErrorLimit) {
             this.dialErrorLimit = dialErrorLimit;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder dialTimeout(@Nullable Double dialTimeout) {
+            this.dialTimeout = dialTimeout;
             return this;
         }
         @CustomType.Setter
@@ -186,6 +205,7 @@ public final class Connection {
             final var o = new Connection();
             o.agentSocketPath = agentSocketPath;
             o.dialErrorLimit = dialErrorLimit;
+            o.dialTimeout = dialTimeout;
             o.host = host;
             o.password = password;
             o.port = port;

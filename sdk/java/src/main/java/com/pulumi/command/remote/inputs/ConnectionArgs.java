@@ -53,6 +53,21 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+     * 
+     */
+    @Import(name="dialTimeout")
+    private @Nullable Output<Double> dialTimeout;
+
+    /**
+     * @return Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+     * 
+     */
+    public Optional<Output<Double>> dialTimeout() {
+        return Optional.ofNullable(this.dialTimeout);
+    }
+
+    /**
      * The address of the resource to connect to.
      * 
      */
@@ -147,6 +162,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     private ConnectionArgs(ConnectionArgs $) {
         this.agentSocketPath = $.agentSocketPath;
         this.dialErrorLimit = $.dialErrorLimit;
+        this.dialTimeout = $.dialTimeout;
         this.host = $.host;
         this.password = $.password;
         this.port = $.port;
@@ -213,6 +229,27 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder dialErrorLimit(Integer dialErrorLimit) {
             return dialErrorLimit(Output.of(dialErrorLimit));
+        }
+
+        /**
+         * @param dialTimeout Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder dialTimeout(@Nullable Output<Double> dialTimeout) {
+            $.dialTimeout = dialTimeout;
+            return this;
+        }
+
+        /**
+         * @param dialTimeout Userland remote connection timeout (in seconds, at each attempt). Default to 0 (no timeout). Does not override OS timeout.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder dialTimeout(Double dialTimeout) {
+            return dialTimeout(Output.of(dialTimeout));
         }
 
         /**
