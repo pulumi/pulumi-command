@@ -32,6 +32,15 @@ type Connection struct {
 	PrivateKey *string `pulumi:"privateKey"`
 	// The password to use in case the private key is encrypted.
 	PrivateKeyPassword *string `pulumi:"privateKeyPassword"`
+	// The address of the bastion host to connect to.
+	ProxyHost *string `pulumi:"proxyHost"`
+	// The password we should use for the bastion host connection.
+	ProxyPassword *string `pulumi:"proxyPassword"`
+	ProxyPort     *int    `pulumi:"proxyPort"`
+	// The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+	ProxyPrivateKey *string `pulumi:"proxyPrivateKey"`
+	// The user that we should use for the bastion host connection.
+	ProxyUser *string `pulumi:"proxyUser"`
 	// The user that we should use for the connection.
 	User *string `pulumi:"user"`
 }
@@ -53,6 +62,10 @@ func (val *Connection) Defaults() *Connection {
 	if tmp.Port == nil {
 		port_ := 22.0
 		tmp.Port = &port_
+	}
+	if tmp.ProxyPort == nil {
+		proxyPort_ := 22
+		tmp.ProxyPort = &proxyPort_
 	}
 	if tmp.User == nil {
 		user_ := "root"
@@ -90,6 +103,15 @@ type ConnectionArgs struct {
 	PrivateKey pulumi.StringPtrInput `pulumi:"privateKey"`
 	// The password to use in case the private key is encrypted.
 	PrivateKeyPassword pulumi.StringPtrInput `pulumi:"privateKeyPassword"`
+	// The address of the bastion host to connect to.
+	ProxyHost pulumi.StringPtrInput `pulumi:"proxyHost"`
+	// The password we should use for the bastion host connection.
+	ProxyPassword pulumi.StringPtrInput `pulumi:"proxyPassword"`
+	ProxyPort     pulumi.IntPtrInput    `pulumi:"proxyPort"`
+	// The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+	ProxyPrivateKey pulumi.StringPtrInput `pulumi:"proxyPrivateKey"`
+	// The user that we should use for the bastion host connection.
+	ProxyUser pulumi.StringPtrInput `pulumi:"proxyUser"`
 	// The user that we should use for the connection.
 	User pulumi.StringPtrInput `pulumi:"user"`
 }
@@ -108,6 +130,9 @@ func (val *ConnectionArgs) Defaults() *ConnectionArgs {
 	}
 	if tmp.Port == nil {
 		tmp.Port = pulumi.Float64Ptr(22.0)
+	}
+	if tmp.ProxyPort == nil {
+		tmp.ProxyPort = pulumi.IntPtr(22)
 	}
 	if tmp.User == nil {
 		tmp.User = pulumi.StringPtr("root")
@@ -191,6 +216,30 @@ func (o ConnectionOutput) PrivateKey() pulumi.StringPtrOutput {
 // The password to use in case the private key is encrypted.
 func (o ConnectionOutput) PrivateKeyPassword() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.PrivateKeyPassword }).(pulumi.StringPtrOutput)
+}
+
+// The address of the bastion host to connect to.
+func (o ConnectionOutput) ProxyHost() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v Connection) *string { return v.ProxyHost }).(pulumi.StringPtrOutput)
+}
+
+// The password we should use for the bastion host connection.
+func (o ConnectionOutput) ProxyPassword() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v Connection) *string { return v.ProxyPassword }).(pulumi.StringPtrOutput)
+}
+
+func (o ConnectionOutput) ProxyPort() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v Connection) *int { return v.ProxyPort }).(pulumi.IntPtrOutput)
+}
+
+// The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+func (o ConnectionOutput) ProxyPrivateKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v Connection) *string { return v.ProxyPrivateKey }).(pulumi.StringPtrOutput)
+}
+
+// The user that we should use for the bastion host connection.
+func (o ConnectionOutput) ProxyUser() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v Connection) *string { return v.ProxyUser }).(pulumi.StringPtrOutput)
 }
 
 // The user that we should use for the connection.
