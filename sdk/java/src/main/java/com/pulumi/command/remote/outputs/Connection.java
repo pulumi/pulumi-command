@@ -49,6 +49,27 @@ public final class Connection {
      */
     private @Nullable String privateKeyPassword;
     /**
+     * @return The address of the bastion host to connect to.
+     * 
+     */
+    private @Nullable String proxyHost;
+    /**
+     * @return The password we should use for the bastion host connection.
+     * 
+     */
+    private @Nullable String proxyPassword;
+    private @Nullable Integer proxyPort;
+    /**
+     * @return The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+     * 
+     */
+    private @Nullable String proxyPrivateKey;
+    /**
+     * @return The user that we should use for the bastion host connection.
+     * 
+     */
+    private @Nullable String proxyUser;
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -105,6 +126,37 @@ public final class Connection {
         return Optional.ofNullable(this.privateKeyPassword);
     }
     /**
+     * @return The address of the bastion host to connect to.
+     * 
+     */
+    public Optional<String> proxyHost() {
+        return Optional.ofNullable(this.proxyHost);
+    }
+    /**
+     * @return The password we should use for the bastion host connection.
+     * 
+     */
+    public Optional<String> proxyPassword() {
+        return Optional.ofNullable(this.proxyPassword);
+    }
+    public Optional<Integer> proxyPort() {
+        return Optional.ofNullable(this.proxyPort);
+    }
+    /**
+     * @return The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+     * 
+     */
+    public Optional<String> proxyPrivateKey() {
+        return Optional.ofNullable(this.proxyPrivateKey);
+    }
+    /**
+     * @return The user that we should use for the bastion host connection.
+     * 
+     */
+    public Optional<String> proxyUser() {
+        return Optional.ofNullable(this.proxyUser);
+    }
+    /**
      * @return The user that we should use for the connection.
      * 
      */
@@ -128,6 +180,11 @@ public final class Connection {
         private @Nullable Double port;
         private @Nullable String privateKey;
         private @Nullable String privateKeyPassword;
+        private @Nullable String proxyHost;
+        private @Nullable String proxyPassword;
+        private @Nullable Integer proxyPort;
+        private @Nullable String proxyPrivateKey;
+        private @Nullable String proxyUser;
         private @Nullable String user;
         public Builder() {}
         public Builder(Connection defaults) {
@@ -139,6 +196,11 @@ public final class Connection {
     	      this.port = defaults.port;
     	      this.privateKey = defaults.privateKey;
     	      this.privateKeyPassword = defaults.privateKeyPassword;
+    	      this.proxyHost = defaults.proxyHost;
+    	      this.proxyPassword = defaults.proxyPassword;
+    	      this.proxyPort = defaults.proxyPort;
+    	      this.proxyPrivateKey = defaults.proxyPrivateKey;
+    	      this.proxyUser = defaults.proxyUser;
     	      this.user = defaults.user;
         }
 
@@ -178,6 +240,31 @@ public final class Connection {
             return this;
         }
         @CustomType.Setter
+        public Builder proxyHost(@Nullable String proxyHost) {
+            this.proxyHost = proxyHost;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder proxyPassword(@Nullable String proxyPassword) {
+            this.proxyPassword = proxyPassword;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder proxyPort(@Nullable Integer proxyPort) {
+            this.proxyPort = proxyPort;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder proxyPrivateKey(@Nullable String proxyPrivateKey) {
+            this.proxyPrivateKey = proxyPrivateKey;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder proxyUser(@Nullable String proxyUser) {
+            this.proxyUser = proxyUser;
+            return this;
+        }
+        @CustomType.Setter
         public Builder user(@Nullable String user) {
             this.user = user;
             return this;
@@ -191,6 +278,11 @@ public final class Connection {
             o.port = port;
             o.privateKey = privateKey;
             o.privateKeyPassword = privateKeyPassword;
+            o.proxyHost = proxyHost;
+            o.proxyPassword = proxyPassword;
+            o.proxyPort = proxyPort;
+            o.proxyPrivateKey = proxyPrivateKey;
+            o.proxyUser = proxyUser;
             o.user = user;
             return o;
         }

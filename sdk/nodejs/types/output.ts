@@ -41,6 +41,23 @@ export namespace remote {
          */
         privateKeyPassword?: string;
         /**
+         * The address of the bastion host to connect to.
+         */
+        proxyHost?: string;
+        /**
+         * The password we should use for the bastion host connection.
+         */
+        proxyPassword?: string;
+        proxyPort?: number;
+        /**
+         * The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+         */
+        proxyPrivateKey?: string;
+        /**
+         * The user that we should use for the bastion host connection.
+         */
+        proxyUser?: string;
+        /**
          * The user that we should use for the connection.
          */
         user?: string;
@@ -53,6 +70,7 @@ export namespace remote {
             ...val,
             dialErrorLimit: (val.dialErrorLimit) ?? 10,
             port: (val.port) ?? 22,
+            proxyPort: (val.proxyPort) ?? 22,
             user: (val.user) ?? "root",
         };
     }

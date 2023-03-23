@@ -41,6 +41,23 @@ export namespace remote {
          */
         privateKeyPassword?: pulumi.Input<string>;
         /**
+         * The address of the bastion host to connect to.
+         */
+        proxyHost?: pulumi.Input<string>;
+        /**
+         * The password we should use for the bastion host connection.
+         */
+        proxyPassword?: pulumi.Input<string>;
+        proxyPort?: pulumi.Input<number>;
+        /**
+         * The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+         */
+        proxyPrivateKey?: pulumi.Input<string>;
+        /**
+         * The user that we should use for the bastion host connection.
+         */
+        proxyUser?: pulumi.Input<string>;
+        /**
          * The user that we should use for the connection.
          */
         user?: pulumi.Input<string>;
@@ -53,6 +70,7 @@ export namespace remote {
             ...val,
             dialErrorLimit: (val.dialErrorLimit) ?? 10,
             port: (val.port) ?? 22,
+            proxyPort: (val.proxyPort) ?? 22,
             user: (val.user) ?? "root",
         };
     }
