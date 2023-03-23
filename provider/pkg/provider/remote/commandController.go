@@ -82,7 +82,7 @@ func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview 
 
 // The Update method will be run on every update.
 func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
-	state := CommandOutputs{CommandInputs: news}
+	state := CommandOutputs{CommandInputs: news, BaseOutputs: olds.BaseOutputs}
 	if preview {
 		return state, nil
 	}
