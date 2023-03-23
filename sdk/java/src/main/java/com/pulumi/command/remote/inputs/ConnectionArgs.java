@@ -143,6 +143,73 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The address of the bastion host to connect to.
+     * 
+     */
+    @Import(name="proxyHost")
+    private @Nullable Output<String> proxyHost;
+
+    /**
+     * @return The address of the bastion host to connect to.
+     * 
+     */
+    public Optional<Output<String>> proxyHost() {
+        return Optional.ofNullable(this.proxyHost);
+    }
+
+    /**
+     * The password we should use for the bastion host connection.
+     * 
+     */
+    @Import(name="proxyPassword")
+    private @Nullable Output<String> proxyPassword;
+
+    /**
+     * @return The password we should use for the bastion host connection.
+     * 
+     */
+    public Optional<Output<String>> proxyPassword() {
+        return Optional.ofNullable(this.proxyPassword);
+    }
+
+    @Import(name="proxyPort")
+    private @Nullable Output<Integer> proxyPort;
+
+    public Optional<Output<Integer>> proxyPort() {
+        return Optional.ofNullable(this.proxyPort);
+    }
+
+    /**
+     * The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+     * 
+     */
+    @Import(name="proxyPrivateKey")
+    private @Nullable Output<String> proxyPrivateKey;
+
+    /**
+     * @return The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+     * 
+     */
+    public Optional<Output<String>> proxyPrivateKey() {
+        return Optional.ofNullable(this.proxyPrivateKey);
+    }
+
+    /**
+     * The user that we should use for the bastion host connection.
+     * 
+     */
+    @Import(name="proxyUser")
+    private @Nullable Output<String> proxyUser;
+
+    /**
+     * @return The user that we should use for the bastion host connection.
+     * 
+     */
+    public Optional<Output<String>> proxyUser() {
+        return Optional.ofNullable(this.proxyUser);
+    }
+
+    /**
      * The user that we should use for the connection.
      * 
      */
@@ -168,6 +235,11 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         this.port = $.port;
         this.privateKey = $.privateKey;
         this.privateKeyPassword = $.privateKeyPassword;
+        this.proxyHost = $.proxyHost;
+        this.proxyPassword = $.proxyPassword;
+        this.proxyPort = $.proxyPort;
+        this.proxyPrivateKey = $.proxyPrivateKey;
+        this.proxyUser = $.proxyUser;
         this.user = $.user;
     }
 
@@ -358,6 +430,99 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
+         * @param proxyHost The address of the bastion host to connect to.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyHost(@Nullable Output<String> proxyHost) {
+            $.proxyHost = proxyHost;
+            return this;
+        }
+
+        /**
+         * @param proxyHost The address of the bastion host to connect to.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyHost(String proxyHost) {
+            return proxyHost(Output.of(proxyHost));
+        }
+
+        /**
+         * @param proxyPassword The password we should use for the bastion host connection.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyPassword(@Nullable Output<String> proxyPassword) {
+            $.proxyPassword = proxyPassword;
+            return this;
+        }
+
+        /**
+         * @param proxyPassword The password we should use for the bastion host connection.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyPassword(String proxyPassword) {
+            return proxyPassword(Output.of(proxyPassword));
+        }
+
+        public Builder proxyPort(@Nullable Output<Integer> proxyPort) {
+            $.proxyPort = proxyPort;
+            return this;
+        }
+
+        public Builder proxyPort(Integer proxyPort) {
+            return proxyPort(Output.of(proxyPort));
+        }
+
+        /**
+         * @param proxyPrivateKey The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyPrivateKey(@Nullable Output<String> proxyPrivateKey) {
+            $.proxyPrivateKey = proxyPrivateKey;
+            return this;
+        }
+
+        /**
+         * @param proxyPrivateKey The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyPrivateKey(String proxyPrivateKey) {
+            return proxyPrivateKey(Output.of(proxyPrivateKey));
+        }
+
+        /**
+         * @param proxyUser The user that we should use for the bastion host connection.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyUser(@Nullable Output<String> proxyUser) {
+            $.proxyUser = proxyUser;
+            return this;
+        }
+
+        /**
+         * @param proxyUser The user that we should use for the bastion host connection.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder proxyUser(String proxyUser) {
+            return proxyUser(Output.of(proxyUser));
+        }
+
+        /**
          * @param user The user that we should use for the connection.
          * 
          * @return builder
@@ -383,6 +548,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
             $.host = Objects.requireNonNull($.host, "expected parameter 'host' to be non-null");
             $.perDialTimeout = Codegen.integerProp("perDialTimeout").output().arg($.perDialTimeout).def(15).getNullable();
             $.port = Codegen.doubleProp("port").output().arg($.port).def(2.2e+01).getNullable();
+            $.proxyPort = Codegen.integerProp("proxyPort").output().arg($.proxyPort).def(22).getNullable();
             $.user = Codegen.stringProp("user").output().arg($.user).def("root").getNullable();
             return $;
         }

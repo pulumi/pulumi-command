@@ -64,6 +64,33 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<string>? PrivateKeyPassword { get; set; }
 
         /// <summary>
+        /// The address of the bastion host to connect to.
+        /// </summary>
+        [Input("proxyHost")]
+        public Input<string>? ProxyHost { get; set; }
+
+        /// <summary>
+        /// The password we should use for the bastion host connection.
+        /// </summary>
+        [Input("proxyPassword")]
+        public Input<string>? ProxyPassword { get; set; }
+
+        [Input("proxyPort")]
+        public Input<int>? ProxyPort { get; set; }
+
+        /// <summary>
+        /// The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+        /// </summary>
+        [Input("proxyPrivateKey")]
+        public Input<string>? ProxyPrivateKey { get; set; }
+
+        /// <summary>
+        /// The user that we should use for the bastion host connection.
+        /// </summary>
+        [Input("proxyUser")]
+        public Input<string>? ProxyUser { get; set; }
+
+        /// <summary>
         /// The user that we should use for the connection.
         /// </summary>
         [Input("user")]
@@ -74,6 +101,7 @@ namespace Pulumi.Command.Remote.Inputs
             DialErrorLimit = 10;
             PerDialTimeout = 15;
             Port = 22;
+            ProxyPort = 22;
             User = "root";
         }
         public static new ConnectionArgs Empty => new ConnectionArgs();
