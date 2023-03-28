@@ -142,14 +142,14 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 	_, _, err = retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
 			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
+				net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port))),
 				config)
 			if con.Proxy != nil && *con.Proxy.Host != "" {
 				proxyConfig, err := con.proxySShConfig()
 				if err != nil {
 					return false, nil, err
 				}
-				proxyClient, err := ssh.Dial("tcp", net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", con.Proxy.Port)), proxyConfig)
+				proxyClient, err := ssh.Dial("tcp", net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port))), proxyConfig)
 				if err != nil {
 					if try > 10 {
 						return true, nil, err
@@ -157,7 +157,7 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 					return false, nil, nil
 				}
 
-				endpoint := net.JoinHostPort(*con.Host, fmt.Sprintf("%d", con.Port))
+				endpoint := net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port)))
 				netConn, err := proxyClient.Dial("tcp", endpoint)
 				if err != nil {
 					if try > 10 {
@@ -178,7 +178,7 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				return true, nil, nil
 			}
 
-			client, err = ssh.Dial("tcp", net.JoinHostPort(*con.Host, fmt.Sprintf("%d", con.Port)), config)
+			client, err = ssh.Dial("tcp", net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port))), config)
 			if err != nil {
 				// on each try we already made a dial
 				dials := try + 1
