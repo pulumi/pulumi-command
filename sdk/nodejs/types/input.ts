@@ -45,22 +45,9 @@ export namespace remote {
          */
         privateKeyPassword?: pulumi.Input<string>;
         /**
-         * The address of the bastion host to connect to.
+         * The connection settings for the bastion/proxy host.
          */
-        proxyHost?: pulumi.Input<string>;
-        /**
-         * The password we should use for the bastion host connection.
-         */
-        proxyPassword?: pulumi.Input<string>;
-        proxyPort?: pulumi.Input<number>;
-        /**
-         * The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
-         */
-        proxyPrivateKey?: pulumi.Input<string>;
-        /**
-         * The user that we should use for the bastion host connection.
-         */
-        proxyUser?: pulumi.Input<string>;
+        proxy?: pulumi.Input<inputs.remote.ProxyConnectionArgs>;
         /**
          * The user that we should use for the connection.
          */
@@ -75,7 +62,56 @@ export namespace remote {
             dialErrorLimit: (val.dialErrorLimit) ?? 10,
             perDialTimeout: (val.perDialTimeout) ?? 15,
             port: (val.port) ?? 22,
-            proxyPort: (val.proxyPort) ?? 22,
+            proxy: (val.proxy ? pulumi.output(val.proxy).apply(inputs.remote.proxyConnectionArgsProvideDefaults) : undefined),
+            user: (val.user) ?? "root",
+        };
+    }
+
+    /**
+     * Instructions for how to connect to a remote endpoint.
+     */
+    export interface ProxyConnectionArgs {
+        /**
+         * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+         */
+        agentSocketPath?: pulumi.Input<string>;
+        /**
+         * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         */
+        dialErrorLimit?: pulumi.Input<number>;
+        /**
+         * The address of the resource to connect to.
+         */
+        host: pulumi.Input<string>;
+        /**
+         * The password we should use for the connection.
+         */
+        password?: pulumi.Input<string>;
+        /**
+         * The port to connect to.
+         */
+        port?: pulumi.Input<number>;
+        /**
+         * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+         */
+        privateKey?: pulumi.Input<string>;
+        /**
+         * The password to use in case the private key is encrypted.
+         */
+        privateKeyPassword?: pulumi.Input<string>;
+        /**
+         * The user that we should use for the connection.
+         */
+        user?: pulumi.Input<string>;
+    }
+    /**
+     * proxyConnectionArgsProvideDefaults sets the appropriate defaults for ProxyConnectionArgs
+     */
+    export function proxyConnectionArgsProvideDefaults(val: ProxyConnectionArgs): ProxyConnectionArgs {
+        return {
+            ...val,
+            dialErrorLimit: (val.dialErrorLimit) ?? 10,
+            port: (val.port) ?? 22,
             user: (val.user) ?? "root",
         };
     }

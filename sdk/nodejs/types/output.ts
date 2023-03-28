@@ -45,22 +45,9 @@ export namespace remote {
          */
         privateKeyPassword?: string;
         /**
-         * The address of the bastion host to connect to.
+         * The connection settings for the bastion/proxy host.
          */
-        proxyHost?: string;
-        /**
-         * The password we should use for the bastion host connection.
-         */
-        proxyPassword?: string;
-        proxyPort?: number;
-        /**
-         * The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
-         */
-        proxyPrivateKey?: string;
-        /**
-         * The user that we should use for the bastion host connection.
-         */
-        proxyUser?: string;
+        proxy?: outputs.remote.ProxyConnection;
         /**
          * The user that we should use for the connection.
          */
@@ -75,7 +62,56 @@ export namespace remote {
             dialErrorLimit: (val.dialErrorLimit) ?? 10,
             perDialTimeout: (val.perDialTimeout) ?? 15,
             port: (val.port) ?? 22,
-            proxyPort: (val.proxyPort) ?? 22,
+            proxy: (val.proxy ? outputs.remote.proxyConnectionProvideDefaults(val.proxy) : undefined),
+            user: (val.user) ?? "root",
+        };
+    }
+
+    /**
+     * Instructions for how to connect to a remote endpoint.
+     */
+    export interface ProxyConnection {
+        /**
+         * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+         */
+        agentSocketPath?: string;
+        /**
+         * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         */
+        dialErrorLimit?: number;
+        /**
+         * The address of the resource to connect to.
+         */
+        host: string;
+        /**
+         * The password we should use for the connection.
+         */
+        password?: string;
+        /**
+         * The port to connect to.
+         */
+        port?: number;
+        /**
+         * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+         */
+        privateKey?: string;
+        /**
+         * The password to use in case the private key is encrypted.
+         */
+        privateKeyPassword?: string;
+        /**
+         * The user that we should use for the connection.
+         */
+        user?: string;
+    }
+    /**
+     * proxyConnectionProvideDefaults sets the appropriate defaults for ProxyConnection
+     */
+    export function proxyConnectionProvideDefaults(val: ProxyConnection): ProxyConnection {
+        return {
+            ...val,
+            dialErrorLimit: (val.dialErrorLimit) ?? 10,
+            port: (val.port) ?? 22,
             user: (val.user) ?? "root",
         };
     }

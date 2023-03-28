@@ -38,20 +38,16 @@ var (
 )
 
 type Connection struct {
-	User               *string  `pulumi:"user,optional"`
-	Password           *string  `pulumi:"password,optional"`
-	Host               *string  `pulumi:"host"`
-	Port               *float64 `pulumi:"port,optional"`
-	PrivateKey         *string  `pulumi:"privateKey,optional"`
-	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
-	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
-	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
-	PerDialTimeout     int      `pulumi:"perDialTimeout,optional"`
-	ProxyUser          *string  `pulumi:"proxyUser,optional"`
-	ProxyPassword      *string  `pulumi:"proxyPassword,optional"`
-	ProxyHost          *string  `pulumi:"proxyHost,optional"`
-	ProxyPort          *int     `pulumi:"proxyPort,optional"`
-	ProxyPrivateKey    *string  `pulumi:"proxyPrivateKey,optional"`
+	User               *string          `pulumi:"user,optional"`
+	Password           *string          `pulumi:"password,optional"`
+	Host               *string          `pulumi:"host"`
+	Port               *float64         `pulumi:"port,optional"`
+	PrivateKey         *string          `pulumi:"privateKey,optional"`
+	PrivateKeyPassword *string          `pulumi:"privateKeyPassword,optional"`
+	AgentSocketPath    *string          `pulumi:"agentSocketPath,optional"`
+	DialErrorLimit     *int             `pulumi:"dialErrorLimit,optional"`
+	PerDialTimeout     int              `pulumi:"perDialTimeout,optional"`
+	Proxy              *ProxyConnection `pulumi:"proxy,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -67,11 +63,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.")
 	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
-	a.Describe(&c.ProxyUser, "The user that we should use for the bastion host connection.")
-	a.Describe(&c.ProxyPassword, "The password we should use for the bastion host connection.")
-	a.Describe(&c.ProxyHost, "The address of the bastion host to connect to.")
-	a.SetDefault(&c.ProxyPort, 22)
-	a.Describe(&c.ProxyPrivateKey, "The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.")
+	a.Describe(&c.Proxy, "The connection settings for the bastion/proxy host.")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
 	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
 	a.SetDefault(&c.PerDialTimeout, 15)
@@ -125,23 +117,23 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
-func (con *Connection) ProxySShConfig() (*ssh.ClientConfig, error) {
+func (con *Connection) proxySShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
-		User:            *con.ProxyUser,
+		User:            *con.Proxy.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
-	if con.ProxyPrivateKey != nil {
-		signer, err := ssh.ParsePrivateKey([]byte(*con.ProxyPrivateKey))
+	if con.Proxy.PrivateKey != nil {
+		signer, err := ssh.ParsePrivateKey([]byte(*con.Proxy.PrivateKey))
 		if err != nil {
 			return nil, err
 		}
 		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
 	}
-	if con.ProxyPassword != nil {
-		config.Auth = append(config.Auth, ssh.Password(*con.ProxyPassword))
+	if con.Proxy.Password != nil {
+		config.Auth = append(config.Auth, ssh.Password(*con.Proxy.Password))
 		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
 			for i := range questions {
-				answers[i] = *con.ProxyPassword
+				answers[i] = *con.Proxy.Password
 			}
 			return answers, err
 		}))
@@ -151,9 +143,8 @@ func (con *Connection) ProxySShConfig() (*ssh.ClientConfig, error) {
 }
 
 // Dial a ssh client connection from a ssh client configuration, retrying as necessary.
-func (con *Connection) Dial(ctx p.Context, proxyConfig *ssh.ClientConfig, config *ssh.ClientConfig) (*ssh.Client, error) {
+func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
-	var proxyClient *ssh.Client
 	var err error
 	var dialErrorLimit = con.getDialErrorLimit()
 	_, _, err = retry.Until(ctx, retry.Acceptor{
@@ -161,8 +152,12 @@ func (con *Connection) Dial(ctx p.Context, proxyConfig *ssh.ClientConfig, config
 			client, err = ssh.Dial("tcp",
 				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
 				config)
-			if *con.ProxyHost != "" {
-				proxyClient, err = ssh.Dial("tcp", net.JoinHostPort(*con.ProxyHost, fmt.Sprintf("%d", con.ProxyPort)), proxyConfig)
+			if con.Proxy != nil && *con.Proxy.Host != "" {
+				proxyConfig, err := con.proxySShConfig()
+				if err != nil {
+					return false, nil, err
+				}
+				proxyClient, err := ssh.Dial("tcp", net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", con.Proxy.Port)), proxyConfig)
 				if err != nil {
 					if try > 10 {
 						return true, nil, err
@@ -179,7 +174,7 @@ func (con *Connection) Dial(ctx p.Context, proxyConfig *ssh.ClientConfig, config
 					return false, nil, nil
 				}
 
-				targetConn, channel, req, err := ssh.NewClientConn(netConn, endpoint, config)
+				proxyConn, channel, req, err := ssh.NewClientConn(netConn, endpoint, config)
 				if err != nil {
 					if try > 10 {
 						return true, nil, err
@@ -187,7 +182,7 @@ func (con *Connection) Dial(ctx p.Context, proxyConfig *ssh.ClientConfig, config
 					return false, nil, nil
 				}
 
-				client = ssh.NewClient(targetConn, channel, req)
+				client = ssh.NewClient(proxyConn, channel, req)
 				return true, nil, nil
 			}
 
