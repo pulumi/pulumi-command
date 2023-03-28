@@ -11,6 +11,7 @@ from .. import _utilities
 
 __all__ = [
     'ConnectionArgs',
+    'ProxyConnectionArgs',
 ]
 
 @pulumi.input_type
@@ -24,11 +25,7 @@ class ConnectionArgs:
                  port: Optional[pulumi.Input[float]] = None,
                  private_key: Optional[pulumi.Input[str]] = None,
                  private_key_password: Optional[pulumi.Input[str]] = None,
-                 proxy_host: Optional[pulumi.Input[str]] = None,
-                 proxy_password: Optional[pulumi.Input[str]] = None,
-                 proxy_port: Optional[pulumi.Input[int]] = None,
-                 proxy_private_key: Optional[pulumi.Input[str]] = None,
-                 proxy_user: Optional[pulumi.Input[str]] = None,
+                 proxy: Optional[pulumi.Input['ProxyConnectionArgs']] = None,
                  user: Optional[pulumi.Input[str]] = None):
         """
         Instructions for how to connect to a remote endpoint.
@@ -40,10 +37,7 @@ class ConnectionArgs:
         :param pulumi.Input[float] port: The port to connect to.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         :param pulumi.Input[str] private_key_password: The password to use in case the private key is encrypted.
-        :param pulumi.Input[str] proxy_host: The address of the bastion host to connect to.
-        :param pulumi.Input[str] proxy_password: The password we should use for the bastion host connection.
-        :param pulumi.Input[str] proxy_private_key: The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
-        :param pulumi.Input[str] proxy_user: The user that we should use for the bastion host connection.
+        :param pulumi.Input['ProxyConnectionArgs'] proxy: The connection settings for the bastion/proxy host.
         :param pulumi.Input[str] user: The user that we should use for the connection.
         """
         pulumi.set(__self__, "host", host)
@@ -67,18 +61,8 @@ class ConnectionArgs:
             pulumi.set(__self__, "private_key", private_key)
         if private_key_password is not None:
             pulumi.set(__self__, "private_key_password", private_key_password)
-        if proxy_host is not None:
-            pulumi.set(__self__, "proxy_host", proxy_host)
-        if proxy_password is not None:
-            pulumi.set(__self__, "proxy_password", proxy_password)
-        if proxy_port is None:
-            proxy_port = 22
-        if proxy_port is not None:
-            pulumi.set(__self__, "proxy_port", proxy_port)
-        if proxy_private_key is not None:
-            pulumi.set(__self__, "proxy_private_key", proxy_private_key)
-        if proxy_user is not None:
-            pulumi.set(__self__, "proxy_user", proxy_user)
+        if proxy is not None:
+            pulumi.set(__self__, "proxy", proxy)
         if user is None:
             user = 'root'
         if user is not None:
@@ -181,61 +165,157 @@ class ConnectionArgs:
         pulumi.set(self, "private_key_password", value)
 
     @property
-    @pulumi.getter(name="proxyHost")
-    def proxy_host(self) -> Optional[pulumi.Input[str]]:
+    @pulumi.getter
+    def proxy(self) -> Optional[pulumi.Input['ProxyConnectionArgs']]:
         """
-        The address of the bastion host to connect to.
+        The connection settings for the bastion/proxy host.
         """
-        return pulumi.get(self, "proxy_host")
+        return pulumi.get(self, "proxy")
 
-    @proxy_host.setter
-    def proxy_host(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "proxy_host", value)
+    @proxy.setter
+    def proxy(self, value: Optional[pulumi.Input['ProxyConnectionArgs']]):
+        pulumi.set(self, "proxy", value)
 
     @property
-    @pulumi.getter(name="proxyPassword")
-    def proxy_password(self) -> Optional[pulumi.Input[str]]:
+    @pulumi.getter
+    def user(self) -> Optional[pulumi.Input[str]]:
         """
-        The password we should use for the bastion host connection.
+        The user that we should use for the connection.
         """
-        return pulumi.get(self, "proxy_password")
+        return pulumi.get(self, "user")
 
-    @proxy_password.setter
-    def proxy_password(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "proxy_password", value)
+    @user.setter
+    def user(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "user", value)
+
+
+@pulumi.input_type
+class ProxyConnectionArgs:
+    def __init__(__self__, *,
+                 host: pulumi.Input[str],
+                 agent_socket_path: Optional[pulumi.Input[str]] = None,
+                 dial_error_limit: Optional[pulumi.Input[int]] = None,
+                 password: Optional[pulumi.Input[str]] = None,
+                 port: Optional[pulumi.Input[float]] = None,
+                 private_key: Optional[pulumi.Input[str]] = None,
+                 private_key_password: Optional[pulumi.Input[str]] = None,
+                 user: Optional[pulumi.Input[str]] = None):
+        """
+        Instructions for how to connect to a remote endpoint.
+        :param pulumi.Input[str] host: The address of the resource to connect to.
+        :param pulumi.Input[str] agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+        :param pulumi.Input[int] dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+        :param pulumi.Input[str] password: The password we should use for the connection.
+        :param pulumi.Input[float] port: The port to connect to.
+        :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        :param pulumi.Input[str] private_key_password: The password to use in case the private key is encrypted.
+        :param pulumi.Input[str] user: The user that we should use for the connection.
+        """
+        pulumi.set(__self__, "host", host)
+        if agent_socket_path is not None:
+            pulumi.set(__self__, "agent_socket_path", agent_socket_path)
+        if dial_error_limit is None:
+            dial_error_limit = 10
+        if dial_error_limit is not None:
+            pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if password is not None:
+            pulumi.set(__self__, "password", password)
+        if port is None:
+            port = 22
+        if port is not None:
+            pulumi.set(__self__, "port", port)
+        if private_key is not None:
+            pulumi.set(__self__, "private_key", private_key)
+        if private_key_password is not None:
+            pulumi.set(__self__, "private_key_password", private_key_password)
+        if user is None:
+            user = 'root'
+        if user is not None:
+            pulumi.set(__self__, "user", user)
 
     @property
-    @pulumi.getter(name="proxyPort")
-    def proxy_port(self) -> Optional[pulumi.Input[int]]:
-        return pulumi.get(self, "proxy_port")
+    @pulumi.getter
+    def host(self) -> pulumi.Input[str]:
+        """
+        The address of the resource to connect to.
+        """
+        return pulumi.get(self, "host")
 
-    @proxy_port.setter
-    def proxy_port(self, value: Optional[pulumi.Input[int]]):
-        pulumi.set(self, "proxy_port", value)
+    @host.setter
+    def host(self, value: pulumi.Input[str]):
+        pulumi.set(self, "host", value)
 
     @property
-    @pulumi.getter(name="proxyPrivateKey")
-    def proxy_private_key(self) -> Optional[pulumi.Input[str]]:
+    @pulumi.getter(name="agentSocketPath")
+    def agent_socket_path(self) -> Optional[pulumi.Input[str]]:
         """
-        The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
+        SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         """
-        return pulumi.get(self, "proxy_private_key")
+        return pulumi.get(self, "agent_socket_path")
 
-    @proxy_private_key.setter
-    def proxy_private_key(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "proxy_private_key", value)
+    @agent_socket_path.setter
+    def agent_socket_path(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "agent_socket_path", value)
 
     @property
-    @pulumi.getter(name="proxyUser")
-    def proxy_user(self) -> Optional[pulumi.Input[str]]:
+    @pulumi.getter(name="dialErrorLimit")
+    def dial_error_limit(self) -> Optional[pulumi.Input[int]]:
         """
-        The user that we should use for the bastion host connection.
+        Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
         """
-        return pulumi.get(self, "proxy_user")
+        return pulumi.get(self, "dial_error_limit")
 
-    @proxy_user.setter
-    def proxy_user(self, value: Optional[pulumi.Input[str]]):
-        pulumi.set(self, "proxy_user", value)
+    @dial_error_limit.setter
+    def dial_error_limit(self, value: Optional[pulumi.Input[int]]):
+        pulumi.set(self, "dial_error_limit", value)
+
+    @property
+    @pulumi.getter
+    def password(self) -> Optional[pulumi.Input[str]]:
+        """
+        The password we should use for the connection.
+        """
+        return pulumi.get(self, "password")
+
+    @password.setter
+    def password(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "password", value)
+
+    @property
+    @pulumi.getter
+    def port(self) -> Optional[pulumi.Input[float]]:
+        """
+        The port to connect to.
+        """
+        return pulumi.get(self, "port")
+
+    @port.setter
+    def port(self, value: Optional[pulumi.Input[float]]):
+        pulumi.set(self, "port", value)
+
+    @property
+    @pulumi.getter(name="privateKey")
+    def private_key(self) -> Optional[pulumi.Input[str]]:
+        """
+        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+        """
+        return pulumi.get(self, "private_key")
+
+    @private_key.setter
+    def private_key(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "private_key", value)
+
+    @property
+    @pulumi.getter(name="privateKeyPassword")
+    def private_key_password(self) -> Optional[pulumi.Input[str]]:
+        """
+        The password to use in case the private key is encrypted.
+        """
+        return pulumi.get(self, "private_key_password")
+
+    @private_key_password.setter
+    def private_key_password(self, value: Optional[pulumi.Input[str]]):
+        pulumi.set(self, "private_key_password", value)
 
     @property
     @pulumi.getter

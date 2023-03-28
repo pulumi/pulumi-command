@@ -49,22 +49,9 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly string? PrivateKeyPassword;
         /// <summary>
-        /// The address of the bastion host to connect to.
+        /// The connection settings for the bastion/proxy host.
         /// </summary>
-        public readonly string? ProxyHost;
-        /// <summary>
-        /// The password we should use for the bastion host connection.
-        /// </summary>
-        public readonly string? ProxyPassword;
-        public readonly int? ProxyPort;
-        /// <summary>
-        /// The contents of an SSH key to use for the bastion host to setup the connection. This takes preference over the password if provided.
-        /// </summary>
-        public readonly string? ProxyPrivateKey;
-        /// <summary>
-        /// The user that we should use for the bastion host connection.
-        /// </summary>
-        public readonly string? ProxyUser;
+        public readonly Outputs.ProxyConnection? Proxy;
         /// <summary>
         /// The user that we should use for the connection.
         /// </summary>
@@ -88,15 +75,7 @@ namespace Pulumi.Command.Remote.Outputs
 
             string? privateKeyPassword,
 
-            string? proxyHost,
-
-            string? proxyPassword,
-
-            int? proxyPort,
-
-            string? proxyPrivateKey,
-
-            string? proxyUser,
+            Outputs.ProxyConnection? proxy,
 
             string? user)
         {
@@ -108,11 +87,7 @@ namespace Pulumi.Command.Remote.Outputs
             Port = port;
             PrivateKey = privateKey;
             PrivateKeyPassword = privateKeyPassword;
-            ProxyHost = proxyHost;
-            ProxyPassword = proxyPassword;
-            ProxyPort = proxyPort;
-            ProxyPrivateKey = proxyPrivateKey;
-            ProxyUser = proxyUser;
+            Proxy = proxy;
             User = user;
         }
     }
