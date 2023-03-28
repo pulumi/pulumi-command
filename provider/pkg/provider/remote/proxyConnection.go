@@ -30,12 +30,12 @@ type ProxyConnection struct {
 }
 
 func (c *ProxyConnection) Annotate(a infer.Annotator) {
-	a.Describe(&c, "Instructions for how to connect to a remote endpoint.")
-	a.Describe(&c.User, "The user that we should use for the connection.")
+	a.Describe(&c, "Instructions for how to connect to a remote endpoint via a bastion host.")
+	a.Describe(&c.User, "The user that we should use for the connection to the bastion host.")
 	a.SetDefault(&c.User, "root")
-	a.Describe(&c.Password, "The password we should use for the connection.")
-	a.Describe(&c.Host, "The address of the resource to connect to.")
-	a.Describe(&c.Port, "The port to connect to.")
+	a.Describe(&c.Password, "The password we should use for the connection to the bastion host.")
+	a.Describe(&c.Host, "The address of the bastion host to connect to.")
+	a.Describe(&c.Port, "The port of the bastion host to connect to.")
 	a.SetDefault(&c.Port, 22)
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
