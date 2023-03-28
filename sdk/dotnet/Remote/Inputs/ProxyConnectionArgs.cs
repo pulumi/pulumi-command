@@ -11,7 +11,7 @@ namespace Pulumi.Command.Remote.Inputs
 {
 
     /// <summary>
-    /// Instructions for how to connect to a remote endpoint.
+    /// Instructions for how to connect to a remote endpoint via a bastion host.
     /// </summary>
     public sealed class ProxyConnectionArgs : global::Pulumi.ResourceArgs
     {
@@ -28,19 +28,19 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<int>? DialErrorLimit { get; set; }
 
         /// <summary>
-        /// The address of the resource to connect to.
+        /// The address of the bastion host to connect to.
         /// </summary>
         [Input("host", required: true)]
         public Input<string> Host { get; set; } = null!;
 
         /// <summary>
-        /// The password we should use for the connection.
+        /// The password we should use for the connection to the bastion host.
         /// </summary>
         [Input("password")]
         public Input<string>? Password { get; set; }
 
         /// <summary>
-        /// The port to connect to.
+        /// The port of the bastion host to connect to.
         /// </summary>
         [Input("port")]
         public Input<double>? Port { get; set; }
@@ -58,7 +58,7 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<string>? PrivateKeyPassword { get; set; }
 
         /// <summary>
-        /// The user that we should use for the connection.
+        /// The user that we should use for the connection to the bastion host.
         /// </summary>
         [Input("user")]
         public Input<string>? User { get; set; }

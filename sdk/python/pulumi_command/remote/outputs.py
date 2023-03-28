@@ -181,7 +181,7 @@ class Connection(dict):
 @pulumi.output_type
 class ProxyConnection(dict):
     """
-    Instructions for how to connect to a remote endpoint.
+    Instructions for how to connect to a remote endpoint via a bastion host.
     """
     @staticmethod
     def __key_warning(key: str):
@@ -216,15 +216,15 @@ class ProxyConnection(dict):
                  private_key_password: Optional[str] = None,
                  user: Optional[str] = None):
         """
-        Instructions for how to connect to a remote endpoint.
-        :param str host: The address of the resource to connect to.
+        Instructions for how to connect to a remote endpoint via a bastion host.
+        :param str host: The address of the bastion host to connect to.
         :param str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
-        :param str password: The password we should use for the connection.
-        :param float port: The port to connect to.
+        :param str password: The password we should use for the connection to the bastion host.
+        :param float port: The port of the bastion host to connect to.
         :param str private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         :param str private_key_password: The password to use in case the private key is encrypted.
-        :param str user: The user that we should use for the connection.
+        :param str user: The user that we should use for the connection to the bastion host.
         """
         pulumi.set(__self__, "host", host)
         if agent_socket_path is not None:
@@ -252,7 +252,7 @@ class ProxyConnection(dict):
     @pulumi.getter
     def host(self) -> str:
         """
-        The address of the resource to connect to.
+        The address of the bastion host to connect to.
         """
         return pulumi.get(self, "host")
 
@@ -276,7 +276,7 @@ class ProxyConnection(dict):
     @pulumi.getter
     def password(self) -> Optional[str]:
         """
-        The password we should use for the connection.
+        The password we should use for the connection to the bastion host.
         """
         return pulumi.get(self, "password")
 
@@ -284,7 +284,7 @@ class ProxyConnection(dict):
     @pulumi.getter
     def port(self) -> Optional[float]:
         """
-        The port to connect to.
+        The port of the bastion host to connect to.
         """
         return pulumi.get(self, "port")
 
@@ -308,7 +308,7 @@ class ProxyConnection(dict):
     @pulumi.getter
     def user(self) -> Optional[str]:
         """
-        The user that we should use for the connection.
+        The user that we should use for the connection to the bastion host.
         """
         return pulumi.get(self, "user")
 

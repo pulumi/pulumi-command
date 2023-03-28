@@ -68,7 +68,7 @@ export namespace remote {
     }
 
     /**
-     * Instructions for how to connect to a remote endpoint.
+     * Instructions for how to connect to a remote endpoint via a bastion host.
      */
     export interface ProxyConnectionArgs {
         /**
@@ -80,15 +80,15 @@ export namespace remote {
          */
         dialErrorLimit?: pulumi.Input<number>;
         /**
-         * The address of the resource to connect to.
+         * The address of the bastion host to connect to.
          */
         host: pulumi.Input<string>;
         /**
-         * The password we should use for the connection.
+         * The password we should use for the connection to the bastion host.
          */
         password?: pulumi.Input<string>;
         /**
-         * The port to connect to.
+         * The port of the bastion host to connect to.
          */
         port?: pulumi.Input<number>;
         /**
@@ -100,7 +100,7 @@ export namespace remote {
          */
         privateKeyPassword?: pulumi.Input<string>;
         /**
-         * The user that we should use for the connection.
+         * The user that we should use for the connection to the bastion host.
          */
         user?: pulumi.Input<string>;
     }
