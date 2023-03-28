@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 
 /**
- * Instructions for how to connect to a remote endpoint.
+ * Instructions for how to connect to a remote endpoint via a bastion host.
  * 
  */
 public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs {
@@ -53,14 +53,14 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
     }
 
     /**
-     * The address of the resource to connect to.
+     * The address of the bastion host to connect to.
      * 
      */
     @Import(name="host", required=true)
     private Output<String> host;
 
     /**
-     * @return The address of the resource to connect to.
+     * @return The address of the bastion host to connect to.
      * 
      */
     public Output<String> host() {
@@ -68,14 +68,14 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
     }
 
     /**
-     * The password we should use for the connection.
+     * The password we should use for the connection to the bastion host.
      * 
      */
     @Import(name="password")
     private @Nullable Output<String> password;
 
     /**
-     * @return The password we should use for the connection.
+     * @return The password we should use for the connection to the bastion host.
      * 
      */
     public Optional<Output<String>> password() {
@@ -83,14 +83,14 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
     }
 
     /**
-     * The port to connect to.
+     * The port of the bastion host to connect to.
      * 
      */
     @Import(name="port")
     private @Nullable Output<Double> port;
 
     /**
-     * @return The port to connect to.
+     * @return The port of the bastion host to connect to.
      * 
      */
     public Optional<Output<Double>> port() {
@@ -128,14 +128,14 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
     }
 
     /**
-     * The user that we should use for the connection.
+     * The user that we should use for the connection to the bastion host.
      * 
      */
     @Import(name="user")
     private @Nullable Output<String> user;
 
     /**
-     * @return The user that we should use for the connection.
+     * @return The user that we should use for the connection to the bastion host.
      * 
      */
     public Optional<Output<String>> user() {
@@ -216,7 +216,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param host The address of the resource to connect to.
+         * @param host The address of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -227,7 +227,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param host The address of the resource to connect to.
+         * @param host The address of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -237,7 +237,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param password The password we should use for the connection.
+         * @param password The password we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -248,7 +248,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param password The password we should use for the connection.
+         * @param password The password we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -258,7 +258,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param port The port to connect to.
+         * @param port The port of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -269,7 +269,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param port The port to connect to.
+         * @param port The port of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -321,7 +321,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param user The user that we should use for the connection.
+         * @param user The user that we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -332,7 +332,7 @@ public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs
         }
 
         /**
-         * @param user The user that we should use for the connection.
+         * @param user The user that we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
