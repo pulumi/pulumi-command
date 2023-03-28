@@ -24,17 +24,17 @@ public final class ProxyConnection {
      */
     private @Nullable Integer dialErrorLimit;
     /**
-     * @return The address of the resource to connect to.
+     * @return The address of the bastion host to connect to.
      * 
      */
     private String host;
     /**
-     * @return The password we should use for the connection.
+     * @return The password we should use for the connection to the bastion host.
      * 
      */
     private @Nullable String password;
     /**
-     * @return The port to connect to.
+     * @return The port of the bastion host to connect to.
      * 
      */
     private @Nullable Double port;
@@ -49,7 +49,7 @@ public final class ProxyConnection {
      */
     private @Nullable String privateKeyPassword;
     /**
-     * @return The user that we should use for the connection.
+     * @return The user that we should use for the connection to the bastion host.
      * 
      */
     private @Nullable String user;
@@ -70,21 +70,21 @@ public final class ProxyConnection {
         return Optional.ofNullable(this.dialErrorLimit);
     }
     /**
-     * @return The address of the resource to connect to.
+     * @return The address of the bastion host to connect to.
      * 
      */
     public String host() {
         return this.host;
     }
     /**
-     * @return The password we should use for the connection.
+     * @return The password we should use for the connection to the bastion host.
      * 
      */
     public Optional<String> password() {
         return Optional.ofNullable(this.password);
     }
     /**
-     * @return The port to connect to.
+     * @return The port of the bastion host to connect to.
      * 
      */
     public Optional<Double> port() {
@@ -105,7 +105,7 @@ public final class ProxyConnection {
         return Optional.ofNullable(this.privateKeyPassword);
     }
     /**
-     * @return The user that we should use for the connection.
+     * @return The user that we should use for the connection to the bastion host.
      * 
      */
     public Optional<String> user() {

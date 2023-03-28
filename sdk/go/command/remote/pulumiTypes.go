@@ -178,23 +178,23 @@ func (o ConnectionOutput) User() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.User }).(pulumi.StringPtrOutput)
 }
 
-// Instructions for how to connect to a remote endpoint.
+// Instructions for how to connect to a remote endpoint via a bastion host.
 type ProxyConnection struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
-	// The address of the resource to connect to.
+	// The address of the bastion host to connect to.
 	Host string `pulumi:"host"`
-	// The password we should use for the connection.
+	// The password we should use for the connection to the bastion host.
 	Password *string `pulumi:"password"`
-	// The port to connect to.
+	// The port of the bastion host to connect to.
 	Port *float64 `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey *string `pulumi:"privateKey"`
 	// The password to use in case the private key is encrypted.
 	PrivateKeyPassword *string `pulumi:"privateKeyPassword"`
-	// The user that we should use for the connection.
+	// The user that we should use for the connection to the bastion host.
 	User *string `pulumi:"user"`
 }
 
@@ -230,23 +230,23 @@ type ProxyConnectionInput interface {
 	ToProxyConnectionOutputWithContext(context.Context) ProxyConnectionOutput
 }
 
-// Instructions for how to connect to a remote endpoint.
+// Instructions for how to connect to a remote endpoint via a bastion host.
 type ProxyConnectionArgs struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
-	// The address of the resource to connect to.
+	// The address of the bastion host to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
-	// The password we should use for the connection.
+	// The password we should use for the connection to the bastion host.
 	Password pulumi.StringPtrInput `pulumi:"password"`
-	// The port to connect to.
+	// The port of the bastion host to connect to.
 	Port pulumi.Float64PtrInput `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey pulumi.StringPtrInput `pulumi:"privateKey"`
 	// The password to use in case the private key is encrypted.
 	PrivateKeyPassword pulumi.StringPtrInput `pulumi:"privateKeyPassword"`
-	// The user that we should use for the connection.
+	// The user that we should use for the connection to the bastion host.
 	User pulumi.StringPtrInput `pulumi:"user"`
 }
 
@@ -320,7 +320,7 @@ func (i *proxyConnectionPtrType) ToProxyConnectionPtrOutputWithContext(ctx conte
 	return pulumi.ToOutputWithContext(ctx, i).(ProxyConnectionPtrOutput)
 }
 
-// Instructions for how to connect to a remote endpoint.
+// Instructions for how to connect to a remote endpoint via a bastion host.
 type ProxyConnectionOutput struct{ *pulumi.OutputState }
 
 func (ProxyConnectionOutput) ElementType() reflect.Type {
@@ -355,17 +355,17 @@ func (o ProxyConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
 }
 
-// The address of the resource to connect to.
+// The address of the bastion host to connect to.
 func (o ProxyConnectionOutput) Host() pulumi.StringOutput {
 	return o.ApplyT(func(v ProxyConnection) string { return v.Host }).(pulumi.StringOutput)
 }
 
-// The password we should use for the connection.
+// The password we should use for the connection to the bastion host.
 func (o ProxyConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *string { return v.Password }).(pulumi.StringPtrOutput)
 }
 
-// The port to connect to.
+// The port of the bastion host to connect to.
 func (o ProxyConnectionOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *float64 { return v.Port }).(pulumi.Float64PtrOutput)
 }
@@ -380,7 +380,7 @@ func (o ProxyConnectionOutput) PrivateKeyPassword() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *string { return v.PrivateKeyPassword }).(pulumi.StringPtrOutput)
 }
 
-// The user that we should use for the connection.
+// The user that we should use for the connection to the bastion host.
 func (o ProxyConnectionOutput) User() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *string { return v.User }).(pulumi.StringPtrOutput)
 }
@@ -429,7 +429,7 @@ func (o ProxyConnectionPtrOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	}).(pulumi.IntPtrOutput)
 }
 
-// The address of the resource to connect to.
+// The address of the bastion host to connect to.
 func (o ProxyConnectionPtrOutput) Host() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ProxyConnection) *string {
 		if v == nil {
@@ -439,7 +439,7 @@ func (o ProxyConnectionPtrOutput) Host() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// The password we should use for the connection.
+// The password we should use for the connection to the bastion host.
 func (o ProxyConnectionPtrOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ProxyConnection) *string {
 		if v == nil {
@@ -449,7 +449,7 @@ func (o ProxyConnectionPtrOutput) Password() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// The port to connect to.
+// The port of the bastion host to connect to.
 func (o ProxyConnectionPtrOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v *ProxyConnection) *float64 {
 		if v == nil {
@@ -479,7 +479,7 @@ func (o ProxyConnectionPtrOutput) PrivateKeyPassword() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// The user that we should use for the connection.
+// The user that we should use for the connection to the bastion host.
 func (o ProxyConnectionPtrOutput) User() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *ProxyConnection) *string {
 		if v == nil {
