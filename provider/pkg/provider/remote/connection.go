@@ -151,7 +151,9 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				}
 				proxyClient, err := ssh.Dial("tcp", net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port))), proxyConfig)
 				if err != nil {
-					if try > 10 {
+					// on each try we already made a dial
+					dials := try + 1
+					if reachedDialingErrorLimit(dials, dialErrorLimit) {
 						return true, nil, err
 					}
 					return false, nil, nil
@@ -160,7 +162,9 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				endpoint := net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port)))
 				netConn, err := proxyClient.Dial("tcp", endpoint)
 				if err != nil {
-					if try > 10 {
+					// on each try we already made a dial
+					dials := try + 1
+					if reachedDialingErrorLimit(dials, dialErrorLimit) {
 						return true, nil, err
 					}
 					return false, nil, nil
@@ -168,7 +172,9 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 
 				proxyConn, channel, req, err := ssh.NewClientConn(netConn, endpoint, config)
 				if err != nil {
-					if try > 10 {
+					// on each try we already made a dial
+					dials := try + 1
+					if reachedDialingErrorLimit(dials, dialErrorLimit) {
 						return true, nil, err
 					}
 					return false, nil, nil
