@@ -123,7 +123,13 @@ func (con *Connection) proxySShConfig() (*ssh.ClientConfig, error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	if con.Proxy.PrivateKey != nil {
-		signer, err := ssh.ParsePrivateKey([]byte(*con.Proxy.PrivateKey))
+		var signer ssh.Signer
+		var err error
+		if con.PrivateKeyPassword != nil {
+			signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(*con.Proxy.PrivateKey), []byte(*con.Proxy.PrivateKeyPassword))
+		} else {
+			signer, err = ssh.ParsePrivateKey([]byte(*con.Proxy.PrivateKey))
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -138,7 +144,20 @@ func (con *Connection) proxySShConfig() (*ssh.ClientConfig, error) {
 			return answers, err
 		}))
 	}
-
+	var sshAgentSocketPath *string
+	if con.Proxy.AgentSocketPath != nil {
+		sshAgentSocketPath = con.Proxy.AgentSocketPath
+	}
+	if envAgentSocketPath := os.Getenv(sshAgentSocketEnvVar); sshAgentSocketPath == nil && envAgentSocketPath != "" {
+		sshAgentSocketPath = &envAgentSocketPath
+	}
+	if sshAgentSocketPath != nil {
+		conn, err := net.Dial("unix", *sshAgentSocketPath)
+		if err != nil {
+			return nil, err
+		}
+		config.Auth = append(config.Auth, ssh.PublicKeysCallback(agent.NewClient(conn).Signers))
+	}
 	return config, nil
 }
 
