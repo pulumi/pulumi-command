@@ -1,0 +1,3 @@
+name: command-ec2-remote
+runtime: nodejs
+description: A simple command example
