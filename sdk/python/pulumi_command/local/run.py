@@ -347,17 +347,17 @@ def run(archive_paths: Optional[Sequence[str]] = None,
     __ret__ = pulumi.runtime.invoke('command:local:run', __args__, opts=opts, typ=RunResult).value
 
     return AwaitableRunResult(
-        archive=__ret__.archive,
-        archive_paths=__ret__.archive_paths,
-        asset_paths=__ret__.asset_paths,
-        assets=__ret__.assets,
-        command=__ret__.command,
-        dir=__ret__.dir,
-        environment=__ret__.environment,
-        interpreter=__ret__.interpreter,
-        stderr=__ret__.stderr,
-        stdin=__ret__.stdin,
-        stdout=__ret__.stdout)
+        archive=pulumi.get(__ret__, 'archive'),
+        archive_paths=pulumi.get(__ret__, 'archive_paths'),
+        asset_paths=pulumi.get(__ret__, 'asset_paths'),
+        assets=pulumi.get(__ret__, 'assets'),
+        command=pulumi.get(__ret__, 'command'),
+        dir=pulumi.get(__ret__, 'dir'),
+        environment=pulumi.get(__ret__, 'environment'),
+        interpreter=pulumi.get(__ret__, 'interpreter'),
+        stderr=pulumi.get(__ret__, 'stderr'),
+        stdin=pulumi.get(__ret__, 'stdin'),
+        stdout=pulumi.get(__ret__, 'stdout'))
 
 
 @_utilities.lift_output_func(run)
