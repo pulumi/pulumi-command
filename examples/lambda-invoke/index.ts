@@ -1,10 +1,10 @@
 import { local } from "@pulumi/command";
 import * as aws from "@pulumi/aws";
-import * as crypto from "crypto";
 
 const f = new aws.lambda.CallbackFunction("f", {
     publish: true,
     callback: async (ev: any) => {
+        const crypto = require("crypto");
         return crypto.randomBytes(ev.len/2).toString('hex');
     }
 });
