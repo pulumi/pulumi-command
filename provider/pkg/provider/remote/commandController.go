@@ -15,8 +15,12 @@
 package remote
 
 import (
+	"encoding/json"
+	"fmt"
+
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
+	"github.com/pulumi/pulumi/sdk/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
@@ -57,7 +61,11 @@ func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, s
 // This is the Create method. This will be run on every Command resource creation.
 func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
 	state := CommandOutputs{CommandInputs: input}
-	var err error
+	inputJSON, err := json.MarshalIndent(input, "", "  ")
+	if err != nil {
+		return "", state, err
+	}
+	ctx.Log(diag.Warning, string(inputJSON))
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
 		return "", state, err
