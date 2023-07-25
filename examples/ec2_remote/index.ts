@@ -7,9 +7,12 @@ import * as path from "path";
 import { size } from "./size";
 
 const config = new Config();
-const keyName = config.get("keyName") ?? new aws.ec2.KeyPair("key", { publicKey: config.require("publicKey") }).keyName;
+const keyName = config.get("keyName") ??
+  new aws.ec2.KeyPair("key", { publicKey: config.require("publicKey") }).keyName;
 const privateKeyBase64 = config.get("privateKeyBase64");
-const privateKey = privateKeyBase64 ? Buffer.from(privateKeyBase64, 'base64').toString('ascii') : fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa")).toString("utf8");
+const privateKey = privateKeyBase64 ?
+  Buffer.from(privateKeyBase64, 'base64').toString('ascii') :
+  fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa")).toString("utf8");
 
 const secgrp = new aws.ec2.SecurityGroup("secgrp", {
     description: "Foo",
@@ -42,11 +45,18 @@ const connection: types.input.remote.ConnectionArgs = {
 };
 
 const connectionNoDialRetry: types.input.remote.ConnectionArgs = {
-    host: server.publicIp,
-    user: "ec2-user",
-    privateKey: privateKey,
-    dialErrorLimit: -1,
+    ...connection,
+    dialErrorLimit: 1,
 };
+
+// We poll the server until it responds.
+//
+// Because other commands depend on this command, other commands are guaranteed
+// to hit an already booted server.
+const poll = new remote.Command("poll", {
+  connection: { ...connection, dialErrorLimit: -1 },
+    create: "echo 'Connection established'",
+}, { customTimeouts: { create: "10m" } })
 
 const hostname = new remote.Command("hostname", {
     connection,
@@ -54,19 +64,19 @@ const hostname = new remote.Command("hostname", {
     environment: secret({
       "secret-key": secret("super-secret-value")
     }),
-});
+}, { dependsOn: poll });
 
 new remote.Command("remotePrivateIP", {
     connection,
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
-}, { deleteBeforeReplace: true });
+}, { deleteBeforeReplace: true, dependsOn: poll });
 
 new remote.Command("remoteWithNoDialRetryPrivateIP", {
     connection: connectionNoDialRetry,
     create: interpolate`echo ${server.privateIp} > private_ip_on_no_dial_retry.txt`,
     delete: `rm private_ip_on_no_dial_retry.txt`,
-}, { deleteBeforeReplace: true });
+}, { deleteBeforeReplace: true, dependsOn: poll });
 
 new local.Command("localPrivateIP", {
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
@@ -77,7 +87,7 @@ const sizeFile = new remote.CopyFile("size", {
     connection,
     localPath: "./size.ts",
     remotePath: "size.ts",
-})
+}, { dependsOn: poll })
 
 const catSize = new remote.Command("checkSize", {
     connection,
