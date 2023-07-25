@@ -82,12 +82,14 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	}
 	if con.Password != nil {
 		config.Auth = append(config.Auth, ssh.Password(*con.Password))
-		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
-			for i := range questions {
-				answers[i] = *con.Password
-			}
-			return answers, err
-		}))
+		config.Auth = append(config.Auth, ssh.KeyboardInteractive(
+			func(user, instruction string, questions []string, echos []bool) ([]string, error) {
+				answers := make([]string, len(questions))
+				for i := range questions {
+					answers[i] = *con.Password
+				}
+				return answers, nil
+			}))
 	}
 	var sshAgentSocketPath *string
 	if con.AgentSocketPath != nil {

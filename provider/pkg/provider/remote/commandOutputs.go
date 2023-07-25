@@ -26,20 +26,20 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) {
+func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	config, err := c.Connection.SShConfig()
 	if err != nil {
-		return "", "", err
+		return err
 	}
 
 	client, err := c.Connection.Dial(ctx, config)
 	if err != nil {
-		return "", "", err
+		return err
 	}
 
 	session, err := client.NewSession()
 	if err != nil {
-		return "", "", err
+		return err
 	}
 	defer session.Close()
 
@@ -73,8 +73,11 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) (string, string, error) 
 	<-stdouterrch
 
 	if err != nil {
-		return "", "", fmt.Errorf("%w: running %q:\n%s", err, cmd, stdouterrbuf.String())
+		return fmt.Errorf("%w: running %q:\n%s", err, cmd, stdouterrbuf.String())
 	}
-
-	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), nil
+	c.BaseOutputs = BaseOutputs{
+		Stdout: strings.TrimSuffix(stdoutbuf.String(), "\n"),
+		Stderr: strings.TrimSuffix(stderrbuf.String(), "\n"),
+	}
+	return nil
 }
