@@ -22,6 +22,7 @@ import (
 
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
@@ -125,6 +126,15 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				if reachedDialingErrorLimit(dials, dialErrorLimit) {
 					return true, nil, err
 				}
+				var limit string
+				if dialErrorLimit == -1 {
+					limit = "inf"
+				} else {
+					limit = fmt.Sprintf("%d", dialErrorLimit)
+				}
+				ctx.LogStatusf(diag.Info, "Dial %d/%s failed: retrying",
+					dials, limit)
+
 				return false, nil, nil
 			}
 			return true, nil, nil
