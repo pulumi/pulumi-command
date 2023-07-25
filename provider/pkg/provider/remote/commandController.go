@@ -75,7 +75,7 @@ func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview 
 	}
 
 	if !preview {
-		state.Stdout, state.Stderr, err = state.run(ctx, cmd)
+		err = state.run(ctx, cmd)
 	}
 	return id, state, err
 }
@@ -89,9 +89,9 @@ func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news Comma
 	var err error
 	if !preview {
 		if news.Update != nil {
-			state.Stdout, state.Stderr, err = state.run(ctx, *news.Update)
+			err = state.run(ctx, *news.Update)
 		} else if news.Create != nil {
-			state.Stdout, state.Stderr, err = state.run(ctx, *news.Create)
+			err = state.run(ctx, *news.Create)
 		}
 	}
 	return state, err
@@ -102,6 +102,5 @@ func (*Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
-	_, _, err := props.run(ctx, *props.Delete)
-	return err
+	return props.run(ctx, *props.Delete)
 }
