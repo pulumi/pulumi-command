@@ -38,7 +38,6 @@ def readme():
 
 
 setup(name='pulumi_command',
-      python_requires='>=3.7',
       version=VERSION,
       description="The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
       long_description=readme(),
