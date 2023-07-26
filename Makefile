@@ -13,7 +13,7 @@ PROVIDER_PATH   := provider
 VERSION_PATH    := ${PROVIDER_PATH}/pkg/version.Version
 
 SCHEMA_FILE     := provider/cmd/pulumi-resource-command/schema.json
-GOPATH			:= $(shell go env GOPATH)
+GOPATH          := $(shell go env GOPATH)
 
 WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
@@ -44,6 +44,8 @@ dotnet_sdk::
 	cd ${PACKDIR}/dotnet/&& \
 		echo "${DOTNET_VERSION}" >version.txt && \
 		dotnet build /p:Version=${DOTNET_VERSION}
+# Work around for https://github.com/pulumi/pulumi/issues/13589
+	cp assets/logo.png ${PACKDIR}/dotnet/logo.png
 
 go_sdk::
 	rm -rf sdk/go
