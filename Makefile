@@ -41,11 +41,12 @@ dotnet_sdk:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 dotnet_sdk::
 	rm -rf sdk/dotnet
 	pulumi package gen-sdk --language dotnet $(SCHEMA_FILE)
+	# Copy the logo to the dotnet directory before building so it can be included in the nuget package archive.
+	# https://github.com/pulumi/pulumi-command/issues/243
 	cd ${PACKDIR}/dotnet/&& \
 		echo "${DOTNET_VERSION}" >version.txt && \
+		cp $(WORKING_DIR)/assets/logo.png logo.png && \
 		dotnet build /p:Version=${DOTNET_VERSION}
-# Work around for https://github.com/pulumi/pulumi/issues/13589
-	cp assets/logo.png ${PACKDIR}/dotnet/logo.png
 
 go_sdk::
 	rm -rf sdk/go
