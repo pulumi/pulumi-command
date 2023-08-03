@@ -31,7 +31,8 @@ var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(n
 
 // This is the Create method. This will be run on every Command resource creation.
 func (c *Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
-	state := CommandOutputs{CommandInputs: input}
+	outputs := BaseOutputs{Stdout: *input.Stdin, Stderr: *input.Stdin}
+	state := CommandOutputs{CommandInputs: input, BaseOutputs: outputs}
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
 		return id, state, err
