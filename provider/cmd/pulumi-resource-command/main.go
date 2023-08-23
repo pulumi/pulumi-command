@@ -28,10 +28,7 @@ import (
 // A provider is a program that listens for requests from the Pulumi engine
 // to interact with cloud providers using a CRUD-based model.
 func main() {
-	version := version.Version
-	if strings.HasPrefix(version, "v") {
-		version = version[1:]
-	}
+	version := strings.TrimPrefix(version.Version, "v")
 
 	// This method defines the provider implemented in this repository.
 	commandProvider := command.NewProvider()
