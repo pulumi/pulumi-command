@@ -27,6 +27,10 @@ import (
 	"github.com/pulumi/pulumi-go-provider/integration"
 )
 
+const (
+	Name = "command"
+)
+
 // This provider uses the `pulumi-go-provider` library to produce a code-first provider definition.
 func NewProvider() p.Provider {
 	return infer.Provider(infer.Options{
@@ -106,7 +110,7 @@ func Schema(version string) (string, error) {
 	if strings.HasPrefix(version, "v") {
 		version = version[1:]
 	}
-	s, err := integration.NewServer("command", semver.MustParse(version), NewProvider()).
+	s, err := integration.NewServer(Name, semver.MustParse(version), NewProvider()).
 		GetSchema(p.GetSchemaRequest{})
 	return s.Schema, err
 }

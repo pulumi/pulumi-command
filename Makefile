@@ -18,8 +18,10 @@ GOPATH          := $(shell go env GOPATH)
 WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
 
-ensure::
-	cd provider && go mod tidy
+ensure:: tidy
+
+tidy:
+	cd provider && go mod tidy && cd tests && go mod tidy
 	cd sdk && go mod tidy
 	cd examples && go mod tidy
 
@@ -130,5 +132,8 @@ install_nodejs_sdk::
 	-yarn unlink --cwd $(WORKING_DIR)/sdk/nodejs/bin
 	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-test::
+test_unit: tidy
+	cd provider/tests && go test -v ./...
+
+test:: tidy test_unit
 	cd examples && go test -v -tags=all -timeout 2h

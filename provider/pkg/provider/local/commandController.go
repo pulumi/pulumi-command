@@ -49,11 +49,11 @@ func (c *Command) Create(ctx p.Context, name string, input CommandInputs, previe
 	return id, state, err
 }
 
-// WireDependencies is relevant to secrets handling. This method indicates which Inputs
-// the Outputs are derived from. If an output is derived from a secret input, the output
-// will be a secret.
+// WireDependencies controls how unknown or secret values flow from inputs to outputs. If
+// an output is derived from a secret input, the output will be a secret. Likewise, if an
+// output is derived from an unknown input, the output will be a secret.
 
-// This naive implementation conveys that every output is derived from all inputs.
+// This naive implementation conveys that every output is derived from all inputs except connection.
 func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) {
 
 	// get BaseInputs
