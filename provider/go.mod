@@ -6,7 +6,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.4
-	github.com/pulumi/pulumi-go-provider v0.11.0
+	github.com/pulumi/pulumi-go-provider v0.11.1-0.20230824225649-16913d749342
 	github.com/pulumi/pulumi-go-provider/integration v0.10.0
 	github.com/pulumi/pulumi/sdk/v3 v3.78.1
 	golang.org/x/crypto v0.11.0
