@@ -25,34 +25,6 @@ import (
 var _ = (infer.CustomResource[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
-var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
-
-// WireDependencies is relevant to secrets handling. This method indicates which Inputs
-// the Outputs are derived from. If an output is derived from a secret input, the output
-// will be a secret.
-
-// This naive implementation conveys that every output is derived from all inputs.
-func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) {
-	createInput := f.InputField(&args.Create)
-	updateInput := f.InputField(&args.Update)
-
-	f.OutputField(&state.Connection).DependsOn(f.InputField(&args.Connection))
-	f.OutputField(&state.Environment).DependsOn(f.InputField(&args.Environment))
-	f.OutputField(&state.Triggers).DependsOn(f.InputField(&args.Triggers))
-	f.OutputField(&state.Create).DependsOn(f.InputField(&args.Create))
-	f.OutputField(&state.Delete).DependsOn(f.InputField(&args.Delete))
-	f.OutputField(&state.Update).DependsOn(f.InputField(&args.Update))
-	f.OutputField(&state.Stdin).DependsOn(f.InputField(&args.Stdin))
-
-	f.OutputField(&state.Stdout).DependsOn(
-		createInput,
-		updateInput,
-	)
-	f.OutputField(&state.Stderr).DependsOn(
-		createInput,
-		updateInput,
-	)
-}
 
 // This is the Create method. This will be run on every Command resource creation.
 func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
