@@ -27,7 +27,6 @@ import (
 var _ = (infer.CustomResource[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
-var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
 
 // This is the Create method. This will be run on every Command resource creation.
 func (c *Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
@@ -49,69 +48,12 @@ func (c *Command) Create(ctx p.Context, name string, input CommandInputs, previe
 	return id, state, err
 }
 
-// WireDependencies controls how unknown or secret values flow from inputs to outputs. If
-// an output is derived from a secret input, the output will be a secret. Likewise, if an
-// output is derived from an unknown input, the output will be a secret.
-
-// This naive implementation conveys that every output is derived from all inputs except connection.
-func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) {
-
-	// get BaseInputs
-	interpreterInput := f.InputField(&args.Interpreter)
-	dirInput := f.InputField(&args.Dir)
-	environmentInput := f.InputField(&args.Environment)
-	stdinInput := f.InputField(&args.Stdin)
-	assetPathsInput := f.InputField(&args.AssetPaths)
-	archivePathsInput := f.InputField(&args.ArchivePaths)
-
-	// set BaseInputs
-	f.OutputField(&state.Interpreter).DependsOn(interpreterInput)
-	f.OutputField(&state.Dir).DependsOn(dirInput)
-	f.OutputField(&state.Environment).DependsOn(environmentInput)
-	f.OutputField(&state.Stdin).DependsOn(stdinInput)
-	f.OutputField(&state.AssetPaths).DependsOn(assetPathsInput)
-	f.OutputField(&state.ArchivePaths).DependsOn(archivePathsInput)
-
-	// get CommandInputs
-	triggersInput := f.InputField(&args.Triggers)
-	createInput := f.InputField(&args.Create)
-	updateInput := f.InputField(&args.Update)
-	deleteInput := f.InputField(&args.Delete)
-
-	// set CommandInputs
-	f.OutputField(&state.Triggers).DependsOn(triggersInput)
-	f.OutputField(&state.Create).DependsOn(createInput)
-	f.OutputField(&state.Update).DependsOn(updateInput)
-	f.OutputField(&state.Delete).DependsOn(deleteInput)
-
-	// Mark Stdout as derived from all inputs
-	f.OutputField(&state.Stdout).DependsOn(
-		triggersInput,
-		createInput,
-		updateInput,
-		deleteInput,
-		interpreterInput,
-		dirInput,
-		environmentInput,
-		stdinInput,
-		assetPathsInput,
-		archivePathsInput,
-	)
-
-	// Mark Stderr as derived from all inputs
-	f.OutputField(&state.Stderr).DependsOn(
-		triggersInput,
-		createInput,
-		updateInput,
-		deleteInput,
-		interpreterInput,
-		dirInput,
-		environmentInput,
-		stdinInput,
-		assetPathsInput,
-		archivePathsInput,
-	)
-}
+// WireDependencies controls how secrets and unknowns flow through a resource.
+//
+//	var _ = (infer.ExplicitDependencies[CommandInputs, CommandOutputs])((*Command)(nil))
+//	func (r *Command) WireDependencies(f infer.FieldSelector, args *CommandInputs, state *CommandOutputs) { .. }
+//
+// Because we want every output to depend on every input, we can leave the default behavior.
 
 // The Update method will be run on every update.
 func (c *Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
