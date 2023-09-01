@@ -129,3 +129,33 @@ func TestLocalCommand(t *testing.T) {
 		})))
 	})
 }
+
+// Ensure that we correctly apply apply defaults to `connection.port`.
+//
+// User issue is https://github.com/pulumi/pulumi-command/issues/248.
+func TestRegress248(t *testing.T) {
+	t.Parallel()
+	type pMap = resource.PropertyMap
+	pString := resource.NewStringProperty
+	pNumber := resource.NewNumberProperty
+	resp, err := provider().Check(p.CheckRequest{
+		Urn: urn("remote", "Command", "check"),
+		News: resource.PropertyMap{
+			"create": pString("<create command>"),
+			"connection": resource.NewObjectProperty(pMap{
+				"host": pString("<required value>"),
+			}),
+		},
+	})
+	require.NoError(t, err)
+	assert.Empty(t, resp.Failures)
+	assert.Equal(t, resource.PropertyMap{
+		"create": pString("<create command>"),
+		"connection": resource.NewObjectProperty(resource.PropertyMap{
+			"host":           pString("<required value>"),
+			"port":           pNumber(22),
+			"user":           pString("root"),
+			"dialErrorLimit": pNumber(10),
+		}),
+	}, resp.Inputs)
+}
