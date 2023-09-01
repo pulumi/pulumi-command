@@ -23,10 +23,14 @@ export PULUMI_IGNORE_AMBIENT_PLUGINS = true
 
 ensure:: tidy
 
-tidy:
-	cd provider && go mod tidy && cd tests && go mod tidy
+tidy: tidy_provider tidy_examples
 	cd sdk && go mod tidy
+
+tidy_examples:
 	cd examples && go mod tidy
+
+tidy_provider:
+	cd provider && go mod tidy && cd tests && go mod tidy
 
 codegen::
 	(cd provider && VERSION=${VERSION} go generate cmd/${PROVIDER}/main.go)
@@ -39,8 +43,8 @@ provider::
 provider_debug::
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -gcflags="all=-N -l" -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))
 
-test_provider::
-	cd provider/pkg && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} ./...
+test_provider: tidy_provider
+	cd provider/tests && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} ./...
 
 dotnet_sdk:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
 dotnet_sdk::	.pulumi/bin/pulumi
@@ -112,7 +116,7 @@ install:: install_nodejs_sdk install_dotnet_sdk
 
 GO_TEST := go test -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
 
-test_all::
+test_all:: test
 	cd provider/pkg && $(GO_TEST) ./...
 	cd tests/sdk/nodejs && $(GO_TEST) ./...
 	cd tests/sdk/python && $(GO_TEST) ./...
@@ -137,10 +141,7 @@ install_nodejs_sdk::
 	-yarn unlink --cwd $(WORKING_DIR)/sdk/nodejs/bin
 	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-test_unit: tidy
-	cd provider/tests && go test -v ./...
-
-test:: tidy test_unit
+test:: tidy_examples test_provider
 	cd examples && go test -v -tags=all -timeout 2h
 
 # --------- File-based targets --------- #
