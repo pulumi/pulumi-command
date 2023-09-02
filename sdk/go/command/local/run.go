@@ -9,6 +9,7 @@ import (
 
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // A local command to be executed.
@@ -226,6 +227,12 @@ func (o RunResultOutput) ToRunResultOutput() RunResultOutput {
 
 func (o RunResultOutput) ToRunResultOutputWithContext(ctx context.Context) RunResultOutput {
 	return o
+}
+
+func (o RunResultOutput) ToOutput(ctx context.Context) pulumix.Output[RunResult] {
+	return pulumix.Output[RunResult]{
+		OutputState: o.OutputState,
+	}
 }
 
 // An archive asset containing files found after running the command.

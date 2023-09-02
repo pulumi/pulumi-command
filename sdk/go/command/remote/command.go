@@ -10,6 +10,7 @@ import (
 	"errors"
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // A command to run on a remote host.
@@ -164,6 +165,12 @@ func (i *Command) ToCommandOutputWithContext(ctx context.Context) CommandOutput 
 	return pulumi.ToOutputWithContext(ctx, i).(CommandOutput)
 }
 
+func (i *Command) ToOutput(ctx context.Context) pulumix.Output[*Command] {
+	return pulumix.Output[*Command]{
+		OutputState: i.ToCommandOutputWithContext(ctx).OutputState,
+	}
+}
+
 // CommandArrayInput is an input type that accepts CommandArray and CommandArrayOutput values.
 // You can construct a concrete instance of `CommandArrayInput` via:
 //
@@ -187,6 +194,12 @@ func (i CommandArray) ToCommandArrayOutput() CommandArrayOutput {
 
 func (i CommandArray) ToCommandArrayOutputWithContext(ctx context.Context) CommandArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(CommandArrayOutput)
+}
+
+func (i CommandArray) ToOutput(ctx context.Context) pulumix.Output[[]*Command] {
+	return pulumix.Output[[]*Command]{
+		OutputState: i.ToCommandArrayOutputWithContext(ctx).OutputState,
+	}
 }
 
 // CommandMapInput is an input type that accepts CommandMap and CommandMapOutput values.
@@ -214,6 +227,12 @@ func (i CommandMap) ToCommandMapOutputWithContext(ctx context.Context) CommandMa
 	return pulumi.ToOutputWithContext(ctx, i).(CommandMapOutput)
 }
 
+func (i CommandMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*Command] {
+	return pulumix.Output[map[string]*Command]{
+		OutputState: i.ToCommandMapOutputWithContext(ctx).OutputState,
+	}
+}
+
 type CommandOutput struct{ *pulumi.OutputState }
 
 func (CommandOutput) ElementType() reflect.Type {
@@ -226,6 +245,12 @@ func (o CommandOutput) ToCommandOutput() CommandOutput {
 
 func (o CommandOutput) ToCommandOutputWithContext(ctx context.Context) CommandOutput {
 	return o
+}
+
+func (o CommandOutput) ToOutput(ctx context.Context) pulumix.Output[*Command] {
+	return pulumix.Output[*Command]{
+		OutputState: o.OutputState,
+	}
 }
 
 // The parameters with which to connect to the remote host.
@@ -292,6 +317,12 @@ func (o CommandArrayOutput) ToCommandArrayOutputWithContext(ctx context.Context)
 	return o
 }
 
+func (o CommandArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*Command] {
+	return pulumix.Output[[]*Command]{
+		OutputState: o.OutputState,
+	}
+}
+
 func (o CommandArrayOutput) Index(i pulumi.IntInput) CommandOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *Command {
 		return vs[0].([]*Command)[vs[1].(int)]
@@ -310,6 +341,12 @@ func (o CommandMapOutput) ToCommandMapOutput() CommandMapOutput {
 
 func (o CommandMapOutput) ToCommandMapOutputWithContext(ctx context.Context) CommandMapOutput {
 	return o
+}
+
+func (o CommandMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*Command] {
+	return pulumix.Output[map[string]*Command]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o CommandMapOutput) MapIndex(k pulumi.StringInput) CommandOutput {

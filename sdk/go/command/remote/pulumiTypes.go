@@ -9,6 +9,7 @@ import (
 
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 var _ = internal.GetEnvOrDefault
@@ -114,6 +115,12 @@ func (i ConnectionArgs) ToConnectionOutputWithContext(ctx context.Context) Conne
 	return pulumi.ToOutputWithContext(ctx, i).(ConnectionOutput)
 }
 
+func (i ConnectionArgs) ToOutput(ctx context.Context) pulumix.Output[Connection] {
+	return pulumix.Output[Connection]{
+		OutputState: i.ToConnectionOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Instructions for how to connect to a remote endpoint.
 type ConnectionOutput struct{ *pulumi.OutputState }
 
@@ -127,6 +134,12 @@ func (o ConnectionOutput) ToConnectionOutput() ConnectionOutput {
 
 func (o ConnectionOutput) ToConnectionOutputWithContext(ctx context.Context) ConnectionOutput {
 	return o
+}
+
+func (o ConnectionOutput) ToOutput(ctx context.Context) pulumix.Output[Connection] {
+	return pulumix.Output[Connection]{
+		OutputState: o.OutputState,
+	}
 }
 
 // SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
