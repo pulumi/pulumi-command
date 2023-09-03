@@ -92,9 +92,10 @@ func TestLocalCommand(t *testing.T) {
 	t.Run("create-preview", func(t *testing.T) {
 		t.Parallel()
 		assert.Equal(t, resource.PropertyMap{
-			"create": resource.PropertyValue{V: "echo hello, $NAME!"},
-			"stderr": c(resource.PropertyValue{V: ""}),
-			"stdout": c(resource.PropertyValue{V: ""}),
+			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
+			"stderr":      c(resource.PropertyValue{V: ""}),
+			"stdout":      c(resource.PropertyValue{V: ""}),
+			"environment": c(resource.PropertyValue{V: resource.PropertyMap{}}),
 		},
 			create(true /* preview */, unknown))
 	})
@@ -110,9 +111,10 @@ func TestLocalCommand(t *testing.T) {
 	t.Run("update-preview", func(t *testing.T) {
 		t.Parallel()
 		assert.Equal(t, resource.PropertyMap{
-			"create": resource.PropertyValue{V: "echo hello, $NAME!"},
-			"stderr": c(resource.PropertyValue{V: ""}),
-			"stdout": c(resource.PropertyValue{V: "hello, world!"}),
+			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
+			"stderr":      c(resource.PropertyValue{V: ""}),
+			"stdout":      c(resource.PropertyValue{V: "hello, world!"}),
+			"environment": c(resource.PropertyValue{V: resource.PropertyMap{}}),
 		}, update(true /* preview */, unknown))
 	})
 	t.Run("update-actual", func(t *testing.T) {
