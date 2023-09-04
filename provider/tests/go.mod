@@ -7,9 +7,9 @@ replace github.com/pulumi/pulumi-command/provider => ../
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pulumi/pulumi-command/provider v0.0.0-00010101000000-000000000000
-	github.com/pulumi/pulumi-go-provider v0.12.0
+	github.com/pulumi/pulumi-go-provider v0.12.1-0.20230904021810-cfa8727d371a
 	github.com/pulumi/pulumi-go-provider/integration v0.10.0
-	github.com/pulumi/pulumi/sdk/v3 v3.78.1
+	github.com/pulumi/pulumi/sdk/v3 v3.79.0
 	github.com/stretchr/testify v1.8.3
 )
 
@@ -54,7 +54,7 @@ require (
 	github.com/pkg/sftp v1.13.4 // indirect
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/pulumi/pulumi/pkg/v3 v3.78.1 // indirect
+	github.com/pulumi/pulumi/pkg/v3 v3.79.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect

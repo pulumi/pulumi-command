@@ -1,6 +1,6 @@
 {
     "name": "@pulumi/command",
-    "version": "${VERSION}",
+    "version": "1.0.0",
     "keywords": [
         "pulumi",
         "command",
