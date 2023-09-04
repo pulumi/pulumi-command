@@ -40,7 +40,7 @@ func TestLocalCommand(t *testing.T) {
 	cmd := provider()
 	urn := urn("local", "Command", "echo")
 	unknown := resource.NewOutputProperty(resource.Output{
-		Element: resource.NewStringProperty(""),
+		Element: resource.NewObjectProperty(resource.PropertyMap{}),
 		Known:   false,
 	})
 	c := resource.MakeComputed
@@ -95,7 +95,7 @@ func TestLocalCommand(t *testing.T) {
 			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
 			"stderr":      c(resource.PropertyValue{V: ""}),
 			"stdout":      c(resource.PropertyValue{V: ""}),
-			"environment": c(resource.PropertyValue{V: resource.PropertyMap{}}),
+			"environment": unknown,
 		},
 			create(true /* preview */, unknown))
 	})
@@ -114,7 +114,7 @@ func TestLocalCommand(t *testing.T) {
 			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
 			"stderr":      c(resource.PropertyValue{V: ""}),
 			"stdout":      c(resource.PropertyValue{V: "hello, world!"}),
-			"environment": c(resource.PropertyValue{V: resource.PropertyMap{}}),
+			"environment": unknown,
 		}, update(true /* preview */, unknown))
 	})
 	t.Run("update-actual", func(t *testing.T) {
