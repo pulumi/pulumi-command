@@ -18,6 +18,9 @@ GOPATH          := $(shell go env GOPATH)
 WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
 
+# Need to pick up locally pinned pulumi-langage-* plugins.
+export PATH := .pulumi/bin:$(PATH)
+
 ensure:: tidy
 
 tidy:
