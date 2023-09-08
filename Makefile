@@ -18,6 +18,9 @@ GOPATH          := $(shell go env GOPATH)
 WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
 
+# Need to pick up locally pinned pulumi-langage-* plugins.
+export PATH := .pulumi/bin:$(PATH)
+
 ensure:: tidy
 
 tidy:
@@ -40,9 +43,9 @@ test_provider::
 	cd provider/pkg && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} ./...
 
 dotnet_sdk:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
-dotnet_sdk::
+dotnet_sdk::	.pulumi/bin/pulumi
 	rm -rf sdk/dotnet
-	pulumi package gen-sdk --language dotnet $(SCHEMA_FILE)
+	.pulumi/bin/pulumi package gen-sdk --language dotnet $(SCHEMA_FILE)
 	# Copy the logo to the dotnet directory before building so it can be included in the nuget package archive.
 	# https://github.com/pulumi/pulumi-command/issues/243
 	cd ${PACKDIR}/dotnet/&& \
@@ -50,14 +53,14 @@ dotnet_sdk::
 		cp $(WORKING_DIR)/assets/logo.png logo.png && \
 		dotnet build /p:Version=${DOTNET_VERSION}
 
-go_sdk::
+go_sdk::	.pulumi/bin/pulumi
 	rm -rf sdk/go
-	pulumi package gen-sdk --language go $(SCHEMA_FILE)
+	.pulumi/bin/pulumi package gen-sdk --language go $(SCHEMA_FILE)
 
 nodejs_sdk:: VERSION := $(shell pulumictl get version --language javascript)
-nodejs_sdk::
+nodejs_sdk::	.pulumi/bin/pulumi
 	rm -rf sdk/nodejs
-	pulumi package gen-sdk --language nodejs $(SCHEMA_FILE)
+	.pulumi/bin/pulumi package gen-sdk --language nodejs $(SCHEMA_FILE)
 	cd ${PACKDIR}/nodejs/ && \
 		yarn install && \
 		yarn run tsc
@@ -65,9 +68,9 @@ nodejs_sdk::
 	sed -i.bak 's/$${VERSION}/$(VERSION)/g' ${PACKDIR}/nodejs/bin/package.json
 
 python_sdk:: PYPI_VERSION := $(shell pulumictl get version --language python)
-python_sdk::
+python_sdk::	.pulumi/bin/pulumi
 	rm -rf sdk/python
-	pulumi package gen-sdk --language python $(SCHEMA_FILE)
+	.pulumi/bin/pulumi package gen-sdk --language python $(SCHEMA_FILE)
 	cp README.md ${PACKDIR}/python/
 	cd ${PACKDIR}/python/ && \
 		python3 setup.py clean --all 2>/dev/null && \
@@ -80,9 +83,9 @@ bin/pulumi-java-gen::
 	echo pulumi-java-gen is no longer necessary
 
 java_sdk:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
-java_sdk::
+java_sdk::	.pulumi/bin/pulumi
 	rm -rf sdk/java
-	pulumi package gen-sdk --language java $(SCHEMA_FILE)
+	.pulumi/bin/pulumi package gen-sdk --language java $(SCHEMA_FILE)
 	cd sdk/java/ && \
 		gradle --console=plain build
 
@@ -137,3 +140,10 @@ test_unit: tidy
 
 test:: tidy test_unit
 	cd examples && go test -v -tags=all -timeout 2h
+
+# --------- File-based targets --------- #
+
+.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cat .pulumi.version)
+.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
+.pulumi/bin/pulumi: .pulumi.version
+	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
