@@ -69,6 +69,9 @@ func NewProvider() p.Provider {
 					"requires": map[string]string{
 						"pulumi": ">=3.0.0,<4.0.0",
 					},
+					"pyproject": map[string]bool{
+						"enabled": true,
+					},
 				},
 				"java": map[string]any{
 					"buildFiles":                      "gradle",
