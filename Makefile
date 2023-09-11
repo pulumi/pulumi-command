@@ -19,7 +19,7 @@ WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
 
 # Need to pick up locally pinned pulumi-langage-* plugins.
-export PATH := .pulumi/bin:$(PATH)
+export PULUMI_IGNORE_AMBIENT_PLUGINS = true
 
 ensure:: tidy
 
