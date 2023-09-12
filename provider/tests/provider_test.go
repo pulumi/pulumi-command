@@ -161,3 +161,23 @@ func TestRegress248(t *testing.T) {
 		}),
 	}, resp.Inputs)
 }
+
+func TestLocalRun(t *testing.T) {
+	t.Parallel()
+
+	type pMap = resource.PropertyMap
+	pString := resource.NewStringProperty
+
+	resp, err := provider().Invoke(p.InvokeRequest{
+		Token: "command:local:run",
+		Args: pMap{
+			"command": pString(`echo "Hello, World!"`),
+		},
+	})
+	require.NoError(t, err)
+	assert.Equal(t, pMap{
+		"command": pString(`echo "Hello, World!"`),
+		"stderr":  pString(""),
+		"stdout":  pString("Hello, World!"),
+	}, resp.Return)
+}

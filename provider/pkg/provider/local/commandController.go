@@ -44,7 +44,7 @@ func (c *Command) Create(ctx p.Context, name string, input CommandInputs, previe
 		return id, state, nil
 	}
 	cmd := *input.Create
-	state.Stdout, state.Stderr, err = state.run(ctx, cmd)
+	err = run(ctx, cmd, state.BaseInputs, &state.BaseOutputs)
 	return id, state, err
 }
 
@@ -71,8 +71,7 @@ func (c *Command) Update(ctx p.Context, id string, olds CommandOutputs, news Com
 	if cmd == nil {
 		return state, nil
 	}
-	var err error
-	state.Stdout, state.Stderr, err = state.run(ctx, *cmd)
+	err := run(ctx, *cmd, state.BaseInputs, &state.BaseOutputs)
 	return state, err
 }
 
@@ -81,6 +80,5 @@ func (c *Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
-	_, _, err := props.run(ctx, *props.Delete)
-	return err
+	return run(ctx, *props.Delete, props.BaseInputs, &props.BaseOutputs)
 }

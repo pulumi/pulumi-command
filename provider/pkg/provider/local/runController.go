@@ -28,14 +28,7 @@ var _ = (infer.ExplicitDependencies[RunInputs, RunOutputs])((*Run)(nil))
 // it.
 func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
 	r := RunOutputs{RunInputs: input}
-	state := &CommandOutputs{
-		CommandInputs: CommandInputs{
-			BaseInputs: input.BaseInputs,
-		},
-	}
-	var err error
-	r.Stdout, r.Stderr, err = (state).run(ctx, input.Command)
-	r.BaseOutputs = state.BaseOutputs
+	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs)
 	return r, err
 }
 
