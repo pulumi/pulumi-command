@@ -40,7 +40,7 @@ func TestLocalCommand(t *testing.T) {
 	cmd := provider()
 	urn := urn("local", "Command", "echo")
 	unknown := resource.NewOutputProperty(resource.Output{
-		Element: resource.NewStringProperty(""),
+		Element: resource.NewObjectProperty(resource.PropertyMap{}),
 		Known:   false,
 	})
 	c := resource.MakeComputed
@@ -92,9 +92,10 @@ func TestLocalCommand(t *testing.T) {
 	t.Run("create-preview", func(t *testing.T) {
 		t.Parallel()
 		assert.Equal(t, resource.PropertyMap{
-			"create": resource.PropertyValue{V: "echo hello, $NAME!"},
-			"stderr": c(resource.PropertyValue{V: ""}),
-			"stdout": c(resource.PropertyValue{V: ""}),
+			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
+			"stderr":      c(resource.PropertyValue{V: ""}),
+			"stdout":      c(resource.PropertyValue{V: ""}),
+			"environment": unknown,
 		},
 			create(true /* preview */, unknown))
 	})
@@ -110,9 +111,10 @@ func TestLocalCommand(t *testing.T) {
 	t.Run("update-preview", func(t *testing.T) {
 		t.Parallel()
 		assert.Equal(t, resource.PropertyMap{
-			"create": resource.PropertyValue{V: "echo hello, $NAME!"},
-			"stderr": c(resource.PropertyValue{V: ""}),
-			"stdout": c(resource.PropertyValue{V: "hello, world!"}),
+			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
+			"stderr":      c(resource.PropertyValue{V: ""}),
+			"stdout":      c(resource.PropertyValue{V: "hello, world!"}),
+			"environment": unknown,
 		}, update(true /* preview */, unknown))
 	})
 	t.Run("update-actual", func(t *testing.T) {
@@ -128,4 +130,34 @@ func TestLocalCommand(t *testing.T) {
 			"NAME": resource.NewStringProperty("Pulumi"),
 		})))
 	})
+}
+
+// Ensure that we correctly apply apply defaults to `connection.port`.
+//
+// User issue is https://github.com/pulumi/pulumi-command/issues/248.
+func TestRegress248(t *testing.T) {
+	t.Parallel()
+	type pMap = resource.PropertyMap
+	pString := resource.NewStringProperty
+	pNumber := resource.NewNumberProperty
+	resp, err := provider().Check(p.CheckRequest{
+		Urn: urn("remote", "Command", "check"),
+		News: resource.PropertyMap{
+			"create": pString("<create command>"),
+			"connection": resource.NewObjectProperty(pMap{
+				"host": pString("<required value>"),
+			}),
+		},
+	})
+	require.NoError(t, err)
+	assert.Empty(t, resp.Failures)
+	assert.Equal(t, resource.PropertyMap{
+		"create": pString("<create command>"),
+		"connection": resource.NewObjectProperty(resource.PropertyMap{
+			"host":           pString("<required value>"),
+			"port":           pNumber(22),
+			"user":           pString("root"),
+			"dialErrorLimit": pNumber(10),
+		}),
+	}, resp.Inputs)
 }
