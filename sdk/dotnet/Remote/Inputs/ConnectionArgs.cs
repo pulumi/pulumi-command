@@ -22,7 +22,7 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<string>? AgentSocketPath { get; set; }
 
         /// <summary>
-        /// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+        /// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         /// </summary>
         [Input("dialErrorLimit")]
         public Input<int>? DialErrorLimit { get; set; }
@@ -38,6 +38,12 @@ namespace Pulumi.Command.Remote.Inputs
         /// </summary>
         [Input("password")]
         public Input<string>? Password { get; set; }
+
+        /// <summary>
+        /// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+        /// </summary>
+        [Input("perDialTimeout")]
+        public Input<int>? PerDialTimeout { get; set; }
 
         /// <summary>
         /// The port to connect to.
@@ -66,6 +72,7 @@ namespace Pulumi.Command.Remote.Inputs
         public ConnectionArgs()
         {
             DialErrorLimit = 10;
+            PerDialTimeout = 15;
             Port = 22;
             User = "root";
         }

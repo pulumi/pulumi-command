@@ -38,14 +38,14 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
      * 
      */
     @Import(name="dialErrorLimit")
     private @Nullable Output<Integer> dialErrorLimit;
 
     /**
-     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
      * 
      */
     public Optional<Output<Integer>> dialErrorLimit() {
@@ -80,6 +80,21 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Optional<Output<String>> password() {
         return Optional.ofNullable(this.password);
+    }
+
+    /**
+     * Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+     * 
+     */
+    @Import(name="perDialTimeout")
+    private @Nullable Output<Integer> perDialTimeout;
+
+    /**
+     * @return Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+     * 
+     */
+    public Optional<Output<Integer>> perDialTimeout() {
+        return Optional.ofNullable(this.perDialTimeout);
     }
 
     /**
@@ -149,6 +164,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         this.dialErrorLimit = $.dialErrorLimit;
         this.host = $.host;
         this.password = $.password;
+        this.perDialTimeout = $.perDialTimeout;
         this.port = $.port;
         this.privateKey = $.privateKey;
         this.privateKeyPassword = $.privateKeyPassword;
@@ -195,7 +211,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param dialErrorLimit Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         * @param dialErrorLimit Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
          * 
          * @return builder
          * 
@@ -206,7 +222,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param dialErrorLimit Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         * @param dialErrorLimit Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
          * 
          * @return builder
          * 
@@ -255,6 +271,27 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder password(String password) {
             return password(Output.of(password));
+        }
+
+        /**
+         * @param perDialTimeout Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder perDialTimeout(@Nullable Output<Integer> perDialTimeout) {
+            $.perDialTimeout = perDialTimeout;
+            return this;
+        }
+
+        /**
+         * @param perDialTimeout Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder perDialTimeout(Integer perDialTimeout) {
+            return perDialTimeout(Output.of(perDialTimeout));
         }
 
         /**
@@ -344,6 +381,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         public ConnectionArgs build() {
             $.dialErrorLimit = Codegen.integerProp("dialErrorLimit").output().arg($.dialErrorLimit).def(10).getNullable();
             $.host = Objects.requireNonNull($.host, "expected parameter 'host' to be non-null");
+            $.perDialTimeout = Codegen.integerProp("perDialTimeout").output().arg($.perDialTimeout).def(15).getNullable();
             $.port = Codegen.doubleProp("port").output().arg($.port).def(2.2e+01).getNullable();
             $.user = Codegen.stringProp("user").output().arg($.user).def("root").getNullable();
             return $;
