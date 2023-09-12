@@ -46,6 +46,7 @@ type Connection struct {
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
+	PerDialTimeout     int      `pulumi:"perDialTimeout,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -59,14 +60,17 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
-	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
+	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
+	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
+	a.SetDefault(&c.PerDialTimeout, 15)
 }
 
 func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            *con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		Timeout:         time.Second * time.Duration(con.PerDialTimeout),
 	}
 	if con.PrivateKey != nil {
 		var signer ssh.Signer
@@ -135,8 +139,13 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				ctx.LogStatusf(diag.Info, "Dial %d/%s failed: retrying",
 					dials, limit)
 
+				if config.Timeout > time.Second*15 {
+					config.Timeout -= time.Second * 15
+				}
+
 				return false, nil, nil
 			}
+
 			return true, nil, nil
 		},
 	})
