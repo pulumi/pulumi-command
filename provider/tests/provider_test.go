@@ -158,6 +158,7 @@ func TestRegress248(t *testing.T) {
 			"port":           pNumber(22),
 			"user":           pString("root"),
 			"dialErrorLimit": pNumber(10),
+			"perDialTimeout": pNumber(15),
 		}),
 	}, resp.Inputs)
 }

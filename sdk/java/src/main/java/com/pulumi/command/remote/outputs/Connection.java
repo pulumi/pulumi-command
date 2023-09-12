@@ -19,7 +19,7 @@ public final class Connection {
      */
     private @Nullable String agentSocketPath;
     /**
-     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
      * 
      */
     private @Nullable Integer dialErrorLimit;
@@ -33,6 +33,11 @@ public final class Connection {
      * 
      */
     private @Nullable String password;
+    /**
+     * @return Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+     * 
+     */
+    private @Nullable Integer perDialTimeout;
     /**
      * @return The port to connect to.
      * 
@@ -63,7 +68,7 @@ public final class Connection {
         return Optional.ofNullable(this.agentSocketPath);
     }
     /**
-     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+     * @return Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
      * 
      */
     public Optional<Integer> dialErrorLimit() {
@@ -82,6 +87,13 @@ public final class Connection {
      */
     public Optional<String> password() {
         return Optional.ofNullable(this.password);
+    }
+    /**
+     * @return Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+     * 
+     */
+    public Optional<Integer> perDialTimeout() {
+        return Optional.ofNullable(this.perDialTimeout);
     }
     /**
      * @return The port to connect to.
@@ -125,6 +137,7 @@ public final class Connection {
         private @Nullable Integer dialErrorLimit;
         private String host;
         private @Nullable String password;
+        private @Nullable Integer perDialTimeout;
         private @Nullable Double port;
         private @Nullable String privateKey;
         private @Nullable String privateKeyPassword;
@@ -136,6 +149,7 @@ public final class Connection {
     	      this.dialErrorLimit = defaults.dialErrorLimit;
     	      this.host = defaults.host;
     	      this.password = defaults.password;
+    	      this.perDialTimeout = defaults.perDialTimeout;
     	      this.port = defaults.port;
     	      this.privateKey = defaults.privateKey;
     	      this.privateKeyPassword = defaults.privateKeyPassword;
@@ -160,6 +174,11 @@ public final class Connection {
         @CustomType.Setter
         public Builder password(@Nullable String password) {
             this.password = password;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder perDialTimeout(@Nullable Integer perDialTimeout) {
+            this.perDialTimeout = perDialTimeout;
             return this;
         }
         @CustomType.Setter
@@ -188,6 +207,7 @@ public final class Connection {
             o.dialErrorLimit = dialErrorLimit;
             o.host = host;
             o.password = password;
+            o.perDialTimeout = perDialTimeout;
             o.port = port;
             o.privateKey = privateKey;
             o.privateKeyPassword = privateKeyPassword;

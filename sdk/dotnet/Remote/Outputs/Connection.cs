@@ -21,7 +21,7 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly string? AgentSocketPath;
         /// <summary>
-        /// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+        /// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         /// </summary>
         public readonly int? DialErrorLimit;
         /// <summary>
@@ -32,6 +32,10 @@ namespace Pulumi.Command.Remote.Outputs
         /// The password we should use for the connection.
         /// </summary>
         public readonly string? Password;
+        /// <summary>
+        /// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+        /// </summary>
+        public readonly int? PerDialTimeout;
         /// <summary>
         /// The port to connect to.
         /// </summary>
@@ -59,6 +63,8 @@ namespace Pulumi.Command.Remote.Outputs
 
             string? password,
 
+            int? perDialTimeout,
+
             double? port,
 
             string? privateKey,
@@ -71,6 +77,7 @@ namespace Pulumi.Command.Remote.Outputs
             DialErrorLimit = dialErrorLimit;
             Host = host;
             Password = password;
+            PerDialTimeout = perDialTimeout;
             Port = port;
             PrivateKey = privateKey;
             PrivateKeyPassword = privateKeyPassword;

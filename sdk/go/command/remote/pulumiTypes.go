@@ -18,12 +18,14 @@ var _ = internal.GetEnvOrDefault
 type Connection struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
-	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
 	// The address of the resource to connect to.
 	Host string `pulumi:"host"`
 	// The password we should use for the connection.
 	Password *string `pulumi:"password"`
+	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+	PerDialTimeout *int `pulumi:"perDialTimeout"`
 	// The port to connect to.
 	Port *float64 `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
@@ -43,6 +45,10 @@ func (val *Connection) Defaults() *Connection {
 	if tmp.DialErrorLimit == nil {
 		dialErrorLimit_ := 10
 		tmp.DialErrorLimit = &dialErrorLimit_
+	}
+	if tmp.PerDialTimeout == nil {
+		perDialTimeout_ := 15
+		tmp.PerDialTimeout = &perDialTimeout_
 	}
 	if tmp.Port == nil {
 		port_ := 22.0
@@ -70,12 +76,14 @@ type ConnectionInput interface {
 type ConnectionArgs struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
-	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
 	// The address of the resource to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
 	// The password we should use for the connection.
 	Password pulumi.StringPtrInput `pulumi:"password"`
+	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+	PerDialTimeout pulumi.IntPtrInput `pulumi:"perDialTimeout"`
 	// The port to connect to.
 	Port pulumi.Float64PtrInput `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
@@ -94,6 +102,9 @@ func (val *ConnectionArgs) Defaults() *ConnectionArgs {
 	tmp := *val
 	if tmp.DialErrorLimit == nil {
 		tmp.DialErrorLimit = pulumi.IntPtr(10)
+	}
+	if tmp.PerDialTimeout == nil {
+		tmp.PerDialTimeout = pulumi.IntPtr(15)
 	}
 	if tmp.Port == nil {
 		tmp.Port = pulumi.Float64Ptr(22.0)
@@ -147,7 +158,7 @@ func (o ConnectionOutput) AgentSocketPath() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.AgentSocketPath }).(pulumi.StringPtrOutput)
 }
 
-// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 func (o ConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v Connection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
 }
@@ -160,6 +171,11 @@ func (o ConnectionOutput) Host() pulumi.StringOutput {
 // The password we should use for the connection.
 func (o ConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.Password }).(pulumi.StringPtrOutput)
+}
+
+// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+func (o ConnectionOutput) PerDialTimeout() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v Connection) *int { return v.PerDialTimeout }).(pulumi.IntPtrOutput)
 }
 
 // The port to connect to.

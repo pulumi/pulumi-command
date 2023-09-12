@@ -17,7 +17,7 @@ export namespace remote {
          */
         agentSocketPath?: pulumi.Input<string>;
         /**
-         * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+         * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
          */
         dialErrorLimit?: pulumi.Input<number>;
         /**
@@ -28,6 +28,10 @@ export namespace remote {
          * The password we should use for the connection.
          */
         password?: pulumi.Input<string>;
+        /**
+         * Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+         */
+        perDialTimeout?: pulumi.Input<number>;
         /**
          * The port to connect to.
          */
@@ -52,6 +56,7 @@ export namespace remote {
         return {
             ...val,
             dialErrorLimit: (val.dialErrorLimit) ?? 10,
+            perDialTimeout: (val.perDialTimeout) ?? 15,
             port: (val.port) ?? 22,
             user: (val.user) ?? "root",
         };

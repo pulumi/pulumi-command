@@ -476,7 +476,7 @@
                 },
                 "dialErrorLimit": {
                     "default": 10,
-                    "description": "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10",
+                    "description": "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.",
                     "type": "integer"
                 },
                 "host": {
@@ -486,6 +486,11 @@
                 "password": {
                     "description": "The password we should use for the connection.",
                     "type": "string"
+                },
+                "perDialTimeout": {
+                    "default": 15,
+                    "description": "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.",
+                    "type": "integer"
                 },
                 "port": {
                     "default": 22,
