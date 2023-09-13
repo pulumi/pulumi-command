@@ -311,6 +311,12 @@ func (i ProxyConnectionArgs) ToProxyConnectionOutputWithContext(ctx context.Cont
 	return pulumi.ToOutputWithContext(ctx, i).(ProxyConnectionOutput)
 }
 
+func (i ProxyConnectionArgs) ToOutput(ctx context.Context) pulumix.Output[ProxyConnection] {
+	return pulumix.Output[ProxyConnection]{
+		OutputState: i.ToProxyConnectionOutputWithContext(ctx).OutputState,
+	}
+}
+
 func (i ProxyConnectionArgs) ToProxyConnectionPtrOutput() ProxyConnectionPtrOutput {
 	return i.ToProxyConnectionPtrOutputWithContext(context.Background())
 }
@@ -352,6 +358,12 @@ func (i *proxyConnectionPtrType) ToProxyConnectionPtrOutputWithContext(ctx conte
 	return pulumi.ToOutputWithContext(ctx, i).(ProxyConnectionPtrOutput)
 }
 
+func (i *proxyConnectionPtrType) ToOutput(ctx context.Context) pulumix.Output[*ProxyConnection] {
+	return pulumix.Output[*ProxyConnection]{
+		OutputState: i.ToProxyConnectionPtrOutputWithContext(ctx).OutputState,
+	}
+}
+
 // Instructions for how to connect to a remote endpoint via a bastion host.
 type ProxyConnectionOutput struct{ *pulumi.OutputState }
 
@@ -375,6 +387,12 @@ func (o ProxyConnectionOutput) ToProxyConnectionPtrOutputWithContext(ctx context
 	return o.ApplyTWithContext(ctx, func(_ context.Context, v ProxyConnection) *ProxyConnection {
 		return &v
 	}).(ProxyConnectionPtrOutput)
+}
+
+func (o ProxyConnectionOutput) ToOutput(ctx context.Context) pulumix.Output[ProxyConnection] {
+	return pulumix.Output[ProxyConnection]{
+		OutputState: o.OutputState,
+	}
 }
 
 // SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
@@ -429,6 +447,12 @@ func (o ProxyConnectionPtrOutput) ToProxyConnectionPtrOutput() ProxyConnectionPt
 
 func (o ProxyConnectionPtrOutput) ToProxyConnectionPtrOutputWithContext(ctx context.Context) ProxyConnectionPtrOutput {
 	return o
+}
+
+func (o ProxyConnectionPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*ProxyConnection] {
+	return pulumix.Output[*ProxyConnection]{
+		OutputState: o.OutputState,
+	}
 }
 
 func (o ProxyConnectionPtrOutput) Elem() ProxyConnectionOutput {
