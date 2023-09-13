@@ -29,14 +29,16 @@ import (
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, error) {
+func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
+	contract.Assertf(out != nil, "run:out cannot be nil")
 	var args []string
-	if c.Interpreter != nil && len(*c.Interpreter) > 0 {
-		args = append(args, *c.Interpreter...)
+	if in.Interpreter != nil && len(*in.Interpreter) > 0 {
+		args = append(args, *in.Interpreter...)
 	} else {
 		if runtime.GOOS == "windows" {
 			args = []string{"cmd", "/C"}
@@ -54,29 +56,29 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
 	cmd.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrwriter, w)
 	cmd.Stderr = io.MultiWriter(&stderrbuf, &stdouterrwriter, w)
-	if c.Dir != nil {
-		cmd.Dir = *c.Dir
+	if in.Dir != nil {
+		cmd.Dir = *in.Dir
 	} else {
 		cmd.Dir, err = os.Getwd()
 		if err != nil {
-			return "", "", err
+			return err
 		}
 	}
 	cmd.Env = os.Environ()
-	if c.Environment != nil {
-		for k, v := range *c.Environment {
+	if in.Environment != nil {
+		for k, v := range *in.Environment {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 		}
 	}
-	if c.Stdout != "" {
-		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDOUT, c.Stdout))
+	if out.Stdout != "" {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDOUT, out.Stdout))
 	}
-	if c.Stderr != "" {
-		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDERR, c.Stderr))
+	if out.Stderr != "" {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDERR, out.Stderr))
 	}
 
-	if c.Stdin != nil && len(*c.Stdin) > 0 {
-		cmd.Stdin = strings.NewReader(*c.Stdin)
+	if in.Stdin != nil && len(*in.Stdin) > 0 {
+		cmd.Stdin = strings.NewReader(*in.Stdin)
 	}
 
 	stdouterrch := make(chan struct{})
@@ -91,22 +93,22 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 	<-stdouterrch
 
 	if err != nil {
-		return "", "", fmt.Errorf("%w: running %q:\n%s", err, command, stdouterrbuf.String())
+		return fmt.Errorf("%w: running %q:\n%s", err, command, stdouterrbuf.String())
 	}
 
-	if c.AssetPaths != nil {
-		assets, err := globAssets(cmd.Dir, *c.AssetPaths)
+	if in.AssetPaths != nil {
+		assets, err := globAssets(cmd.Dir, *in.AssetPaths)
 		if err != nil {
-			return "", "", err
+			return err
 		}
-		c.Assets = &assets
+		out.Assets = &assets
 	}
 
-	if c.ArchivePaths != nil {
+	if in.ArchivePaths != nil {
 		archiveAssets := map[string]interface{}{}
-		assets, err := globAssets(cmd.Dir, *c.ArchivePaths)
+		assets, err := globAssets(cmd.Dir, *in.ArchivePaths)
 		if err != nil {
-			return "", "", err
+			return err
 		}
 
 		for path, asset := range assets {
@@ -115,12 +117,15 @@ func (c *CommandOutputs) run(ctx p.Context, command string) (string, string, err
 
 		archive, err := resource.NewAssetArchive(archiveAssets)
 		if err != nil {
-			return "", "", err
+			return err
 		}
-		c.Archive = archive
+		out.Archive = archive
 	}
 
-	return strings.TrimSuffix(stdoutbuf.String(), "\n"), strings.TrimSuffix(stderrbuf.String(), "\n"), nil
+	out.Stdout = strings.TrimSuffix(stdoutbuf.String(), "\n")
+	out.Stderr = strings.TrimSuffix(stderrbuf.String(), "\n")
+
+	return nil
 }
 
 func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {
