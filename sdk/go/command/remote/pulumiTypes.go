@@ -214,12 +214,14 @@ func (o ConnectionOutput) User() pulumi.StringPtrOutput {
 type ProxyConnection struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
-	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
 	// The address of the bastion host to connect to.
 	Host string `pulumi:"host"`
 	// The password we should use for the connection to the bastion host.
 	Password *string `pulumi:"password"`
+	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+	PerDialTimeout *int `pulumi:"perDialTimeout"`
 	// The port of the bastion host to connect to.
 	Port *float64 `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
@@ -239,6 +241,10 @@ func (val *ProxyConnection) Defaults() *ProxyConnection {
 	if tmp.DialErrorLimit == nil {
 		dialErrorLimit_ := 10
 		tmp.DialErrorLimit = &dialErrorLimit_
+	}
+	if tmp.PerDialTimeout == nil {
+		perDialTimeout_ := 15
+		tmp.PerDialTimeout = &perDialTimeout_
 	}
 	if tmp.Port == nil {
 		port_ := 22.0
@@ -266,12 +272,14 @@ type ProxyConnectionInput interface {
 type ProxyConnectionArgs struct {
 	// SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
-	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
 	// The address of the bastion host to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
 	// The password we should use for the connection to the bastion host.
 	Password pulumi.StringPtrInput `pulumi:"password"`
+	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+	PerDialTimeout pulumi.IntPtrInput `pulumi:"perDialTimeout"`
 	// The port of the bastion host to connect to.
 	Port pulumi.Float64PtrInput `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
@@ -290,6 +298,9 @@ func (val *ProxyConnectionArgs) Defaults() *ProxyConnectionArgs {
 	tmp := *val
 	if tmp.DialErrorLimit == nil {
 		tmp.DialErrorLimit = pulumi.IntPtr(10)
+	}
+	if tmp.PerDialTimeout == nil {
+		tmp.PerDialTimeout = pulumi.IntPtr(15)
 	}
 	if tmp.Port == nil {
 		tmp.Port = pulumi.Float64Ptr(22.0)
@@ -400,7 +411,7 @@ func (o ProxyConnectionOutput) AgentSocketPath() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *string { return v.AgentSocketPath }).(pulumi.StringPtrOutput)
 }
 
-// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 func (o ProxyConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
 }
@@ -413,6 +424,11 @@ func (o ProxyConnectionOutput) Host() pulumi.StringOutput {
 // The password we should use for the connection to the bastion host.
 func (o ProxyConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *string { return v.Password }).(pulumi.StringPtrOutput)
+}
+
+// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+func (o ProxyConnectionOutput) PerDialTimeout() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ProxyConnection) *int { return v.PerDialTimeout }).(pulumi.IntPtrOutput)
 }
 
 // The port of the bastion host to connect to.
@@ -475,7 +491,7 @@ func (o ProxyConnectionPtrOutput) AgentSocketPath() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
-// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10
+// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 func (o ProxyConnectionPtrOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *ProxyConnection) *int {
 		if v == nil {
@@ -503,6 +519,16 @@ func (o ProxyConnectionPtrOutput) Password() pulumi.StringPtrOutput {
 		}
 		return v.Password
 	}).(pulumi.StringPtrOutput)
+}
+
+// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+func (o ProxyConnectionPtrOutput) PerDialTimeout() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *ProxyConnection) *int {
+		if v == nil {
+			return nil
+		}
+		return v.PerDialTimeout
+	}).(pulumi.IntPtrOutput)
 }
 
 // The port of the bastion host to connect to.
