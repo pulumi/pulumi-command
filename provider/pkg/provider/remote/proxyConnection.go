@@ -18,16 +18,7 @@ import (
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
 
-type ProxyConnection struct {
-	User               *string  `pulumi:"user,optional"`
-	Password           *string  `pulumi:"password,optional"`
-	Host               *string  `pulumi:"host"`
-	Port               *float64 `pulumi:"port,optional"`
-	PrivateKey         *string  `pulumi:"privateKey,optional"`
-	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
-	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
-	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
-}
+type ProxyConnection struct{ connectionBase }
 
 func (c *ProxyConnection) Annotate(a infer.Annotator) {
 	a.Describe(&c, "Instructions for how to connect to a remote endpoint via a bastion host.")
@@ -40,6 +31,8 @@ func (c *ProxyConnection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
-	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10")
+	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
+	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
+	a.SetDefault(&c.PerDialTimeout, 15)
 }
