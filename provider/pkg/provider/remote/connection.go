@@ -38,16 +38,20 @@ var (
 )
 
 type Connection struct {
-	User               *string          `pulumi:"user,optional"`
-	Password           *string          `pulumi:"password,optional"`
-	Host               *string          `pulumi:"host"`
-	Port               *float64         `pulumi:"port,optional"`
-	PrivateKey         *string          `pulumi:"privateKey,optional"`
-	PrivateKeyPassword *string          `pulumi:"privateKeyPassword,optional"`
-	AgentSocketPath    *string          `pulumi:"agentSocketPath,optional"`
-	DialErrorLimit     *int             `pulumi:"dialErrorLimit,optional"`
-	PerDialTimeout     int              `pulumi:"perDialTimeout,optional"`
-	Proxy              *ProxyConnection `pulumi:"proxy,optional"`
+	connectionBase
+	Proxy *ProxyConnection `pulumi:"proxy,optional"`
+}
+
+type connectionBase struct {
+	User               *string  `pulumi:"user,optional"`
+	Password           *string  `pulumi:"password,optional"`
+	Host               *string  `pulumi:"host"`
+	Port               *float64 `pulumi:"port,optional"`
+	PrivateKey         *string  `pulumi:"privateKey,optional"`
+	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
+	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
+	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
+	PerDialTimeout     int      `pulumi:"perDialTimeout,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -68,7 +72,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.SetDefault(&c.PerDialTimeout, 15)
 }
 
-func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
+func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            *con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
@@ -116,50 +120,6 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
-func (con *Connection) proxySShConfig() (*ssh.ClientConfig, error) {
-	config := &ssh.ClientConfig{
-		User:            *con.Proxy.User,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
-	if con.Proxy.PrivateKey != nil {
-		var signer ssh.Signer
-		var err error
-		if con.PrivateKeyPassword != nil {
-			signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(*con.Proxy.PrivateKey), []byte(*con.Proxy.PrivateKeyPassword))
-		} else {
-			signer, err = ssh.ParsePrivateKey([]byte(*con.Proxy.PrivateKey))
-		}
-		if err != nil {
-			return nil, err
-		}
-		config.Auth = append(config.Auth, ssh.PublicKeys(signer))
-	}
-	if con.Proxy.Password != nil {
-		config.Auth = append(config.Auth, ssh.Password(*con.Proxy.Password))
-		config.Auth = append(config.Auth, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
-			for i := range questions {
-				answers[i] = *con.Proxy.Password
-			}
-			return answers, err
-		}))
-	}
-	var sshAgentSocketPath *string
-	if con.Proxy.AgentSocketPath != nil {
-		sshAgentSocketPath = con.Proxy.AgentSocketPath
-	}
-	if envAgentSocketPath := os.Getenv(sshAgentSocketEnvVar); sshAgentSocketPath == nil && envAgentSocketPath != "" {
-		sshAgentSocketPath = &envAgentSocketPath
-	}
-	if sshAgentSocketPath != nil {
-		conn, err := net.Dial("unix", *sshAgentSocketPath)
-		if err != nil {
-			return nil, err
-		}
-		config.Auth = append(config.Auth, ssh.PublicKeysCallback(agent.NewClient(conn).Signers))
-	}
-	return config, nil
-}
-
 // Dial a ssh client connection from a ssh client configuration, retrying as necessary.
 func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
 	var client *ssh.Client
@@ -171,11 +131,13 @@ func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Clien
 				net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port))),
 				config)
 			if con.Proxy != nil && *con.Proxy.Host != "" {
-				proxyConfig, err := con.proxySShConfig()
+				proxyConfig, err := con.Proxy.SShConfig()
 				if err != nil {
 					return false, nil, err
 				}
-				proxyClient, err := ssh.Dial("tcp", net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port))), proxyConfig)
+				proxyClient, err := ssh.Dial("tcp",
+					net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port))),
+					proxyConfig)
 				if err != nil {
 					// on each try we already made a dial
 					dials := try + 1
