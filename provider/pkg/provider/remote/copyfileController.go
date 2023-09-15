@@ -58,12 +58,7 @@ func (*CopyFile) Create(ctx p.Context, name string, input CopyFileInputs, previe
 	}
 	defer src.Close()
 
-	config, err := input.Connection.SShConfig()
-	if err != nil {
-		return "", CopyFileOutputs{input}, err
-	}
-
-	client, err := input.Connection.Dial(ctx, config)
+	client, err := input.Connection.Dial(ctx)
 	if err != nil {
 		return "", CopyFileOutputs{input}, err
 	}
