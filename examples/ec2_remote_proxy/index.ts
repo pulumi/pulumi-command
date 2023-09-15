@@ -11,11 +11,22 @@ const keyName = config.get("keyName") ?? new aws.ec2.KeyPair("key", { publicKey:
 const privateKeyBase64 = config.get("privateKeyBase64");
 const privateKey = privateKeyBase64 ? Buffer.from(privateKeyBase64, 'base64').toString('ascii') : fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa")).toString("utf8");
 
-const secgrp = new aws.ec2.SecurityGroup("secgrp", {
-    description: "Foo",
+const ingress = new aws.ec2.SecurityGroup("ingress", {
+    description: "A security group that will accept SSH connections from the outside world.",
     ingress: [
         { protocol: "tcp", fromPort: 22, toPort: 22, cidrBlocks: ["0.0.0.0/0"] },
         { protocol: "tcp", fromPort: 80, toPort: 80, cidrBlocks: ["0.0.0.0/0"] },
+    ],
+    egress: [
+        { fromPort: 0, toPort: 0, protocol: "-1", cidrBlocks: ["0.0.0.0/0"], ipv6CidrBlocks: ["::/0"], },
+    ],
+});
+
+const validated = new aws.ec2.SecurityGroup("validated", {
+    description: "A security group that will only accept connections that have already been validated.",
+    ingress: [
+        { protocol: "tcp", fromPort: 22, toPort: 22, securityGroups: [ingress.id] },
+        { protocol: "tcp", fromPort: 80, toPort: 80, securityGroups: [ingress.id] },
     ],
     egress: [
         { fromPort: 0, toPort: 0, protocol: "-1", cidrBlocks: ["0.0.0.0/0"], ipv6CidrBlocks: ["::/0"], },
@@ -35,34 +46,32 @@ const server = new aws.ec2.Instance("server", {
     instanceType: size,
     ami: ami.id,
     keyName: keyName,
-    vpcSecurityGroupIds: [secgrp.id],
+    vpcSecurityGroupIds: [validated.id],
 }, { replaceOnChanges: ["instanceType"] });
 
 const proxy = new aws.ec2.Instance("proxy", {
     instanceType: size,
     ami: ami.id,
     keyName: keyName,
-    vpcSecurityGroupIds: [secgrp.id],
+    vpcSecurityGroupIds: [ingress.id],
 }, { replaceOnChanges: ["instanceType"] });
-
-const proxyConnection: types.input.remote.ProxyConnectionArgs = {
-    host: proxy.publicIp,
-    user: "ec2-user",
-    privateKey: privateKey,
-}
 
 const connection: types.input.remote.ConnectionArgs = {
     host: server.publicIp,
     user: "ec2-user",
     privateKey: privateKey,
-    proxy: proxyConnection,
+    proxy: {
+        host: proxy.publicIp,
+        user: "ec2-user",
+        privateKey: privateKey,
+    },
 };
 
 const hostname = new remote.Command("hostname", {
     connection: connection,
     create: "hostname",
     environment: secret({
-      "secret-key": secret("super-secret-value")
+        "secret-key": secret("super-secret-value")
     }),
 });
 
