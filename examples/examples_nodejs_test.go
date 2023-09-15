@@ -161,7 +161,7 @@ func TestSimpleWithUpdate(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestEc2RemoteTs(t *testing.T) {
+func testEc2Ts(t *testing.T, targetDir string) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(getRegion(t))},
 	)
@@ -186,7 +186,7 @@ func TestEc2RemoteTs(t *testing.T) {
 	}()
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "ec2_remote"),
+			Dir: filepath.Join(getCwd(t), targetDir),
 			Config: map[string]string{
 				"keyName": aws.StringValue(key.KeyName),
 			},
@@ -194,7 +194,7 @@ func TestEc2RemoteTs(t *testing.T) {
 				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
 			},
 			EditDirs: []integration.EditDir{{
-				Dir:      filepath.Join("ec2_remote", "replace_instance"),
+				Dir:      filepath.Join(targetDir, "replace_instance"),
 				Additive: true,
 			}},
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
@@ -237,81 +237,9 @@ func TestEc2RemoteTs(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestEc2RemoteProxyTs(t *testing.T) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(getRegion(t))},
-	)
-	assert.NoError(t, err)
-	svc := ec2.New(sess)
-	keyName, err := resource.NewUniqueHex("test-keyname", 8, 20)
-	assert.NoError(t, err)
-	t.Logf("Creating keypair %s.\n", keyName)
-	key, err := svc.CreateKeyPair(&ec2.CreateKeyPairInput{
-		KeyName: aws.String(keyName),
-	})
-	assert.NoError(t, err)
-	if err != nil {
-		return
-	}
-	defer func() {
-		t.Logf("Deleting keypair %s.\n", keyName)
-		_, err := svc.DeleteKeyPair(&ec2.DeleteKeyPairInput{
-			KeyName: aws.String(keyName),
-		})
-		assert.NoError(t, err)
-	}()
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "ec2_remote_proxy"),
-			Config: map[string]string{
-				"keyName": aws.StringValue(key.KeyName),
-			},
-			Secrets: map[string]string{
-				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
-			},
-			EditDirs: []integration.EditDir{{
-				Dir:      filepath.Join("ec2_remote_proxy", "replace_instance"),
-				Additive: true,
-			}},
-			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-				isEncrypted := func(v interface{}) bool {
-					m, ok := v.(map[string]interface{})
-					if !ok {
-						return false
-					}
-					sigKey := m[resource.SigKey]
-					if sigKey == nil {
-						return false
-					}
+func TestEc2RemoteTs(t *testing.T) { testEc2Ts(t, "ec2_remote") }
 
-					v, vOk := sigKey.(string)
-					if !vOk {
-						return false
-					}
-
-					if v != resource.SecretSig {
-						return false
-					}
-
-					ciphertext := m["ciphertext"]
-					if ciphertext == nil {
-						return false
-					}
-
-					_, cOk := ciphertext.(string)
-					return cOk
-				}
-
-				assertEncryptedValue := func(m map[string]interface{}, key string) {
-					assert.Truef(t, isEncrypted(m[key]), "%s value should be encrypted", key)
-				}
-				assertEncryptedValue(stack.Outputs, "connectionSecret")
-				assertEncryptedValue(stack.Outputs, "secretEnv")
-			},
-		})
-
-	integration.ProgramTest(t, &test)
-}
+func TestEc2RemoteProxyTs(t *testing.T) { testEc2Ts(t, "ec2_remote_proxy") }
 
 func TestLambdaInvoke(t *testing.T) {
 	test := getJSBaseOptions(t).
