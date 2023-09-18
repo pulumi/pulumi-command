@@ -179,27 +179,28 @@ func (con *Connection) Dial(ctx p.Context) (*ssh.Client, error) {
 	proxyTries := con.getDialErrorLimit()
 	// The user has specified a proxy connection. First, connect to the proxy:
 	proxyClient, err := dialWithRetry(ctx, "Dial proxy", proxyTries, &proxyConfig.Timeout, func() (*ssh.Client, error) {
-		endpoint := net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port)))
-		return ssh.Dial("tcp", endpoint, proxyConfig)
+		return ssh.Dial("tcp",
+			net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port))),
+			proxyConfig)
 	})
 	if err != nil {
 		return nil, fmt.Errorf("proxy: %w", err)
 	}
 
-	// Having connected with the proxy, we need to dial endpoint with our proxy.
-
-	netConn, err := dialWithRetry(ctx, "Dial from proxy", tries, &config.Timeout, func() (net.Conn, error) {
+	// Having connected with the proxy, we establish a connection from our proxy to
+	// our server.
+	conn, err := dialWithRetry(ctx, "Dial from proxy", tries, &proxyConfig.Timeout, func() (net.Conn, error) {
 		return proxyClient.Dial("tcp", endpoint)
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("proxy: %w", err)
 	}
 
+	// We initiate a SSH connection over the bridge we just established.
 	var channel <-chan ssh.NewChannel
 	var req <-chan *ssh.Request
 	proxyConn, err := dialWithRetry(ctx, "Dial", tries, &config.Timeout, func() (ssh.Conn, error) {
-		c, ch, r, err := ssh.NewClientConn(netConn, endpoint, config)
+		c, ch, r, err := ssh.NewClientConn(conn, endpoint, config)
 		channel = ch
 		req = r
 		return c, err
