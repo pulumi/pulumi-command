@@ -23,7 +23,6 @@ import (
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
@@ -121,9 +120,9 @@ func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
-func dialWithRetry[T any](ctx p.Context, maxAttemptes int, timeout *time.Duration, f func() (T, error)) (T, error) {
+func dialWithRetry[T any](ctx p.Context, msg string, maxAttemptes int, timeout *time.Duration, f func() (T, error)) (T, error) {
 	var userError error
-	ok, data, err := retry.Until(ctx, retry.Acceptor{
+	_, data, err := retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, _ time.Duration) (bool, any, error) {
 			var result T
 			result, userError = f()
@@ -140,8 +139,8 @@ func dialWithRetry[T any](ctx p.Context, maxAttemptes int, timeout *time.Duratio
 			} else {
 				limit = fmt.Sprintf("%d", maxAttemptes)
 			}
-			ctx.LogStatusf(diag.Info, "Dial %d/%s failed: retrying",
-				dials, limit)
+			ctx.LogStatusf(diag.Info, "%s %d/%s failed: retrying",
+				msg, dials, limit)
 
 			if *timeout > time.Second*15 {
 				(*timeout) -= time.Second * 15
@@ -149,13 +148,11 @@ func dialWithRetry[T any](ctx p.Context, maxAttemptes int, timeout *time.Duratio
 			return false, nil, nil
 		},
 	})
-	if ok {
+	if err == nil {
 		return data.(T), nil
 	}
 
 	var t T
-	contract.Assertf(err != nil,
-		"if err was nil, then we would have already returned")
 	return t, err
 }
 
@@ -169,7 +166,7 @@ func (con *Connection) Dial(ctx p.Context) (*ssh.Client, error) {
 	endpoint := net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port)))
 	tries := con.getDialErrorLimit()
 	if con.Proxy == nil {
-		return dialWithRetry(ctx, tries, &config.Timeout, func() (*ssh.Client, error) {
+		return dialWithRetry(ctx, "Dial", tries, &config.Timeout, func() (*ssh.Client, error) {
 			return ssh.Dial("tcp", endpoint, config)
 		})
 	}
@@ -181,7 +178,7 @@ func (con *Connection) Dial(ctx p.Context) (*ssh.Client, error) {
 
 	proxyTries := con.getDialErrorLimit()
 	// The user has specified a proxy connection. First, connect to the proxy:
-	proxyClient, err := dialWithRetry(ctx, proxyTries, &proxyConfig.Timeout, func() (*ssh.Client, error) {
+	proxyClient, err := dialWithRetry(ctx, "Dial proxy", proxyTries, &proxyConfig.Timeout, func() (*ssh.Client, error) {
 		endpoint := net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port)))
 		return ssh.Dial("tcp", endpoint, proxyConfig)
 	})
@@ -191,7 +188,7 @@ func (con *Connection) Dial(ctx p.Context) (*ssh.Client, error) {
 
 	// Having connected with the proxy, we need to dial endpoint with our proxy.
 
-	netConn, err := dialWithRetry(ctx, tries, &config.Timeout, func() (net.Conn, error) {
+	netConn, err := dialWithRetry(ctx, "Dial from proxy", tries, &config.Timeout, func() (net.Conn, error) {
 		return proxyClient.Dial("tcp", endpoint)
 	})
 
@@ -201,7 +198,7 @@ func (con *Connection) Dial(ctx p.Context) (*ssh.Client, error) {
 
 	var channel <-chan ssh.NewChannel
 	var req <-chan *ssh.Request
-	proxyConn, err := dialWithRetry(ctx, tries, &config.Timeout, func() (ssh.Conn, error) {
+	proxyConn, err := dialWithRetry(ctx, "Dial", tries, &config.Timeout, func() (ssh.Conn, error) {
 		c, ch, r, err := ssh.NewClientConn(netConn, endpoint, config)
 		channel = ch
 		req = r
