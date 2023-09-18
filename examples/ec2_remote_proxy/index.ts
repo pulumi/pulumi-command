@@ -57,7 +57,7 @@ const proxy = new aws.ec2.Instance("proxy", {
 }, { replaceOnChanges: ["instanceType"] });
 
 const connection: types.input.remote.ConnectionArgs = {
-    host: server.publicIp,
+    host: server.privateDns,
     user: "ec2-user",
     privateKey: privateKey,
     proxy: {
