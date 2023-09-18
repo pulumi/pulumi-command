@@ -68,29 +68,29 @@ const connection: types.input.remote.ConnectionArgs = {
 };
 
 const hostname = new remote.Command("hostname", {
-    connection: connection,
+    connection: { ...connection, dialErrorLimit: -1 },
     create: "hostname",
     environment: secret({
         "secret-key": secret("super-secret-value")
     }),
-});
+}, { customTimeouts: { create: "10m" } });
 
 new remote.Command("remotePrivateIP", {
     connection,
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
-}, { deleteBeforeReplace: true });
+}, { deleteBeforeReplace: true, dependsOn: hostname });
 
 new local.Command("localPrivateIP", {
     create: interpolate`echo ${server.privateIp} > private_ip.txt`,
     delete: `rm private_ip.txt`,
-}, { deleteBeforeReplace: true });
+}, { deleteBeforeReplace: true, dependsOn: hostname });
 
 const sizeFile = new remote.CopyFile("size", {
     connection: connection,
     localPath: "./size.ts",
     remotePath: "size.ts",
-})
+}, { dependsOn: hostname })
 
 const catSize = new remote.Command("checkSize", {
     connection: connection,
