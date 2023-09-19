@@ -3,7 +3,6 @@
 
 package com.pulumi.command.remote.inputs;
 
-import com.pulumi.command.remote.inputs.ProxyConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
@@ -16,12 +15,12 @@ import javax.annotation.Nullable;
 
 
 /**
- * Instructions for how to connect to a remote endpoint.
+ * Instructions for how to connect to a remote endpoint via a bastion host.
  * 
  */
-public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
+public final class ProxyConnectionArgs extends com.pulumi.resources.ResourceArgs {
 
-    public static final ConnectionArgs Empty = new ConnectionArgs();
+    public static final ProxyConnectionArgs Empty = new ProxyConnectionArgs();
 
     /**
      * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
@@ -54,14 +53,14 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The address of the resource to connect to.
+     * The address of the bastion host to connect to.
      * 
      */
     @Import(name="host", required=true)
     private Output<String> host;
 
     /**
-     * @return The address of the resource to connect to.
+     * @return The address of the bastion host to connect to.
      * 
      */
     public Output<String> host() {
@@ -69,14 +68,14 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The password we should use for the connection.
+     * The password we should use for the connection to the bastion host.
      * 
      */
     @Import(name="password")
     private @Nullable Output<String> password;
 
     /**
-     * @return The password we should use for the connection.
+     * @return The password we should use for the connection to the bastion host.
      * 
      */
     public Optional<Output<String>> password() {
@@ -99,14 +98,14 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The port to connect to.
+     * The port of the bastion host to connect to.
      * 
      */
     @Import(name="port")
     private @Nullable Output<Double> port;
 
     /**
-     * @return The port to connect to.
+     * @return The port of the bastion host to connect to.
      * 
      */
     public Optional<Output<Double>> port() {
@@ -144,38 +143,23 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The connection settings for the bastion/proxy host.
-     * 
-     */
-    @Import(name="proxy")
-    private @Nullable Output<ProxyConnectionArgs> proxy;
-
-    /**
-     * @return The connection settings for the bastion/proxy host.
-     * 
-     */
-    public Optional<Output<ProxyConnectionArgs>> proxy() {
-        return Optional.ofNullable(this.proxy);
-    }
-
-    /**
-     * The user that we should use for the connection.
+     * The user that we should use for the connection to the bastion host.
      * 
      */
     @Import(name="user")
     private @Nullable Output<String> user;
 
     /**
-     * @return The user that we should use for the connection.
+     * @return The user that we should use for the connection to the bastion host.
      * 
      */
     public Optional<Output<String>> user() {
         return Optional.ofNullable(this.user);
     }
 
-    private ConnectionArgs() {}
+    private ProxyConnectionArgs() {}
 
-    private ConnectionArgs(ConnectionArgs $) {
+    private ProxyConnectionArgs(ProxyConnectionArgs $) {
         this.agentSocketPath = $.agentSocketPath;
         this.dialErrorLimit = $.dialErrorLimit;
         this.host = $.host;
@@ -184,26 +168,25 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         this.port = $.port;
         this.privateKey = $.privateKey;
         this.privateKeyPassword = $.privateKeyPassword;
-        this.proxy = $.proxy;
         this.user = $.user;
     }
 
     public static Builder builder() {
         return new Builder();
     }
-    public static Builder builder(ConnectionArgs defaults) {
+    public static Builder builder(ProxyConnectionArgs defaults) {
         return new Builder(defaults);
     }
 
     public static final class Builder {
-        private ConnectionArgs $;
+        private ProxyConnectionArgs $;
 
         public Builder() {
-            $ = new ConnectionArgs();
+            $ = new ProxyConnectionArgs();
         }
 
-        public Builder(ConnectionArgs defaults) {
-            $ = new ConnectionArgs(Objects.requireNonNull(defaults));
+        public Builder(ProxyConnectionArgs defaults) {
+            $ = new ProxyConnectionArgs(Objects.requireNonNull(defaults));
         }
 
         /**
@@ -249,7 +232,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param host The address of the resource to connect to.
+         * @param host The address of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -260,7 +243,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param host The address of the resource to connect to.
+         * @param host The address of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -270,7 +253,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param password The password we should use for the connection.
+         * @param password The password we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -281,7 +264,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param password The password we should use for the connection.
+         * @param password The password we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -312,7 +295,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param port The port to connect to.
+         * @param port The port of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -323,7 +306,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param port The port to connect to.
+         * @param port The port of the bastion host to connect to.
          * 
          * @return builder
          * 
@@ -375,28 +358,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param proxy The connection settings for the bastion/proxy host.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder proxy(@Nullable Output<ProxyConnectionArgs> proxy) {
-            $.proxy = proxy;
-            return this;
-        }
-
-        /**
-         * @param proxy The connection settings for the bastion/proxy host.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder proxy(ProxyConnectionArgs proxy) {
-            return proxy(Output.of(proxy));
-        }
-
-        /**
-         * @param user The user that we should use for the connection.
+         * @param user The user that we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -407,7 +369,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param user The user that we should use for the connection.
+         * @param user The user that we should use for the connection to the bastion host.
          * 
          * @return builder
          * 
@@ -416,7 +378,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
             return user(Output.of(user));
         }
 
-        public ConnectionArgs build() {
+        public ProxyConnectionArgs build() {
             $.dialErrorLimit = Codegen.integerProp("dialErrorLimit").output().arg($.dialErrorLimit).def(10).getNullable();
             $.host = Objects.requireNonNull($.host, "expected parameter 'host' to be non-null");
             $.perDialTimeout = Codegen.integerProp("perDialTimeout").output().arg($.perDialTimeout).def(15).getNullable();

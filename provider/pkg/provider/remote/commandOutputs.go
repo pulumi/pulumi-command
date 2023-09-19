@@ -27,12 +27,7 @@ import (
 )
 
 func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
-	config, err := c.Connection.SShConfig()
-	if err != nil {
-		return err
-	}
-
-	client, err := c.Connection.Dial(ctx, config)
+	client, err := c.Connection.Dial(ctx)
 	if err != nil {
 		return err
 	}

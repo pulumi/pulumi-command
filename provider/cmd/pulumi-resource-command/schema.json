@@ -505,9 +505,62 @@
                     "description": "The password to use in case the private key is encrypted.",
                     "type": "string"
                 },
+                "proxy": {
+                    "$ref": "#/types/command:remote:ProxyConnection",
+                    "description": "The connection settings for the bastion/proxy host."
+                },
                 "user": {
                     "default": "root",
                     "description": "The user that we should use for the connection.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "host"
+            ],
+            "type": "object"
+        },
+        "command:remote:ProxyConnection": {
+            "description": "Instructions for how to connect to a remote endpoint via a bastion host.",
+            "properties": {
+                "agentSocketPath": {
+                    "description": "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.",
+                    "type": "string"
+                },
+                "dialErrorLimit": {
+                    "default": 10,
+                    "description": "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.",
+                    "type": "integer"
+                },
+                "host": {
+                    "description": "The address of the bastion host to connect to.",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "The password we should use for the connection to the bastion host.",
+                    "type": "string"
+                },
+                "perDialTimeout": {
+                    "default": 15,
+                    "description": "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.",
+                    "type": "integer"
+                },
+                "port": {
+                    "default": 22,
+                    "description": "The port of the bastion host to connect to.",
+                    "type": "number"
+                },
+                "privateKey": {
+                    "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+                    "type": "string"
+                },
+                "privateKeyPassword": {
+                    "description": "The password to use in case the private key is encrypted.",
+                    "type": "string"
+                },
+                "user": {
+                    "default": "root",
+                    "description": "The user that we should use for the connection to the bastion host.",
                     "type": "string"
                 }
             },

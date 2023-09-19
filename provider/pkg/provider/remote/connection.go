@@ -38,6 +38,11 @@ var (
 )
 
 type Connection struct {
+	connectionBase
+	Proxy *ProxyConnection `pulumi:"proxy,optional"`
+}
+
+type connectionBase struct {
 	User               *string  `pulumi:"user,optional"`
 	Password           *string  `pulumi:"password,optional"`
 	Host               *string  `pulumi:"host"`
@@ -46,7 +51,7 @@ type Connection struct {
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
-	PerDialTimeout     int      `pulumi:"perDialTimeout,optional"`
+	PerDialTimeout     *int     `pulumi:"perDialTimeout,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -61,16 +66,17 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
 	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.")
+	a.Describe(&c.Proxy, "The connection settings for the bastion/proxy host.")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
 	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
 	a.SetDefault(&c.PerDialTimeout, 15)
 }
 
-func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
+func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
 	config := &ssh.ClientConfig{
 		User:            *con.User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout:         time.Second * time.Duration(con.PerDialTimeout),
+		Timeout:         time.Second * time.Duration(*con.PerDialTimeout),
 	}
 	if con.PrivateKey != nil {
 		var signer ssh.Signer
@@ -114,48 +120,96 @@ func (con *Connection) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
-// Dial a ssh client connection from a ssh client configuration, retrying as necessary.
-func (con *Connection) Dial(ctx p.Context, config *ssh.ClientConfig) (*ssh.Client, error) {
-	var client *ssh.Client
-	var err error
-	var dialErrorLimit = con.getDialErrorLimit()
-	_, _, err = retry.Until(ctx, retry.Acceptor{
-		Accept: func(try int, nextRetryTime time.Duration) (bool, interface{}, error) {
-			client, err = ssh.Dial("tcp",
-				net.JoinHostPort(*con.Host, fmt.Sprintf("%.0f", *con.Port)),
-				config)
-			if err != nil {
-				// on each try we already made a dial
-				dials := try + 1
-				if reachedDialingErrorLimit(dials, dialErrorLimit) {
-					return true, nil, err
-				}
-				var limit string
-				if dialErrorLimit == -1 {
-					limit = "inf"
-				} else {
-					limit = fmt.Sprintf("%d", dialErrorLimit)
-				}
-				ctx.LogStatusf(diag.Info, "Dial %d/%s failed: retrying",
-					dials, limit)
-
-				if config.Timeout > time.Second*15 {
-					config.Timeout -= time.Second * 15
-				}
-
-				return false, nil, nil
+func dialWithRetry[T any](ctx p.Context, msg string, maxAttempts int, f func() (T, error)) (T, error) {
+	var userError error
+	_, data, err := retry.Until(ctx, retry.Acceptor{
+		Accept: func(try int, _ time.Duration) (bool, any, error) {
+			var result T
+			result, userError = f()
+			if userError == nil {
+				return true, result, nil
 			}
-
-			return true, nil, nil
+			dials := try + 1
+			if reachedDialingErrorLimit(dials, maxAttempts) {
+				return true, nil, fmt.Errorf("after %d failed attempts: %w",
+					try, userError)
+			}
+			var limit string
+			if maxAttempts == -1 {
+				limit = "inf"
+			} else {
+				limit = fmt.Sprintf("%d", maxAttempts)
+			}
+			ctx.LogStatusf(diag.Info, "%s %d/%s failed: retrying",
+				msg, dials, limit)
+			return false, nil, nil
 		},
 	})
+	if err == nil {
+		return data.(T), nil
+	}
+
+	var t T
+	return t, err
+}
+
+// Dial a ssh client connection from a ssh client configuration, retrying as necessary.
+func (con *Connection) Dial(ctx p.Context) (*ssh.Client, error) {
+	config, err := con.SShConfig()
 	if err != nil {
 		return nil, err
 	}
-	return client, nil
+
+	endpoint := net.JoinHostPort(*con.Host, fmt.Sprintf("%d", int(*con.Port)))
+	tries := con.getDialErrorLimit()
+	if con.Proxy == nil {
+		return dialWithRetry(ctx, "Dial", tries, func() (*ssh.Client, error) {
+			return ssh.Dial("tcp", endpoint, config)
+		})
+	}
+
+	proxyConfig, err := con.Proxy.SShConfig()
+	if err != nil {
+		return nil, fmt.Errorf("proxy: %w", err)
+	}
+
+	proxyTries := con.Proxy.getDialErrorLimit()
+	// The user has specified a proxy connection. First, connect to the proxy:
+	proxyClient, err := dialWithRetry(ctx, "Dial proxy", proxyTries, func() (*ssh.Client, error) {
+		return ssh.Dial("tcp",
+			net.JoinHostPort(*con.Proxy.Host, fmt.Sprintf("%d", int(*con.Proxy.Port))),
+			proxyConfig)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("proxy: %w", err)
+	}
+
+	// Having connected with the proxy, we establish a connection from our proxy to
+	// our server.
+	conn, err := dialWithRetry(ctx, "Dial from proxy", tries, func() (net.Conn, error) {
+		return proxyClient.Dial("tcp", endpoint)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("proxy: %w", err)
+	}
+
+	// We initiate a SSH connection over the bridge we just established.
+	var channel <-chan ssh.NewChannel
+	var req <-chan *ssh.Request
+	proxyConn, err := dialWithRetry(ctx, "Dial", tries, func() (ssh.Conn, error) {
+		c, ch, r, err := ssh.NewClientConn(conn, endpoint, config)
+		channel = ch
+		req = r
+		return c, err
+	})
+	if err != nil {
+		return nil, fmt.Errorf("proxy: %w", err)
+	}
+
+	return ssh.NewClient(proxyConn, channel, req), nil
 }
 
-func (con *Connection) getDialErrorLimit() int {
+func (con connectionBase) getDialErrorLimit() int {
 	if con.DialErrorLimit == nil {
 		return dialErrorDefault
 	}

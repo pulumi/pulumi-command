@@ -3,7 +3,6 @@
 
 package com.pulumi.command.remote.outputs;
 
-import com.pulumi.command.remote.outputs.ProxyConnection;
 import com.pulumi.core.annotations.CustomType;
 import java.lang.Double;
 import java.lang.Integer;
@@ -13,7 +12,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 @CustomType
-public final class Connection {
+public final class ProxyConnection {
     /**
      * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
      * 
@@ -25,12 +24,12 @@ public final class Connection {
      */
     private @Nullable Integer dialErrorLimit;
     /**
-     * @return The address of the resource to connect to.
+     * @return The address of the bastion host to connect to.
      * 
      */
     private String host;
     /**
-     * @return The password we should use for the connection.
+     * @return The password we should use for the connection to the bastion host.
      * 
      */
     private @Nullable String password;
@@ -40,7 +39,7 @@ public final class Connection {
      */
     private @Nullable Integer perDialTimeout;
     /**
-     * @return The port to connect to.
+     * @return The port of the bastion host to connect to.
      * 
      */
     private @Nullable Double port;
@@ -55,17 +54,12 @@ public final class Connection {
      */
     private @Nullable String privateKeyPassword;
     /**
-     * @return The connection settings for the bastion/proxy host.
-     * 
-     */
-    private @Nullable ProxyConnection proxy;
-    /**
-     * @return The user that we should use for the connection.
+     * @return The user that we should use for the connection to the bastion host.
      * 
      */
     private @Nullable String user;
 
-    private Connection() {}
+    private ProxyConnection() {}
     /**
      * @return SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
      * 
@@ -81,14 +75,14 @@ public final class Connection {
         return Optional.ofNullable(this.dialErrorLimit);
     }
     /**
-     * @return The address of the resource to connect to.
+     * @return The address of the bastion host to connect to.
      * 
      */
     public String host() {
         return this.host;
     }
     /**
-     * @return The password we should use for the connection.
+     * @return The password we should use for the connection to the bastion host.
      * 
      */
     public Optional<String> password() {
@@ -102,7 +96,7 @@ public final class Connection {
         return Optional.ofNullable(this.perDialTimeout);
     }
     /**
-     * @return The port to connect to.
+     * @return The port of the bastion host to connect to.
      * 
      */
     public Optional<Double> port() {
@@ -123,14 +117,7 @@ public final class Connection {
         return Optional.ofNullable(this.privateKeyPassword);
     }
     /**
-     * @return The connection settings for the bastion/proxy host.
-     * 
-     */
-    public Optional<ProxyConnection> proxy() {
-        return Optional.ofNullable(this.proxy);
-    }
-    /**
-     * @return The user that we should use for the connection.
+     * @return The user that we should use for the connection to the bastion host.
      * 
      */
     public Optional<String> user() {
@@ -141,7 +128,7 @@ public final class Connection {
         return new Builder();
     }
 
-    public static Builder builder(Connection defaults) {
+    public static Builder builder(ProxyConnection defaults) {
         return new Builder(defaults);
     }
     @CustomType.Builder
@@ -154,10 +141,9 @@ public final class Connection {
         private @Nullable Double port;
         private @Nullable String privateKey;
         private @Nullable String privateKeyPassword;
-        private @Nullable ProxyConnection proxy;
         private @Nullable String user;
         public Builder() {}
-        public Builder(Connection defaults) {
+        public Builder(ProxyConnection defaults) {
     	      Objects.requireNonNull(defaults);
     	      this.agentSocketPath = defaults.agentSocketPath;
     	      this.dialErrorLimit = defaults.dialErrorLimit;
@@ -167,7 +153,6 @@ public final class Connection {
     	      this.port = defaults.port;
     	      this.privateKey = defaults.privateKey;
     	      this.privateKeyPassword = defaults.privateKeyPassword;
-    	      this.proxy = defaults.proxy;
     	      this.user = defaults.user;
         }
 
@@ -212,17 +197,12 @@ public final class Connection {
             return this;
         }
         @CustomType.Setter
-        public Builder proxy(@Nullable ProxyConnection proxy) {
-            this.proxy = proxy;
-            return this;
-        }
-        @CustomType.Setter
         public Builder user(@Nullable String user) {
             this.user = user;
             return this;
         }
-        public Connection build() {
-            final var o = new Connection();
+        public ProxyConnection build() {
+            final var o = new ProxyConnection();
             o.agentSocketPath = agentSocketPath;
             o.dialErrorLimit = dialErrorLimit;
             o.host = host;
@@ -231,7 +211,6 @@ public final class Connection {
             o.port = port;
             o.privateKey = privateKey;
             o.privateKeyPassword = privateKeyPassword;
-            o.proxy = proxy;
             o.user = user;
             return o;
         }

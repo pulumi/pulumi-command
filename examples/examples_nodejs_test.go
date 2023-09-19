@@ -161,7 +161,7 @@ func TestSimpleWithUpdate(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestEc2RemoteTs(t *testing.T) {
+func testEc2Ts(t *testing.T, targetDir string) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(getRegion(t))},
 	)
@@ -186,7 +186,7 @@ func TestEc2RemoteTs(t *testing.T) {
 	}()
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "ec2_remote"),
+			Dir: filepath.Join(getCwd(t), targetDir),
 			Config: map[string]string{
 				"keyName": aws.StringValue(key.KeyName),
 			},
@@ -194,7 +194,7 @@ func TestEc2RemoteTs(t *testing.T) {
 				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
 			},
 			EditDirs: []integration.EditDir{{
-				Dir:      filepath.Join("ec2_remote", "replace_instance"),
+				Dir:      filepath.Join(targetDir, "replace_instance"),
 				Additive: true,
 			}},
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
@@ -236,6 +236,10 @@ func TestEc2RemoteTs(t *testing.T) {
 
 	integration.ProgramTest(t, &test)
 }
+
+func TestEc2RemoteTs(t *testing.T) { testEc2Ts(t, "ec2_remote") }
+
+func TestEc2RemoteProxyTs(t *testing.T) { testEc2Ts(t, "ec2_remote_proxy") }
 
 func TestLambdaInvoke(t *testing.T) {
 	test := getJSBaseOptions(t).
