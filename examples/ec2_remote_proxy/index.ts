@@ -68,7 +68,14 @@ const connection: types.input.remote.ConnectionArgs = {
 };
 
 const hostname = new remote.Command("hostname", {
-    connection: { ...connection, dialErrorLimit: -1 },
+    connection: {
+        ...connection,
+        dialErrorLimit: -1,
+        proxy: {
+            ...connection.proxy,
+            dialErrorLimit: -1,
+        }
+    },
     create: "hostname",
     environment: secret({
         "secret-key": secret("super-secret-value")

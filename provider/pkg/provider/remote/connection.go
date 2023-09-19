@@ -120,7 +120,7 @@ func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
-func dialWithRetry[T any](ctx p.Context, msg string, maxAttemptes int, f func() (T, error)) (T, error) {
+func dialWithRetry[T any](ctx p.Context, msg string, maxAttempts int, f func() (T, error)) (T, error) {
 	var userError error
 	_, data, err := retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, _ time.Duration) (bool, any, error) {
@@ -130,14 +130,15 @@ func dialWithRetry[T any](ctx p.Context, msg string, maxAttemptes int, f func() 
 				return true, result, nil
 			}
 			dials := try + 1
-			if reachedDialingErrorLimit(dials, maxAttemptes) {
-				return true, nil, userError
+			if reachedDialingErrorLimit(dials, maxAttempts) {
+				return true, nil, fmt.Errorf("after %d failed attempts: %w",
+					try, userError)
 			}
 			var limit string
-			if maxAttemptes == -1 {
+			if maxAttempts == -1 {
 				limit = "inf"
 			} else {
-				limit = fmt.Sprintf("%d", maxAttemptes)
+				limit = fmt.Sprintf("%d", maxAttempts)
 			}
 			ctx.LogStatusf(diag.Info, "%s %d/%s failed: retrying",
 				msg, dials, limit)
