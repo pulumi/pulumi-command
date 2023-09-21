@@ -7,7 +7,7 @@ replace github.com/pulumi/pulumi-command/provider => ../
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/pulumi/pulumi-command/provider v0.0.0-00010101000000-000000000000
-	github.com/pulumi/pulumi-go-provider v0.12.2-0.20230914002200-b7679cf2e409
+	github.com/pulumi/pulumi-go-provider v0.12.2
 	github.com/pulumi/pulumi-go-provider/integration v0.10.0
 	github.com/pulumi/pulumi/sdk/v3 v3.82.1
 	github.com/stretchr/testify v1.8.3

@@ -28,19 +28,6 @@ import (
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
 var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
-var _ = (infer.ExplicitDependencies[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
-
-// WireDependencies is relevant to secrets handling. This method indicates which Inputs
-// the Outputs are derived from. If an output is derived from a secret input, the output
-// will be a secret.
-
-// This naive implementation conveys that every output is derived from all inputs.
-func (r *CopyFile) WireDependencies(f infer.FieldSelector, args *CopyFileInputs, state *CopyFileOutputs) {
-	f.OutputField(&state.CopyFileInputs.Connection).DependsOn(f.InputField(&args.Connection))
-	f.OutputField(&state.CopyFileInputs.Triggers).DependsOn(f.InputField(&args.Triggers))
-	f.OutputField(&state.CopyFileInputs.LocalPath).DependsOn(f.InputField(&args.LocalPath))
-	f.OutputField(&state.CopyFileInputs.RemotePath).DependsOn(f.InputField(&args.RemotePath))
-}
 
 // This is the Create method. This will be run on every CopyFile resource creation.
 func (*CopyFile) Create(ctx p.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
