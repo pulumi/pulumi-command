@@ -132,6 +132,31 @@ func TestLocalCommand(t *testing.T) {
 	})
 }
 
+func TestRemoteCommand(t *testing.T) {
+	t.Parallel()
+	pString := resource.NewStringProperty
+	sec := resource.MakeSecret
+
+	t.Run("regress-256", func(t *testing.T) {
+		resp, err := provider().Create(p.CreateRequest{
+			Urn:     urn("remote", "Command", "check"),
+			Preview: true,
+			Properties: resource.PropertyMap{
+				"create": pString("<create command>"),
+				"connection": sec(resource.NewObjectProperty(resource.PropertyMap{
+					"host": pString("<host port>"),
+				})),
+			}})
+		require.NoError(t, err)
+
+		for _, v := range []resource.PropertyKey{"stdout", "stderr"} {
+			p := resp.Properties[v]
+			assert.True(t, p.ContainsUnknowns())
+			assert.False(t, p.IsSecret() || (p.IsOutput() && p.OutputValue().Secret))
+		}
+	})
+}
+
 // Ensure that we correctly apply apply defaults to `connection.port`.
 //
 // User issue is https://github.com/pulumi/pulumi-command/issues/248.
