@@ -202,17 +202,17 @@ public final class ProxyConnection {
             return this;
         }
         public ProxyConnection build() {
-            final var o = new ProxyConnection();
-            o.agentSocketPath = agentSocketPath;
-            o.dialErrorLimit = dialErrorLimit;
-            o.host = host;
-            o.password = password;
-            o.perDialTimeout = perDialTimeout;
-            o.port = port;
-            o.privateKey = privateKey;
-            o.privateKeyPassword = privateKeyPassword;
-            o.user = user;
-            return o;
+            final var _resultValue = new ProxyConnection();
+            _resultValue.agentSocketPath = agentSocketPath;
+            _resultValue.dialErrorLimit = dialErrorLimit;
+            _resultValue.host = host;
+            _resultValue.password = password;
+            _resultValue.perDialTimeout = perDialTimeout;
+            _resultValue.port = port;
+            _resultValue.privateKey = privateKey;
+            _resultValue.privateKeyPassword = privateKeyPassword;
+            _resultValue.user = user;
+            return _resultValue;
         }
     }
 }

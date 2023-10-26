@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
 from .. import _utilities
 
 __all__ = ['CommandArgs', 'Command']
@@ -118,26 +118,59 @@ class CommandArgs:
                are set to the stdout and stderr properties of the Command resource from previous 
                create or update steps.
         """
+        CommandArgs._configure(
+            lambda key, value: pulumi.set(__self__, key, value),
+            archive_paths=archive_paths,
+            asset_paths=asset_paths,
+            create=create,
+            delete=delete,
+            dir=dir,
+            environment=environment,
+            interpreter=interpreter,
+            stdin=stdin,
+            triggers=triggers,
+            update=update,
+        )
+    @staticmethod
+    def _configure(
+             _setter: Callable[[Any, Any], None],
+             archive_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             asset_paths: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             create: Optional[pulumi.Input[str]] = None,
+             delete: Optional[pulumi.Input[str]] = None,
+             dir: Optional[pulumi.Input[str]] = None,
+             environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+             interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             stdin: Optional[pulumi.Input[str]] = None,
+             triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+             update: Optional[pulumi.Input[str]] = None,
+             opts: Optional[pulumi.ResourceOptions] = None,
+             **kwargs):
+        if archive_paths is None and 'archivePaths' in kwargs:
+            archive_paths = kwargs['archivePaths']
+        if asset_paths is None and 'assetPaths' in kwargs:
+            asset_paths = kwargs['assetPaths']
+
         if archive_paths is not None:
-            pulumi.set(__self__, "archive_paths", archive_paths)
+            _setter("archive_paths", archive_paths)
         if asset_paths is not None:
-            pulumi.set(__self__, "asset_paths", asset_paths)
+            _setter("asset_paths", asset_paths)
         if create is not None:
-            pulumi.set(__self__, "create", create)
+            _setter("create", create)
         if delete is not None:
-            pulumi.set(__self__, "delete", delete)
+            _setter("delete", delete)
         if dir is not None:
-            pulumi.set(__self__, "dir", dir)
+            _setter("dir", dir)
         if environment is not None:
-            pulumi.set(__self__, "environment", environment)
+            _setter("environment", environment)
         if interpreter is not None:
-            pulumi.set(__self__, "interpreter", interpreter)
+            _setter("interpreter", interpreter)
         if stdin is not None:
-            pulumi.set(__self__, "stdin", stdin)
+            _setter("stdin", stdin)
         if triggers is not None:
-            pulumi.set(__self__, "triggers", triggers)
+            _setter("triggers", triggers)
         if update is not None:
-            pulumi.set(__self__, "update", update)
+            _setter("update", update)
 
     @property
     @pulumi.getter(name="archivePaths")
@@ -481,6 +514,10 @@ class Command(pulumi.CustomResource):
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
+            kwargs = kwargs or {}
+            def _setter(key, value):
+                kwargs[key] = value
+            CommandArgs._configure(_setter, **kwargs)
             __self__._internal_init(resource_name, *args, **kwargs)
 
     def _internal_init(__self__,
