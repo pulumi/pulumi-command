@@ -329,19 +329,19 @@ public final class RunResult {
             return this;
         }
         public RunResult build() {
-            final var o = new RunResult();
-            o.archive = archive;
-            o.archivePaths = archivePaths;
-            o.assetPaths = assetPaths;
-            o.assets = assets;
-            o.command = command;
-            o.dir = dir;
-            o.environment = environment;
-            o.interpreter = interpreter;
-            o.stderr = stderr;
-            o.stdin = stdin;
-            o.stdout = stdout;
-            return o;
+            final var _resultValue = new RunResult();
+            _resultValue.archive = archive;
+            _resultValue.archivePaths = archivePaths;
+            _resultValue.assetPaths = assetPaths;
+            _resultValue.assets = assets;
+            _resultValue.command = command;
+            _resultValue.dir = dir;
+            _resultValue.environment = environment;
+            _resultValue.interpreter = interpreter;
+            _resultValue.stderr = stderr;
+            _resultValue.stdin = stdin;
+            _resultValue.stdout = stdout;
+            return _resultValue;
         }
     }
 }
