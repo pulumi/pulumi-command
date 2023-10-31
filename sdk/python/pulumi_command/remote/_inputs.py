@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Mapping, Optional, Sequence, Union, overload
 from .. import _utilities
 
 __all__ = [
@@ -40,74 +40,33 @@ class ConnectionArgs:
         :param pulumi.Input['ProxyConnectionArgs'] proxy: The connection settings for the bastion/proxy host.
         :param pulumi.Input[str] user: The user that we should use for the connection.
         """
-        ConnectionArgs._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            host=host,
-            agent_socket_path=agent_socket_path,
-            dial_error_limit=dial_error_limit,
-            password=password,
-            per_dial_timeout=per_dial_timeout,
-            port=port,
-            private_key=private_key,
-            private_key_password=private_key_password,
-            proxy=proxy,
-            user=user,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             host: Optional[pulumi.Input[str]] = None,
-             agent_socket_path: Optional[pulumi.Input[str]] = None,
-             dial_error_limit: Optional[pulumi.Input[int]] = None,
-             password: Optional[pulumi.Input[str]] = None,
-             per_dial_timeout: Optional[pulumi.Input[int]] = None,
-             port: Optional[pulumi.Input[float]] = None,
-             private_key: Optional[pulumi.Input[str]] = None,
-             private_key_password: Optional[pulumi.Input[str]] = None,
-             proxy: Optional[pulumi.Input['ProxyConnectionArgs']] = None,
-             user: Optional[pulumi.Input[str]] = None,
-             opts: Optional[pulumi.ResourceOptions] = None,
-             **kwargs):
-        if host is None:
-            raise TypeError("Missing 'host' argument")
-        if agent_socket_path is None and 'agentSocketPath' in kwargs:
-            agent_socket_path = kwargs['agentSocketPath']
-        if dial_error_limit is None and 'dialErrorLimit' in kwargs:
-            dial_error_limit = kwargs['dialErrorLimit']
-        if per_dial_timeout is None and 'perDialTimeout' in kwargs:
-            per_dial_timeout = kwargs['perDialTimeout']
-        if private_key is None and 'privateKey' in kwargs:
-            private_key = kwargs['privateKey']
-        if private_key_password is None and 'privateKeyPassword' in kwargs:
-            private_key_password = kwargs['privateKeyPassword']
-
-        _setter("host", host)
+        pulumi.set(__self__, "host", host)
         if agent_socket_path is not None:
-            _setter("agent_socket_path", agent_socket_path)
+            pulumi.set(__self__, "agent_socket_path", agent_socket_path)
         if dial_error_limit is None:
             dial_error_limit = 10
         if dial_error_limit is not None:
-            _setter("dial_error_limit", dial_error_limit)
+            pulumi.set(__self__, "dial_error_limit", dial_error_limit)
         if password is not None:
-            _setter("password", password)
+            pulumi.set(__self__, "password", password)
         if per_dial_timeout is None:
             per_dial_timeout = 15
         if per_dial_timeout is not None:
-            _setter("per_dial_timeout", per_dial_timeout)
+            pulumi.set(__self__, "per_dial_timeout", per_dial_timeout)
         if port is None:
             port = 22
         if port is not None:
-            _setter("port", port)
+            pulumi.set(__self__, "port", port)
         if private_key is not None:
-            _setter("private_key", private_key)
+            pulumi.set(__self__, "private_key", private_key)
         if private_key_password is not None:
-            _setter("private_key_password", private_key_password)
+            pulumi.set(__self__, "private_key_password", private_key_password)
         if proxy is not None:
-            _setter("proxy", proxy)
+            pulumi.set(__self__, "proxy", proxy)
         if user is None:
             user = 'root'
         if user is not None:
-            _setter("user", user)
+            pulumi.set(__self__, "user", user)
 
     @property
     @pulumi.getter
@@ -254,70 +213,31 @@ class ProxyConnectionArgs:
         :param pulumi.Input[str] private_key_password: The password to use in case the private key is encrypted.
         :param pulumi.Input[str] user: The user that we should use for the connection to the bastion host.
         """
-        ProxyConnectionArgs._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            host=host,
-            agent_socket_path=agent_socket_path,
-            dial_error_limit=dial_error_limit,
-            password=password,
-            per_dial_timeout=per_dial_timeout,
-            port=port,
-            private_key=private_key,
-            private_key_password=private_key_password,
-            user=user,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             host: Optional[pulumi.Input[str]] = None,
-             agent_socket_path: Optional[pulumi.Input[str]] = None,
-             dial_error_limit: Optional[pulumi.Input[int]] = None,
-             password: Optional[pulumi.Input[str]] = None,
-             per_dial_timeout: Optional[pulumi.Input[int]] = None,
-             port: Optional[pulumi.Input[float]] = None,
-             private_key: Optional[pulumi.Input[str]] = None,
-             private_key_password: Optional[pulumi.Input[str]] = None,
-             user: Optional[pulumi.Input[str]] = None,
-             opts: Optional[pulumi.ResourceOptions] = None,
-             **kwargs):
-        if host is None:
-            raise TypeError("Missing 'host' argument")
-        if agent_socket_path is None and 'agentSocketPath' in kwargs:
-            agent_socket_path = kwargs['agentSocketPath']
-        if dial_error_limit is None and 'dialErrorLimit' in kwargs:
-            dial_error_limit = kwargs['dialErrorLimit']
-        if per_dial_timeout is None and 'perDialTimeout' in kwargs:
-            per_dial_timeout = kwargs['perDialTimeout']
-        if private_key is None and 'privateKey' in kwargs:
-            private_key = kwargs['privateKey']
-        if private_key_password is None and 'privateKeyPassword' in kwargs:
-            private_key_password = kwargs['privateKeyPassword']
-
-        _setter("host", host)
+        pulumi.set(__self__, "host", host)
         if agent_socket_path is not None:
-            _setter("agent_socket_path", agent_socket_path)
+            pulumi.set(__self__, "agent_socket_path", agent_socket_path)
         if dial_error_limit is None:
             dial_error_limit = 10
         if dial_error_limit is not None:
-            _setter("dial_error_limit", dial_error_limit)
+            pulumi.set(__self__, "dial_error_limit", dial_error_limit)
         if password is not None:
-            _setter("password", password)
+            pulumi.set(__self__, "password", password)
         if per_dial_timeout is None:
             per_dial_timeout = 15
         if per_dial_timeout is not None:
-            _setter("per_dial_timeout", per_dial_timeout)
+            pulumi.set(__self__, "per_dial_timeout", per_dial_timeout)
         if port is None:
             port = 22
         if port is not None:
-            _setter("port", port)
+            pulumi.set(__self__, "port", port)
         if private_key is not None:
-            _setter("private_key", private_key)
+            pulumi.set(__self__, "private_key", private_key)
         if private_key_password is not None:
-            _setter("private_key_password", private_key_password)
+            pulumi.set(__self__, "private_key_password", private_key_password)
         if user is None:
             user = 'root'
         if user is not None:
-            _setter("user", user)
+            pulumi.set(__self__, "user", user)
 
     @property
     @pulumi.getter
