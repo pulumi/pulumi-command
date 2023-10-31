@@ -6,7 +6,7 @@ import copy
 import warnings
 import pulumi
 import pulumi.runtime
-from typing import Any, Callable, Mapping, Optional, Sequence, Union, overload
+from typing import Any, Mapping, Optional, Sequence, Union, overload
 from .. import _utilities
 from . import outputs
 from ._inputs import *
@@ -38,44 +38,19 @@ class CommandArgs:
                are set to the stdout and stderr properties of the Command resource from previous 
                create or update steps.
         """
-        CommandArgs._configure(
-            lambda key, value: pulumi.set(__self__, key, value),
-            connection=connection,
-            create=create,
-            delete=delete,
-            environment=environment,
-            stdin=stdin,
-            triggers=triggers,
-            update=update,
-        )
-    @staticmethod
-    def _configure(
-             _setter: Callable[[Any, Any], None],
-             connection: Optional[pulumi.Input['ConnectionArgs']] = None,
-             create: Optional[pulumi.Input[str]] = None,
-             delete: Optional[pulumi.Input[str]] = None,
-             environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
-             stdin: Optional[pulumi.Input[str]] = None,
-             triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
-             update: Optional[pulumi.Input[str]] = None,
-             opts: Optional[pulumi.ResourceOptions] = None,
-             **kwargs):
-        if connection is None:
-            raise TypeError("Missing 'connection' argument")
-
-        _setter("connection", connection)
+        pulumi.set(__self__, "connection", connection)
         if create is not None:
-            _setter("create", create)
+            pulumi.set(__self__, "create", create)
         if delete is not None:
-            _setter("delete", delete)
+            pulumi.set(__self__, "delete", delete)
         if environment is not None:
-            _setter("environment", environment)
+            pulumi.set(__self__, "environment", environment)
         if stdin is not None:
-            _setter("stdin", stdin)
+            pulumi.set(__self__, "stdin", stdin)
         if triggers is not None:
-            _setter("triggers", triggers)
+            pulumi.set(__self__, "triggers", triggers)
         if update is not None:
-            _setter("update", update)
+            pulumi.set(__self__, "update", update)
 
     @property
     @pulumi.getter
@@ -219,10 +194,6 @@ class Command(pulumi.CustomResource):
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
-            kwargs = kwargs or {}
-            def _setter(key, value):
-                kwargs[key] = value
-            CommandArgs._configure(_setter, **kwargs)
             __self__._internal_init(resource_name, *args, **kwargs)
 
     def _internal_init(__self__,
@@ -244,7 +215,6 @@ class Command(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = CommandArgs.__new__(CommandArgs)
 
-            connection = _utilities.configure(connection, ConnectionArgs, True)
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
             __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
