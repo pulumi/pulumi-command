@@ -9,7 +9,7 @@ require (
 	github.com/pulumi/pulumi-command/provider v0.0.0-00010101000000-000000000000
 	github.com/pulumi/pulumi-go-provider v0.13.0
 	github.com/pulumi/pulumi-go-provider/integration v0.10.0
-	github.com/pulumi/pulumi/sdk/v3 v3.90.1
+	github.com/pulumi/pulumi/sdk/v3 v3.91.1
 	github.com/stretchr/testify v1.8.4
 )
 
