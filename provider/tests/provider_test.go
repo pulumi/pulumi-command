@@ -27,12 +27,11 @@ func urn(mod, res, name string) resource.URN {
 	if !tokens.IsQName(name) {
 		panic(fmt.Sprintf("invalid resource name: %q", name))
 	}
-	n := tokens.QName(name)
 	return resource.NewURN("test", "command", "",
 		tokens.NewTypeToken(
 			tokens.NewModuleToken(command.Name, m),
 			r),
-		n)
+		name)
 }
 
 func TestLocalCommand(t *testing.T) {
