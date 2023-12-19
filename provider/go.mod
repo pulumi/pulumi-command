@@ -9,7 +9,7 @@ require (
 	github.com/pulumi/pulumi-go-provider v0.13.1-0.20231204212757-ab334266917c
 	github.com/pulumi/pulumi-go-provider/integration v0.10.1-0.20231204212757-ab334266917c
 	github.com/pulumi/pulumi/sdk/v3 v3.96.2
-	golang.org/x/crypto v0.15.0
+	golang.org/x/crypto v0.17.0
 )
 
 require (
@@ -92,8 +92,8 @@ require (
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
-	golang.org/x/term v0.14.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/term v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230706204954-ccb25ca9f130 // indirect
