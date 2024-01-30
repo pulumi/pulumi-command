@@ -43,17 +43,17 @@ jobs:
     - name: Unshallow clone for tags
       run: git fetch --prune --unshallow --tags
     - name: Install Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v3
       with:
         go-version: ${{ env.GOVERSION }}
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.10.0
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/action-install-pulumi-cli@v2
+      uses: pulumi/actions@v4
     - name: Setup DotNet
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Node
@@ -74,31 +74,11 @@ jobs:
 
         git checkout -b update-pulumi/${{ github.run_id }}-${{ github.run_number }}
 
-        cd provider
-
-        go get github.com/pulumi/pulumi/pkg/v3
-
-        go get github.com/pulumi/pulumi/sdk/v3
-
-        go mod download
-
-        go mod tidy
-
-        cd ../sdk
-
-        go get github.com/pulumi/pulumi/sdk/v3
-
-        go mod download
-
-        go mod tidy
-
-        cd ..
+        for MODFILE in $(find . -name go.mod); do pushd $(dirname $MODFILE); go get github.com/pulumi/pulumi/pkg/v3 github.com/pulumi/pulumi/sdk/v3; go mod tidy; popd; done
 
         git update-index -q --refresh
 
-        if ! git diff-files --quiet; then 
-        	echo ::set-output name=changes::1 
-        fi
+        if ! git diff-files --quiet; then echo changes=1 >> "$GITHUB_OUTPUT"; fi
     - name: Provider with Pulumi Upgrade
       if: steps.gomod.outputs.changes != 0
       run: >-
