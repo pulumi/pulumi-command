@@ -139,7 +139,7 @@ jobs:
         distribution: temurin
         cache: gradle
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         gradle-version: "7.6"
     - name: Download provider + tfgen binaries
@@ -231,7 +231,7 @@ jobs:
         distribution: temurin
         cache: gradle
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         gradle-version: "7.6"
     - name: Download provider + tfgen binaries
@@ -449,7 +449,7 @@ jobs:
         distribution: temurin
         cache: gradle
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         gradle-version: "7.6"
     - name: Download java SDK
@@ -464,7 +464,7 @@ jobs:
       run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
         $GITHUB_ENV
     - name: Publish Java SDK
-      uses: gradle/gradle-build-action@9b814496b50909128c6a52622b416c5ffa04db49
+      uses: gradle/gradle-build-action@a8f75513eafdebd8141bd1cd4e30fcd194af8dfa
       with:
         arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
         build-root-directory: ./sdk/java
