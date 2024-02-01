@@ -23,7 +23,7 @@ env:
   SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
   GOVERSION: 1.21.x
   NODEVERSION: 16.x
-  PYTHONVERSION: "3.7"
+  PYTHONVERSION: "3.11"
   DOTNETVERSION: |
     6.0.x
     3.1.301
@@ -40,7 +40,7 @@ jobs:
       with:
         lfs: true
     - name: Comment PR
-      uses: thollander/actions-comment-pull-request@v1
+      uses: thollander/actions-comment-pull-request@v2
       with:
         message: >
           PR is now waiting for a maintainer to run the acceptance tests.
