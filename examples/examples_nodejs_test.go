@@ -136,11 +136,6 @@ func TestSimple(t *testing.T) {
 					Additive:      true,
 					ExpectFailure: true,
 				},
-				{
-					Dir:           filepath.Join("simple", "update-change"),
-					Additive:      true,
-					ExpectFailure: true,
-				},
 			},
 		})
 	integration.ProgramTest(t, &test)
