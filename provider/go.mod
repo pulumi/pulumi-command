@@ -8,7 +8,7 @@ require (
 	github.com/pkg/sftp v1.13.4
 	github.com/pulumi/pulumi-go-provider v0.13.1-0.20231204212757-ab334266917c
 	github.com/pulumi/pulumi-go-provider/integration v0.10.1-0.20231204212757-ab334266917c
-	github.com/pulumi/pulumi/sdk/v3 v3.104.2
+	github.com/pulumi/pulumi/sdk/v3 v3.105.0
 	golang.org/x/crypto v0.17.0
 )
 
@@ -68,7 +68,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.6.2 // indirect
-	github.com/pulumi/pulumi/pkg/v3 v3.104.2 // indirect
+	github.com/pulumi/pulumi/pkg/v3 v3.105.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
