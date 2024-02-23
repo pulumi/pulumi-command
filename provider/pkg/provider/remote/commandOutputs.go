@@ -40,14 +40,23 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 
 	if c.Environment != nil {
 		for k, v := range *c.Environment {
-			session.Setenv(k, v)
+			err := session.Setenv(k, v)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	if c.Stdout != "" {
-		session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
+		err := session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
+		if err != nil {
+			return err
+		}
 	}
 	if c.Stderr != "" {
-		session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
+		err := session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
+		if err != nil {
+			return err
+		}
 	}
 
 	if c.Stdin != nil && len(*c.Stdin) > 0 {
