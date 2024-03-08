@@ -20,12 +20,13 @@ import (
 )
 
 type BaseInputs struct {
-	Interpreter  *[]string          `pulumi:"interpreter,optional"`
-	Dir          *string            `pulumi:"dir,optional"`
-	Environment  *map[string]string `pulumi:"environment,optional"`
-	Stdin        *string            `pulumi:"stdin,optional"`
-	AssetPaths   *[]string          `pulumi:"assetPaths,optional"`
-	ArchivePaths *[]string          `pulumi:"archivePaths,optional"`
+	Interpreter            *[]string          `pulumi:"interpreter,optional"`
+	Dir                    *string            `pulumi:"dir,optional"`
+	Environment            *map[string]string `pulumi:"environment,optional"`
+	Stdin                  *string            `pulumi:"stdin,optional"`
+	AssetPaths             *[]string          `pulumi:"assetPaths,optional"`
+	ArchivePaths           *[]string          `pulumi:"archivePaths,optional"`
+	AddPreviousOutputInEnv *bool              `pulumi:"addPreviousOutputInEnv,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for fields and they will

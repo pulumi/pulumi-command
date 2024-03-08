@@ -70,11 +70,14 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 		}
 	}
-	if out.Stdout != "" {
-		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDOUT, out.Stdout))
-	}
-	if out.Stderr != "" {
-		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDERR, out.Stderr))
+
+	if in.AddPreviousOutputInEnv == nil || *in.AddPreviousOutputInEnv {
+		if out.Stdout != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDOUT, out.Stdout))
+		}
+		if out.Stderr != "" {
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDERR, out.Stderr))
+		}
 	}
 
 	if in.Stdin != nil && len(*in.Stdin) > 0 {
