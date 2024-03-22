@@ -7,6 +7,9 @@
             "description": "A local command to be executed.\nThis command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.",
             "inputs": {
                 "properties": {
+                    "addPreviousOutputInEnv": {
+                        "type": "boolean"
+                    },
                     "archivePaths": {
                         "description": "A list of path globs to return as a single archive asset after the command completes.\n\nWhen specifying glob patterns the following rules apply:\n- We only include files not directories for assets and archives.\n- Path separators are `/` on all platforms - including Windows.\n- Patterns starting with `!` are 'exclude' rules.\n- Rules are evaluated in order, so exclude rules should be after inclusion rules.\n- `*` matches anything except `/`\n- `**` matches anything, _including_ `/`\n- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.\n- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)\n\n#### Example\n\nGiven the rules:\n```yaml\n- \"assets/**\"\n- \"src/**.js\"\n- \"!**secret.*\"\n```\n\nWhen evaluating against this folder:\n\n```yaml\n- assets/\n  - logos/\n    - logo.svg\n- src/\n  - index.js\n  - secret.js\n```\n\nThe following paths will be returned:\n\n```yaml\n- assets/logos/logo.svg\n- src/index.js\n```",
                         "items": {
@@ -55,6 +58,9 @@
             },
             "outputs": {
                 "properties": {
+                    "addPreviousOutputInEnv": {
+                        "type": "boolean"
+                    },
                     "archive": {
                         "$ref": "pulumi.json#/Archive",
                         "description": "An archive asset containing files found after running the command."
@@ -174,6 +180,9 @@
         "command:local:Command": {
             "description": "A local command to be executed.\nThis command can be inserted into the life cycles of other resources using the\n`dependsOn` or `parent` resource options. A command is considered to have\nfailed when it finished with a non-zero exit code. This will fail the CRUD step\nof the `Command` resource.",
             "inputProperties": {
+                "addPreviousOutputInEnv": {
+                    "type": "boolean"
+                },
                 "archivePaths": {
                     "description": "A list of path globs to return as a single archive asset after the command completes.\n\nWhen specifying glob patterns the following rules apply:\n- We only include files not directories for assets and archives.\n- Path separators are `/` on all platforms - including Windows.\n- Patterns starting with `!` are 'exclude' rules.\n- Rules are evaluated in order, so exclude rules should be after inclusion rules.\n- `*` matches anything except `/`\n- `**` matches anything, _including_ `/`\n- All returned paths are relative to the working directory (without leading `./`) e.g. `file.text` or `subfolder/file.txt`.\n- For full details of the globbing syntax, see [github.com/gobwas/glob](https://github.com/gobwas/glob)\n\n#### Example\n\nGiven the rules:\n```yaml\n- \"assets/**\"\n- \"src/**.js\"\n- \"!**secret.*\"\n```\n\nWhen evaluating against this folder:\n\n```yaml\n- assets/\n  - logos/\n    - logo.svg\n- src/\n  - index.js\n  - secret.js\n```\n\nThe following paths will be returned:\n\n```yaml\n- assets/logos/logo.svg\n- src/index.js\n```",
                     "items": {
@@ -232,6 +241,9 @@
                 }
             },
             "properties": {
+                "addPreviousOutputInEnv": {
+                    "type": "boolean"
+                },
                 "archive": {
                     "$ref": "pulumi.json#/Archive",
                     "description": "An archive asset containing files found after running the command."
