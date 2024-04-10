@@ -131,6 +131,73 @@ func TestLocalCommand(t *testing.T) {
 	})
 }
 
+func TestLocalCommandStdoutStderrFlag(t *testing.T) {
+	cmd := provider()
+	urn := urn("local", "Command", "echo")
+
+	// Run a create against an in-memory provider, assert it succeeded, and return the
+	// created property map.
+	create := func() resource.PropertyMap {
+		resp, err := cmd.Create(p.CreateRequest{
+			Urn: urn,
+			Properties: resource.PropertyMap{
+				"create": resource.NewStringProperty("echo std, $PULUMI_COMMAND_STDOUT"),
+			},
+		})
+		require.NoError(t, err)
+		return resp.Properties
+	}
+
+	// The state that we expect a non-preview create to return.
+	//
+	// We use this as the final expect for create and the old state during update.
+	createdState := resource.PropertyMap{
+		"create": resource.PropertyValue{V: "echo std, $PULUMI_COMMAND_STDOUT"},
+		"stderr": resource.PropertyValue{V: ""},
+		"stdout": resource.PropertyValue{V: "std,"},
+	}
+
+	// Run an update against an in-memory provider, assert it succeeded, and return
+	// the new property map.
+	update := func(addPreviousOutputInEnv bool) resource.PropertyMap {
+		resp, err := cmd.Update(p.UpdateRequest{
+			ID:   "echo1234",
+			Urn:  urn,
+			Olds: createdState.Copy(),
+			News: resource.PropertyMap{
+				"create":                 resource.NewStringProperty("echo std, $PULUMI_COMMAND_STDOUT"),
+				"addPreviousOutputInEnv": resource.NewBoolProperty(addPreviousOutputInEnv),
+			},
+		})
+		require.NoError(t, err)
+		return resp.Properties
+	}
+
+	t.Run("create-actual", func(t *testing.T) {
+		assert.Equal(t, createdState,
+			create())
+	})
+
+	t.Run("update-actual-with-std", func(t *testing.T) {
+		assert.Equal(t, resource.PropertyMap{
+			"create":                 resource.PropertyValue{V: "echo std, $PULUMI_COMMAND_STDOUT"},
+			"stderr":                 resource.PropertyValue{V: ""},
+			"stdout":                 resource.PropertyValue{V: "std, std,"},
+			"addPreviousOutputInEnv": resource.PropertyValue{V: true},
+		}, update(true))
+	})
+
+	t.Run("update-actual-without-std", func(t *testing.T) {
+		assert.Equal(t, resource.PropertyMap{
+			"create":                 resource.PropertyValue{V: "echo std, $PULUMI_COMMAND_STDOUT"},
+			"stderr":                 resource.PropertyValue{V: ""},
+			"stdout":                 resource.PropertyValue{V: "std,"},
+			"addPreviousOutputInEnv": resource.PropertyValue{V: false},
+		}, update(false))
+	})
+
+}
+
 func TestRemoteCommand(t *testing.T) {
 	t.Parallel()
 	pString := resource.NewStringProperty
