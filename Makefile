@@ -44,16 +44,16 @@ $(SCHEMA_FILE): provider $(PULUMI)
 codegen: $(SCHEMA_FILE) sdk/dotnet sdk/go sdk/nodejs sdk/python sdk/java
 
 .PHONY: sdk/%
-sdk/%: provider $(PULUMI)
+sdk/%: $(SCHEMA_FILE)
 	rm -rf $@
 	$(PULUMI) package gen-sdk --language $* $(SCHEMA_FILE)
 
-sdk/python: provider $(PULUMI)
+sdk/python: $(SCHEMA_FILE)
 	rm -rf $@
 	$(PULUMI) package gen-sdk --language python $(SCHEMA_FILE)
 	cp README.md ${PACKDIR}/python/
 
-sdk/dotnet: provider $(PULUMI)
+sdk/dotnet: $(SCHEMA_FILE)
 	rm -rf $@
 	$(PULUMI) package gen-sdk --language dotnet $(SCHEMA_FILE)
 	# Copy the logo to the dotnet directory before building so it can be included in the nuget package archive.
@@ -113,7 +113,7 @@ java_sdk:: sdk/java
 build:: provider build_sdks
 
 .PHONY: build_sdks
-build_sdks: codegen dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
+build_sdks: dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 
 # Required for the codegen action that runs in pulumi/pulumi
 only_build:: build
