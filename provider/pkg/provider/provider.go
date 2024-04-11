@@ -73,7 +73,7 @@ func NewProvider() p.Provider {
 					"buildFiles":                      "gradle",
 					"gradleNexusPublishPluginVersion": "1.1.0",
 					"dependencies": map[string]any{
-						"com.pulumi:pulumi":               "0.6.0",
+						"com.pulumi:pulumi":               "0.10.0",
 						"com.google.code.gson:gson":       "2.8.9",
 						"com.google.code.findbugs:jsr305": "3.0.2",
 					},

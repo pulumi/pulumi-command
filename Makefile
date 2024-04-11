@@ -11,6 +11,8 @@ VERSION         ?= $(shell pulumictl get version)
 PROVIDER_PATH   := provider
 VERSION_PATH    := ${PROVIDER_PATH}/pkg/version.Version
 
+PULUMI          := .pulumi/bin/pulumi
+
 SCHEMA_FILE     := provider/cmd/pulumi-resource-command/schema.json
 GOPATH          := $(shell go env GOPATH)
 
@@ -31,11 +33,34 @@ tidy_examples:
 tidy_provider:
 	cd provider && go mod tidy && cd tests && go mod tidy
 
-$(SCHEMA_FILE): provider .pulumi/bin/pulumi
-	.pulumi/bin/pulumi package get-schema $(WORKING_DIR)/bin/${PROVIDER} | \
+$(SCHEMA_FILE): provider $(PULUMI)
+	$(PULUMI) package get-schema $(WORKING_DIR)/bin/${PROVIDER} | \
 		jq 'del(.version)' > $(SCHEMA_FILE)
 
-codegen: $(SCHEMA_FILE)
+# Codegen generates the schema file and *generates* all sdks. This is a local process and
+# does not require the ability to build all SDKs.
+#
+# To build the SDKs, use `make build_sdks`
+codegen: $(SCHEMA_FILE) sdk/dotnet sdk/go sdk/nodejs sdk/python sdk/java
+
+.PHONY: sdk/%
+sdk/%: $(SCHEMA_FILE)
+	rm -rf $@
+	$(PULUMI) package gen-sdk --language $* $(SCHEMA_FILE)
+
+sdk/python: $(SCHEMA_FILE)
+	rm -rf $@
+	$(PULUMI) package gen-sdk --language python $(SCHEMA_FILE)
+	cp README.md ${PACKDIR}/python/
+
+sdk/dotnet: $(SCHEMA_FILE)
+	rm -rf $@
+	$(PULUMI) package gen-sdk --language dotnet $(SCHEMA_FILE)
+	# Copy the logo to the dotnet directory before building so it can be included in the nuget package archive.
+	# https://github.com/pulumi/pulumi-command/issues/243
+	cd ${PACKDIR}/dotnet/&& \
+		cp $(WORKING_DIR)/assets/logo.png logo.png
+
 
 .PHONY: provider
 provider:
@@ -48,35 +73,24 @@ provider_debug:
 test_provider: tidy_provider
 	cd provider/tests && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} ./...
 
-dotnet_sdk:: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
-dotnet_sdk::	.pulumi/bin/pulumi
-	rm -rf sdk/dotnet
-	.pulumi/bin/pulumi package gen-sdk --language dotnet $(SCHEMA_FILE)
-	# Copy the logo to the dotnet directory before building so it can be included in the nuget package archive.
-	# https://github.com/pulumi/pulumi-command/issues/243
+dotnet_sdk: DOTNET_VERSION := $(shell pulumictl get version --language dotnet)
+dotnet_sdk: sdk/dotnet
 	cd ${PACKDIR}/dotnet/&& \
 		echo "${DOTNET_VERSION}" >version.txt && \
-		cp $(WORKING_DIR)/assets/logo.png logo.png && \
 		dotnet build /p:Version=${DOTNET_VERSION}
 
-go_sdk::	.pulumi/bin/pulumi
-	rm -rf sdk/go
-	.pulumi/bin/pulumi package gen-sdk --language go $(SCHEMA_FILE)
+go_sdk:	sdk/go
 
-nodejs_sdk:: VERSION := $(shell pulumictl get version --language javascript)
-nodejs_sdk::	.pulumi/bin/pulumi
-	rm -rf sdk/nodejs
-	.pulumi/bin/pulumi package gen-sdk --language nodejs $(SCHEMA_FILE)
+nodejs_sdk: VERSION := $(shell pulumictl get version --language javascript)
+nodejs_sdk: sdk/nodejs
 	cd ${PACKDIR}/nodejs/ && \
 		yarn install && \
 		yarn run tsc
 	cp README.md LICENSE ${PACKDIR}/nodejs/package.json ${PACKDIR}/nodejs/yarn.lock ${PACKDIR}/nodejs/bin/
 	sed -i.bak 's/$${VERSION}/$(VERSION)/g' ${PACKDIR}/nodejs/bin/package.json
 
-python_sdk:: PYPI_VERSION := $(shell pulumictl get version --language python)
-python_sdk::	.pulumi/bin/pulumi
-	rm -rf sdk/python
-	.pulumi/bin/pulumi package gen-sdk --language python $(SCHEMA_FILE)
+python_sdk: PYPI_VERSION := $(shell pulumictl get version --language python)
+python_sdk: sdk/python
 	cp README.md ${PACKDIR}/python/
 	cd ${PACKDIR}/python/ && \
 		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
@@ -91,9 +105,7 @@ bin/pulumi-java-gen::
 	echo pulumi-java-gen is no longer necessary
 
 java_sdk:: PACKAGE_VERSION := $(shell pulumictl get version --language generic)
-java_sdk::	.pulumi/bin/pulumi
-	rm -rf sdk/java
-	.pulumi/bin/pulumi package gen-sdk --language java $(SCHEMA_FILE)
+java_sdk:: sdk/java
 	cd sdk/java/ && \
 		gradle --console=plain build
 
@@ -101,7 +113,7 @@ java_sdk::	.pulumi/bin/pulumi
 build:: provider build_sdks
 
 .PHONY: build_sdks
-build_sdks: codegen dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
+build_sdks: dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 
 # Required for the codegen action that runs in pulumi/pulumi
 only_build:: build
@@ -146,9 +158,19 @@ install_nodejs_sdk::
 test:: tidy_examples test_provider
 	cd examples && go test -v -tags=all -timeout 2h
 
-# --------- File-based targets --------- #
+# Keep the version of the pulumi binary used for code generation in sync with the version
+# of the dependency used by github.com/pulumi/pulumi-command/provider
 
-.pulumi/bin/pulumi: PULUMI_VERSION := $(shell cat .pulumi.version)
-.pulumi/bin/pulumi: HOME := $(WORKING_DIR)
-.pulumi/bin/pulumi: .pulumi.version
-	curl -fsSL https://get.pulumi.com | sh -s -- --version "$(PULUMI_VERSION)"
+$(PULUMI): HOME := $(WORKING_DIR)
+$(PULUMI): provider/go.mod
+	@ PULUMI_VERSION="$$(cd provider && go list -m github.com/pulumi/pulumi/pkg/v3 | awk '{print $$2}')"; \
+	if [ -x $(PULUMI) ]; then \
+		CURRENT_VERSION="$$($(PULUMI) version)"; \
+		if [ "$${CURRENT_VERSION}" != "$${PULUMI_VERSION}" ]; then \
+			echo "Upgrading $(PULUMI) from $${CURRENT_VERSION} to $${PULUMI_VERSION}"; \
+			rm $(PULUMI); \
+		fi; \
+	fi; \
+	if ! [ -x $(PULUMI) ]; then \
+		curl -fsSL https://get.pulumi.com | sh -s -- --version "$${PULUMI_VERSION#v}"; \
+	fi
