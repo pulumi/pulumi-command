@@ -9,7 +9,6 @@ import (
 
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 var _ = internal.GetEnvOrDefault
@@ -133,12 +132,6 @@ func (i ConnectionArgs) ToConnectionOutputWithContext(ctx context.Context) Conne
 	return pulumi.ToOutputWithContext(ctx, i).(ConnectionOutput)
 }
 
-func (i ConnectionArgs) ToOutput(ctx context.Context) pulumix.Output[Connection] {
-	return pulumix.Output[Connection]{
-		OutputState: i.ToConnectionOutputWithContext(ctx).OutputState,
-	}
-}
-
 // Instructions for how to connect to a remote endpoint.
 type ConnectionOutput struct{ *pulumi.OutputState }
 
@@ -152,12 +145,6 @@ func (o ConnectionOutput) ToConnectionOutput() ConnectionOutput {
 
 func (o ConnectionOutput) ToConnectionOutputWithContext(ctx context.Context) ConnectionOutput {
 	return o
-}
-
-func (o ConnectionOutput) ToOutput(ctx context.Context) pulumix.Output[Connection] {
-	return pulumix.Output[Connection]{
-		OutputState: o.OutputState,
-	}
 }
 
 // SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
@@ -322,12 +309,6 @@ func (i ProxyConnectionArgs) ToProxyConnectionOutputWithContext(ctx context.Cont
 	return pulumi.ToOutputWithContext(ctx, i).(ProxyConnectionOutput)
 }
 
-func (i ProxyConnectionArgs) ToOutput(ctx context.Context) pulumix.Output[ProxyConnection] {
-	return pulumix.Output[ProxyConnection]{
-		OutputState: i.ToProxyConnectionOutputWithContext(ctx).OutputState,
-	}
-}
-
 func (i ProxyConnectionArgs) ToProxyConnectionPtrOutput() ProxyConnectionPtrOutput {
 	return i.ToProxyConnectionPtrOutputWithContext(context.Background())
 }
@@ -369,12 +350,6 @@ func (i *proxyConnectionPtrType) ToProxyConnectionPtrOutputWithContext(ctx conte
 	return pulumi.ToOutputWithContext(ctx, i).(ProxyConnectionPtrOutput)
 }
 
-func (i *proxyConnectionPtrType) ToOutput(ctx context.Context) pulumix.Output[*ProxyConnection] {
-	return pulumix.Output[*ProxyConnection]{
-		OutputState: i.ToProxyConnectionPtrOutputWithContext(ctx).OutputState,
-	}
-}
-
 // Instructions for how to connect to a remote endpoint via a bastion host.
 type ProxyConnectionOutput struct{ *pulumi.OutputState }
 
@@ -398,12 +373,6 @@ func (o ProxyConnectionOutput) ToProxyConnectionPtrOutputWithContext(ctx context
 	return o.ApplyTWithContext(ctx, func(_ context.Context, v ProxyConnection) *ProxyConnection {
 		return &v
 	}).(ProxyConnectionPtrOutput)
-}
-
-func (o ProxyConnectionOutput) ToOutput(ctx context.Context) pulumix.Output[ProxyConnection] {
-	return pulumix.Output[ProxyConnection]{
-		OutputState: o.OutputState,
-	}
 }
 
 // SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
@@ -463,12 +432,6 @@ func (o ProxyConnectionPtrOutput) ToProxyConnectionPtrOutput() ProxyConnectionPt
 
 func (o ProxyConnectionPtrOutput) ToProxyConnectionPtrOutputWithContext(ctx context.Context) ProxyConnectionPtrOutput {
 	return o
-}
-
-func (o ProxyConnectionPtrOutput) ToOutput(ctx context.Context) pulumix.Output[*ProxyConnection] {
-	return pulumix.Output[*ProxyConnection]{
-		OutputState: o.OutputState,
-	}
 }
 
 func (o ProxyConnectionPtrOutput) Elem() ProxyConnectionOutput {

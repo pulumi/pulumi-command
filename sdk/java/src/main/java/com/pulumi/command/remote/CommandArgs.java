@@ -6,6 +6,7 @@ package com.pulumi.command.remote;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -332,7 +333,9 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public CommandArgs build() {
-            $.connection = Objects.requireNonNull($.connection, "expected parameter 'connection' to be non-null");
+            if ($.connection == null) {
+                throw new MissingRequiredPropertyException("CommandArgs", "connection");
+            }
             return $;
         }
     }

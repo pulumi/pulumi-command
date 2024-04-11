@@ -6,6 +6,7 @@ package com.pulumi.command.local.inputs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.String;
 import java.util.List;
@@ -567,7 +568,9 @@ public final class RunArgs extends com.pulumi.resources.InvokeArgs {
 
         public RunArgs build() {
             $.addPreviousOutputInEnv = Codegen.booleanProp("addPreviousOutputInEnv").output().arg($.addPreviousOutputInEnv).def(true).getNullable();
-            $.command = Objects.requireNonNull($.command, "expected parameter 'command' to be non-null");
+            if ($.command == null) {
+                throw new MissingRequiredPropertyException("RunArgs", "command");
+            }
             return $;
         }
     }

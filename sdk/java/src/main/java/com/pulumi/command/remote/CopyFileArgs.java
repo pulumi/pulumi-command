@@ -6,6 +6,7 @@ package com.pulumi.command.remote;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -200,9 +201,15 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public CopyFileArgs build() {
-            $.connection = Objects.requireNonNull($.connection, "expected parameter 'connection' to be non-null");
-            $.localPath = Objects.requireNonNull($.localPath, "expected parameter 'localPath' to be non-null");
-            $.remotePath = Objects.requireNonNull($.remotePath, "expected parameter 'remotePath' to be non-null");
+            if ($.connection == null) {
+                throw new MissingRequiredPropertyException("CopyFileArgs", "connection");
+            }
+            if ($.localPath == null) {
+                throw new MissingRequiredPropertyException("CopyFileArgs", "localPath");
+            }
+            if ($.remotePath == null) {
+                throw new MissingRequiredPropertyException("CopyFileArgs", "remotePath");
+            }
             return $;
         }
     }

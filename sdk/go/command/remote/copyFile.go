@@ -10,7 +10,6 @@ import (
 	"errors"
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 )
 
 // Copy a local file to a remote host.
@@ -129,12 +128,6 @@ func (i *CopyFile) ToCopyFileOutputWithContext(ctx context.Context) CopyFileOutp
 	return pulumi.ToOutputWithContext(ctx, i).(CopyFileOutput)
 }
 
-func (i *CopyFile) ToOutput(ctx context.Context) pulumix.Output[*CopyFile] {
-	return pulumix.Output[*CopyFile]{
-		OutputState: i.ToCopyFileOutputWithContext(ctx).OutputState,
-	}
-}
-
 // CopyFileArrayInput is an input type that accepts CopyFileArray and CopyFileArrayOutput values.
 // You can construct a concrete instance of `CopyFileArrayInput` via:
 //
@@ -158,12 +151,6 @@ func (i CopyFileArray) ToCopyFileArrayOutput() CopyFileArrayOutput {
 
 func (i CopyFileArray) ToCopyFileArrayOutputWithContext(ctx context.Context) CopyFileArrayOutput {
 	return pulumi.ToOutputWithContext(ctx, i).(CopyFileArrayOutput)
-}
-
-func (i CopyFileArray) ToOutput(ctx context.Context) pulumix.Output[[]*CopyFile] {
-	return pulumix.Output[[]*CopyFile]{
-		OutputState: i.ToCopyFileArrayOutputWithContext(ctx).OutputState,
-	}
 }
 
 // CopyFileMapInput is an input type that accepts CopyFileMap and CopyFileMapOutput values.
@@ -191,12 +178,6 @@ func (i CopyFileMap) ToCopyFileMapOutputWithContext(ctx context.Context) CopyFil
 	return pulumi.ToOutputWithContext(ctx, i).(CopyFileMapOutput)
 }
 
-func (i CopyFileMap) ToOutput(ctx context.Context) pulumix.Output[map[string]*CopyFile] {
-	return pulumix.Output[map[string]*CopyFile]{
-		OutputState: i.ToCopyFileMapOutputWithContext(ctx).OutputState,
-	}
-}
-
 type CopyFileOutput struct{ *pulumi.OutputState }
 
 func (CopyFileOutput) ElementType() reflect.Type {
@@ -209,12 +190,6 @@ func (o CopyFileOutput) ToCopyFileOutput() CopyFileOutput {
 
 func (o CopyFileOutput) ToCopyFileOutputWithContext(ctx context.Context) CopyFileOutput {
 	return o
-}
-
-func (o CopyFileOutput) ToOutput(ctx context.Context) pulumix.Output[*CopyFile] {
-	return pulumix.Output[*CopyFile]{
-		OutputState: o.OutputState,
-	}
 }
 
 // The parameters with which to connect to the remote host.
@@ -251,12 +226,6 @@ func (o CopyFileArrayOutput) ToCopyFileArrayOutputWithContext(ctx context.Contex
 	return o
 }
 
-func (o CopyFileArrayOutput) ToOutput(ctx context.Context) pulumix.Output[[]*CopyFile] {
-	return pulumix.Output[[]*CopyFile]{
-		OutputState: o.OutputState,
-	}
-}
-
 func (o CopyFileArrayOutput) Index(i pulumi.IntInput) CopyFileOutput {
 	return pulumi.All(o, i).ApplyT(func(vs []interface{}) *CopyFile {
 		return vs[0].([]*CopyFile)[vs[1].(int)]
@@ -275,12 +244,6 @@ func (o CopyFileMapOutput) ToCopyFileMapOutput() CopyFileMapOutput {
 
 func (o CopyFileMapOutput) ToCopyFileMapOutputWithContext(ctx context.Context) CopyFileMapOutput {
 	return o
-}
-
-func (o CopyFileMapOutput) ToOutput(ctx context.Context) pulumix.Output[map[string]*CopyFile] {
-	return pulumix.Output[map[string]*CopyFile]{
-		OutputState: o.OutputState,
-	}
 }
 
 func (o CopyFileMapOutput) MapIndex(k pulumi.StringInput) CopyFileOutput {

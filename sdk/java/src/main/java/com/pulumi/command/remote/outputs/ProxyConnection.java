@@ -4,6 +4,7 @@
 package com.pulumi.command.remote.outputs;
 
 import com.pulumi.core.annotations.CustomType;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Double;
 import java.lang.Integer;
 import java.lang.String;
@@ -158,46 +159,57 @@ public final class ProxyConnection {
 
         @CustomType.Setter
         public Builder agentSocketPath(@Nullable String agentSocketPath) {
+
             this.agentSocketPath = agentSocketPath;
             return this;
         }
         @CustomType.Setter
         public Builder dialErrorLimit(@Nullable Integer dialErrorLimit) {
+
             this.dialErrorLimit = dialErrorLimit;
             return this;
         }
         @CustomType.Setter
         public Builder host(String host) {
-            this.host = Objects.requireNonNull(host);
+            if (host == null) {
+              throw new MissingRequiredPropertyException("ProxyConnection", "host");
+            }
+            this.host = host;
             return this;
         }
         @CustomType.Setter
         public Builder password(@Nullable String password) {
+
             this.password = password;
             return this;
         }
         @CustomType.Setter
         public Builder perDialTimeout(@Nullable Integer perDialTimeout) {
+
             this.perDialTimeout = perDialTimeout;
             return this;
         }
         @CustomType.Setter
         public Builder port(@Nullable Double port) {
+
             this.port = port;
             return this;
         }
         @CustomType.Setter
         public Builder privateKey(@Nullable String privateKey) {
+
             this.privateKey = privateKey;
             return this;
         }
         @CustomType.Setter
         public Builder privateKeyPassword(@Nullable String privateKeyPassword) {
+
             this.privateKeyPassword = privateKeyPassword;
             return this;
         }
         @CustomType.Setter
         public Builder user(@Nullable String user) {
+
             this.user = user;
             return this;
         }

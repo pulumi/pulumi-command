@@ -7,6 +7,7 @@ import com.pulumi.command.remote.inputs.ProxyConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Double;
 import java.lang.Integer;
 import java.lang.String;
@@ -418,7 +419,9 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
 
         public ConnectionArgs build() {
             $.dialErrorLimit = Codegen.integerProp("dialErrorLimit").output().arg($.dialErrorLimit).def(10).getNullable();
-            $.host = Objects.requireNonNull($.host, "expected parameter 'host' to be non-null");
+            if ($.host == null) {
+                throw new MissingRequiredPropertyException("ConnectionArgs", "host");
+            }
             $.perDialTimeout = Codegen.integerProp("perDialTimeout").output().arg($.perDialTimeout).def(15).getNullable();
             $.port = Codegen.doubleProp("port").output().arg($.port).def(2.2e+01).getNullable();
             $.user = Codegen.stringProp("user").output().arg($.user).def("root").getNullable();

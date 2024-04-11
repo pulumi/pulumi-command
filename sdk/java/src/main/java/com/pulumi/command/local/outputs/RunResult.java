@@ -6,6 +6,7 @@ package com.pulumi.command.local.outputs;
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.core.annotations.CustomType;
+import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.String;
 import java.util.List;
@@ -285,16 +286,19 @@ public final class RunResult {
 
         @CustomType.Setter
         public Builder addPreviousOutputInEnv(@Nullable Boolean addPreviousOutputInEnv) {
+
             this.addPreviousOutputInEnv = addPreviousOutputInEnv;
             return this;
         }
         @CustomType.Setter
         public Builder archive(@Nullable Archive archive) {
+
             this.archive = archive;
             return this;
         }
         @CustomType.Setter
         public Builder archivePaths(@Nullable List<String> archivePaths) {
+
             this.archivePaths = archivePaths;
             return this;
         }
@@ -303,6 +307,7 @@ public final class RunResult {
         }
         @CustomType.Setter
         public Builder assetPaths(@Nullable List<String> assetPaths) {
+
             this.assetPaths = assetPaths;
             return this;
         }
@@ -311,26 +316,33 @@ public final class RunResult {
         }
         @CustomType.Setter
         public Builder assets(@Nullable Map<String,AssetOrArchive> assets) {
+
             this.assets = assets;
             return this;
         }
         @CustomType.Setter
         public Builder command(String command) {
-            this.command = Objects.requireNonNull(command);
+            if (command == null) {
+              throw new MissingRequiredPropertyException("RunResult", "command");
+            }
+            this.command = command;
             return this;
         }
         @CustomType.Setter
         public Builder dir(@Nullable String dir) {
+
             this.dir = dir;
             return this;
         }
         @CustomType.Setter
         public Builder environment(@Nullable Map<String,String> environment) {
+
             this.environment = environment;
             return this;
         }
         @CustomType.Setter
         public Builder interpreter(@Nullable List<String> interpreter) {
+
             this.interpreter = interpreter;
             return this;
         }
@@ -339,17 +351,24 @@ public final class RunResult {
         }
         @CustomType.Setter
         public Builder stderr(String stderr) {
-            this.stderr = Objects.requireNonNull(stderr);
+            if (stderr == null) {
+              throw new MissingRequiredPropertyException("RunResult", "stderr");
+            }
+            this.stderr = stderr;
             return this;
         }
         @CustomType.Setter
         public Builder stdin(@Nullable String stdin) {
+
             this.stdin = stdin;
             return this;
         }
         @CustomType.Setter
         public Builder stdout(String stdout) {
-            this.stdout = Objects.requireNonNull(stdout);
+            if (stdout == null) {
+              throw new MissingRequiredPropertyException("RunResult", "stdout");
+            }
+            this.stdout = stdout;
             return this;
         }
         public RunResult build() {
