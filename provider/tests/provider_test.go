@@ -268,8 +268,9 @@ func TestLocalRun(t *testing.T) {
 	})
 	require.NoError(t, err)
 	assert.Equal(t, pMap{
-		"command": pString(`echo "Hello, World!"`),
-		"stderr":  pString(""),
-		"stdout":  pString("Hello, World!"),
+		"command":                pString(`echo "Hello, World!"`),
+		"stderr":                 pString(""),
+		"stdout":                 pString("Hello, World!"),
+		"addPreviousOutputInEnv": resource.NewProperty(true),
 	}, resp.Return)
 }
