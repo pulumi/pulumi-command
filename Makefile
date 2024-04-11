@@ -159,7 +159,7 @@ test:: tidy_examples test_provider
 	cd examples && go test -v -tags=all -timeout 2h
 
 # Keep the version of the pulumi binary used for code generation in sync with the version
-# of the dependency used by github.com/pulumi/pulumi-pulumiservice/provider
+# of the dependency used by github.com/pulumi/pulumi-command/provider
 
 $(PULUMI): HOME := $(WORKING_DIR)
 $(PULUMI): provider/go.mod
