@@ -15,16 +15,12 @@
 package provider
 
 import (
-	"strings"
-
-	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi-go-provider/middleware/schema"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/remote"
-	"github.com/pulumi/pulumi-go-provider/integration"
 )
 
 const (
@@ -105,13 +101,5 @@ func NewProvider() p.Provider {
 			// The Run function is commented extensively for new pulumi-go-provider developers.
 			infer.Function[*local.Run, local.RunInputs, local.RunOutputs](),
 		},
-		// Config is unused in the Command provider.
 	})
-}
-
-func Schema(version string) (string, error) {
-	version = strings.TrimPrefix(version, "v")
-	s, err := integration.NewServer(Name, semver.MustParse(version), NewProvider()).
-		GetSchema(p.GetSchemaRequest{})
-	return s.Schema, err
 }
