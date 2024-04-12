@@ -42,20 +42,22 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 		for k, v := range c.Environment {
 			err := session.Setenv(k, v)
 			if err != nil {
-				return setenvErr(k, ctx, err)
+				return logAndWrapSetenvErr(k, ctx, err)
 			}
 		}
 	}
+
+	// Set remote Stdout and Stderr environment variables optimistically, but log and continue if they fail.
 	if c.Stdout != "" {
 		err := session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
 		if err != nil {
-			return setenvErr(util.PULUMI_COMMAND_STDOUT, ctx, err)
+			logAndWrapSetenvErr(util.PULUMI_COMMAND_STDOUT, ctx, err)
 		}
 	}
 	if c.Stderr != "" {
 		err := session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
 		if err != nil {
-			return setenvErr(util.PULUMI_COMMAND_STDERR, ctx, err)
+			logAndWrapSetenvErr(util.PULUMI_COMMAND_STDERR, ctx, err)
 		}
 	}
 
@@ -86,7 +88,7 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	return nil
 }
 
-func setenvErr(key string, ctx p.Context, err error) error {
+func logAndWrapSetenvErr(key string, ctx p.Context, err error) error {
 	ctx.Logf(diag.Error, `Unable to set '%s'. This only works if your SSH server is configured to accept
  these variables via AcceptEnv. Alternatively, if a Bash-like shell runs the command on the remote host, you could
  prefix the command itself with the variables in the form 'VAR=value command'`, key)
