@@ -225,7 +225,6 @@ func testEc2Ts(t *testing.T, targetDir string) {
 					assert.Truef(t, isEncrypted(m[key]), "%s value should be encrypted", key)
 				}
 				assertEncryptedValue(stack.Outputs, "connectionSecret")
-				assertEncryptedValue(stack.Outputs, "secretEnv")
 			},
 		})
 

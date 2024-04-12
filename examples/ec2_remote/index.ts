@@ -61,9 +61,6 @@ const poll = new remote.Command("poll", {
 const hostname = new remote.Command("hostname", {
     connection,
     create: "hostname",
-    environment: secret({
-      "secret-key": secret("super-secret-value")
-    }),
 }, { dependsOn: poll });
 
 new remote.Command("remotePrivateIP", {
@@ -95,7 +92,6 @@ const catSize = new remote.Command("checkSize", {
 }, { dependsOn: sizeFile })
 
 export const connectionSecret = hostname.connection;
-export const secretEnv = hostname.environment;
 export const confirmSize = catSize.stdout;
 export const publicIp = server.publicIp;
 export const publicHostName = server.publicDns;
