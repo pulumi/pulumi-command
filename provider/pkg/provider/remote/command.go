@@ -34,13 +34,13 @@ type CommandInputs struct {
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
 	// provider:"replaceOnChanges" specifies that the resource will be replaced if the field changes.
 	// provider:"secret" specifies that a field should be marked secret.
-	Connection  *Connection        `pulumi:"connection" provider:"secret"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	Create      *string            `pulumi:"create,optional"`
-	Delete      *string            `pulumi:"delete,optional"`
-	Update      *string            `pulumi:"update,optional"`
-	Stdin       *string            `pulumi:"stdin,optional"`
+	Connection  *Connection       `pulumi:"connection" provider:"secret"`
+	Environment map[string]string `pulumi:"environment,optional"`
+	Triggers    *[]any            `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Create      *string           `pulumi:"create,optional"`
+	Delete      *string           `pulumi:"delete,optional"`
+	Update      *string           `pulumi:"update,optional"`
+	Stdin       *string           `pulumi:"stdin,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for arguments and they will
