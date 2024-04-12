@@ -40,7 +40,10 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 
 	if c.Environment != nil {
 		for k, v := range *c.Environment {
-			session.Setenv(k, v)
+			err := session.Setenv(k, v)
+			if err != nil {
+				return fmt.Errorf("could not set environment variable '%s': %w. Please see the `environment` property's documentation for guidance", k, err)
+			}
 		}
 	}
 	if c.Stdout != "" {

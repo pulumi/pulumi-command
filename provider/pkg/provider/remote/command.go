@@ -47,7 +47,10 @@ type CommandInputs struct {
 // be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
-	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
+	a.Describe(&c.Environment, `Additional environment variables available to the command's process.
+Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+with the variables in the form 'VAR=value command'.`)
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Create, "The command to run on create.")
 	a.Describe(&c.Delete, `The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
