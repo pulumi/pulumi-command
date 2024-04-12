@@ -31,6 +31,9 @@ class CommandArgs:
                and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
                Command resource from previous create or update steps.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
+               Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+               Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+               with the variables in the form 'VAR=value command'.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -95,6 +98,9 @@ class CommandArgs:
     def environment(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]]:
         """
         Additional environment variables available to the command's process.
+        Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+        Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+        with the variables in the form 'VAR=value command'.
         """
         return pulumi.get(self, "environment")
 
@@ -167,6 +173,9 @@ class Command(pulumi.CustomResource):
                and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
                Command resource from previous create or update steps.
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
+               Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+               Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+               with the variables in the form 'VAR=value command'.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -294,6 +303,9 @@ class Command(pulumi.CustomResource):
     def environment(self) -> pulumi.Output[Optional[Mapping[str, str]]]:
         """
         Additional environment variables available to the command's process.
+        Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+        Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+        with the variables in the form 'VAR=value command'.
         """
         return pulumi.get(self, "environment")
 

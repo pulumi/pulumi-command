@@ -72,6 +72,9 @@ public class Command extends com.pulumi.resources.CustomResource {
     }
     /**
      * Additional environment variables available to the command&#39;s process.
+     * Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+     * Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+     * with the variables in the form &#39;VAR=value command&#39;.
      * 
      */
     @Export(name="environment", refs={Map.class,String.class}, tree="[0,1,1]")
@@ -79,6 +82,9 @@ public class Command extends com.pulumi.resources.CustomResource {
 
     /**
      * @return Additional environment variables available to the command&#39;s process.
+     * Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+     * Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+     * with the variables in the form &#39;VAR=value command&#39;.
      * 
      */
     public Output<Optional<Map<String,String>>> environment() {

@@ -38,6 +38,9 @@ namespace Pulumi.Command.Remote
 
         /// <summary>
         /// Additional environment variables available to the command's process.
+        /// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+        /// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+        /// with the variables in the form 'VAR=value command'.
         /// </summary>
         [Output("environment")]
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
@@ -163,6 +166,9 @@ namespace Pulumi.Command.Remote
 
         /// <summary>
         /// Additional environment variables available to the command's process.
+        /// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+        /// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+        /// with the variables in the form 'VAR=value command'.
         /// </summary>
         public InputMap<string> Environment
         {

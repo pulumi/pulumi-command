@@ -39,8 +39,14 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	defer session.Close()
 
 	if c.Environment != nil {
-		for k, v := range *c.Environment {
-			session.Setenv(k, v)
+		for k, v := range c.Environment {
+			err := session.Setenv(k, v)
+			if err != nil {
+				ctx.Logf(diag.Error, `Unable to set '%s'. This only works if your SSH server is configured to accept
+ these variables via AcceptEnv. Alternatively, if a Bash-like shell runs the command on the remote host, you could
+ prefix the command itself with the variables in the form 'VAR=value command'`, k)
+				return fmt.Errorf("could not set environment variable '%s': %w", k, err)
+			}
 		}
 	}
 	if c.Stdout != "" {

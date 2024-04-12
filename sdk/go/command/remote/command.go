@@ -26,6 +26,9 @@ type Command struct {
 	// Command resource from previous create or update steps.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
+	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+	// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+	// with the variables in the form 'VAR=value command'.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
@@ -106,6 +109,9 @@ type commandArgs struct {
 	// Command resource from previous create or update steps.
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
+	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+	// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+	// with the variables in the form 'VAR=value command'.
 	Environment map[string]string `pulumi:"environment"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
@@ -129,6 +135,9 @@ type CommandArgs struct {
 	// Command resource from previous create or update steps.
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
+	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+	// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+	// with the variables in the form 'VAR=value command'.
 	Environment pulumi.StringMapInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
@@ -246,6 +255,9 @@ func (o CommandOutput) Delete() pulumi.StringPtrOutput {
 }
 
 // Additional environment variables available to the command's process.
+// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+// with the variables in the form 'VAR=value command'.
 func (o CommandOutput) Environment() pulumi.StringMapOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringMapOutput { return v.Environment }).(pulumi.StringMapOutput)
 }

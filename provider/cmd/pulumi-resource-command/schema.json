@@ -332,7 +332,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Additional environment variables available to the command's process."
+          "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
         },
         "stderr": {
           "type": "string",
@@ -384,7 +384,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Additional environment variables available to the command's process."
+          "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
         },
         "stdin": {
           "type": "string",

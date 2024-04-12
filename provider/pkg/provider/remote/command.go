@@ -34,20 +34,23 @@ type CommandInputs struct {
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
 	// provider:"replaceOnChanges" specifies that the resource will be replaced if the field changes.
 	// provider:"secret" specifies that a field should be marked secret.
-	Connection  *Connection        `pulumi:"connection" provider:"secret"`
-	Environment *map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]any             `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	Create      *string            `pulumi:"create,optional"`
-	Delete      *string            `pulumi:"delete,optional"`
-	Update      *string            `pulumi:"update,optional"`
-	Stdin       *string            `pulumi:"stdin,optional"`
+	Connection  *Connection       `pulumi:"connection" provider:"secret"`
+	Environment map[string]string `pulumi:"environment,optional"`
+	Triggers    *[]any            `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Create      *string           `pulumi:"create,optional"`
+	Delete      *string           `pulumi:"delete,optional"`
+	Update      *string           `pulumi:"update,optional"`
+	Stdin       *string           `pulumi:"stdin,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for arguments and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
-	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
+	a.Describe(&c.Environment, `Additional environment variables available to the command's process.
+Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
+Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
+with the variables in the form 'VAR=value command'.`)
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Create, "The command to run on create.")
 	a.Describe(&c.Delete, `The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
