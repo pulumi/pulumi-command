@@ -118,10 +118,8 @@ build_sdks: dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 # Required for the codegen action that runs in pulumi/pulumi
 only_build:: build
 
-lint::
-	for DIR in "provider" "sdk" "tests" ; do \
-		pushd $$DIR && golangci-lint run --timeout 10m && popd ; \
-	done
+lint:
+	cd provider && golangci-lint --config ../.golangci.yml run
 
 
 install:: install_nodejs_sdk install_dotnet_sdk
