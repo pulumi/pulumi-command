@@ -42,7 +42,7 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 		for k, v := range c.Environment {
 			err := session.Setenv(k, v)
 			if err != nil {
-				return logAndWrapSetenvErr(k, ctx, err)
+				return logAndWrapSetenvErr(diag.Error, k, ctx, err)
 			}
 		}
 	}
@@ -51,13 +51,19 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	if c.Stdout != "" {
 		err := session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
 		if err != nil {
-			logAndWrapSetenvErr(util.PULUMI_COMMAND_STDOUT, ctx, err)
+			// Set remote Stdout var optimistically, but warn and continue on failure.
+			//
+			//nolint:errcheck
+			logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDOUT, ctx, err)
 		}
 	}
 	if c.Stderr != "" {
 		err := session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
 		if err != nil {
-			logAndWrapSetenvErr(util.PULUMI_COMMAND_STDERR, ctx, err)
+			// Set remote STDERR var optimistically, but warn and continue on failure.
+			//
+			//nolint:errcheck
+			logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDERR, ctx, err)
 		}
 	}
 
@@ -88,8 +94,8 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	return nil
 }
 
-func logAndWrapSetenvErr(key string, ctx p.Context, err error) error {
-	ctx.Logf(diag.Error, `Unable to set '%s'. This only works if your SSH server is configured to accept
+func logAndWrapSetenvErr(severity diag.Severity, key string, ctx p.Context, err error) error {
+	ctx.Logf(severity, `Unable to set '%s'. This only works if your SSH server is configured to accept
  these variables via AcceptEnv. Alternatively, if a Bash-like shell runs the command on the remote host, you could
  prefix the command itself with the variables in the form 'VAR=value command'`, key)
 	return fmt.Errorf("could not set environment variable %q: %w", key, err)
