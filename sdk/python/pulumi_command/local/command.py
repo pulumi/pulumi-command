@@ -22,6 +22,7 @@ class CommandArgs:
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 log_output: Optional[pulumi.Input[bool]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None):
@@ -115,6 +116,7 @@ class CommandArgs:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
+        :param pulumi.Input[bool] log_output: If the command's stdout and stderr should be logged.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -140,6 +142,10 @@ class CommandArgs:
             pulumi.set(__self__, "environment", environment)
         if interpreter is not None:
             pulumi.set(__self__, "interpreter", interpreter)
+        if log_output is None:
+            log_output = True
+        if log_output is not None:
+            pulumi.set(__self__, "log_output", log_output)
         if stdin is not None:
             pulumi.set(__self__, "stdin", stdin)
         if triggers is not None:
@@ -324,6 +330,18 @@ class CommandArgs:
         pulumi.set(self, "interpreter", value)
 
     @property
+    @pulumi.getter(name="logOutput")
+    def log_output(self) -> Optional[pulumi.Input[bool]]:
+        """
+        If the command's stdout and stderr should be logged.
+        """
+        return pulumi.get(self, "log_output")
+
+    @log_output.setter
+    def log_output(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "log_output", value)
+
+    @property
     @pulumi.getter
     def stdin(self) -> Optional[pulumi.Input[str]]:
         """
@@ -376,6 +394,7 @@ class Command(pulumi.CustomResource):
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 log_output: Optional[pulumi.Input[bool]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -477,6 +496,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
+        :param pulumi.Input[bool] log_output: If the command's stdout and stderr should be logged.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -520,6 +540,7 @@ class Command(pulumi.CustomResource):
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+                 log_output: Optional[pulumi.Input[bool]] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -542,6 +563,9 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["dir"] = dir
             __props__.__dict__["environment"] = environment
             __props__.__dict__["interpreter"] = interpreter
+            if log_output is None:
+                log_output = True
+            __props__.__dict__["log_output"] = log_output
             __props__.__dict__["stdin"] = stdin
             __props__.__dict__["triggers"] = triggers
             __props__.__dict__["update"] = update
@@ -583,6 +607,7 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["dir"] = None
         __props__.__dict__["environment"] = None
         __props__.__dict__["interpreter"] = None
+        __props__.__dict__["log_output"] = None
         __props__.__dict__["stderr"] = None
         __props__.__dict__["stdin"] = None
         __props__.__dict__["stdout"] = None
@@ -750,6 +775,14 @@ class Command(pulumi.CustomResource):
         On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
         """
         return pulumi.get(self, "interpreter")
+
+    @property
+    @pulumi.getter(name="logOutput")
+    def log_output(self) -> pulumi.Output[Optional[bool]]:
+        """
+        If the command's stdout and stderr should be logged.
+        """
+        return pulumi.get(self, "log_output")
 
     @property
     @pulumi.getter

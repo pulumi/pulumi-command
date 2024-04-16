@@ -18,7 +18,7 @@ __all__ = [
 
 @pulumi.output_type
 class RunResult:
-    def __init__(__self__, add_previous_output_in_env=None, archive=None, archive_paths=None, asset_paths=None, assets=None, command=None, dir=None, environment=None, interpreter=None, stderr=None, stdin=None, stdout=None):
+    def __init__(__self__, add_previous_output_in_env=None, archive=None, archive_paths=None, asset_paths=None, assets=None, command=None, dir=None, environment=None, interpreter=None, log_output=None, stderr=None, stdin=None, stdout=None):
         if add_previous_output_in_env and not isinstance(add_previous_output_in_env, bool):
             raise TypeError("Expected argument 'add_previous_output_in_env' to be a bool")
         pulumi.set(__self__, "add_previous_output_in_env", add_previous_output_in_env)
@@ -46,6 +46,9 @@ class RunResult:
         if interpreter and not isinstance(interpreter, list):
             raise TypeError("Expected argument 'interpreter' to be a list")
         pulumi.set(__self__, "interpreter", interpreter)
+        if log_output and not isinstance(log_output, bool):
+            raise TypeError("Expected argument 'log_output' to be a bool")
+        pulumi.set(__self__, "log_output", log_output)
         if stderr and not isinstance(stderr, str):
             raise TypeError("Expected argument 'stderr' to be a str")
         pulumi.set(__self__, "stderr", stderr)
@@ -208,6 +211,14 @@ class RunResult:
         return pulumi.get(self, "interpreter")
 
     @property
+    @pulumi.getter(name="logOutput")
+    def log_output(self) -> Optional[bool]:
+        """
+        If the command's stdout and stderr should be logged.
+        """
+        return pulumi.get(self, "log_output")
+
+    @property
     @pulumi.getter
     def stderr(self) -> str:
         """
@@ -247,6 +258,7 @@ class AwaitableRunResult(RunResult):
             dir=self.dir,
             environment=self.environment,
             interpreter=self.interpreter,
+            log_output=self.log_output,
             stderr=self.stderr,
             stdin=self.stdin,
             stdout=self.stdout)
@@ -259,6 +271,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
         dir: Optional[str] = None,
         environment: Optional[Mapping[str, str]] = None,
         interpreter: Optional[Sequence[str]] = None,
+        log_output: Optional[bool] = None,
         stdin: Optional[str] = None,
         opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableRunResult:
     """
@@ -351,6 +364,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
+    :param bool log_output: If the command's stdout and stderr should be logged.
     :param str stdin: Pass a string to the command's process as standard in
     """
     __args__ = dict()
@@ -361,6 +375,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
     __args__['dir'] = dir
     __args__['environment'] = environment
     __args__['interpreter'] = interpreter
+    __args__['logOutput'] = log_output
     __args__['stdin'] = stdin
     opts = pulumi.InvokeOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
     __ret__ = pulumi.runtime.invoke('command:local:run', __args__, opts=opts, typ=RunResult).value
@@ -375,6 +390,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
         dir=pulumi.get(__ret__, 'dir'),
         environment=pulumi.get(__ret__, 'environment'),
         interpreter=pulumi.get(__ret__, 'interpreter'),
+        log_output=pulumi.get(__ret__, 'log_output'),
         stderr=pulumi.get(__ret__, 'stderr'),
         stdin=pulumi.get(__ret__, 'stdin'),
         stdout=pulumi.get(__ret__, 'stdout'))
@@ -388,6 +404,7 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
                dir: Optional[pulumi.Input[Optional[str]]] = None,
                environment: Optional[pulumi.Input[Optional[Mapping[str, str]]]] = None,
                interpreter: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
+               log_output: Optional[pulumi.Input[Optional[bool]]] = None,
                stdin: Optional[pulumi.Input[Optional[str]]] = None,
                opts: Optional[pulumi.InvokeOptions] = None) -> pulumi.Output[RunResult]:
     """
@@ -480,6 +497,7 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
+    :param bool log_output: If the command's stdout and stderr should be logged.
     :param str stdin: Pass a string to the command's process as standard in
     """
     ...

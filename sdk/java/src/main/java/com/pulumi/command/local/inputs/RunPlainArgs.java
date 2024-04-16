@@ -205,6 +205,21 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
     }
 
     /**
+     * If the command&#39;s stdout and stderr should be logged.
+     * 
+     */
+    @Import(name="logOutput")
+    private @Nullable Boolean logOutput;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged.
+     * 
+     */
+    public Optional<Boolean> logOutput() {
+        return Optional.ofNullable(this.logOutput);
+    }
+
+    /**
      * Pass a string to the command&#39;s process as standard in
      * 
      */
@@ -229,6 +244,7 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         this.dir = $.dir;
         this.environment = $.environment;
         this.interpreter = $.interpreter;
+        this.logOutput = $.logOutput;
         this.stdin = $.stdin;
     }
 
@@ -435,6 +451,17 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         }
 
         /**
+         * @param logOutput If the command&#39;s stdout and stderr should be logged.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder logOutput(@Nullable Boolean logOutput) {
+            $.logOutput = logOutput;
+            return this;
+        }
+
+        /**
          * @param stdin Pass a string to the command&#39;s process as standard in
          * 
          * @return builder
@@ -450,6 +477,7 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
             if ($.command == null) {
                 throw new MissingRequiredPropertyException("RunPlainArgs", "command");
             }
+            $.logOutput = Codegen.booleanProp("logOutput").arg($.logOutput).def(true).getNullable();
             return $;
         }
     }

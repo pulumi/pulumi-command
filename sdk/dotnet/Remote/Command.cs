@@ -46,6 +46,12 @@ namespace Pulumi.Command.Remote
         public Output<ImmutableDictionary<string, string>?> Environment { get; private set; } = null!;
 
         /// <summary>
+        /// If the command's stdout and stderr should be logged.
+        /// </summary>
+        [Output("logOutput")]
+        public Output<bool?> LogOutput { get; private set; } = null!;
+
+        /// <summary>
         /// The standard error of the command's process
         /// </summary>
         [Output("stderr")]
@@ -177,6 +183,12 @@ namespace Pulumi.Command.Remote
         }
 
         /// <summary>
+        /// If the command's stdout and stderr should be logged.
+        /// </summary>
+        [Input("logOutput")]
+        public Input<bool>? LogOutput { get; set; }
+
+        /// <summary>
         /// Pass a string to the command's process as standard in
         /// </summary>
         [Input("stdin")]
@@ -205,6 +217,7 @@ namespace Pulumi.Command.Remote
 
         public CommandArgs()
         {
+            LogOutput = true;
         }
         public static new CommandArgs Empty => new CommandArgs();
     }

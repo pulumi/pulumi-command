@@ -19,6 +19,7 @@ export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResu
         "dir": args.dir,
         "environment": args.environment,
         "interpreter": args.interpreter,
+        "logOutput": args.logOutput,
         "stdin": args.stdin,
     }, opts);
 }
@@ -130,6 +131,10 @@ export interface RunArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: string[];
+    /**
+     * If the command's stdout and stderr should be logged.
+     */
+    logOutput?: boolean;
     /**
      * Pass a string to the command's process as standard in
      */
@@ -252,6 +257,10 @@ export interface RunResult {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     readonly interpreter?: string[];
+    /**
+     * If the command's stdout and stderr should be logged.
+     */
+    readonly logOutput?: boolean;
     /**
      * The standard error of the command's process
      */
@@ -380,6 +389,10 @@ export interface RunOutputArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * If the command's stdout and stderr should be logged.
+     */
+    logOutput?: pulumi.Input<boolean>;
     /**
      * Pass a string to the command's process as standard in
      */

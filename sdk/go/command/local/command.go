@@ -82,6 +82,8 @@ type Command struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput pulumi.BoolPtrOutput `pulumi:"logOutput"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
@@ -106,6 +108,9 @@ func NewCommand(ctx *pulumi.Context,
 
 	if args.AddPreviousOutputInEnv == nil {
 		args.AddPreviousOutputInEnv = pulumi.BoolPtr(true)
+	}
+	if args.LogOutput == nil {
+		args.LogOutput = pulumi.BoolPtr(true)
 	}
 	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
 		"triggers[*]",
@@ -202,6 +207,8 @@ type commandArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput *bool `pulumi:"logOutput"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
 	// Trigger replacements on changes to this input.
@@ -273,6 +280,8 @@ type CommandArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput
+	// If the command's stdout and stderr should be logged.
+	LogOutput pulumi.BoolPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
 	// Trigger replacements on changes to this input.
@@ -462,6 +471,11 @@ func (o CommandOutput) Environment() pulumi.StringMapOutput {
 // On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 func (o CommandOutput) Interpreter() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.Interpreter }).(pulumi.StringArrayOutput)
+}
+
+// If the command's stdout and stderr should be logged.
+func (o CommandOutput) LogOutput() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.BoolPtrOutput { return v.LogOutput }).(pulumi.BoolPtrOutput)
 }
 
 // The standard error of the command's process

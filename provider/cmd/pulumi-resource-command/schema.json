@@ -217,6 +217,11 @@
           },
           "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
         },
+        "logOutput": {
+          "type": "boolean",
+          "description": "If the command's stdout and stderr should be logged.",
+          "default": true
+        },
         "stderr": {
           "type": "string",
           "description": "The standard error of the command's process"
@@ -293,6 +298,11 @@
           },
           "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
         },
+        "logOutput": {
+          "type": "boolean",
+          "description": "If the command's stdout and stderr should be logged.",
+          "default": true
+        },
         "stdin": {
           "type": "string",
           "description": "Pass a string to the command's process as standard in"
@@ -333,6 +343,11 @@
             "type": "string"
           },
           "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
+        },
+        "logOutput": {
+          "type": "boolean",
+          "description": "If the command's stdout and stderr should be logged.",
+          "default": true
         },
         "stderr": {
           "type": "string",
@@ -385,6 +400,11 @@
             "type": "string"
           },
           "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
+        },
+        "logOutput": {
+          "type": "boolean",
+          "description": "If the command's stdout and stderr should be logged.",
+          "default": true
         },
         "stdin": {
           "type": "string",
@@ -512,6 +532,11 @@
             },
             "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
           },
+          "logOutput": {
+            "type": "boolean",
+            "description": "If the command's stdout and stderr should be logged.",
+            "default": true
+          },
           "stdin": {
             "type": "string",
             "description": "Pass a string to the command's process as standard in"
@@ -575,6 +600,11 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "logOutput": {
+            "default": true,
+            "description": "If the command's stdout and stderr should be logged.",
+            "type": "boolean"
           },
           "stderr": {
             "description": "The standard error of the command's process",

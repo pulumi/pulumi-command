@@ -160,6 +160,10 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly interpreter!: pulumi.Output<string[] | undefined>;
     /**
+     * If the command's stdout and stderr should be logged.
+     */
+    public readonly logOutput!: pulumi.Output<boolean | undefined>;
+    /**
      * The standard error of the command's process
      */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
@@ -202,6 +206,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = args ? args.dir : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
             resourceInputs["interpreter"] = args ? args.interpreter : undefined;
+            resourceInputs["logOutput"] = (args ? args.logOutput : undefined) ?? true;
             resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["update"] = args ? args.update : undefined;
@@ -220,6 +225,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
             resourceInputs["interpreter"] = undefined /*out*/;
+            resourceInputs["logOutput"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdin"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
@@ -349,6 +355,10 @@ export interface CommandArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * If the command's stdout and stderr should be logged.
+     */
+    logOutput?: pulumi.Input<boolean>;
     /**
      * Pass a string to the command's process as standard in
      */

@@ -256,6 +256,20 @@ public class Command extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.interpreter);
     }
     /**
+     * If the command&#39;s stdout and stderr should be logged.
+     * 
+     */
+    @Export(name="logOutput", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> logOutput;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged.
+     * 
+     */
+    public Output<Optional<Boolean>> logOutput() {
+        return Codegen.optional(this.logOutput);
+    }
+    /**
      * The standard error of the command&#39;s process
      * 
      */

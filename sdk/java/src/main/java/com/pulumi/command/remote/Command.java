@@ -10,6 +10,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
 import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
+import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -89,6 +90,20 @@ public class Command extends com.pulumi.resources.CustomResource {
      */
     public Output<Optional<Map<String,String>>> environment() {
         return Codegen.optional(this.environment);
+    }
+    /**
+     * If the command&#39;s stdout and stderr should be logged.
+     * 
+     */
+    @Export(name="logOutput", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> logOutput;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged.
+     * 
+     */
+    public Output<Optional<Boolean>> logOutput() {
+        return Codegen.optional(this.logOutput);
     }
     /**
      * The standard error of the command&#39;s process

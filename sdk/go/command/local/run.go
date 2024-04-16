@@ -78,6 +78,8 @@ type RunArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput *bool `pulumi:"logOutput"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
 }
@@ -91,6 +93,10 @@ func (val *RunArgs) Defaults() *RunArgs {
 	if tmp.AddPreviousOutputInEnv == nil {
 		addPreviousOutputInEnv_ := true
 		tmp.AddPreviousOutputInEnv = &addPreviousOutputInEnv_
+	}
+	if tmp.LogOutput == nil {
+		logOutput_ := true
+		tmp.LogOutput = &logOutput_
 	}
 	return &tmp
 }
@@ -155,6 +161,8 @@ type RunResult struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput *bool `pulumi:"logOutput"`
 	// The standard error of the command's process
 	Stderr string `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
@@ -172,6 +180,10 @@ func (val *RunResult) Defaults() *RunResult {
 	if tmp.AddPreviousOutputInEnv == nil {
 		addPreviousOutputInEnv_ := true
 		tmp.AddPreviousOutputInEnv = &addPreviousOutputInEnv_
+	}
+	if tmp.LogOutput == nil {
+		logOutput_ := true
+		tmp.LogOutput = &logOutput_
 	}
 	return &tmp
 }
@@ -244,6 +256,8 @@ type RunOutputArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput `pulumi:"interpreter"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput pulumi.BoolPtrInput `pulumi:"logOutput"`
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput `pulumi:"stdin"`
 }
@@ -350,6 +364,11 @@ func (o RunResultOutput) Environment() pulumi.StringMapOutput {
 // On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 func (o RunResultOutput) Interpreter() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v RunResult) []string { return v.Interpreter }).(pulumi.StringArrayOutput)
+}
+
+// If the command's stdout and stderr should be logged.
+func (o RunResultOutput) LogOutput() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v RunResult) *bool { return v.LogOutput }).(pulumi.BoolPtrOutput)
 }
 
 // The standard error of the command's process

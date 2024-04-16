@@ -30,6 +30,8 @@ type Command struct {
 	// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
 	// with the variables in the form 'VAR=value command'.
 	Environment pulumi.StringMapOutput `pulumi:"environment"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput pulumi.BoolPtrOutput `pulumi:"logOutput"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
@@ -56,6 +58,9 @@ func NewCommand(ctx *pulumi.Context,
 		return nil, errors.New("invalid value for required argument 'Connection'")
 	}
 	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
+	if args.LogOutput == nil {
+		args.LogOutput = pulumi.BoolPtr(true)
+	}
 	if args.Connection != nil {
 		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionInput)
 	}
@@ -113,6 +118,8 @@ type commandArgs struct {
 	// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
 	// with the variables in the form 'VAR=value command'.
 	Environment map[string]string `pulumi:"environment"`
+	// If the command's stdout and stderr should be logged.
+	LogOutput *bool `pulumi:"logOutput"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
 	// Trigger replacements on changes to this input.
@@ -139,6 +146,8 @@ type CommandArgs struct {
 	// Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
 	// with the variables in the form 'VAR=value command'.
 	Environment pulumi.StringMapInput
+	// If the command's stdout and stderr should be logged.
+	LogOutput pulumi.BoolPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
 	// Trigger replacements on changes to this input.
@@ -260,6 +269,11 @@ func (o CommandOutput) Delete() pulumi.StringPtrOutput {
 // with the variables in the form 'VAR=value command'.
 func (o CommandOutput) Environment() pulumi.StringMapOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringMapOutput { return v.Environment }).(pulumi.StringMapOutput)
+}
+
+// If the command's stdout and stderr should be logged.
+func (o CommandOutput) LogOutput() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.BoolPtrOutput { return v.LogOutput }).(pulumi.BoolPtrOutput)
 }
 
 // The standard error of the command's process

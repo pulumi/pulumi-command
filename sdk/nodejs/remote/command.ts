@@ -59,6 +59,10 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
     /**
+     * If the command's stdout and stderr should be logged.
+     */
+    public readonly logOutput!: pulumi.Output<boolean | undefined>;
+    /**
      * The standard error of the command's process
      */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
@@ -100,6 +104,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
+            resourceInputs["logOutput"] = (args ? args.logOutput : undefined) ?? true;
             resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["update"] = args ? args.update : undefined;
@@ -110,6 +115,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["create"] = undefined /*out*/;
             resourceInputs["delete"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
+            resourceInputs["logOutput"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdin"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
@@ -150,6 +156,10 @@ export interface CommandArgs {
      * with the variables in the form 'VAR=value command'.
      */
     environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    /**
+     * If the command's stdout and stderr should be logged.
+     */
+    logOutput?: pulumi.Input<boolean>;
     /**
      * Pass a string to the command's process as standard in
      */
