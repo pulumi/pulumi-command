@@ -26,7 +26,7 @@ import (
 const PULUMI_COMMAND_STDOUT = "PULUMI_COMMAND_STDOUT"
 const PULUMI_COMMAND_STDERR = "PULUMI_COMMAND_STDERR"
 
-func CopyOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
+func LogOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {

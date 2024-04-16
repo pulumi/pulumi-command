@@ -34,7 +34,7 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
+func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs, logOutput bool) error {
 	contract.Assertf(out != nil, "run:out cannot be nil")
 	var args []string
 	if in.Interpreter != nil && len(*in.Interpreter) > 0 {
@@ -85,7 +85,11 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
 	}
 
 	stdouterrch := make(chan struct{})
-	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
+	if logOutput {
+		go util.LogOutput(ctx, r, stdouterrch, diag.Info)
+	} else {
+		go noopLogger(r, stdouterrch)
+	}
 
 	err = cmd.Start()
 	if err == nil {
@@ -129,6 +133,11 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
 	out.Stderr = strings.TrimSuffix(stderrbuf.String(), "\n")
 
 	return nil
+}
+
+func noopLogger(r io.Reader, done chan struct{}) {
+	defer close(done)
+	io.Copy(io.Discard, r)
 }
 
 func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {

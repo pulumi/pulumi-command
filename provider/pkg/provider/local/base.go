@@ -27,6 +27,7 @@ type BaseInputs struct {
 	AssetPaths             *[]string          `pulumi:"assetPaths,optional"`
 	ArchivePaths           *[]string          `pulumi:"archivePaths,optional"`
 	AddPreviousOutputInEnv *bool              `pulumi:"addPreviousOutputInEnv,optional"`
+	LogOutput              *bool              `pulumi:"logOutput,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for fields and they will
@@ -119,6 +120,12 @@ The following paths will be returned:
 injected into the environment of the next run as PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR.
 Defaults to true.`)
 	a.SetDefault(&c.AddPreviousOutputInEnv, true)
+	a.Describe(&c.LogOutput, `If the command's stdout and stderr should be logged.`)
+	a.SetDefault(&c.LogOutput, true)
+}
+
+func (c *BaseInputs) shouldLogOutput() bool {
+	return (c == nil || c.LogOutput == nil) || *c.LogOutput
 }
 
 type BaseOutputs struct {

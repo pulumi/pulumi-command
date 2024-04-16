@@ -77,7 +77,7 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	session.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
 
 	stdouterrch := make(chan struct{})
-	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
+	go util.LogOutput(ctx, r, stdouterrch, diag.Info)
 
 	err = session.Run(cmd)
 
