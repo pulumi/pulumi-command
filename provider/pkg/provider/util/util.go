@@ -34,6 +34,12 @@ func LogOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag
 	}
 }
 
+// NoopLogger is for testing. It reads from the provided reader until EOF, discarding the output, then closes the channel.
+func NoopLogger(r io.Reader, done chan struct{}) {
+	defer close(done)
+	io.Copy(io.Discard, r)
+}
+
 type ConcurrentWriter struct {
 	Writer io.Writer
 	mu     sync.Mutex

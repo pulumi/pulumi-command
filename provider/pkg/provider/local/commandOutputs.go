@@ -88,7 +88,7 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs, logOutp
 	if logOutput {
 		go util.LogOutput(ctx, r, stdouterrch, diag.Info)
 	} else {
-		go noopLogger(r, stdouterrch)
+		go util.NoopLogger(r, stdouterrch)
 	}
 
 	err = cmd.Start()
@@ -133,11 +133,6 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs, logOutp
 	out.Stderr = strings.TrimSuffix(stderrbuf.String(), "\n")
 
 	return nil
-}
-
-func noopLogger(r io.Reader, done chan struct{}) {
-	defer close(done)
-	io.Copy(io.Discard, r)
 }
 
 func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {

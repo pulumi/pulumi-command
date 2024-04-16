@@ -19,12 +19,14 @@ import (
 	"context"
 	"testing"
 
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/stretchr/testify/require"
 )
 
+// TestContext is a test implementation of p.Context that records all log messages in a buffer, regardless of severity.
 type TestContext struct {
 	context.Context
 	output bytes.Buffer
@@ -53,9 +55,13 @@ func TestOptionalLogging(t *testing.T) {
 
 			ctx := TestContext{Context: context.Background()}
 			input := CommandInputs{
-				Create: pulumi.StringRef("echo hello"),
 				BaseInputs: BaseInputs{
-					LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),
+					CommonInputs: common.CommonInputs{
+						LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),
+					},
+				},
+				ResourceInputs: common.ResourceInputs{
+					Create: pulumi.StringRef("echo hello"),
 				},
 			}
 

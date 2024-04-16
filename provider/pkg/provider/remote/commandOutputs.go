@@ -26,7 +26,7 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
+func (c *CommandOutputs) run(ctx p.Context, cmd string, logOutput bool) error {
 	client, err := c.Connection.Dial(ctx)
 	if err != nil {
 		return err
@@ -77,7 +77,11 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 	session.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
 
 	stdouterrch := make(chan struct{})
-	go util.LogOutput(ctx, r, stdouterrch, diag.Info)
+	if logOutput {
+		go util.LogOutput(ctx, r, stdouterrch, diag.Info)
+	} else {
+		go util.NoopLogger(r, stdouterrch)
+	}
 
 	err = session.Run(cmd)
 

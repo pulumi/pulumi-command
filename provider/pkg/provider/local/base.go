@@ -15,30 +15,32 @@
 package local
 
 import (
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
+// BaseInputs is the common set of inputs for all local commands.
 type BaseInputs struct {
+	common.CommonInputs
 	Interpreter            *[]string          `pulumi:"interpreter,optional"`
 	Dir                    *string            `pulumi:"dir,optional"`
 	Environment            *map[string]string `pulumi:"environment,optional"`
-	Stdin                  *string            `pulumi:"stdin,optional"`
 	AssetPaths             *[]string          `pulumi:"assetPaths,optional"`
 	ArchivePaths           *[]string          `pulumi:"archivePaths,optional"`
 	AddPreviousOutputInEnv *bool              `pulumi:"addPreviousOutputInEnv,optional"`
-	LogOutput              *bool              `pulumi:"logOutput,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for fields and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *BaseInputs) Annotate(a infer.Annotator) {
+	c.CommonInputs.Annotate(a)
+
 	a.Describe(&c.Interpreter, "The program and arguments to run the command.\n"+
 		"On Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`")
 	a.Describe(&c.Dir, "The directory from which to run the command from. If `dir` does not exist, then\n"+
 		"`Command` will fail.")
 	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
-	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 	a.Describe(&c.ArchivePaths, `A list of path globs to return as a single archive asset after the command completes.
 
 When specifying glob patterns the following rules apply:
@@ -120,12 +122,6 @@ The following paths will be returned:
 injected into the environment of the next run as PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR.
 Defaults to true.`)
 	a.SetDefault(&c.AddPreviousOutputInEnv, true)
-	a.Describe(&c.LogOutput, `If the command's stdout and stderr should be logged.`)
-	a.SetDefault(&c.LogOutput, true)
-}
-
-func (c *BaseInputs) shouldLogOutput() bool {
-	return (c == nil || c.LogOutput == nil) || *c.LogOutput
 }
 
 type BaseOutputs struct {
