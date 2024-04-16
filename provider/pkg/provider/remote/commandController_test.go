@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package local
+package remote
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"testing"
 
+	"github.com/gliderlabs/ssh"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -25,11 +28,31 @@ import (
 )
 
 func TestOptionalLogging(t *testing.T) {
+	const (
+		host           = "localhost"
+		port           = 2222
+		serverResponse = "look, it's SSH!"
+	)
+
+	server := &ssh.Server{
+		Addr: fmt.Sprintf("%s:%d", host, port),
+		Handler: func(s ssh.Session) {
+			_, err := io.WriteString(s, serverResponse)
+			require.NoError(t, err)
+		},
+	}
+	go func() {
+		require.NoError(t, server.ListenAndServe())
+	}()
+	t.Cleanup(func() {
+		_ = server.Close()
+	})
+
 	for name, testCase := range map[string]struct {
 		shouldLogOutput bool
 		expectedLog     string
 	}{
-		"should log":     {shouldLogOutput: true, expectedLog: "hello"},
+		"should log":     {shouldLogOutput: true, expectedLog: serverResponse},
 		"should not log": {shouldLogOutput: false, expectedLog: ""},
 	} {
 		t.Run(name, func(t *testing.T) {
@@ -37,13 +60,19 @@ func TestOptionalLogging(t *testing.T) {
 
 			ctx := util.TestContext{Context: context.Background()}
 			input := CommandInputs{
-				BaseInputs: BaseInputs{
-					CommonInputs: common.CommonInputs{
-						LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),
-					},
+				CommonInputs: common.CommonInputs{
+					LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),
 				},
 				ResourceInputs: common.ResourceInputs{
-					Create: pulumi.StringRef("echo hello"),
+					Create: pulumi.StringRef("ignored"),
+				},
+				Connection: &Connection{
+					connectionBase: connectionBase{
+						Host:           pulumi.StringRef(host),
+						Port:           pulumi.Float64Ref(float64(port)),
+						User:           pulumi.StringRef("foo"), // unused but prevents nil panic
+						PerDialTimeout: pulumi.IntRef(1),        // unused but prevents nil panic
+					},
 				},
 			}
 

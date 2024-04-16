@@ -16,6 +16,8 @@ package util
 
 import (
 	"bufio"
+	"bytes"
+	"context"
 	"io"
 	"sync"
 
@@ -37,7 +39,7 @@ func LogOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag
 // NoopLogger is for testing. It reads from the provided reader until EOF, discarding the output, then closes the channel.
 func NoopLogger(r io.Reader, done chan struct{}) {
 	defer close(done)
-	io.Copy(io.Discard, r)
+	_, _ = io.Copy(io.Discard, r)
 }
 
 type ConcurrentWriter struct {
@@ -50,3 +52,19 @@ func (w *ConcurrentWriter) Write(bs []byte) (int, error) {
 	defer w.mu.Unlock()
 	return w.Writer.Write(bs)
 }
+
+// TestContext is a test implementation of p.Context that records all log messages in a buffer, regardless of severity.
+type TestContext struct {
+	context.Context
+	Output bytes.Buffer
+}
+
+func (c *TestContext) log(msg string) {
+	c.Output.WriteString(msg)
+}
+
+func (c *TestContext) Log(_ diag.Severity, msg string)                  { c.log(msg) }
+func (c *TestContext) Logf(_ diag.Severity, msg string, _ ...any)       { c.log(msg) }
+func (c *TestContext) LogStatus(_ diag.Severity, msg string)            { c.log(msg) }
+func (c *TestContext) LogStatusf(_ diag.Severity, msg string, _ ...any) { c.log(msg) }
+func (c *TestContext) RuntimeInformation() p.RunInfo                    { return p.RunInfo{} }
