@@ -15,8 +15,9 @@
 package remote
 
 import (
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-go-provider/infer"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 )
 
 type Command struct{}
@@ -44,9 +45,6 @@ type CommandInputs struct {
 // Implementing Annotate lets you provide descriptions and default values for arguments and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
-	c.ResourceInputs.Annotate(a)
-	c.CommonInputs.Annotate(a)
-
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Environment, `Additional environment variables available to the command's process.
 Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.

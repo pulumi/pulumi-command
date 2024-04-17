@@ -22,7 +22,7 @@ import (
 
 	"github.com/gliderlabs/ssh"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/stretchr/testify/require"
 )
@@ -58,7 +58,7 @@ func TestOptionalLogging(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			cmd := Command{}
 
-			ctx := util.TestContext{Context: context.Background()}
+			ctx := testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
 				CommonInputs: common.CommonInputs{
 					LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),

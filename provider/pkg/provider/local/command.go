@@ -47,13 +47,6 @@ type CommandInputs struct {
 	BaseInputs
 }
 
-// Annotate lets you provide descriptions and default values for fields and they will
-// be visible in the provider's schema and the generated SDKs.
-func (c *CommandInputs) Annotate(a infer.Annotator) {
-	c.BaseInputs.Annotate(a)
-	c.ResourceInputs.Annotate(a)
-}
-
 // These are the outputs (or properties) of a Command resource.
 type CommandOutputs struct {
 	CommandInputs
