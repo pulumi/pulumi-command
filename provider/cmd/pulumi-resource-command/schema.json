@@ -51,6 +51,27 @@
   },
   "config": {},
   "types": {
+    "command:common:Logging": {
+      "type": "string",
+      "enum": [
+        {
+          "description": "Capture stdout in logs but not stderr",
+          "value": "stdout"
+        },
+        {
+          "description": "Capture stderr in logs but not stdout",
+          "value": "stderr"
+        },
+        {
+          "description": "Capture stdout and stderr in logs",
+          "value": "both"
+        },
+        {
+          "description": "Capture no logs",
+          "value": "none"
+        }
+      ]
+    },
     "command:remote:Connection": {
       "description": "Instructions for how to connect to a remote endpoint.",
       "properties": {
@@ -217,10 +238,9 @@
           },
           "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
         },
-        "logOutput": {
-          "type": "boolean",
-          "description": "If the command's stdout and stderr should be logged.",
-          "default": true
+        "logging": {
+          "$ref": "#/types/command:common:Logging",
+          "description": "If the command's stdout and stderr should be logged."
         },
         "stderr": {
           "type": "string",
@@ -298,10 +318,9 @@
           },
           "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
         },
-        "logOutput": {
-          "type": "boolean",
-          "description": "If the command's stdout and stderr should be logged.",
-          "default": true
+        "logging": {
+          "$ref": "#/types/command:common:Logging",
+          "description": "If the command's stdout and stderr should be logged."
         },
         "stdin": {
           "type": "string",
@@ -344,10 +363,9 @@
           },
           "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
         },
-        "logOutput": {
-          "type": "boolean",
-          "description": "If the command's stdout and stderr should be logged.",
-          "default": true
+        "logging": {
+          "$ref": "#/types/command:common:Logging",
+          "description": "If the command's stdout and stderr should be logged."
         },
         "stderr": {
           "type": "string",
@@ -401,10 +419,9 @@
           },
           "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
         },
-        "logOutput": {
-          "type": "boolean",
-          "description": "If the command's stdout and stderr should be logged.",
-          "default": true
+        "logging": {
+          "$ref": "#/types/command:common:Logging",
+          "description": "If the command's stdout and stderr should be logged."
         },
         "stdin": {
           "type": "string",
@@ -532,10 +549,9 @@
             },
             "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
           },
-          "logOutput": {
-            "type": "boolean",
-            "description": "If the command's stdout and stderr should be logged.",
-            "default": true
+          "logging": {
+            "$ref": "#/types/command:common:Logging",
+            "description": "If the command's stdout and stderr should be logged."
           },
           "stdin": {
             "type": "string",
@@ -601,10 +617,9 @@
             },
             "type": "array"
           },
-          "logOutput": {
-            "default": true,
-            "description": "If the command's stdout and stderr should be logged.",
-            "type": "boolean"
+          "logging": {
+            "$ref": "#/types/command:common:Logging",
+            "description": "If the command's stdout and stderr should be logged."
           },
           "stderr": {
             "description": "The standard error of the command's process",

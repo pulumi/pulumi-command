@@ -3,6 +3,7 @@
 
 package com.pulumi.command.local.inputs;
 
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
@@ -208,15 +209,15 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
      * If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    @Import(name="logOutput")
-    private @Nullable Boolean logOutput;
+    @Import(name="logging")
+    private @Nullable Logging logging;
 
     /**
      * @return If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    public Optional<Boolean> logOutput() {
-        return Optional.ofNullable(this.logOutput);
+    public Optional<Logging> logging() {
+        return Optional.ofNullable(this.logging);
     }
 
     /**
@@ -244,7 +245,7 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         this.dir = $.dir;
         this.environment = $.environment;
         this.interpreter = $.interpreter;
-        this.logOutput = $.logOutput;
+        this.logging = $.logging;
         this.stdin = $.stdin;
     }
 
@@ -451,13 +452,13 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         }
 
         /**
-         * @param logOutput If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged.
          * 
          * @return builder
          * 
          */
-        public Builder logOutput(@Nullable Boolean logOutput) {
-            $.logOutput = logOutput;
+        public Builder logging(@Nullable Logging logging) {
+            $.logging = logging;
             return this;
         }
 
@@ -477,7 +478,6 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
             if ($.command == null) {
                 throw new MissingRequiredPropertyException("RunPlainArgs", "command");
             }
-            $.logOutput = Codegen.booleanProp("logOutput").arg($.logOutput).def(true).getNullable();
             return $;
         }
     }

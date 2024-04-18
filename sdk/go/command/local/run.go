@@ -7,6 +7,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/pulumi/pulumi-command/sdk/go/command/common"
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -79,7 +80,7 @@ type RunArgs struct {
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
 	// If the command's stdout and stderr should be logged.
-	LogOutput *bool `pulumi:"logOutput"`
+	Logging *common.Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
 }
@@ -93,10 +94,6 @@ func (val *RunArgs) Defaults() *RunArgs {
 	if tmp.AddPreviousOutputInEnv == nil {
 		addPreviousOutputInEnv_ := true
 		tmp.AddPreviousOutputInEnv = &addPreviousOutputInEnv_
-	}
-	if tmp.LogOutput == nil {
-		logOutput_ := true
-		tmp.LogOutput = &logOutput_
 	}
 	return &tmp
 }
@@ -162,7 +159,7 @@ type RunResult struct {
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
 	// If the command's stdout and stderr should be logged.
-	LogOutput *bool `pulumi:"logOutput"`
+	Logging *common.Logging `pulumi:"logging"`
 	// The standard error of the command's process
 	Stderr string `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
@@ -180,10 +177,6 @@ func (val *RunResult) Defaults() *RunResult {
 	if tmp.AddPreviousOutputInEnv == nil {
 		addPreviousOutputInEnv_ := true
 		tmp.AddPreviousOutputInEnv = &addPreviousOutputInEnv_
-	}
-	if tmp.LogOutput == nil {
-		logOutput_ := true
-		tmp.LogOutput = &logOutput_
 	}
 	return &tmp
 }
@@ -257,7 +250,7 @@ type RunOutputArgs struct {
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput `pulumi:"interpreter"`
 	// If the command's stdout and stderr should be logged.
-	LogOutput pulumi.BoolPtrInput `pulumi:"logOutput"`
+	Logging common.LoggingPtrInput `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput `pulumi:"stdin"`
 }
@@ -367,8 +360,8 @@ func (o RunResultOutput) Interpreter() pulumi.StringArrayOutput {
 }
 
 // If the command's stdout and stderr should be logged.
-func (o RunResultOutput) LogOutput() pulumi.BoolPtrOutput {
-	return o.ApplyT(func(v RunResult) *bool { return v.LogOutput }).(pulumi.BoolPtrOutput)
+func (o RunResultOutput) Logging() common.LoggingPtrOutput {
+	return o.ApplyT(func(v RunResult) *common.Logging { return v.Logging }).(common.LoggingPtrOutput)
 }
 
 // The standard error of the command's process

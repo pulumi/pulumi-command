@@ -3,12 +3,11 @@
 
 package com.pulumi.command.remote;
 
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.core.internal.Codegen;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
-import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -96,15 +95,15 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
      * If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    @Import(name="logOutput")
-    private @Nullable Output<Boolean> logOutput;
+    @Import(name="logging")
+    private @Nullable Output<Logging> logging;
 
     /**
      * @return If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    public Optional<Output<Boolean>> logOutput() {
-        return Optional.ofNullable(this.logOutput);
+    public Optional<Output<Logging>> logging() {
+        return Optional.ofNullable(this.logging);
     }
 
     /**
@@ -165,7 +164,7 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         this.create = $.create;
         this.delete = $.delete;
         this.environment = $.environment;
-        this.logOutput = $.logOutput;
+        this.logging = $.logging;
         this.stdin = $.stdin;
         this.triggers = $.triggers;
         this.update = $.update;
@@ -284,24 +283,24 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param logOutput If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged.
          * 
          * @return builder
          * 
          */
-        public Builder logOutput(@Nullable Output<Boolean> logOutput) {
-            $.logOutput = logOutput;
+        public Builder logging(@Nullable Output<Logging> logging) {
+            $.logging = logging;
             return this;
         }
 
         /**
-         * @param logOutput If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged.
          * 
          * @return builder
          * 
          */
-        public Builder logOutput(Boolean logOutput) {
-            return logOutput(Output.of(logOutput));
+        public Builder logging(Logging logging) {
+            return logging(Output.of(logging));
         }
 
         /**
@@ -387,7 +386,6 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
             if ($.connection == null) {
                 throw new MissingRequiredPropertyException("CommandArgs", "connection");
             }
-            $.logOutput = Codegen.booleanProp("logOutput").output().arg($.logOutput).def(true).getNullable();
             return $;
         }
     }

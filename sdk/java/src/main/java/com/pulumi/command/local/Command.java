@@ -6,6 +6,7 @@ package com.pulumi.command.local;
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.Utilities;
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.command.local.CommandArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -259,15 +260,15 @@ public class Command extends com.pulumi.resources.CustomResource {
      * If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    @Export(name="logOutput", refs={Boolean.class}, tree="[0]")
-    private Output</* @Nullable */ Boolean> logOutput;
+    @Export(name="logging", refs={Logging.class}, tree="[0]")
+    private Output</* @Nullable */ Logging> logging;
 
     /**
      * @return If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    public Output<Optional<Boolean>> logOutput() {
-        return Codegen.optional(this.logOutput);
+    public Output<Optional<Logging>> logging() {
+        return Codegen.optional(this.logging);
     }
     /**
      * The standard error of the command&#39;s process

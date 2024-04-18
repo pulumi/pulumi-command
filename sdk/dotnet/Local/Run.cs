@@ -176,8 +176,8 @@ namespace Pulumi.Command.Local
         /// <summary>
         /// If the command's stdout and stderr should be logged.
         /// </summary>
-        [Input("logOutput")]
-        public bool? LogOutput { get; set; }
+        [Input("logging")]
+        public Pulumi.Command.Common.Logging? Logging { get; set; }
 
         /// <summary>
         /// Pass a string to the command's process as standard in
@@ -188,7 +188,6 @@ namespace Pulumi.Command.Local
         public RunArgs()
         {
             AddPreviousOutputInEnv = true;
-            LogOutput = true;
         }
         public static new RunArgs Empty => new RunArgs();
     }
@@ -342,8 +341,8 @@ namespace Pulumi.Command.Local
         /// <summary>
         /// If the command's stdout and stderr should be logged.
         /// </summary>
-        [Input("logOutput")]
-        public Input<bool>? LogOutput { get; set; }
+        [Input("logging")]
+        public Input<Pulumi.Command.Common.Logging>? Logging { get; set; }
 
         /// <summary>
         /// Pass a string to the command's process as standard in
@@ -354,7 +353,6 @@ namespace Pulumi.Command.Local
         public RunInvokeArgs()
         {
             AddPreviousOutputInEnv = true;
-            LogOutput = true;
         }
         public static new RunInvokeArgs Empty => new RunInvokeArgs();
     }
@@ -481,7 +479,7 @@ namespace Pulumi.Command.Local
         /// <summary>
         /// If the command's stdout and stderr should be logged.
         /// </summary>
-        public readonly bool? LogOutput;
+        public readonly Pulumi.Command.Common.Logging? Logging;
         /// <summary>
         /// The standard error of the command's process
         /// </summary>
@@ -515,7 +513,7 @@ namespace Pulumi.Command.Local
 
             ImmutableArray<string> interpreter,
 
-            bool? logOutput,
+            Pulumi.Command.Common.Logging? logging,
 
             string stderr,
 
@@ -532,7 +530,7 @@ namespace Pulumi.Command.Local
             Dir = dir;
             Environment = environment;
             Interpreter = interpreter;
-            LogOutput = logOutput;
+            Logging = logging;
             Stderr = stderr;
             Stdin = stdin;
             Stdout = stdout;

@@ -3,6 +3,7 @@
 
 package com.pulumi.command.local;
 
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
@@ -228,15 +229,15 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
      * If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    @Import(name="logOutput")
-    private @Nullable Output<Boolean> logOutput;
+    @Import(name="logging")
+    private @Nullable Output<Logging> logging;
 
     /**
      * @return If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    public Optional<Output<Boolean>> logOutput() {
-        return Optional.ofNullable(this.logOutput);
+    public Optional<Output<Logging>> logging() {
+        return Optional.ofNullable(this.logging);
     }
 
     /**
@@ -301,7 +302,7 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         this.dir = $.dir;
         this.environment = $.environment;
         this.interpreter = $.interpreter;
-        this.logOutput = $.logOutput;
+        this.logging = $.logging;
         this.stdin = $.stdin;
         this.triggers = $.triggers;
         this.update = $.update;
@@ -645,24 +646,24 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param logOutput If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged.
          * 
          * @return builder
          * 
          */
-        public Builder logOutput(@Nullable Output<Boolean> logOutput) {
-            $.logOutput = logOutput;
+        public Builder logging(@Nullable Output<Logging> logging) {
+            $.logging = logging;
             return this;
         }
 
         /**
-         * @param logOutput If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged.
          * 
          * @return builder
          * 
          */
-        public Builder logOutput(Boolean logOutput) {
-            return logOutput(Output.of(logOutput));
+        public Builder logging(Logging logging) {
+            return logging(Output.of(logging));
         }
 
         /**
@@ -746,7 +747,6 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
 
         public CommandArgs build() {
             $.addPreviousOutputInEnv = Codegen.booleanProp("addPreviousOutputInEnv").output().arg($.addPreviousOutputInEnv).def(true).getNullable();
-            $.logOutput = Codegen.booleanProp("logOutput").output().arg($.logOutput).def(true).getNullable();
             return $;
         }
     }

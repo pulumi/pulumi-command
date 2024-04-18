@@ -2,6 +2,9 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
+import * as inputs from "../types/input";
+import * as outputs from "../types/output";
+import * as enums from "../types/enums";
 import * as utilities from "../utilities";
 
 /**
@@ -162,7 +165,7 @@ export class Command extends pulumi.CustomResource {
     /**
      * If the command's stdout and stderr should be logged.
      */
-    public readonly logOutput!: pulumi.Output<boolean | undefined>;
+    public readonly logging!: pulumi.Output<enums.common.Logging | undefined>;
     /**
      * The standard error of the command's process
      */
@@ -206,7 +209,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = args ? args.dir : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
             resourceInputs["interpreter"] = args ? args.interpreter : undefined;
-            resourceInputs["logOutput"] = (args ? args.logOutput : undefined) ?? true;
+            resourceInputs["logging"] = args ? args.logging : undefined;
             resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["update"] = args ? args.update : undefined;
@@ -225,7 +228,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
             resourceInputs["interpreter"] = undefined /*out*/;
-            resourceInputs["logOutput"] = undefined /*out*/;
+            resourceInputs["logging"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdin"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
@@ -358,7 +361,7 @@ export interface CommandArgs {
     /**
      * If the command's stdout and stderr should be logged.
      */
-    logOutput?: pulumi.Input<boolean>;
+    logging?: pulumi.Input<enums.common.Logging>;
     /**
      * Pass a string to the command's process as standard in
      */

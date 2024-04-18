@@ -5,6 +5,7 @@ package com.pulumi.command.local.outputs;
 
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.core.annotations.CustomType;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
@@ -107,7 +108,7 @@ public final class RunResult {
      * @return If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    private @Nullable Boolean logOutput;
+    private @Nullable Logging logging;
     /**
      * @return The standard error of the command&#39;s process
      * 
@@ -233,8 +234,8 @@ public final class RunResult {
      * @return If the command&#39;s stdout and stderr should be logged.
      * 
      */
-    public Optional<Boolean> logOutput() {
-        return Optional.ofNullable(this.logOutput);
+    public Optional<Logging> logging() {
+        return Optional.ofNullable(this.logging);
     }
     /**
      * @return The standard error of the command&#39;s process
@@ -276,7 +277,7 @@ public final class RunResult {
         private @Nullable String dir;
         private @Nullable Map<String,String> environment;
         private @Nullable List<String> interpreter;
-        private @Nullable Boolean logOutput;
+        private @Nullable Logging logging;
         private String stderr;
         private @Nullable String stdin;
         private String stdout;
@@ -292,7 +293,7 @@ public final class RunResult {
     	      this.dir = defaults.dir;
     	      this.environment = defaults.environment;
     	      this.interpreter = defaults.interpreter;
-    	      this.logOutput = defaults.logOutput;
+    	      this.logging = defaults.logging;
     	      this.stderr = defaults.stderr;
     	      this.stdin = defaults.stdin;
     	      this.stdout = defaults.stdout;
@@ -364,9 +365,9 @@ public final class RunResult {
             return interpreter(List.of(interpreter));
         }
         @CustomType.Setter
-        public Builder logOutput(@Nullable Boolean logOutput) {
+        public Builder logging(@Nullable Logging logging) {
 
-            this.logOutput = logOutput;
+            this.logging = logging;
             return this;
         }
         @CustomType.Setter
@@ -402,7 +403,7 @@ public final class RunResult {
             _resultValue.dir = dir;
             _resultValue.environment = environment;
             _resultValue.interpreter = interpreter;
-            _resultValue.logOutput = logOutput;
+            _resultValue.logging = logging;
             _resultValue.stderr = stderr;
             _resultValue.stdin = stdin;
             _resultValue.stdout = stdout;

@@ -48,8 +48,8 @@ namespace Pulumi.Command.Remote
         /// <summary>
         /// If the command's stdout and stderr should be logged.
         /// </summary>
-        [Output("logOutput")]
-        public Output<bool?> LogOutput { get; private set; } = null!;
+        [Output("logging")]
+        public Output<Pulumi.Command.Common.Logging?> Logging { get; private set; } = null!;
 
         /// <summary>
         /// The standard error of the command's process
@@ -185,8 +185,8 @@ namespace Pulumi.Command.Remote
         /// <summary>
         /// If the command's stdout and stderr should be logged.
         /// </summary>
-        [Input("logOutput")]
-        public Input<bool>? LogOutput { get; set; }
+        [Input("logging")]
+        public Input<Pulumi.Command.Common.Logging>? Logging { get; set; }
 
         /// <summary>
         /// Pass a string to the command's process as standard in
@@ -217,7 +217,6 @@ namespace Pulumi.Command.Remote
 
         public CommandArgs()
         {
-            LogOutput = true;
         }
         public static new CommandArgs Empty => new CommandArgs();
     }

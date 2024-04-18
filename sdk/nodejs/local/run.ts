@@ -2,6 +2,9 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
+import * as inputs from "../types/input";
+import * as outputs from "../types/output";
+import * as enums from "../types/enums";
 import * as utilities from "../utilities";
 
 /**
@@ -19,7 +22,7 @@ export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResu
         "dir": args.dir,
         "environment": args.environment,
         "interpreter": args.interpreter,
-        "logOutput": args.logOutput,
+        "logging": args.logging,
         "stdin": args.stdin,
     }, opts);
 }
@@ -134,7 +137,7 @@ export interface RunArgs {
     /**
      * If the command's stdout and stderr should be logged.
      */
-    logOutput?: boolean;
+    logging?: enums.common.Logging;
     /**
      * Pass a string to the command's process as standard in
      */
@@ -260,7 +263,7 @@ export interface RunResult {
     /**
      * If the command's stdout and stderr should be logged.
      */
-    readonly logOutput?: boolean;
+    readonly logging?: enums.common.Logging;
     /**
      * The standard error of the command's process
      */
@@ -392,7 +395,7 @@ export interface RunOutputArgs {
     /**
      * If the command's stdout and stderr should be logged.
      */
-    logOutput?: pulumi.Input<boolean>;
+    logging?: pulumi.Input<enums.common.Logging>;
     /**
      * Pass a string to the command's process as standard in
      */
