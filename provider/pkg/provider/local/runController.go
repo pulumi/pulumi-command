@@ -20,6 +20,6 @@ import p "github.com/pulumi/pulumi-go-provider"
 // it.
 func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
 	r := RunOutputs{RunInputs: input}
-	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs, input.ShouldLogOutput())
+	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs, input.Logging)
 	return r, err
 }

@@ -47,7 +47,7 @@ func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview 
 	}
 
 	if !preview {
-		err = state.run(ctx, cmd, input.ShouldLogOutput())
+		err = state.run(ctx, cmd, input.Logging)
 	}
 	return id, state, err
 }
@@ -61,9 +61,9 @@ func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news Comma
 	var err error
 	if !preview {
 		if news.Update != nil {
-			err = state.run(ctx, *news.Update, news.ShouldLogOutput())
+			err = state.run(ctx, *news.Update, news.Logging)
 		} else if news.Create != nil {
-			err = state.run(ctx, *news.Create, news.ShouldLogOutput())
+			err = state.run(ctx, *news.Create, news.Logging)
 		}
 	}
 	return state, err
@@ -74,5 +74,5 @@ func (*Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
-	return props.run(ctx, *props.Delete, props.ShouldLogOutput())
+	return props.run(ctx, *props.Delete, props.Logging)
 }

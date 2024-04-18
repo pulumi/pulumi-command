@@ -16,6 +16,7 @@ package local
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
@@ -25,32 +26,31 @@ import (
 )
 
 func TestOptionalLogging(t *testing.T) {
-	for name, testCase := range map[string]struct {
-		shouldLogOutput bool
-		expectedLog     string
-	}{
-		"should log":     {shouldLogOutput: true, expectedLog: "hello"},
-		"should not log": {shouldLogOutput: false, expectedLog: ""},
-	} {
-		t.Run(name, func(t *testing.T) {
+	for _, logMode := range common.Logging.Values(common.LogStdoutAndStderr) {
+
+		t.Run(logMode.Name, func(t *testing.T) {
 			cmd := Command{}
 
 			ctx := testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
 				BaseInputs: BaseInputs{
 					CommonInputs: common.CommonInputs{
-						LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),
+						Logging: &logMode.Value,
 					},
 				},
 				ResourceInputs: common.ResourceInputs{
-					Create: pulumi.StringRef("echo hello"),
+					Create: pulumi.StringRef("echo foo; echo bar >> /dev/stderr"),
 				},
 			}
 
 			_, _, err := cmd.Create(&ctx, "name", input, false /* preview */)
 			require.NoError(t, err)
 
-			require.Equal(t, testCase.expectedLog, ctx.Output.String())
+			log := ctx.Output.String()
+
+			// When logging both stdout and stderr, the output could be foobar or barfoo.
+			require.Equal(t, logMode.Value.ShouldLogStdout(), strings.Contains(log, "foo"))
+			require.Equal(t, logMode.Value.ShouldLogStderr(), strings.Contains(log, "bar"))
 		})
 	}
 }

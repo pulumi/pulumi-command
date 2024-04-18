@@ -18,12 +18,33 @@ type ResourceInputs struct {
 type CommonInputs struct {
 	// The field tags are used to provide metadata on the schema representation.
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
-	Stdin     *string `pulumi:"stdin,optional"`
-	LogOutput *bool   `pulumi:"logOutput,optional"`
+	Stdin   *string  `pulumi:"stdin,optional"`
+	Logging *Logging `pulumi:"logging,optional"`
 }
 
-func (c *CommonInputs) ShouldLogOutput() bool {
-	return (c == nil || c.LogOutput == nil) || *c.LogOutput
+type Logging string
+
+const (
+	LogStdout          Logging = "stdout"
+	LogStderr          Logging = "stderr"
+	LogStdoutAndStderr Logging = "both"
+	NoLogging          Logging = "none"
+)
+
+func (Logging) Values() []infer.EnumValue[Logging] {
+	return []infer.EnumValue[Logging]{
+		{Name: string(LogStdout), Value: LogStdout, Description: "Capture stdout in logs but not stderr"},
+		{Name: string(LogStderr), Value: LogStderr, Description: "Capture stderr in logs but not stdout"},
+		{Name: string(LogStdoutAndStderr), Value: LogStdoutAndStderr, Description: "Capture stdout and stderr in logs"},
+		{Name: string(NoLogging), Value: NoLogging, Description: "Capture no logs"},
+	}
+}
+
+func (l *Logging) ShouldLogStdout() bool {
+	return l == nil || *l == LogStdout || *l == LogStdoutAndStderr
+}
+func (l *Logging) ShouldLogStderr() bool {
+	return l == nil || *l == LogStderr || *l == LogStdoutAndStderr
 }
 
 // Annotate lets you provide descriptions and default values for fields and they will
@@ -40,10 +61,7 @@ are set to the stdout and stderr properties of the Command resource from previou
 create or update steps.`)
 }
 
-// Annotate lets you provide descriptions and default values for fields and they will
-// be visible in the provider's schema and the generated SDKs.
 func (c *CommonInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
-	a.Describe(&c.LogOutput, `If the command's stdout and stderr should be logged.`)
-	a.SetDefault(&c.LogOutput, true)
+	a.Describe(&c.Logging, `If the command's stdout and stderr should be logged.`)
 }

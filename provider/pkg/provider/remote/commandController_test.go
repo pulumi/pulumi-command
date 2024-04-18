@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"testing"
 
 	"github.com/gliderlabs/ssh"
@@ -29,15 +30,17 @@ import (
 
 func TestOptionalLogging(t *testing.T) {
 	const (
-		host           = "localhost"
-		port           = 2222
-		serverResponse = "look, it's SSH!"
+		host = "localhost"
+		port = 2222
 	)
 
+	// This SSH server always writes "foo" to stdout and "bar" to stderr, no matter the command.
 	server := &ssh.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
 		Handler: func(s ssh.Session) {
-			_, err := io.WriteString(s, serverResponse)
+			_, err := io.WriteString(s, "foo")
+			require.NoError(t, err)
+			_, err = io.WriteString(s.Stderr(), "bar")
 			require.NoError(t, err)
 		},
 	}
@@ -48,20 +51,14 @@ func TestOptionalLogging(t *testing.T) {
 		_ = server.Close()
 	})
 
-	for name, testCase := range map[string]struct {
-		shouldLogOutput bool
-		expectedLog     string
-	}{
-		"should log":     {shouldLogOutput: true, expectedLog: serverResponse},
-		"should not log": {shouldLogOutput: false, expectedLog: ""},
-	} {
-		t.Run(name, func(t *testing.T) {
+	for _, logMode := range common.Logging.Values(common.LogStdoutAndStderr) {
+		t.Run(logMode.Name, func(t *testing.T) {
 			cmd := Command{}
 
 			ctx := testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
 				CommonInputs: common.CommonInputs{
-					LogOutput: pulumi.BoolRef(testCase.shouldLogOutput),
+					Logging: &logMode.Value,
 				},
 				ResourceInputs: common.ResourceInputs{
 					Create: pulumi.StringRef("ignored"),
@@ -70,8 +67,8 @@ func TestOptionalLogging(t *testing.T) {
 					connectionBase: connectionBase{
 						Host:           pulumi.StringRef(host),
 						Port:           pulumi.Float64Ref(float64(port)),
-						User:           pulumi.StringRef("foo"), // unused but prevents nil panic
-						PerDialTimeout: pulumi.IntRef(1),        // unused but prevents nil panic
+						User:           pulumi.StringRef("user"), // unused but prevents nil panic
+						PerDialTimeout: pulumi.IntRef(1),         // unused but prevents nil panic
 					},
 				},
 			}
@@ -79,7 +76,11 @@ func TestOptionalLogging(t *testing.T) {
 			_, _, err := cmd.Create(&ctx, "name", input, false /* preview */)
 			require.NoError(t, err)
 
-			require.Equal(t, testCase.expectedLog, ctx.Output.String())
+			log := ctx.Output.String()
+
+			// When logging both stdout and stderr, the output could be foobar or barfoo.
+			require.Equal(t, logMode.Value.ShouldLogStdout(), strings.Contains(log, "foo"))
+			require.Equal(t, logMode.Value.ShouldLogStderr(), strings.Contains(log, "bar"))
 		})
 	}
 }

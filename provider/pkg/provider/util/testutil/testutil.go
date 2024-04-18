@@ -8,7 +8,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 )
 
-// TestContext is a test implementation of p.Context that records all log messages in a buffer, regardless of severity.
+// TestContext is an implementation of p.Context that records all log messages in a buffer, regardless of severity.
 type TestContext struct {
 	context.Context
 	Output bytes.Buffer
