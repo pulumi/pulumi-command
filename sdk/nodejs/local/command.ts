@@ -2,6 +2,9 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
+import * as inputs from "../types/input";
+import * as outputs from "../types/output";
+import * as enums from "../types/enums";
 import * as utilities from "../utilities";
 
 /**
@@ -160,6 +163,12 @@ export class Command extends pulumi.CustomResource {
      */
     public readonly interpreter!: pulumi.Output<string[] | undefined>;
     /**
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+     */
+    public readonly logging!: pulumi.Output<enums.common.Logging | undefined>;
+    /**
      * The standard error of the command's process
      */
     public /*out*/ readonly stderr!: pulumi.Output<string>;
@@ -202,6 +211,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = args ? args.dir : undefined;
             resourceInputs["environment"] = args ? args.environment : undefined;
             resourceInputs["interpreter"] = args ? args.interpreter : undefined;
+            resourceInputs["logging"] = args ? args.logging : undefined;
             resourceInputs["stdin"] = args ? args.stdin : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
             resourceInputs["update"] = args ? args.update : undefined;
@@ -220,6 +230,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["dir"] = undefined /*out*/;
             resourceInputs["environment"] = undefined /*out*/;
             resourceInputs["interpreter"] = undefined /*out*/;
+            resourceInputs["logging"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdin"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
@@ -349,6 +360,12 @@ export interface CommandArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+     */
+    logging?: pulumi.Input<enums.common.Logging>;
     /**
      * Pass a string to the command's process as standard in
      */

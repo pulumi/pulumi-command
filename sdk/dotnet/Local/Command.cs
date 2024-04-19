@@ -161,6 +161,14 @@ namespace Pulumi.Command.Local
         public Output<ImmutableArray<string>> Interpreter { get; private set; } = null!;
 
         /// <summary>
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        /// </summary>
+        [Output("logging")]
+        public Output<Pulumi.Command.Common.Logging?> Logging { get; private set; } = null!;
+
+        /// <summary>
         /// The standard error of the command's process
         /// </summary>
         [Output("stderr")]
@@ -393,6 +401,14 @@ namespace Pulumi.Command.Local
             get => _interpreter ?? (_interpreter = new InputList<string>());
             set => _interpreter = value;
         }
+
+        /// <summary>
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        /// </summary>
+        [Input("logging")]
+        public Input<Pulumi.Command.Common.Logging>? Logging { get; set; }
 
         /// <summary>
         /// Pass a string to the command's process as standard in

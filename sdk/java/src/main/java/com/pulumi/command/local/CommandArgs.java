@@ -3,6 +3,7 @@
 
 package com.pulumi.command.local;
 
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
@@ -225,6 +226,25 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    @Import(name="logging")
+    private @Nullable Output<Logging> logging;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    public Optional<Output<Logging>> logging() {
+        return Optional.ofNullable(this.logging);
+    }
+
+    /**
      * Pass a string to the command&#39;s process as standard in
      * 
      */
@@ -286,6 +306,7 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         this.dir = $.dir;
         this.environment = $.environment;
         this.interpreter = $.interpreter;
+        this.logging = $.logging;
         this.stdin = $.stdin;
         this.triggers = $.triggers;
         this.update = $.update;
@@ -626,6 +647,31 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder interpreter(String... interpreter) {
             return interpreter(List.of(interpreter));
+        }
+
+        /**
+         * @param logging If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+         * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+         * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder logging(@Nullable Output<Logging> logging) {
+            $.logging = logging;
+            return this;
+        }
+
+        /**
+         * @param logging If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+         * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+         * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder logging(Logging logging) {
+            return logging(Output.of(logging));
         }
 
         /**

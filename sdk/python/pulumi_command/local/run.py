@@ -8,6 +8,7 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from .. import _utilities
+from .. import common
 
 __all__ = [
     'RunResult',
@@ -18,7 +19,7 @@ __all__ = [
 
 @pulumi.output_type
 class RunResult:
-    def __init__(__self__, add_previous_output_in_env=None, archive=None, archive_paths=None, asset_paths=None, assets=None, command=None, dir=None, environment=None, interpreter=None, stderr=None, stdin=None, stdout=None):
+    def __init__(__self__, add_previous_output_in_env=None, archive=None, archive_paths=None, asset_paths=None, assets=None, command=None, dir=None, environment=None, interpreter=None, logging=None, stderr=None, stdin=None, stdout=None):
         if add_previous_output_in_env and not isinstance(add_previous_output_in_env, bool):
             raise TypeError("Expected argument 'add_previous_output_in_env' to be a bool")
         pulumi.set(__self__, "add_previous_output_in_env", add_previous_output_in_env)
@@ -46,6 +47,9 @@ class RunResult:
         if interpreter and not isinstance(interpreter, list):
             raise TypeError("Expected argument 'interpreter' to be a list")
         pulumi.set(__self__, "interpreter", interpreter)
+        if logging and not isinstance(logging, str):
+            raise TypeError("Expected argument 'logging' to be a str")
+        pulumi.set(__self__, "logging", logging)
         if stderr and not isinstance(stderr, str):
             raise TypeError("Expected argument 'stderr' to be a str")
         pulumi.set(__self__, "stderr", stderr)
@@ -209,6 +213,16 @@ class RunResult:
 
     @property
     @pulumi.getter
+    def logging(self) -> Optional['common.Logging']:
+        """
+        If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        """
+        return pulumi.get(self, "logging")
+
+    @property
+    @pulumi.getter
     def stderr(self) -> str:
         """
         The standard error of the command's process
@@ -247,6 +261,7 @@ class AwaitableRunResult(RunResult):
             dir=self.dir,
             environment=self.environment,
             interpreter=self.interpreter,
+            logging=self.logging,
             stderr=self.stderr,
             stdin=self.stdin,
             stdout=self.stdout)
@@ -259,6 +274,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
         dir: Optional[str] = None,
         environment: Optional[Mapping[str, str]] = None,
         interpreter: Optional[Sequence[str]] = None,
+        logging: Optional['common.Logging'] = None,
         stdin: Optional[str] = None,
         opts: Optional[pulumi.InvokeOptions] = None) -> AwaitableRunResult:
     """
@@ -351,6 +367,9 @@ def run(add_previous_output_in_env: Optional[bool] = None,
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
+    :param 'common.Logging' logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+           stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+           outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
     :param str stdin: Pass a string to the command's process as standard in
     """
     __args__ = dict()
@@ -361,6 +380,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
     __args__['dir'] = dir
     __args__['environment'] = environment
     __args__['interpreter'] = interpreter
+    __args__['logging'] = logging
     __args__['stdin'] = stdin
     opts = pulumi.InvokeOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
     __ret__ = pulumi.runtime.invoke('command:local:run', __args__, opts=opts, typ=RunResult).value
@@ -375,6 +395,7 @@ def run(add_previous_output_in_env: Optional[bool] = None,
         dir=pulumi.get(__ret__, 'dir'),
         environment=pulumi.get(__ret__, 'environment'),
         interpreter=pulumi.get(__ret__, 'interpreter'),
+        logging=pulumi.get(__ret__, 'logging'),
         stderr=pulumi.get(__ret__, 'stderr'),
         stdin=pulumi.get(__ret__, 'stdin'),
         stdout=pulumi.get(__ret__, 'stdout'))
@@ -388,6 +409,7 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
                dir: Optional[pulumi.Input[Optional[str]]] = None,
                environment: Optional[pulumi.Input[Optional[Mapping[str, str]]]] = None,
                interpreter: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
+               logging: Optional[pulumi.Input[Optional['common.Logging']]] = None,
                stdin: Optional[pulumi.Input[Optional[str]]] = None,
                opts: Optional[pulumi.InvokeOptions] = None) -> pulumi.Output[RunResult]:
     """
@@ -480,6 +502,9 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
     :param Mapping[str, str] environment: Additional environment variables available to the command's process.
     :param Sequence[str] interpreter: The program and arguments to run the command.
            On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
+    :param 'common.Logging' logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+           stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+           outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
     :param str stdin: Pass a string to the command's process as standard in
     """
     ...

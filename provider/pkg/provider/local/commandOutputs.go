@@ -31,10 +31,11 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
+func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs, logging *common.Logging) error {
 	contract.Assertf(out != nil, "run:out cannot be nil")
 	var args []string
 	if in.Interpreter != nil && len(*in.Interpreter) > 0 {
@@ -49,13 +50,24 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
 	args = append(args, command)
 
 	var err error
-	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer
+	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer // stdouterrbuf is only for error messages
 	stdouterrwriter := util.ConcurrentWriter{Writer: &stdouterrbuf}
-	r, w := io.Pipe()
+	loggingReader, loggingWriter := io.Pipe()
 
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
-	cmd.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrwriter, w)
-	cmd.Stderr = io.MultiWriter(&stderrbuf, &stdouterrwriter, w)
+
+	stdoutWriters := []io.Writer{&stdoutbuf, &stdouterrwriter}
+	if logging.ShouldLogStdout() {
+		stdoutWriters = append(stdoutWriters, loggingWriter)
+	}
+	cmd.Stdout = io.MultiWriter(stdoutWriters...)
+
+	stderrWriters := []io.Writer{&stderrbuf, &stdouterrwriter}
+	if logging.ShouldLogStderr() {
+		stderrWriters = append(stderrWriters, loggingWriter)
+	}
+	cmd.Stderr = io.MultiWriter(stderrWriters...)
+
 	if in.Dir != nil {
 		cmd.Dir = *in.Dir
 	} else {
@@ -85,14 +97,14 @@ func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs) error {
 	}
 
 	stdouterrch := make(chan struct{})
-	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
+	go util.LogOutput(ctx, loggingReader, stdouterrch, diag.Info)
 
 	err = cmd.Start()
 	if err == nil {
 		err = cmd.Wait()
 	}
 
-	w.Close()
+	loggingWriter.Close()
 	<-stdouterrch
 
 	if err != nil {

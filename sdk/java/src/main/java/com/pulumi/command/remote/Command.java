@@ -4,6 +4,7 @@
 package com.pulumi.command.remote;
 
 import com.pulumi.command.Utilities;
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.command.remote.CommandArgs;
 import com.pulumi.command.remote.outputs.Connection;
 import com.pulumi.core.Output;
@@ -89,6 +90,24 @@ public class Command extends com.pulumi.resources.CustomResource {
      */
     public Output<Optional<Map<String,String>>> environment() {
         return Codegen.optional(this.environment);
+    }
+    /**
+     * If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    @Export(name="logging", refs={Logging.class}, tree="[0]")
+    private Output</* @Nullable */ Logging> logging;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    public Output<Optional<Logging>> logging() {
+        return Codegen.optional(this.logging);
     }
     /**
      * The standard error of the command&#39;s process

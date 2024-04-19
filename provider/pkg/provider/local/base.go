@@ -15,15 +15,17 @@
 package local
 
 import (
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
+// BaseInputs is the common set of inputs for all local commands.
 type BaseInputs struct {
+	common.CommonInputs
 	Interpreter            *[]string          `pulumi:"interpreter,optional"`
 	Dir                    *string            `pulumi:"dir,optional"`
 	Environment            *map[string]string `pulumi:"environment,optional"`
-	Stdin                  *string            `pulumi:"stdin,optional"`
 	AssetPaths             *[]string          `pulumi:"assetPaths,optional"`
 	ArchivePaths           *[]string          `pulumi:"archivePaths,optional"`
 	AddPreviousOutputInEnv *bool              `pulumi:"addPreviousOutputInEnv,optional"`
@@ -37,7 +39,6 @@ func (c *BaseInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Dir, "The directory from which to run the command from. If `dir` does not exist, then\n"+
 		"`Command` will fail.")
 	a.Describe(&c.Environment, "Additional environment variables available to the command's process.")
-	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 	a.Describe(&c.ArchivePaths, `A list of path globs to return as a single archive asset after the command completes.
 
 When specifying glob patterns the following rules apply:

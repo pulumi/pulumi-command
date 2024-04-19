@@ -3,6 +3,7 @@
 
 package com.pulumi.command.local.inputs;
 
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
@@ -205,6 +206,25 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
     }
 
     /**
+     * If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    @Import(name="logging")
+    private @Nullable Logging logging;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    public Optional<Logging> logging() {
+        return Optional.ofNullable(this.logging);
+    }
+
+    /**
      * Pass a string to the command&#39;s process as standard in
      * 
      */
@@ -229,6 +249,7 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         this.dir = $.dir;
         this.environment = $.environment;
         this.interpreter = $.interpreter;
+        this.logging = $.logging;
         this.stdin = $.stdin;
     }
 
@@ -432,6 +453,19 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
          */
         public Builder interpreter(String... interpreter) {
             return interpreter(List.of(interpreter));
+        }
+
+        /**
+         * @param logging If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+         * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+         * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder logging(@Nullable Logging logging) {
+            $.logging = logging;
+            return this;
         }
 
         /**

@@ -26,12 +26,19 @@ import (
 const PULUMI_COMMAND_STDOUT = "PULUMI_COMMAND_STDOUT"
 const PULUMI_COMMAND_STDERR = "PULUMI_COMMAND_STDERR"
 
-func CopyOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
+func LogOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		ctx.LogStatus(severity, scanner.Text())
 	}
+}
+
+// NoopLogger satisfies the expected logger shape but doesn't actually log.
+// It reads from the provided reader until EOF, discarding the output, then closes the channel.
+func NoopLogger(r io.Reader, done chan struct{}) {
+	defer close(done)
+	_, _ = io.Copy(io.Discard, r)
 }
 
 type ConcurrentWriter struct {

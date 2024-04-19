@@ -223,7 +223,7 @@ func TestRemoteCommand(t *testing.T) {
 	})
 }
 
-// Ensure that we correctly apply apply defaults to `connection.port`.
+// Ensure that we correctly apply defaults to `connection.port`.
 //
 // User issue is https://github.com/pulumi/pulumi-command/issues/248.
 func TestRegress248(t *testing.T) {

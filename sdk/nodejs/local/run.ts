@@ -2,6 +2,9 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 import * as pulumi from "@pulumi/pulumi";
+import * as inputs from "../types/input";
+import * as outputs from "../types/output";
+import * as enums from "../types/enums";
 import * as utilities from "../utilities";
 
 /**
@@ -19,6 +22,7 @@ export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResu
         "dir": args.dir,
         "environment": args.environment,
         "interpreter": args.interpreter,
+        "logging": args.logging,
         "stdin": args.stdin,
     }, opts);
 }
@@ -130,6 +134,12 @@ export interface RunArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: string[];
+    /**
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+     */
+    logging?: enums.common.Logging;
     /**
      * Pass a string to the command's process as standard in
      */
@@ -252,6 +262,12 @@ export interface RunResult {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     readonly interpreter?: string[];
+    /**
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+     */
+    readonly logging?: enums.common.Logging;
     /**
      * The standard error of the command's process
      */
@@ -380,6 +396,12 @@ export interface RunOutputArgs {
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
+    /**
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+     */
+    logging?: pulumi.Input<enums.common.Logging>;
     /**
      * Pass a string to the command's process as standard in
      */

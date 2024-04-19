@@ -16,6 +16,8 @@ package remote
 
 import (
 	"github.com/pulumi/pulumi-go-provider/infer"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 )
 
 type Command struct{}
@@ -29,6 +31,8 @@ The connection is established via ssh.`)
 
 // The arguments for a remote Command resource.
 type CommandInputs struct {
+	common.ResourceInputs
+	common.CommonInputs
 	// the pulumi-go-provider library uses field tags to dictate behavior.
 	// pulumi:"connection" specifies the name of the field in the schema
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
@@ -36,11 +40,6 @@ type CommandInputs struct {
 	// provider:"secret" specifies that a field should be marked secret.
 	Connection  *Connection       `pulumi:"connection" provider:"secret"`
 	Environment map[string]string `pulumi:"environment,optional"`
-	Triggers    *[]any            `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	Create      *string           `pulumi:"create,optional"`
-	Delete      *string           `pulumi:"delete,optional"`
-	Update      *string           `pulumi:"update,optional"`
-	Stdin       *string           `pulumi:"stdin,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for arguments and they will
@@ -51,16 +50,6 @@ func (c *CommandInputs) Annotate(a infer.Annotator) {
 Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
 Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
 with the variables in the form 'VAR=value command'.`)
-	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
-	a.Describe(&c.Create, "The command to run on create.")
-	a.Describe(&c.Delete, `The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-Command resource from previous create or update steps.`)
-	a.Describe(&c.Update, `The command to run on update, if empty, create will 
-run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
-are set to the stdout and stderr properties of the Command resource from previous 
-create or update steps.`)
-	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
 }
 
 // The properties for a remote Command resource.

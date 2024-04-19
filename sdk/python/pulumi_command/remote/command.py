@@ -9,6 +9,7 @@ import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from .. import _utilities
 from . import outputs
+from .. import common
 from ._inputs import *
 
 __all__ = ['CommandArgs', 'Command']
@@ -20,6 +21,7 @@ class CommandArgs:
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 logging: Optional[pulumi.Input['common.Logging']] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None):
@@ -34,6 +36,9 @@ class CommandArgs:
                Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
                Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
                with the variables in the form 'VAR=value command'.
+        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+               stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+               outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -48,6 +53,8 @@ class CommandArgs:
             pulumi.set(__self__, "delete", delete)
         if environment is not None:
             pulumi.set(__self__, "environment", environment)
+        if logging is not None:
+            pulumi.set(__self__, "logging", logging)
         if stdin is not None:
             pulumi.set(__self__, "stdin", stdin)
         if triggers is not None:
@@ -110,6 +117,20 @@ class CommandArgs:
 
     @property
     @pulumi.getter
+    def logging(self) -> Optional[pulumi.Input['common.Logging']]:
+        """
+        If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        """
+        return pulumi.get(self, "logging")
+
+    @logging.setter
+    def logging(self, value: Optional[pulumi.Input['common.Logging']]):
+        pulumi.set(self, "logging", value)
+
+    @property
+    @pulumi.getter
     def stdin(self) -> Optional[pulumi.Input[str]]:
         """
         Pass a string to the command's process as standard in
@@ -157,6 +178,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 logging: Optional[pulumi.Input['common.Logging']] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -176,6 +198,9 @@ class Command(pulumi.CustomResource):
                Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
                Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
                with the variables in the form 'VAR=value command'.
+        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+               stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+               outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -212,6 +237,7 @@ class Command(pulumi.CustomResource):
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
+                 logging: Optional[pulumi.Input['common.Logging']] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -230,6 +256,7 @@ class Command(pulumi.CustomResource):
             __props__.__dict__["create"] = create
             __props__.__dict__["delete"] = delete
             __props__.__dict__["environment"] = environment
+            __props__.__dict__["logging"] = logging
             __props__.__dict__["stdin"] = stdin
             __props__.__dict__["triggers"] = triggers
             __props__.__dict__["update"] = update
@@ -265,6 +292,7 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["create"] = None
         __props__.__dict__["delete"] = None
         __props__.__dict__["environment"] = None
+        __props__.__dict__["logging"] = None
         __props__.__dict__["stderr"] = None
         __props__.__dict__["stdin"] = None
         __props__.__dict__["stdout"] = None
@@ -308,6 +336,16 @@ class Command(pulumi.CustomResource):
         with the variables in the form 'VAR=value command'.
         """
         return pulumi.get(self, "environment")
+
+    @property
+    @pulumi.getter
+    def logging(self) -> pulumi.Output[Optional['common.Logging']]:
+        """
+        If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        """
+        return pulumi.get(self, "logging")
 
     @property
     @pulumi.getter

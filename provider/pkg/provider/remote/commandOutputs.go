@@ -23,10 +23,11 @@ import (
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
+func (c *CommandOutputs) run(ctx p.Context, cmd string, logging *common.Logging) error {
 	client, err := c.Connection.Dial(ctx)
 	if err != nil {
 		return err
@@ -73,11 +74,21 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string) error {
 
 	var stdoutbuf, stderrbuf, stdouterrbuf bytes.Buffer
 	r, w := io.Pipe()
-	session.Stdout = io.MultiWriter(&stdoutbuf, &stdouterrbuf, w)
-	session.Stderr = io.MultiWriter(&stderrbuf, &stdouterrbuf, w)
+
+	stdoutWriters := []io.Writer{&stdoutbuf, &stdouterrbuf}
+	if logging.ShouldLogStdout() {
+		stdoutWriters = append(stdoutWriters, w)
+	}
+	session.Stdout = io.MultiWriter(stdoutWriters...)
+
+	stderrWriters := []io.Writer{&stderrbuf, &stdouterrbuf}
+	if logging.ShouldLogStderr() {
+		stderrWriters = append(stderrWriters, w)
+	}
+	session.Stderr = io.MultiWriter(stderrWriters...)
 
 	stdouterrch := make(chan struct{})
-	go util.CopyOutput(ctx, r, stdouterrch, diag.Info)
+	go util.LogOutput(ctx, r, stdouterrch, diag.Info)
 
 	err = session.Run(cmd)
 

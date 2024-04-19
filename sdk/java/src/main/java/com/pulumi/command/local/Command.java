@@ -6,6 +6,7 @@ package com.pulumi.command.local;
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.Utilities;
+import com.pulumi.command.common.enums.Logging;
 import com.pulumi.command.local.CommandArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -254,6 +255,24 @@ public class Command extends com.pulumi.resources.CustomResource {
      */
     public Output<Optional<List<String>>> interpreter() {
         return Codegen.optional(this.interpreter);
+    }
+    /**
+     * If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    @Export(name="logging", refs={Logging.class}, tree="[0]")
+    private Output</* @Nullable */ Logging> logging;
+
+    /**
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
+     * 
+     */
+    public Output<Optional<Logging>> logging() {
+        return Codegen.optional(this.logging);
     }
     /**
      * The standard error of the command&#39;s process

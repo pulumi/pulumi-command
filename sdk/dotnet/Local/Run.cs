@@ -174,6 +174,14 @@ namespace Pulumi.Command.Local
         }
 
         /// <summary>
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        /// </summary>
+        [Input("logging")]
+        public Pulumi.Command.Common.Logging? Logging { get; set; }
+
+        /// <summary>
         /// Pass a string to the command's process as standard in
         /// </summary>
         [Input("stdin")]
@@ -333,6 +341,14 @@ namespace Pulumi.Command.Local
         }
 
         /// <summary>
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        /// </summary>
+        [Input("logging")]
+        public Input<Pulumi.Command.Common.Logging>? Logging { get; set; }
+
+        /// <summary>
         /// Pass a string to the command's process as standard in
         /// </summary>
         [Input("stdin")]
@@ -465,6 +481,12 @@ namespace Pulumi.Command.Local
         /// </summary>
         public readonly ImmutableArray<string> Interpreter;
         /// <summary>
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
+        /// </summary>
+        public readonly Pulumi.Command.Common.Logging? Logging;
+        /// <summary>
         /// The standard error of the command's process
         /// </summary>
         public readonly string Stderr;
@@ -497,6 +519,8 @@ namespace Pulumi.Command.Local
 
             ImmutableArray<string> interpreter,
 
+            Pulumi.Command.Common.Logging? logging,
+
             string stderr,
 
             string? stdin,
@@ -512,6 +536,7 @@ namespace Pulumi.Command.Local
             Dir = dir;
             Environment = environment;
             Interpreter = interpreter;
+            Logging = logging;
             Stderr = stderr;
             Stdin = stdin;
             Stdout = stdout;

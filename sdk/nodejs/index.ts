@@ -12,11 +12,13 @@ utilities.lazyLoad(exports, ["Provider"], () => require("./provider"));
 
 
 // Export sub-modules:
+import * as common from "./common";
 import * as local from "./local";
 import * as remote from "./remote";
 import * as types from "./types";
 
 export {
+    common,
     local,
     remote,
     types,
