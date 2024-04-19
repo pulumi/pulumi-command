@@ -24,7 +24,7 @@ import java.util.StringJoiner;
          * Capture stdout and stderr in logs
          * 
          */
-        Both("both"),
+        StdoutAndStderr("stdoutAndStderr"),
         /**
          * Capture no logs
          * 

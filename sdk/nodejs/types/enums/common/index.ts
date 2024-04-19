@@ -14,7 +14,7 @@ export const Logging = {
     /**
      * Capture stdout and stderr in logs
      */
-    Both: "both",
+    StdoutAndStderr: "stdoutAndStderr",
     /**
      * Capture no logs
      */

@@ -226,14 +226,18 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * If the command&#39;s stdout and stderr should be logged.
+     * If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
      * 
      */
     @Import(name="logging")
     private @Nullable Output<Logging> logging;
 
     /**
-     * @return If the command&#39;s stdout and stderr should be logged.
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
      * 
      */
     public Optional<Output<Logging>> logging() {
@@ -646,7 +650,9 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param logging If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+         * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+         * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
          * 
          * @return builder
          * 
@@ -657,7 +663,9 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param logging If the command&#39;s stdout and stderr should be logged.
+         * @param logging If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+         * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+         * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
          * 
          * @return builder
          * 

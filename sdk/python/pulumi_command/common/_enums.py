@@ -18,7 +18,7 @@ class Logging(str, Enum):
     """
     Capture stderr in logs but not stdout
     """
-    BOTH = "both"
+    STDOUT_AND_STDERR = "stdoutAndStderr"
     """
     Capture stdout and stderr in logs
     """

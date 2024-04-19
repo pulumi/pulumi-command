@@ -27,7 +27,7 @@ type Logging string
 const (
 	LogStdout          Logging = "stdout"
 	LogStderr          Logging = "stderr"
-	LogStdoutAndStderr Logging = "both"
+	LogStdoutAndStderr Logging = "stdoutAndStderr"
 	NoLogging          Logging = "none"
 )
 
@@ -63,5 +63,7 @@ create or update steps.`)
 
 func (c *CommonInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
-	a.Describe(&c.Logging, `If the command's stdout and stderr should be logged.`)
+	a.Describe(&c.Logging, `If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.`)
 }

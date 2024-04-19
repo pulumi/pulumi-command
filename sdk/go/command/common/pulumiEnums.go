@@ -18,7 +18,7 @@ const (
 	// Capture stderr in logs but not stdout
 	LoggingStderr = Logging("stderr")
 	// Capture stdout and stderr in logs
-	LoggingBoth = Logging("both")
+	LoggingStdoutAndStderr = Logging("stdoutAndStderr")
 	// Capture no logs
 	LoggingNone = Logging("none")
 )
@@ -147,7 +147,7 @@ func (o LoggingPtrOutput) ToStringPtrOutputWithContext(ctx context.Context) pulu
 //
 //	LoggingStdout
 //	LoggingStderr
-//	LoggingBoth
+//	LoggingStdoutAndStderr
 //	LoggingNone
 type LoggingInput interface {
 	pulumi.Input

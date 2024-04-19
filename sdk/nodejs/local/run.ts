@@ -135,7 +135,9 @@ export interface RunArgs {
      */
     interpreter?: string[];
     /**
-     * If the command's stdout and stderr should be logged.
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
     logging?: enums.common.Logging;
     /**
@@ -261,7 +263,9 @@ export interface RunResult {
      */
     readonly interpreter?: string[];
     /**
-     * If the command's stdout and stderr should be logged.
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
     readonly logging?: enums.common.Logging;
     /**
@@ -393,7 +397,9 @@ export interface RunOutputArgs {
      */
     interpreter?: pulumi.Input<pulumi.Input<string>[]>;
     /**
-     * If the command's stdout and stderr should be logged.
+     * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
     logging?: pulumi.Input<enums.common.Logging>;
     /**

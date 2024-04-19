@@ -64,7 +64,7 @@
         },
         {
           "description": "Capture stdout and stderr in logs",
-          "value": "both"
+          "value": "stdoutAndStderr"
         },
         {
           "description": "Capture no logs",
@@ -240,7 +240,7 @@
         },
         "logging": {
           "$ref": "#/types/command:common:Logging",
-          "description": "If the command's stdout and stderr should be logged."
+          "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stderr": {
           "type": "string",
@@ -320,7 +320,7 @@
         },
         "logging": {
           "$ref": "#/types/command:common:Logging",
-          "description": "If the command's stdout and stderr should be logged."
+          "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stdin": {
           "type": "string",
@@ -365,7 +365,7 @@
         },
         "logging": {
           "$ref": "#/types/command:common:Logging",
-          "description": "If the command's stdout and stderr should be logged."
+          "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stderr": {
           "type": "string",
@@ -421,7 +421,7 @@
         },
         "logging": {
           "$ref": "#/types/command:common:Logging",
-          "description": "If the command's stdout and stderr should be logged."
+          "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stdin": {
           "type": "string",
@@ -551,7 +551,7 @@
           },
           "logging": {
             "$ref": "#/types/command:common:Logging",
-            "description": "If the command's stdout and stderr should be logged."
+            "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
           },
           "stdin": {
             "type": "string",
@@ -619,7 +619,7 @@
           },
           "logging": {
             "$ref": "#/types/command:common:Logging",
-            "description": "If the command's stdout and stderr should be logged."
+            "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
           },
           "stderr": {
             "description": "The standard error of the command's process",

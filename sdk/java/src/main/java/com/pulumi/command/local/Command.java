@@ -257,14 +257,18 @@ public class Command extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.interpreter);
     }
     /**
-     * If the command&#39;s stdout and stderr should be logged.
+     * If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
      * 
      */
     @Export(name="logging", refs={Logging.class}, tree="[0]")
     private Output</* @Nullable */ Logging> logging;
 
     /**
-     * @return If the command&#39;s stdout and stderr should be logged.
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
      * 
      */
     public Output<Optional<Logging>> logging() {

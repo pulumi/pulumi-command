@@ -161,7 +161,9 @@ namespace Pulumi.Command.Local
         public Output<ImmutableArray<string>> Interpreter { get; private set; } = null!;
 
         /// <summary>
-        /// If the command's stdout and stderr should be logged.
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         /// </summary>
         [Output("logging")]
         public Output<Pulumi.Command.Common.Logging?> Logging { get; private set; } = null!;
@@ -401,7 +403,9 @@ namespace Pulumi.Command.Local
         }
 
         /// <summary>
-        /// If the command's stdout and stderr should be logged.
+        /// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        /// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        /// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         /// </summary>
         [Input("logging")]
         public Input<Pulumi.Command.Common.Logging>? Logging { get; set; }

@@ -83,7 +83,9 @@ type Command struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayOutput `pulumi:"interpreter"`
-	// If the command's stdout and stderr should be logged.
+	// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+	// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+	// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
 	Logging common.LoggingPtrOutput `pulumi:"logging"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
@@ -205,7 +207,9 @@ type commandArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter []string `pulumi:"interpreter"`
-	// If the command's stdout and stderr should be logged.
+	// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+	// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+	// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
 	Logging *common.Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
@@ -278,7 +282,9 @@ type CommandArgs struct {
 	// The program and arguments to run the command.
 	// On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
 	Interpreter pulumi.StringArrayInput
-	// If the command's stdout and stderr should be logged.
+	// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+	// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+	// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
 	Logging common.LoggingPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
@@ -471,7 +477,9 @@ func (o CommandOutput) Interpreter() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringArrayOutput { return v.Interpreter }).(pulumi.StringArrayOutput)
 }
 
-// If the command's stdout and stderr should be logged.
+// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
 func (o CommandOutput) Logging() common.LoggingPtrOutput {
 	return o.ApplyT(func(v *Command) common.LoggingPtrOutput { return v.Logging }).(common.LoggingPtrOutput)
 }

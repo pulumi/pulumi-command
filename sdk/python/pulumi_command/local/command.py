@@ -117,7 +117,9 @@ class CommandArgs:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged.
+        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+               stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+               outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -332,7 +334,9 @@ class CommandArgs:
     @pulumi.getter
     def logging(self) -> Optional[pulumi.Input['common.Logging']]:
         """
-        If the command's stdout and stderr should be logged.
+        If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         """
         return pulumi.get(self, "logging")
 
@@ -495,7 +499,9 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged.
+        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+               stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+               outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
@@ -777,7 +783,9 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def logging(self) -> pulumi.Output[Optional['common.Logging']]:
         """
-        If the command's stdout and stderr should be logged.
+        If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+        outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         """
         return pulumi.get(self, "logging")
 

@@ -105,7 +105,9 @@ public final class RunResult {
      */
     private @Nullable List<String> interpreter;
     /**
-     * @return If the command&#39;s stdout and stderr should be logged.
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
      * 
      */
     private @Nullable Logging logging;
@@ -231,7 +233,9 @@ public final class RunResult {
         return this.interpreter == null ? List.of() : this.interpreter;
     }
     /**
-     * @return If the command&#39;s stdout and stderr should be logged.
+     * @return If the command&#39;s stdout and stderr should be logged. This doesn&#39;t affect the capturing of
+     * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+     * outputs as secret via &#39;additionalSecretOutputs&#39;. Defaults to logging both stdout and stderr.
      * 
      */
     public Optional<Logging> logging() {

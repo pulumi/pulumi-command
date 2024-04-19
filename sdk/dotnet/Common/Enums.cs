@@ -28,7 +28,7 @@ namespace Pulumi.Command.Common
         /// <summary>
         /// Capture stdout and stderr in logs
         /// </summary>
-        public static Logging Both { get; } = new Logging("both");
+        public static Logging StdoutAndStderr { get; } = new Logging("stdoutAndStderr");
         /// <summary>
         /// Capture no logs
         /// </summary>
