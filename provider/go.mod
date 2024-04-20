@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/gliderlabs/ssh v0.3.7
 	github.com/gobwas/glob v0.2.3
-	github.com/pkg/sftp v1.13.4
+	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/pulumi-go-provider v0.13.1-0.20231204212757-ab334266917c
 	github.com/pulumi/pulumi/sdk/v3 v3.113.3
 	github.com/stretchr/testify v1.8.4
