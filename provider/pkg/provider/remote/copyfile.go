@@ -24,7 +24,7 @@ var _ = (infer.Annotated)((*CopyFile)(nil))
 
 // CopyFile implements Annotate which allows you to attach descriptions to the CopyFile resource.
 func (c *CopyFile) Annotate(a infer.Annotator) {
-	a.Describe(&c, "Copy a local file to a remote host.")
+	a.Describe(&c, "Copy a local file or directory to a remote host.")
 }
 
 type CopyFileInputs struct {
@@ -38,7 +38,7 @@ type CopyFileInputs struct {
 func (c *CopyFileInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
-	a.Describe(&c.LocalPath, "The path of the file to be copied.")
+	a.Describe(&c.LocalPath, "The path of the file or directory to be copied.")
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 
