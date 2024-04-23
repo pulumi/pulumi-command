@@ -18,6 +18,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRandom(t *testing.T) {
@@ -156,7 +157,7 @@ func TestSimpleWithUpdate(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func testEc2Ts(t *testing.T, targetDir string) {
+func genEC2KeyPair(t *testing.T) (*ec2.CreateKeyPairOutput, func()) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(getRegion(t))},
 	)
@@ -168,17 +169,23 @@ func testEc2Ts(t *testing.T, targetDir string) {
 	key, err := svc.CreateKeyPair(&ec2.CreateKeyPairInput{
 		KeyName: aws.String(keyName),
 	})
-	assert.NoError(t, err)
-	if err != nil {
-		return
-	}
-	defer func() {
+	require.NoError(t, err)
+
+	cleanup := func() {
 		t.Logf("Deleting keypair %s.\n", keyName)
 		_, err := svc.DeleteKeyPair(&ec2.DeleteKeyPairInput{
 			KeyName: aws.String(keyName),
 		})
 		assert.NoError(t, err)
-	}()
+	}
+
+	return key, cleanup
+}
+
+func testEc2Ts(t *testing.T, targetDir string) {
+	key, keyCleanup := genEC2KeyPair(t)
+	defer keyCleanup()
+
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
 			Dir: filepath.Join(getCwd(t), targetDir),
@@ -234,6 +241,53 @@ func testEc2Ts(t *testing.T, targetDir string) {
 func TestEc2RemoteTs(t *testing.T) { testEc2Ts(t, "ec2_remote") }
 
 func TestEc2RemoteProxyTs(t *testing.T) { testEc2Ts(t, "ec2_remote_proxy") }
+
+func TestEc2DirCopy(t *testing.T) {
+	key, keyCleanup := genEC2KeyPair(t)
+	defer keyCleanup()
+
+	baseDir := t.TempDir() // automatically cleaned up after the test
+	err := os.MkdirAll(filepath.Join(baseDir, "src", "one", "two"), 0755)
+	require.NoError(t, err)
+	_, err = os.Create(filepath.Join(baseDir, "src", "file1"))
+	require.NoError(t, err)
+	_, err = os.Create(filepath.Join(baseDir, "src", "one", "file2"))
+	require.NoError(t, err)
+	_, err = os.Create(filepath.Join(baseDir, "src", "one", "two", "file3"))
+	require.NoError(t, err)
+
+	const dest = "/tmp/ec2_dir_copy"
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: filepath.Join(getCwd(t), "ec2_dir_copy"),
+			Config: map[string]string{
+				"keyName": aws.StringValue(key.KeyName),
+				"srcDir":  filepath.Join(baseDir, "src"),
+				"destDir": dest,
+			},
+			Secrets: map[string]string{
+				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
+			},
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				remoteLSOutput, ok := stack.Outputs["lsRemote"]
+				require.True(t, ok)
+				remoteLS, ok := remoteLSOutput.(string)
+				require.True(t, ok)
+
+				assert.Equal(t,
+					dest+"\n"+
+						dest+"/file1\n"+
+						dest+"/one\n"+
+						dest+"/one/file2\n"+
+						dest+"/one/two\n"+
+						dest+"/one/two/file3",
+					remoteLS)
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+
+}
 
 func TestLambdaInvoke(t *testing.T) {
 	test := getJSBaseOptions(t).

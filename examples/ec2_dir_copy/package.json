@@ -1,0 +1,14 @@
+{
+    "name": "copy-remote",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^18"
+    },
+    "dependencies": {
+        "@pulumi/aws": "^6.0.0",
+        "@pulumi/awsx": "^2.0.2",
+        "@pulumi/pulumi": "^3.113.0",
+        "@pulumi/command": "^0.10",
+        "typescript": "^5.0.0"
+    }
+}
