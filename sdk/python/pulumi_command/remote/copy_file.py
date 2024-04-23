@@ -23,7 +23,7 @@ class CopyFileArgs:
         """
         The set of arguments for constructing a CopyFile resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param pulumi.Input[str] local_path: The path of the file or directory to be copied.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
@@ -49,7 +49,7 @@ class CopyFileArgs:
     @pulumi.getter(name="localPath")
     def local_path(self) -> pulumi.Input[str]:
         """
-        The path of the file to be copied.
+        The path of the file or directory to be copied.
         """
         return pulumi.get(self, "local_path")
 
@@ -93,12 +93,12 @@ class CopyFile(pulumi.CustomResource):
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         """
-        Copy a local file to a remote host.
+        Copy a local file or directory to a remote host.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param pulumi.Input[str] local_path: The path of the file or directory to be copied.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
@@ -109,7 +109,7 @@ class CopyFile(pulumi.CustomResource):
                  args: CopyFileArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Copy a local file to a remote host.
+        Copy a local file or directory to a remote host.
 
         :param str resource_name: The name of the resource.
         :param CopyFileArgs args: The arguments to use to populate this resource's properties.
@@ -191,7 +191,7 @@ class CopyFile(pulumi.CustomResource):
     @pulumi.getter(name="localPath")
     def local_path(self) -> pulumi.Output[str]:
         """
-        The path of the file to be copied.
+        The path of the file or directory to be copied.
         """
         return pulumi.get(self, "local_path")
 

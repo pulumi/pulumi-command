@@ -35,14 +35,14 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The path of the file to be copied.
+     * The path of the file or directory to be copied.
      * 
      */
     @Import(name="localPath", required=true)
     private Output<String> localPath;
 
     /**
-     * @return The path of the file to be copied.
+     * @return The path of the file or directory to be copied.
      * 
      */
     public Output<String> localPath() {
@@ -128,7 +128,7 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localPath The path of the file to be copied.
+         * @param localPath The path of the file or directory to be copied.
          * 
          * @return builder
          * 
@@ -139,7 +139,7 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localPath The path of the file to be copied.
+         * @param localPath The path of the file or directory to be copied.
          * 
          * @return builder
          * 

@@ -10,7 +10,7 @@ using Pulumi.Serialization;
 namespace Pulumi.Command.Remote
 {
     /// <summary>
-    /// Copy a local file to a remote host.
+    /// Copy a local file or directory to a remote host.
     /// </summary>
     [CommandResourceType("command:remote:CopyFile")]
     public partial class CopyFile : global::Pulumi.CustomResource
@@ -22,7 +22,7 @@ namespace Pulumi.Command.Remote
         public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
-        /// The path of the file to be copied.
+        /// The path of the file or directory to be copied.
         /// </summary>
         [Output("localPath")]
         public Output<string> LocalPath { get; private set; } = null!;
@@ -105,7 +105,7 @@ namespace Pulumi.Command.Remote
         }
 
         /// <summary>
-        /// The path of the file to be copied.
+        /// The path of the file or directory to be copied.
         /// </summary>
         [Input("localPath", required: true)]
         public Input<string> LocalPath { get; set; } = null!;

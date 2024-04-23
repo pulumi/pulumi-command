@@ -17,7 +17,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
- * Copy a local file to a remote host.
+ * Copy a local file or directory to a remote host.
  * 
  */
 @ResourceType(type="command:remote:CopyFile")
@@ -37,14 +37,14 @@ public class CopyFile extends com.pulumi.resources.CustomResource {
         return this.connection;
     }
     /**
-     * The path of the file to be copied.
+     * The path of the file or directory to be copied.
      * 
      */
     @Export(name="localPath", refs={String.class}, tree="[0]")
     private Output<String> localPath;
 
     /**
-     * @return The path of the file to be copied.
+     * @return The path of the file or directory to be copied.
      * 
      */
     public Output<String> localPath() {

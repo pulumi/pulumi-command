@@ -8,7 +8,7 @@ import * as enums from "../types/enums";
 import * as utilities from "../utilities";
 
 /**
- * Copy a local file to a remote host.
+ * Copy a local file or directory to a remote host.
  */
 export class CopyFile extends pulumi.CustomResource {
     /**
@@ -42,7 +42,7 @@ export class CopyFile extends pulumi.CustomResource {
      */
     public readonly connection!: pulumi.Output<outputs.remote.Connection>;
     /**
-     * The path of the file to be copied.
+     * The path of the file or directory to be copied.
      */
     public readonly localPath!: pulumi.Output<string>;
     /**
@@ -100,7 +100,7 @@ export interface CopyFileArgs {
      */
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**
-     * The path of the file to be copied.
+     * The path of the file or directory to be copied.
      */
     localPath: pulumi.Input<string>;
     /**
