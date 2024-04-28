@@ -72,6 +72,7 @@ jobs:
       with:
         path: ci-scripts
         repository: pulumi/scripts
+    - run: echo "ci-scripts" >> .git/info/exclude
     - name: Unshallow clone for tags
       run: git fetch --prune --unshallow --tags
     - name: Install Go
@@ -139,6 +140,7 @@ jobs:
       with:
         path: ci-scripts
         repository: pulumi/scripts
+    - run: echo "ci-scripts" >> .git/info/exclude
     - name: Unshallow clone for tags
       run: git fetch --prune --unshallow --tags
     - name: Install Go
@@ -236,6 +238,7 @@ jobs:
       with:
         path: ci-scripts
         repository: pulumi/scripts
+    - run: echo "ci-scripts" >> .git/info/exclude
     - name: Unshallow clone for tags
       run: git fetch --prune --unshallow --tags
     - name: Install Go
