@@ -17,9 +17,9 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 
-public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
+public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
 
-    public static final CopyFileArgs Empty = new CopyFileArgs();
+    public static final CopyArgs Empty = new CopyArgs();
 
     /**
      * The parameters with which to connect to the remote host.
@@ -96,9 +96,9 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.triggers);
     }
 
-    private CopyFileArgs() {}
+    private CopyArgs() {}
 
-    private CopyFileArgs(CopyFileArgs $) {
+    private CopyArgs(CopyArgs $) {
         this.connection = $.connection;
         this.localArchive = $.localArchive;
         this.localAsset = $.localAsset;
@@ -109,19 +109,19 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
     public static Builder builder() {
         return new Builder();
     }
-    public static Builder builder(CopyFileArgs defaults) {
+    public static Builder builder(CopyArgs defaults) {
         return new Builder(defaults);
     }
 
     public static final class Builder {
-        private CopyFileArgs $;
+        private CopyArgs $;
 
         public Builder() {
-            $ = new CopyFileArgs();
+            $ = new CopyArgs();
         }
 
-        public Builder(CopyFileArgs defaults) {
-            $ = new CopyFileArgs(Objects.requireNonNull(defaults));
+        public Builder(CopyArgs defaults) {
+            $ = new CopyArgs(Objects.requireNonNull(defaults));
         }
 
         /**
@@ -239,12 +239,12 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
             return triggers(List.of(triggers));
         }
 
-        public CopyFileArgs build() {
+        public CopyArgs build() {
             if ($.connection == null) {
-                throw new MissingRequiredPropertyException("CopyFileArgs", "connection");
+                throw new MissingRequiredPropertyException("CopyArgs", "connection");
             }
             if ($.remotePath == null) {
-                throw new MissingRequiredPropertyException("CopyFileArgs", "remotePath");
+                throw new MissingRequiredPropertyException("CopyArgs", "remotePath");
             }
             return $;
         }

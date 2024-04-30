@@ -479,8 +479,8 @@
         "connection"
       ]
     },
-    "command:remote:CopyFile": {
-      "description": "Copy a local file to a remote host.",
+    "command:remote:Copy": {
+      "description": "Copy an Asset or Archive to a remote host.",
       "properties": {
         "connection": {
           "$ref": "#/types/command:remote:Connection",

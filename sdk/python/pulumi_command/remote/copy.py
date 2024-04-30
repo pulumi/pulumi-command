@@ -11,10 +11,10 @@ from .. import _utilities
 from . import outputs
 from ._inputs import *
 
-__all__ = ['CopyFileArgs', 'CopyFile']
+__all__ = ['CopyArgs', 'Copy']
 
 @pulumi.input_type
-class CopyFileArgs:
+class CopyArgs:
     def __init__(__self__, *,
                  connection: pulumi.Input['ConnectionArgs'],
                  remote_path: pulumi.Input[str],
@@ -22,7 +22,7 @@ class CopyFileArgs:
                  local_asset: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
-        The set of arguments for constructing a CopyFile resource.
+        The set of arguments for constructing a Copy resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[pulumi.Archive] local_archive: The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
@@ -99,7 +99,7 @@ class CopyFileArgs:
         pulumi.set(self, "triggers", value)
 
 
-class CopyFile(pulumi.CustomResource):
+class Copy(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
@@ -111,7 +111,7 @@ class CopyFile(pulumi.CustomResource):
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
         """
-        Copy a local file to a remote host.
+        Copy an Asset or Archive to a remote host.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -125,18 +125,18 @@ class CopyFile(pulumi.CustomResource):
     @overload
     def __init__(__self__,
                  resource_name: str,
-                 args: CopyFileArgs,
+                 args: CopyArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Copy a local file to a remote host.
+        Copy an Asset or Archive to a remote host.
 
         :param str resource_name: The name of the resource.
-        :param CopyFileArgs args: The arguments to use to populate this resource's properties.
+        :param CopyArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
         """
         ...
     def __init__(__self__, resource_name: str, *args, **kwargs):
-        resource_args, opts = _utilities.get_resource_args_opts(CopyFileArgs, pulumi.ResourceOptions, *args, **kwargs)
+        resource_args, opts = _utilities.get_resource_args_opts(CopyArgs, pulumi.ResourceOptions, *args, **kwargs)
         if resource_args is not None:
             __self__._internal_init(resource_name, opts, **resource_args.__dict__)
         else:
@@ -157,7 +157,7 @@ class CopyFile(pulumi.CustomResource):
         if opts.id is None:
             if __props__ is not None:
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
-            __props__ = CopyFileArgs.__new__(CopyFileArgs)
+            __props__ = CopyArgs.__new__(CopyArgs)
 
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
@@ -172,8 +172,8 @@ class CopyFile(pulumi.CustomResource):
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         replace_on_changes = pulumi.ResourceOptions(replace_on_changes=["triggers[*]"])
         opts = pulumi.ResourceOptions.merge(opts, replace_on_changes)
-        super(CopyFile, __self__).__init__(
-            'command:remote:CopyFile',
+        super(Copy, __self__).__init__(
+            'command:remote:Copy',
             resource_name,
             __props__,
             opts)
@@ -181,9 +181,9 @@ class CopyFile(pulumi.CustomResource):
     @staticmethod
     def get(resource_name: str,
             id: pulumi.Input[str],
-            opts: Optional[pulumi.ResourceOptions] = None) -> 'CopyFile':
+            opts: Optional[pulumi.ResourceOptions] = None) -> 'Copy':
         """
-        Get an existing CopyFile resource's state with the given name, id, and optional extra
+        Get an existing Copy resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.
 
         :param str resource_name: The unique name of the resulting resource.
@@ -192,14 +192,14 @@ class CopyFile(pulumi.CustomResource):
         """
         opts = pulumi.ResourceOptions.merge(opts, pulumi.ResourceOptions(id=id))
 
-        __props__ = CopyFileArgs.__new__(CopyFileArgs)
+        __props__ = CopyArgs.__new__(CopyArgs)
 
         __props__.__dict__["connection"] = None
         __props__.__dict__["local_archive"] = None
         __props__.__dict__["local_asset"] = None
         __props__.__dict__["remote_path"] = None
         __props__.__dict__["triggers"] = None
-        return CopyFile(resource_name, opts=opts, __props__=__props__)
+        return Copy(resource_name, opts=opts, __props__=__props__)
 
     @property
     @pulumi.getter

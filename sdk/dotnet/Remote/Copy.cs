@@ -10,10 +10,10 @@ using Pulumi.Serialization;
 namespace Pulumi.Command.Remote
 {
     /// <summary>
-    /// Copy a local file to a remote host.
+    /// Copy an Asset or Archive to a remote host.
     /// </summary>
-    [CommandResourceType("command:remote:CopyFile")]
-    public partial class CopyFile : global::Pulumi.CustomResource
+    [CommandResourceType("command:remote:Copy")]
+    public partial class Copy : global::Pulumi.CustomResource
     {
         /// <summary>
         /// The parameters with which to connect to the remote host.
@@ -47,19 +47,19 @@ namespace Pulumi.Command.Remote
 
 
         /// <summary>
-        /// Create a CopyFile resource with the given unique name, arguments, and options.
+        /// Create a Copy resource with the given unique name, arguments, and options.
         /// </summary>
         ///
         /// <param name="name">The unique name of the resource</param>
         /// <param name="args">The arguments used to populate this resource's properties</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public CopyFile(string name, CopyFileArgs args, CustomResourceOptions? options = null)
-            : base("command:remote:CopyFile", name, args ?? new CopyFileArgs(), MakeResourceOptions(options, ""))
+        public Copy(string name, CopyArgs args, CustomResourceOptions? options = null)
+            : base("command:remote:Copy", name, args ?? new CopyArgs(), MakeResourceOptions(options, ""))
         {
         }
 
-        private CopyFile(string name, Input<string> id, CustomResourceOptions? options = null)
-            : base("command:remote:CopyFile", name, null, MakeResourceOptions(options, id))
+        private Copy(string name, Input<string> id, CustomResourceOptions? options = null)
+            : base("command:remote:Copy", name, null, MakeResourceOptions(options, id))
         {
         }
 
@@ -83,20 +83,20 @@ namespace Pulumi.Command.Remote
             return merged;
         }
         /// <summary>
-        /// Get an existing CopyFile resource's state with the given name, ID, and optional extra
+        /// Get an existing Copy resource's state with the given name, ID, and optional extra
         /// properties used to qualify the lookup.
         /// </summary>
         ///
         /// <param name="name">The unique name of the resulting resource.</param>
         /// <param name="id">The unique provider ID of the resource to lookup.</param>
         /// <param name="options">A bag of options that control this resource's behavior</param>
-        public static CopyFile Get(string name, Input<string> id, CustomResourceOptions? options = null)
+        public static Copy Get(string name, Input<string> id, CustomResourceOptions? options = null)
         {
-            return new CopyFile(name, id, options);
+            return new Copy(name, id, options);
         }
     }
 
-    public sealed class CopyFileArgs : global::Pulumi.ResourceArgs
+    public sealed class CopyArgs : global::Pulumi.ResourceArgs
     {
         [Input("connection", required: true)]
         private Input<Inputs.ConnectionArgs>? _connection;
@@ -144,9 +144,9 @@ namespace Pulumi.Command.Remote
             set => _triggers = value;
         }
 
-        public CopyFileArgs()
+        public CopyArgs()
         {
         }
-        public static new CopyFileArgs Empty => new CopyFileArgs();
+        public static new CopyArgs Empty => new CopyArgs();
     }
 }

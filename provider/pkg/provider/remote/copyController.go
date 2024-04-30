@@ -29,16 +29,16 @@ import (
 
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
-var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
+var _ = (infer.CustomResource[CopyInputs, CopyOutputs])((*Copy)(nil))
 
 // This is the Create method. This will be run on every CopyFile resource creation.
-func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
+func (*Copy) Create(ctx context.Context, name string, input CopyInputs, preview bool) (string, CopyOutputs, error) {
 	if err := input.validate(); err != nil {
-		return "", CopyFileOutputs{input}, err
+		return "", CopyOutputs{input}, err
 	}
 
 	if preview {
-		return "", CopyFileOutputs{input}, nil
+		return "", CopyOutputs{input}, nil
 	}
 
 	sourcePath := input.sourcePath()
@@ -48,25 +48,25 @@ func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, 
 
 	src, err := os.Open(sourcePath)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return "", CopyOutputs{input}, err
 	}
 	defer src.Close()
 
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return "", CopyOutputs{input}, err
 	}
 	defer client.Close()
 
 	sftp, err := sftp.NewClient(client)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return "", CopyOutputs{input}, err
 	}
 	defer sftp.Close()
 
 	srcInfo, err := src.Stat()
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return "", CopyOutputs{input}, err
 	}
 	if srcInfo.IsDir() {
 		err = copyDir(sftp, sourcePath, input.RemotePath)
@@ -74,11 +74,11 @@ func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, 
 		err = copyFile(sftp, sourcePath, input.RemotePath)
 	}
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return "", CopyOutputs{input}, err
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
-	return id, CopyFileOutputs{input}, err
+	return id, CopyOutputs{input}, err
 }
 
 func copyFile(sftp *sftp.Client, src, dst string) error {
@@ -98,6 +98,8 @@ func copyFile(sftp *sftp.Client, src, dst string) error {
 	return err
 }
 
+// copyDir copies a directory recursively from the local file system to a remote host.
+// Note that the current is naive and sequential and therefore can be slow.
 func copyDir(sftp *sftp.Client, src, dst string) error {
 	fileSystem := os.DirFS(src)
 	return fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, err error) error {
