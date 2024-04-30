@@ -3,6 +3,8 @@
 
 package com.pulumi.command.remote;
 
+import com.pulumi.asset.Archive;
+import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
@@ -35,18 +37,33 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The path of the file to be copied.
+     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
-    @Import(name="localPath", required=true)
-    private Output<String> localPath;
+    @Import(name="localArchive")
+    private @Nullable Output<Archive> localArchive;
 
     /**
-     * @return The path of the file to be copied.
+     * @return The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
-    public Output<String> localPath() {
-        return this.localPath;
+    public Optional<Output<Archive>> localArchive() {
+        return Optional.ofNullable(this.localArchive);
+    }
+
+    /**
+     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * 
+     */
+    @Import(name="localAsset")
+    private @Nullable Output<AssetOrArchive> localAsset;
+
+    /**
+     * @return The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * 
+     */
+    public Optional<Output<AssetOrArchive>> localAsset() {
+        return Optional.ofNullable(this.localAsset);
     }
 
     /**
@@ -83,7 +100,8 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
 
     private CopyFileArgs(CopyFileArgs $) {
         this.connection = $.connection;
-        this.localPath = $.localPath;
+        this.localArchive = $.localArchive;
+        this.localAsset = $.localAsset;
         this.remotePath = $.remotePath;
         this.triggers = $.triggers;
     }
@@ -128,24 +146,45 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localPath The path of the file to be copied.
+         * @param localArchive The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
          * 
          * @return builder
          * 
          */
-        public Builder localPath(Output<String> localPath) {
-            $.localPath = localPath;
+        public Builder localArchive(@Nullable Output<Archive> localArchive) {
+            $.localArchive = localArchive;
             return this;
         }
 
         /**
-         * @param localPath The path of the file to be copied.
+         * @param localArchive The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
          * 
          * @return builder
          * 
          */
-        public Builder localPath(String localPath) {
-            return localPath(Output.of(localPath));
+        public Builder localArchive(Archive localArchive) {
+            return localArchive(Output.of(localArchive));
+        }
+
+        /**
+         * @param localAsset The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder localAsset(@Nullable Output<AssetOrArchive> localAsset) {
+            $.localAsset = localAsset;
+            return this;
+        }
+
+        /**
+         * @param localAsset The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder localAsset(AssetOrArchive localAsset) {
+            return localAsset(Output.of(localAsset));
         }
 
         /**
@@ -203,9 +242,6 @@ public final class CopyFileArgs extends com.pulumi.resources.ResourceArgs {
         public CopyFileArgs build() {
             if ($.connection == null) {
                 throw new MissingRequiredPropertyException("CopyFileArgs", "connection");
-            }
-            if ($.localPath == null) {
-                throw new MissingRequiredPropertyException("CopyFileArgs", "localPath");
             }
             if ($.remotePath == null) {
                 throw new MissingRequiredPropertyException("CopyFileArgs", "remotePath");

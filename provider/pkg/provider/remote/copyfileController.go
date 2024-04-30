@@ -16,7 +16,9 @@ package remote
 
 import (
 	"context"
+	"io/fs"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/sftp"
 
@@ -31,14 +33,20 @@ var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil)
 
 // This is the Create method. This will be run on every CopyFile resource creation.
 func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
+	if err := input.validate(); err != nil {
+		return "", CopyFileOutputs{input}, err
+	}
+
 	if preview {
 		return "", CopyFileOutputs{input}, nil
 	}
 
-	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
-		*input.Connection.Host, input.RemotePath, input.LocalPath)
+	sourcePath := input.sourcePath()
 
-	src, err := os.Open(input.LocalPath)
+	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
+		*input.Connection.Host, input.RemotePath, sourcePath)
+
+	src, err := os.Open(sourcePath)
 	if err != nil {
 		return "", CopyFileOutputs{input}, err
 	}
@@ -56,16 +64,52 @@ func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, 
 	}
 	defer sftp.Close()
 
-	dst, err := sftp.Create(input.RemotePath)
+	srcInfo, err := src.Stat()
 	if err != nil {
 		return "", CopyFileOutputs{input}, err
 	}
-
-	_, err = dst.ReadFrom(src)
+	if srcInfo.IsDir() {
+		err = copyDir(sftp, sourcePath, input.RemotePath)
+	} else {
+		err = copyFile(sftp, sourcePath, input.RemotePath)
+	}
 	if err != nil {
 		return "", CopyFileOutputs{input}, err
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
 	return id, CopyFileOutputs{input}, err
+}
+
+func copyFile(sftp *sftp.Client, src, dst string) error {
+	local, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer local.Close()
+
+	remote, err := sftp.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer remote.Close()
+
+	_, err = remote.ReadFrom(local)
+	return err
+}
+
+func copyDir(sftp *sftp.Client, src, dst string) error {
+	fileSystem := os.DirFS(src)
+	return fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		remotePath := filepath.Join(dst, path)
+
+		if d.IsDir() {
+			return sftp.Mkdir(remotePath)
+		}
+		return copyFile(sftp, filepath.Join(src, path), remotePath)
+	})
 }
