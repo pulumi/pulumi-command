@@ -1,4 +1,4 @@
-import { interpolate, Config, secret } from "@pulumi/pulumi";
+import { interpolate, Config, asset } from "@pulumi/pulumi";
 import { local, remote, types } from "@pulumi/command";
 import * as aws from "@pulumi/aws";
 import * as fs from "fs";
@@ -80,9 +80,9 @@ new local.Command("localPrivateIP", {
     delete: `rm private_ip.txt`,
 }, { deleteBeforeReplace: true });
 
-const sizeFile = new remote.CopyFile("size", {
+const sizeFile = new remote.Copy("size", {
     connection,
-    localPath: "./size.ts",
+    localAsset: new asset.FileAsset("./size.ts"),
     remotePath: "size.ts",
 }, { dependsOn: poll })
 

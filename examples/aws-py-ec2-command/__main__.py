@@ -69,10 +69,10 @@ conn = command.remote.ConnectionArgs(
 )
 
 # Copy a config file to our server.
-cp_config = command.remote.CopyFile(
+cp_config = command.remote.Copy(
     'config',
     connection=conn,
-    local_path='myapp.conf',
+    local_asset='myapp.conf',
     remote_path='myapp.conf',
     opts=pulumi.ResourceOptions(depends_on=[server])
 )
