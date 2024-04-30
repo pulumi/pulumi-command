@@ -22,10 +22,16 @@ namespace Pulumi.Command.Remote
         public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
-        /// The path of the file to be copied.
+        /// The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
         /// </summary>
-        [Output("localPath")]
-        public Output<string> LocalPath { get; private set; } = null!;
+        [Output("localArchive")]
+        public Output<Archive?> LocalArchive { get; private set; } = null!;
+
+        /// <summary>
+        /// The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        /// </summary>
+        [Output("localAsset")]
+        public Output<AssetOrArchive?> LocalAsset { get; private set; } = null!;
 
         /// <summary>
         /// The destination path in the remote host.
@@ -109,10 +115,16 @@ namespace Pulumi.Command.Remote
         }
 
         /// <summary>
-        /// The path of the file to be copied.
+        /// The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
         /// </summary>
-        [Input("localPath", required: true)]
-        public Input<string> LocalPath { get; set; } = null!;
+        [Input("localArchive")]
+        public Input<Archive>? LocalArchive { get; set; }
+
+        /// <summary>
+        /// The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        /// </summary>
+        [Input("localAsset")]
+        public Input<AssetOrArchive>? LocalAsset { get; set; }
 
         /// <summary>
         /// The destination path in the remote host.

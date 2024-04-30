@@ -17,19 +17,24 @@ __all__ = ['CopyFileArgs', 'CopyFile']
 class CopyFileArgs:
     def __init__(__self__, *,
                  connection: pulumi.Input['ConnectionArgs'],
-                 local_path: pulumi.Input[str],
                  remote_path: pulumi.Input[str],
+                 local_archive: Optional[pulumi.Input[pulumi.Archive]] = None,
+                 local_asset: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a CopyFile resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
+        :param pulumi.Input[pulumi.Archive] local_archive: The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+        :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] local_asset: The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
         pulumi.set(__self__, "connection", connection)
-        pulumi.set(__self__, "local_path", local_path)
         pulumi.set(__self__, "remote_path", remote_path)
+        if local_archive is not None:
+            pulumi.set(__self__, "local_archive", local_archive)
+        if local_asset is not None:
+            pulumi.set(__self__, "local_asset", local_asset)
         if triggers is not None:
             pulumi.set(__self__, "triggers", triggers)
 
@@ -46,18 +51,6 @@ class CopyFileArgs:
         pulumi.set(self, "connection", value)
 
     @property
-    @pulumi.getter(name="localPath")
-    def local_path(self) -> pulumi.Input[str]:
-        """
-        The path of the file to be copied.
-        """
-        return pulumi.get(self, "local_path")
-
-    @local_path.setter
-    def local_path(self, value: pulumi.Input[str]):
-        pulumi.set(self, "local_path", value)
-
-    @property
     @pulumi.getter(name="remotePath")
     def remote_path(self) -> pulumi.Input[str]:
         """
@@ -68,6 +61,30 @@ class CopyFileArgs:
     @remote_path.setter
     def remote_path(self, value: pulumi.Input[str]):
         pulumi.set(self, "remote_path", value)
+
+    @property
+    @pulumi.getter(name="localArchive")
+    def local_archive(self) -> Optional[pulumi.Input[pulumi.Archive]]:
+        """
+        The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+        """
+        return pulumi.get(self, "local_archive")
+
+    @local_archive.setter
+    def local_archive(self, value: Optional[pulumi.Input[pulumi.Archive]]):
+        pulumi.set(self, "local_archive", value)
+
+    @property
+    @pulumi.getter(name="localAsset")
+    def local_asset(self) -> Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]]:
+        """
+        The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        """
+        return pulumi.get(self, "local_asset")
+
+    @local_asset.setter
+    def local_asset(self, value: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]]):
+        pulumi.set(self, "local_asset", value)
 
     @property
     @pulumi.getter
@@ -88,7 +105,8 @@ class CopyFile(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
-                 local_path: Optional[pulumi.Input[str]] = None,
+                 local_archive: Optional[pulumi.Input[pulumi.Archive]] = None,
+                 local_asset: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
@@ -98,7 +116,8 @@ class CopyFile(pulumi.CustomResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[str] local_path: The path of the file to be copied.
+        :param pulumi.Input[pulumi.Archive] local_archive: The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+        :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] local_asset: The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
@@ -127,7 +146,8 @@ class CopyFile(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
-                 local_path: Optional[pulumi.Input[str]] = None,
+                 local_archive: Optional[pulumi.Input[pulumi.Archive]] = None,
+                 local_asset: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]] = None,
                  remote_path: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
@@ -142,9 +162,8 @@ class CopyFile(pulumi.CustomResource):
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
             __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
-            if local_path is None and not opts.urn:
-                raise TypeError("Missing required property 'local_path'")
-            __props__.__dict__["local_path"] = local_path
+            __props__.__dict__["local_archive"] = local_archive
+            __props__.__dict__["local_asset"] = local_asset
             if remote_path is None and not opts.urn:
                 raise TypeError("Missing required property 'remote_path'")
             __props__.__dict__["remote_path"] = remote_path
@@ -176,7 +195,8 @@ class CopyFile(pulumi.CustomResource):
         __props__ = CopyFileArgs.__new__(CopyFileArgs)
 
         __props__.__dict__["connection"] = None
-        __props__.__dict__["local_path"] = None
+        __props__.__dict__["local_archive"] = None
+        __props__.__dict__["local_asset"] = None
         __props__.__dict__["remote_path"] = None
         __props__.__dict__["triggers"] = None
         return CopyFile(resource_name, opts=opts, __props__=__props__)
@@ -190,12 +210,20 @@ class CopyFile(pulumi.CustomResource):
         return pulumi.get(self, "connection")
 
     @property
-    @pulumi.getter(name="localPath")
-    def local_path(self) -> pulumi.Output[str]:
+    @pulumi.getter(name="localArchive")
+    def local_archive(self) -> pulumi.Output[Optional[pulumi.Archive]]:
         """
-        The path of the file to be copied.
+        The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
         """
-        return pulumi.get(self, "local_path")
+        return pulumi.get(self, "local_archive")
+
+    @property
+    @pulumi.getter(name="localAsset")
+    def local_asset(self) -> pulumi.Output[Optional[Union[pulumi.Asset, pulumi.Archive]]]:
+        """
+        The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        """
+        return pulumi.get(self, "local_asset")
 
     @property
     @pulumi.getter(name="remotePath")

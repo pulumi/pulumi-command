@@ -3,6 +3,8 @@
 
 package com.pulumi.command.remote;
 
+import com.pulumi.asset.Archive;
+import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.Utilities;
 import com.pulumi.command.remote.CopyFileArgs;
 import com.pulumi.command.remote.outputs.Connection;
@@ -37,18 +39,32 @@ public class CopyFile extends com.pulumi.resources.CustomResource {
         return this.connection;
     }
     /**
-     * The path of the file to be copied.
+     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
-    @Export(name="localPath", refs={String.class}, tree="[0]")
-    private Output<String> localPath;
+    @Export(name="localArchive", refs={Archive.class}, tree="[0]")
+    private Output</* @Nullable */ Archive> localArchive;
 
     /**
-     * @return The path of the file to be copied.
+     * @return The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
-    public Output<String> localPath() {
-        return this.localPath;
+    public Output<Optional<Archive>> localArchive() {
+        return Codegen.optional(this.localArchive);
+    }
+    /**
+     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * 
+     */
+    @Export(name="localAsset", refs={AssetOrArchive.class}, tree="[0]")
+    private Output</* @Nullable */ AssetOrArchive> localAsset;
+
+    /**
+     * @return The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * 
+     */
+    public Output<Optional<AssetOrArchive>> localAsset() {
+        return Codegen.optional(this.localAsset);
     }
     /**
      * The destination path in the remote host.

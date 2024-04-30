@@ -42,9 +42,13 @@ export class CopyFile extends pulumi.CustomResource {
      */
     public readonly connection!: pulumi.Output<outputs.remote.Connection>;
     /**
-     * The path of the file to be copied.
+     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
      */
-    public readonly localPath!: pulumi.Output<string>;
+    public readonly localArchive!: pulumi.Output<pulumi.asset.Archive | undefined>;
+    /**
+     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     */
+    public readonly localAsset!: pulumi.Output<pulumi.asset.Asset | pulumi.asset.Archive | undefined>;
     /**
      * The destination path in the remote host.
      */
@@ -68,19 +72,18 @@ export class CopyFile extends pulumi.CustomResource {
             if ((!args || args.connection === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
-            if ((!args || args.localPath === undefined) && !opts.urn) {
-                throw new Error("Missing required property 'localPath'");
-            }
             if ((!args || args.remotePath === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'remotePath'");
             }
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
-            resourceInputs["localPath"] = args ? args.localPath : undefined;
+            resourceInputs["localArchive"] = args ? args.localArchive : undefined;
+            resourceInputs["localAsset"] = args ? args.localAsset : undefined;
             resourceInputs["remotePath"] = args ? args.remotePath : undefined;
             resourceInputs["triggers"] = args ? args.triggers : undefined;
         } else {
             resourceInputs["connection"] = undefined /*out*/;
-            resourceInputs["localPath"] = undefined /*out*/;
+            resourceInputs["localArchive"] = undefined /*out*/;
+            resourceInputs["localAsset"] = undefined /*out*/;
             resourceInputs["remotePath"] = undefined /*out*/;
             resourceInputs["triggers"] = undefined /*out*/;
         }
@@ -102,9 +105,13 @@ export interface CopyFileArgs {
      */
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**
-     * The path of the file to be copied.
+     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
      */
-    localPath: pulumi.Input<string>;
+    localArchive?: pulumi.Input<pulumi.asset.Archive>;
+    /**
+     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     */
+    localAsset?: pulumi.Input<pulumi.asset.Asset | pulumi.asset.Archive>;
     /**
      * The destination path in the remote host.
      */
