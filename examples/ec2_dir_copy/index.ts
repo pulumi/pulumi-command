@@ -1,4 +1,4 @@
-import { Config } from "@pulumi/pulumi";
+import * as pulumi from "@pulumi/pulumi";
 import { remote, types } from "@pulumi/command";
 import * as aws from "@pulumi/aws";
 import * as fs from "fs";
@@ -7,7 +7,7 @@ import * as path from "path";
 
 const size = "t2.nano";
 
-const config = new Config();
+const config = new pulumi.Config();
 const keyName = config.get("keyName") ??
     new aws.ec2.KeyPair("key", { publicKey: config.require("publicKey") }).keyName;
 const privateKeyBase64 = config.get("privateKeyBase64");
@@ -64,9 +64,9 @@ const poll = new remote.Command("poll", {
 const from = config.get("srcDir")!;
 const to = config.get("destDir")!;
 
-const copy = new remote.CopyFile("copy", {
+const copy = new remote.Copy("copy", {
     connection,
-    localArchive: from,
+    localArchive: new pulumi.asset.FileArchive(from),
     remotePath: to,
 })
 
