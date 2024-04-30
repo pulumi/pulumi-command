@@ -70,6 +70,13 @@ func (c *CopyInputs) sourcePath() string {
 	return c.LocalArchive.Path
 }
 
+func (c *CopyInputs) hash() string {
+	if c.LocalAsset != nil {
+		return c.LocalAsset.Hash
+	}
+	return c.LocalArchive.Hash
+}
+
 type CopyOutputs struct {
 	CopyInputs
 }
