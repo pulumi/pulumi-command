@@ -22,25 +22,24 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
 )
 
-type CopyFile struct{}
+type Copy struct{}
 
-var _ = (infer.Annotated)((*CopyFile)(nil))
+var _ = (infer.Annotated)((*Copy)(nil))
 
 // Copy implements Annotate which allows you to attach descriptions to the Copy resource.
-func (c *CopyFile) Annotate(a infer.Annotator) {
+func (c *Copy) Annotate(a infer.Annotator) {
 	a.Describe(&c, "Copy an Asset or Archive to a remote host.")
 }
 
-type CopyFileInputs struct {
+type CopyInputs struct {
 	Connection   *Connection      `pulumi:"connection" provider:"secret"`
-	Triggers     *[]interface{}   `pulumi:"triggers,optional" providers:"replaceOnDelete"`
+	Triggers     *[]interface{}   `pulumi:"triggers,optional" provider:"replaceOnChanges"`
 	LocalAsset   *asset.Asset     `pulumi:"localAsset,optional"`
 	LocalArchive *archive.Archive `pulumi:"localArchive,optional"`
 	RemotePath   string           `pulumi:"remotePath"`
 }
 
-// CopyFile implements Annotate which allows you to attach descriptions to the CopyFile resource's fields.
-func (c *CopyFileInputs) Annotate(a infer.Annotator) {
+func (c *CopyInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.LocalAsset, "The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.")
@@ -48,7 +47,7 @@ func (c *CopyFileInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 
-func (c *CopyFileInputs) validate() error {
+func (c *CopyInputs) validate() error {
 	if c.LocalAsset != nil && c.LocalArchive != nil {
 		return errors.New("only one of LocalAsset or LocalArchive can be set")
 	}
@@ -64,13 +63,13 @@ func (c *CopyFileInputs) validate() error {
 	return nil
 }
 
-func (c *CopyFileInputs) sourcePath() string {
+func (c *CopyInputs) sourcePath() string {
 	if c.LocalAsset != nil {
 		return c.LocalAsset.Path
 	}
 	return c.LocalArchive.Path
 }
 
-type CopyFileOutputs struct {
-	CopyFileInputs
+type CopyOutputs struct {
+	CopyInputs
 }

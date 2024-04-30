@@ -6,7 +6,7 @@ package com.pulumi.command.remote;
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.Utilities;
-import com.pulumi.command.remote.CopyFileArgs;
+import com.pulumi.command.remote.CopyArgs;
 import com.pulumi.command.remote.outputs.Connection;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
@@ -19,11 +19,11 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
- * Copy a local file to a remote host.
+ * Copy an Asset or Archive to a remote host.
  * 
  */
-@ResourceType(type="command:remote:CopyFile")
-public class CopyFile extends com.pulumi.resources.CustomResource {
+@ResourceType(type="command:remote:Copy")
+public class Copy extends com.pulumi.resources.CustomResource {
     /**
      * The parameters with which to connect to the remote host.
      * 
@@ -99,15 +99,15 @@ public class CopyFile extends com.pulumi.resources.CustomResource {
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public CopyFile(String name) {
-        this(name, CopyFileArgs.Empty);
+    public Copy(String name) {
+        this(name, CopyArgs.Empty);
     }
     /**
      *
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public CopyFile(String name, CopyFileArgs args) {
+    public Copy(String name, CopyArgs args) {
         this(name, args, null);
     }
     /**
@@ -116,12 +116,12 @@ public class CopyFile extends com.pulumi.resources.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public CopyFile(String name, CopyFileArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("command:remote:CopyFile", name, args == null ? CopyFileArgs.Empty : args, makeResourceOptions(options, Codegen.empty()));
+    public Copy(String name, CopyArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("command:remote:Copy", name, args == null ? CopyArgs.Empty : args, makeResourceOptions(options, Codegen.empty()));
     }
 
-    private CopyFile(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("command:remote:CopyFile", name, null, makeResourceOptions(options, id));
+    private Copy(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("command:remote:Copy", name, null, makeResourceOptions(options, id));
     }
 
     private static com.pulumi.resources.CustomResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.CustomResourceOptions options, @Nullable Output<String> id) {
@@ -142,7 +142,7 @@ public class CopyFile extends com.pulumi.resources.CustomResource {
      * @param id The _unique_ provider ID of the resource to lookup.
      * @param options Optional settings to control the behavior of the CustomResource.
      */
-    public static CopyFile get(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        return new CopyFile(name, id, options);
+    public static Copy get(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        return new Copy(name, id, options);
     }
 }
