@@ -16,6 +16,7 @@ package remote
 
 import (
 	"context"
+	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -37,12 +38,6 @@ func doCopy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
 		*input.Connection.Host, input.RemotePath, sourcePath)
 
-	src, err := os.Open(sourcePath)
-	if err != nil {
-		return CopyOutputs{input}, err
-	}
-	defer src.Close()
-
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
 		return CopyOutputs{input}, err
@@ -54,6 +49,12 @@ func doCopy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 		return CopyOutputs{input}, err
 	}
 	defer sftp.Close()
+
+	src, err := os.Open(sourcePath)
+	if err != nil {
+		return CopyOutputs{input}, err
+	}
+	defer src.Close()
 
 	srcInfo, err := src.Stat()
 	if err != nil {
@@ -93,7 +94,7 @@ func (c *Copy) Update(ctx context.Context, id string, olds CopyOutputs, news Cop
 	}
 
 	if preview {
-		// TODO how to show the user whether we need to copy or not?
+		// TODO,tkappler how to show the user whether we need to copy or not?
 		return CopyOutputs{news}, nil
 	}
 
@@ -132,6 +133,18 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 		remotePath := filepath.Join(dst, path)
 
 		if d.IsDir() {
+			dirInfo, err := sftp.Stat(remotePath)
+			// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
+			if err != nil && !errors.Is(err, os.ErrNotExist) {
+				return err
+			}
+			if dirInfo != nil && !dirInfo.IsDir() {
+				err = sftp.Remove(remotePath)
+				if err != nil {
+					return err
+				}
+			}
+
 			return sftp.Mkdir(remotePath)
 		}
 		return copyFile(sftp, filepath.Join(src, path), remotePath)

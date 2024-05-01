@@ -246,23 +246,15 @@ func TestEc2DirCopy(t *testing.T) {
 	key, keyCleanup := genEC2KeyPair(t)
 	defer keyCleanup()
 
-	baseDir := t.TempDir() // automatically cleaned up after the test
-	err := os.MkdirAll(filepath.Join(baseDir, "src", "one", "two"), 0755)
-	require.NoError(t, err)
-	_, err = os.Create(filepath.Join(baseDir, "src", "file1"))
-	require.NoError(t, err)
-	_, err = os.Create(filepath.Join(baseDir, "src", "one", "file2"))
-	require.NoError(t, err)
-	_, err = os.Create(filepath.Join(baseDir, "src", "one", "two", "file3"))
-	require.NoError(t, err)
-
 	const dest = "/tmp/ec2_dir_copy"
+	basePath := filepath.Join(getCwd(t), "ec2_dir_copy")
+
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "ec2_dir_copy"),
+			Dir: basePath,
 			Config: map[string]string{
 				"keyName": aws.StringValue(key.KeyName),
-				"srcDir":  filepath.Join(baseDir, "src"),
+				// "srcDir":  filepath.Join(basePath, "src"),
 				"destDir": dest,
 			},
 			Secrets: map[string]string{
@@ -283,10 +275,33 @@ func TestEc2DirCopy(t *testing.T) {
 						dest+"/one/two/file3",
 					remoteLS)
 			},
+			EditDirs: []integration.EditDir{
+				// There's a new file in src/ so a new copy should be made.
+				{
+					Dir:             filepath.Join(basePath, "step2"),
+					Additive:        true,
+					ExpectNoChanges: false,
+					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+						remoteLSOutput, ok := stack.Outputs["lsRemote"]
+						require.True(t, ok)
+						remoteLS, ok := remoteLSOutput.(string)
+						require.True(t, ok)
+
+						assert.Equal(t,
+							dest+"\n"+
+								dest+"/file1\n"+
+								dest+"/newfile\n"+ // added
+								dest+"/one\n"+
+								dest+"/one/file2\n"+
+								dest+"/one/two\n"+
+								dest+"/one/two/file3",
+							remoteLS)
+					},
+				},
+			},
 		})
 
 	integration.ProgramTest(t, &test)
-
 }
 
 func TestLambdaInvoke(t *testing.T) {
