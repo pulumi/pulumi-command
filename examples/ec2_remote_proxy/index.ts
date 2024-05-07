@@ -77,7 +77,7 @@ const hostname = new remote.Command("hostname", {
         }
     },
     create: "hostname",
-}, { customTimeouts: { create: "10m" } });
+}, { customTimeouts: { create: "12m" } });
 
 new remote.Command("remotePrivateIP", {
     connection,
