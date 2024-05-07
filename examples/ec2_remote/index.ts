@@ -56,7 +56,7 @@ const connectionNoDialRetry: types.input.remote.ConnectionArgs = {
 const poll = new remote.Command("poll", {
   connection: { ...connection, dialErrorLimit: -1 },
     create: "echo 'Connection established'",
-}, { customTimeouts: { create: "10m" } })
+}, { customTimeouts: { create: "12m" } })
 
 const hostname = new remote.Command("hostname", {
     connection,
