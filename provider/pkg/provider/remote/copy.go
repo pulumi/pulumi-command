@@ -40,8 +40,8 @@ type CopyInputs struct {
 func (c *CopyInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
-	a.Describe(&c.LocalAsset, "The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.")
-	a.Describe(&c.LocalArchive, "The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.")
+	a.Describe(&c.LocalAsset, "An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.")
+	a.Describe(&c.LocalArchive, "An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.")
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 

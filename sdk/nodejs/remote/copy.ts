@@ -42,11 +42,11 @@ export class Copy extends pulumi.CustomResource {
      */
     public readonly connection!: pulumi.Output<outputs.remote.Connection>;
     /**
-     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
      */
     public readonly localArchive!: pulumi.Output<pulumi.asset.Archive | undefined>;
     /**
-     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
      */
     public readonly localAsset!: pulumi.Output<pulumi.asset.Asset | pulumi.asset.Archive | undefined>;
     /**
@@ -105,11 +105,11 @@ export interface CopyArgs {
      */
     connection: pulumi.Input<inputs.remote.ConnectionArgs>;
     /**
-     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
      */
     localArchive?: pulumi.Input<pulumi.asset.Archive>;
     /**
-     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
      */
     localAsset?: pulumi.Input<pulumi.asset.Asset | pulumi.asset.Archive>;
     /**

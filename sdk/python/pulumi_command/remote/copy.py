@@ -25,8 +25,8 @@ class CopyArgs:
         The set of arguments for constructing a Copy resource.
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
-        :param pulumi.Input[pulumi.Archive] local_archive: The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
-        :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] local_asset: The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        :param pulumi.Input[pulumi.Archive] local_archive: An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
+        :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] local_asset: An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
         pulumi.set(__self__, "connection", connection)
@@ -66,7 +66,7 @@ class CopyArgs:
     @pulumi.getter(name="localArchive")
     def local_archive(self) -> Optional[pulumi.Input[pulumi.Archive]]:
         """
-        The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+        An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
         """
         return pulumi.get(self, "local_archive")
 
@@ -78,7 +78,7 @@ class CopyArgs:
     @pulumi.getter(name="localAsset")
     def local_asset(self) -> Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]]:
         """
-        The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
         """
         return pulumi.get(self, "local_asset")
 
@@ -116,8 +116,8 @@ class Copy(pulumi.CustomResource):
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
-        :param pulumi.Input[pulumi.Archive] local_archive: The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
-        :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] local_asset: The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        :param pulumi.Input[pulumi.Archive] local_archive: An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
+        :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] local_asset: An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
         :param pulumi.Input[str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
         """
@@ -213,7 +213,7 @@ class Copy(pulumi.CustomResource):
     @pulumi.getter(name="localArchive")
     def local_archive(self) -> pulumi.Output[Optional[pulumi.Archive]]:
         """
-        The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+        An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
         """
         return pulumi.get(self, "local_archive")
 
@@ -221,7 +221,7 @@ class Copy(pulumi.CustomResource):
     @pulumi.getter(name="localAsset")
     def local_asset(self) -> pulumi.Output[Optional[Union[pulumi.Asset, pulumi.Archive]]]:
         """
-        The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+        An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
         """
         return pulumi.get(self, "local_asset")
 
