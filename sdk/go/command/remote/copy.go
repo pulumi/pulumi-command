@@ -18,9 +18,9 @@ type Copy struct {
 
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionOutput `pulumi:"connection"`
-	// The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+	// An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
 	LocalArchive pulumi.ArchiveOutput `pulumi:"localArchive"`
-	// The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+	// An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
 	LocalAsset pulumi.AssetOrArchiveOutput `pulumi:"localAsset"`
 	// The destination path in the remote host.
 	RemotePath pulumi.StringOutput `pulumi:"remotePath"`
@@ -88,9 +88,9 @@ func (CopyState) ElementType() reflect.Type {
 type copyArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`
-	// The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+	// An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
 	LocalArchive pulumi.Archive `pulumi:"localArchive"`
-	// The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+	// An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
 	LocalAsset pulumi.AssetOrArchive `pulumi:"localAsset"`
 	// The destination path in the remote host.
 	RemotePath string `pulumi:"remotePath"`
@@ -102,9 +102,9 @@ type copyArgs struct {
 type CopyArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionInput
-	// The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+	// An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
 	LocalArchive pulumi.ArchiveInput
-	// The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+	// An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
 	LocalAsset pulumi.AssetOrArchiveInput
 	// The destination path in the remote host.
 	RemotePath pulumi.StringInput
@@ -204,12 +204,12 @@ func (o CopyOutput) Connection() ConnectionOutput {
 	return o.ApplyT(func(v *Copy) ConnectionOutput { return v.Connection }).(ConnectionOutput)
 }
 
-// The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+// An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
 func (o CopyOutput) LocalArchive() pulumi.ArchiveOutput {
 	return o.ApplyT(func(v *Copy) pulumi.ArchiveOutput { return v.LocalArchive }).(pulumi.ArchiveOutput)
 }
 
-// The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+// An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
 func (o CopyOutput) LocalAsset() pulumi.AssetOrArchiveOutput {
 	return o.ApplyT(func(v *Copy) pulumi.AssetOrArchiveOutput { return v.LocalAsset }).(pulumi.AssetOrArchiveOutput)
 }

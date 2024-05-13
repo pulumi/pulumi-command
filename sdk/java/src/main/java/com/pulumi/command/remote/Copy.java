@@ -39,28 +39,28 @@ public class Copy extends com.pulumi.resources.CustomResource {
         return this.connection;
     }
     /**
-     * The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
     @Export(name="localArchive", refs={Archive.class}, tree="[0]")
     private Output</* @Nullable */ Archive> localArchive;
 
     /**
-     * @return The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * @return An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
     public Output<Optional<Archive>> localArchive() {
         return Codegen.optional(this.localArchive);
     }
     /**
-     * The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
     @Export(name="localAsset", refs={AssetOrArchive.class}, tree="[0]")
     private Output</* @Nullable */ AssetOrArchive> localAsset;
 
     /**
-     * @return The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.
+     * @return An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
      * 
      */
     public Output<Optional<AssetOrArchive>> localAsset() {
