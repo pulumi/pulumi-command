@@ -15,8 +15,6 @@
 package remote
 
 import (
-	"errors"
-
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
@@ -45,22 +43,6 @@ func (c *CopyInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.LocalAsset, "The path of the file to be copied. Only one of LocalAsset or LocalArchive can be set.")
 	a.Describe(&c.LocalArchive, "The path of the folder or archive to be copied. Only one of LocalAsset or LocalArchive can be set.")
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
-}
-
-func (c *CopyInputs) validate() error {
-	if c.LocalAsset != nil && c.LocalArchive != nil {
-		return errors.New("only one of LocalAsset or LocalArchive can be set")
-	}
-	if c.LocalAsset == nil && c.LocalArchive == nil {
-		return errors.New("either LocalAsset or LocalArchive must be set")
-	}
-	if c.LocalAsset != nil && !c.LocalAsset.IsPath() {
-		return errors.New("LocalAsset must be a file asset")
-	}
-	if c.LocalArchive != nil && !c.LocalArchive.IsPath() {
-		return errors.New("LocalArchive must be a path to a file or directory")
-	}
-	return nil
 }
 
 func (c *CopyInputs) sourcePath() string {
