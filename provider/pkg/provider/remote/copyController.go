@@ -171,21 +171,24 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 
 		remotePath := filepath.Join(dst, path)
 
-		if d.IsDir() {
-			dirInfo, err := sftp.Stat(remotePath)
-			// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
-			if err != nil && !errors.Is(err, os.ErrNotExist) {
+		if !d.IsDir() {
+			return copyFile(sftp, filepath.Join(src, path), remotePath)
+		}
+
+		dirInfo, err := sftp.Stat(remotePath)
+		// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+
+		if dirInfo == nil {
+			return sftp.Mkdir(remotePath)
+		} else if !dirInfo.IsDir() {
+			err = sftp.Remove(remotePath)
+			if err != nil {
 				return err
 			}
-			if dirInfo != nil && !dirInfo.IsDir() {
-				err = sftp.Remove(remotePath)
-				if err != nil {
-					return err
-				}
-			}
-
-			return sftp.Mkdir(remotePath)
 		}
-		return copyFile(sftp, filepath.Join(src, path), remotePath)
+		return nil
 	})
 }
