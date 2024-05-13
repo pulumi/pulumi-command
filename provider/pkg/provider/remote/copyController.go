@@ -31,6 +31,49 @@ import (
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
 var _ = (infer.CustomResource[CopyInputs, CopyOutputs])((*Copy)(nil))
+var _ = (infer.CustomCheck[CopyInputs])((*Copy)(nil))
+var _ = (infer.CustomUpdate[CopyInputs, CopyOutputs])((*Copy)(nil))
+
+func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyInputs, []p.CheckFailure, error) {
+	var failures []p.CheckFailure
+
+	hasAsset := newInputs.HasValue("localAsset")
+	hasArchive := newInputs.HasValue("localArchive")
+
+	if hasAsset && hasArchive {
+		failures = append(failures, p.CheckFailure{
+			Property: "localAsset",
+			Reason:   "only one of localAsset or localArchive can be set",
+		})
+	}
+	if !hasAsset && !hasArchive {
+		failures = append(failures, p.CheckFailure{
+			Property: "localAsset",
+			Reason:   "either localAsset or localArchive must be set",
+		})
+	}
+
+	inputs, newFailures, err := infer.DefaultCheck[CopyInputs](newInputs)
+	if err != nil {
+		return inputs, failures, err
+	}
+	failures = append(failures, newFailures...)
+
+	if hasAsset && !inputs.LocalAsset.IsPath() {
+		failures = append(failures, p.CheckFailure{
+			Property: "localAsset",
+			Reason:   "localAsset must be a path-based file asset",
+		})
+	}
+	if hasArchive && !inputs.LocalArchive.IsPath() {
+		failures = append(failures, p.CheckFailure{
+			Property: "localArchive",
+			Reason:   "localArchive must be a path to a file or directory",
+		})
+	}
+
+	return inputs, failures, nil
+}
 
 func doCopy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 	sourcePath := input.sourcePath()
@@ -84,10 +127,6 @@ func (*Copy) Create(ctx context.Context, name string, input CopyInputs, preview 
 }
 
 func (c *Copy) Update(ctx context.Context, id string, olds CopyOutputs, news CopyInputs, preview bool) (CopyOutputs, error) {
-	if err := news.validate(); err != nil {
-		return olds, err
-	}
-
 	needCopy := true
 	if news.hash() == olds.hash() && news.RemotePath == olds.RemotePath {
 		needCopy = false
