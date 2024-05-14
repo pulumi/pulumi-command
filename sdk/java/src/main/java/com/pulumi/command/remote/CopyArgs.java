@@ -37,14 +37,14 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
+     * An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
      * 
      */
     @Import(name="localArchive")
     private @Nullable Output<Archive> localArchive;
 
     /**
-     * @return An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
+     * @return An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
      * 
      */
     public Optional<Output<Archive>> localArchive() {
@@ -52,14 +52,14 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
+     * An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
      * 
      */
     @Import(name="localAsset")
     private @Nullable Output<AssetOrArchive> localAsset;
 
     /**
-     * @return An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
+     * @return An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
      * 
      */
     public Optional<Output<AssetOrArchive>> localAsset() {
@@ -146,7 +146,7 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localArchive An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
+         * @param localArchive An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
          * 
          * @return builder
          * 
@@ -157,7 +157,7 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localArchive An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.
+         * @param localArchive An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
          * 
          * @return builder
          * 
@@ -167,7 +167,7 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localAsset An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
+         * @param localAsset An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
          * 
          * @return builder
          * 
@@ -178,7 +178,7 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localAsset An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.
+         * @param localAsset An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
          * 
          * @return builder
          * 

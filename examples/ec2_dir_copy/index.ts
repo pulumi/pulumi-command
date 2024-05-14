@@ -70,7 +70,7 @@ export = async () => {
     const archive = new pulumi.asset.FileArchive(from);
     const copy = new remote.Copy("copy", {
         connection,
-        localArchive: archive,
+        archive: archive,
         remotePath: to,
     });
 

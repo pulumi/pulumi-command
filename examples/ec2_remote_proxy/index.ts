@@ -92,7 +92,7 @@ new local.Command("localPrivateIP", {
 
 const sizeFile = new remote.Copy("size", {
     connection: connection,
-    localAsset: new asset.FileAsset("./size.ts"),
+    asset: new asset.FileAsset("./size.ts"),
     remotePath: "size.ts",
 }, { dependsOn: hostname })
 

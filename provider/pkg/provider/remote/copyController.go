@@ -37,19 +37,19 @@ var _ = (infer.CustomUpdate[CopyInputs, CopyOutputs])((*Copy)(nil))
 func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyInputs, []p.CheckFailure, error) {
 	var failures []p.CheckFailure
 
-	hasAsset := newInputs.HasValue("localAsset")
-	hasArchive := newInputs.HasValue("localArchive")
+	hasAsset := newInputs.HasValue("asset")
+	hasArchive := newInputs.HasValue("archive")
 
 	if hasAsset && hasArchive {
 		failures = append(failures, p.CheckFailure{
-			Property: "localAsset",
-			Reason:   "only one of localAsset or localArchive can be set",
+			Property: "asset",
+			Reason:   "only one of asset or archive can be set",
 		})
 	}
 	if !hasAsset && !hasArchive {
 		failures = append(failures, p.CheckFailure{
-			Property: "localAsset",
-			Reason:   "either localAsset or localArchive must be set",
+			Property: "asset",
+			Reason:   "either asset or archive must be set",
 		})
 	}
 
@@ -59,16 +59,16 @@ func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resou
 	}
 	failures = append(failures, newFailures...)
 
-	if hasAsset && !inputs.LocalAsset.IsPath() {
+	if hasAsset && !inputs.Asset.IsPath() {
 		failures = append(failures, p.CheckFailure{
-			Property: "localAsset",
-			Reason:   "localAsset must be a path-based file asset",
+			Property: "asset",
+			Reason:   "asset must be a path-based file asset",
 		})
 	}
-	if hasArchive && !inputs.LocalArchive.IsPath() {
+	if hasArchive && !inputs.Archive.IsPath() {
 		failures = append(failures, p.CheckFailure{
-			Property: "localArchive",
-			Reason:   "localArchive must be a path to a file or directory",
+			Property: "archive",
+			Reason:   "archive must be a path to a file or directory",
 		})
 	}
 
