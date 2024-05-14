@@ -30,33 +30,33 @@ func (c *Copy) Annotate(a infer.Annotator) {
 }
 
 type CopyInputs struct {
-	Connection   *Connection      `pulumi:"connection" provider:"secret"`
-	Triggers     *[]interface{}   `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	LocalAsset   *asset.Asset     `pulumi:"localAsset,optional"`
-	LocalArchive *archive.Archive `pulumi:"localArchive,optional"`
-	RemotePath   string           `pulumi:"remotePath"`
+	Connection *Connection      `pulumi:"connection" provider:"secret"`
+	Triggers   *[]interface{}   `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Asset      *asset.Asset     `pulumi:"localAsset,optional"`
+	Archive    *archive.Archive `pulumi:"localArchive,optional"`
+	RemotePath string           `pulumi:"remotePath"`
 }
 
 func (c *CopyInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
-	a.Describe(&c.LocalAsset, "An asset to upload. It must be a path based asset. Only one of LocalAsset or LocalArchive can be set.")
-	a.Describe(&c.LocalArchive, "An archive to upload. It must be a path based archive. Only one of LocalAsset or LocalArchive can be set.")
+	a.Describe(&c.Asset, "An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.")
+	a.Describe(&c.Archive, "An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.")
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 
 func (c *CopyInputs) sourcePath() string {
-	if c.LocalAsset != nil {
-		return c.LocalAsset.Path
+	if c.Asset != nil {
+		return c.Asset.Path
 	}
-	return c.LocalArchive.Path
+	return c.Archive.Path
 }
 
 func (c *CopyInputs) hash() string {
-	if c.LocalAsset != nil {
-		return c.LocalAsset.Hash
+	if c.Asset != nil {
+		return c.Asset.Hash
 	}
-	return c.LocalArchive.Hash
+	return c.Archive.Hash
 }
 
 type CopyOutputs struct {

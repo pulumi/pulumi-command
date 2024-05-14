@@ -82,10 +82,10 @@ func TestCheck(t *testing.T) {
 
 	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) CopyInputs {
 		return CopyInputs{
-			Connection:   validConnection,
-			LocalAsset:   asset,
-			LocalArchive: archive,
-			RemotePath:   "path/to/remote",
+			Connection: validConnection,
+			Asset:      asset,
+			Archive:    archive,
+			RemotePath: "path/to/remote",
 		}
 	}
 
