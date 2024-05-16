@@ -254,7 +254,6 @@ func TestEc2DirCopy(t *testing.T) {
 			Dir: basePath,
 			Config: map[string]string{
 				"keyName": aws.StringValue(key.KeyName),
-				// "srcDir":  filepath.Join(basePath, "src"),
 				"destDir": dest,
 			},
 			Secrets: map[string]string{
