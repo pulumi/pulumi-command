@@ -33,6 +33,7 @@ func TestCopyDirectories(t *testing.T) {
 	// Start a local SSH and SFTP server that writes files to the local file system, under baseDir.
 	const serverAddr = "127.0.0.1:3333"
 	baseDir := t.TempDir()
+	srcDir := filepath.Join(baseDir, "src")
 
 	server := ssh.Server{
 		Addr: serverAddr,
@@ -48,14 +49,20 @@ func TestCopyDirectories(t *testing.T) {
 		_ = server.Close()
 	})
 
-	err := os.MkdirAll(filepath.Join(baseDir, "src", "one", "two"), 0755)
+	err := os.MkdirAll(filepath.Join(srcDir, "one", "two"), 0755)
 	require.NoError(t, err)
-	_, err = os.Create(filepath.Join(baseDir, "src", "file1"))
+	_, err = os.Create(filepath.Join(srcDir, "file1"))
 	require.NoError(t, err)
-	_, err = os.Create(filepath.Join(baseDir, "src", "one", "file2"))
+	_, err = os.Create(filepath.Join(srcDir, "one", "file2"))
 	require.NoError(t, err)
-	_, err = os.Create(filepath.Join(baseDir, "src", "one", "two", "file3"))
+	_, err = os.Create(filepath.Join(srcDir, "one", "two", "file3"))
 	require.NoError(t, err)
+
+	assertDirectoryTree := func(t *testing.T, base string) {
+		assert.FileExists(t, filepath.Join(base, "file1"))
+		assert.FileExists(t, filepath.Join(base, "one", "file2"))
+		assert.FileExists(t, filepath.Join(base, "one", "two", "file3"))
+	}
 
 	sshClient, err := xssh.Dial("tcp", serverAddr, &xssh.ClientConfig{
 		HostKeyCallback: xssh.InsecureIgnoreHostKey(),
@@ -64,12 +71,50 @@ func TestCopyDirectories(t *testing.T) {
 	sftpClient, err := sftp.NewClient(sshClient)
 	require.NoError(t, err)
 
-	err = copyDir(sftpClient, filepath.Join(baseDir, "src"), filepath.Join(baseDir, "dest"))
-	require.NoError(t, err)
+	t.Run("copy dir recursively", func(t *testing.T) {
+		dest := filepath.Join(t.TempDir(), "dest")
+		err = copyDir(sftpClient, srcDir, dest)
+		require.NoError(t, err)
+		assertDirectoryTree(t, dest)
+	})
 
-	assert.FileExists(t, filepath.Join(baseDir, "dest", "file1"))
-	assert.FileExists(t, filepath.Join(baseDir, "dest", "one", "file2"))
-	assert.FileExists(t, filepath.Join(baseDir, "dest", "one", "two", "file3"))
+	t.Run("copy over existing file", func(t *testing.T) {
+		srcDir := filepath.Join(t.TempDir(), "src")
+		err := os.Mkdir(srcDir, 0755)
+		require.NoError(t, err)
+		_, err = os.Create(filepath.Join(srcDir, "file1"))
+		require.NoError(t, err)
+
+		dest := filepath.Join(t.TempDir(), "dest")
+		err = copyDir(sftpClient, srcDir, dest)
+		require.NoError(t, err)
+		assert.FileExists(t, filepath.Join(dest, "file1"))
+
+		changedFile := filepath.Join(srcDir, "file1")
+		err = os.WriteFile(changedFile, []byte("new content"), 0644)
+		require.NoError(t, err)
+		err = copyDir(sftpClient, srcDir, dest)
+		require.NoError(t, err)
+		content, err := os.ReadFile(changedFile)
+		require.NoError(t, err)
+		assert.Equal(t, "new content", string(content))
+	})
+
+	t.Run("copy dir recursively, replacing file with directory", func(t *testing.T) {
+		dest := filepath.Join(t.TempDir(), "dest")
+		err = copyDir(sftpClient, srcDir, dest)
+		require.NoError(t, err)
+		assertDirectoryTree(t, dest)
+
+		err = os.RemoveAll(filepath.Join(dest, "one", "two"))
+		require.NoError(t, err)
+		err = os.WriteFile(filepath.Join(dest, "one", "two"), []byte("dir turned to file"), 0644)
+		require.NoError(t, err)
+
+		err = copyDir(sftpClient, srcDir, dest)
+		require.NoError(t, err)
+		assertDirectoryTree(t, dest)
+	})
 }
 
 func TestCheck(t *testing.T) {
