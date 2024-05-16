@@ -127,16 +127,11 @@ func (*Copy) Create(ctx context.Context, name string, input CopyInputs, preview 
 }
 
 func (c *Copy) Update(ctx context.Context, id string, olds CopyOutputs, news CopyInputs, preview bool) (CopyOutputs, error) {
-	needCopy := true
-	if news.hash() == olds.hash() && news.RemotePath == olds.RemotePath {
-		needCopy = false
-	}
-
 	if preview {
-		// TODO,tkappler how to show the user whether we need to copy or not?
 		return CopyOutputs{news}, nil
 	}
 
+	needCopy := news.hash() != olds.hash() || news.RemotePath != olds.RemotePath
 	if needCopy {
 		return doCopy(ctx, news)
 	}

@@ -29,7 +29,7 @@ export = async () => {
         mostRecent: true,
         filters: [{
             name: "name",
-            values: ["amzn2-ami-hvm-*-x86_64-ebs"],
+            values: ["al2023-ami-2023.*-kernel-*-x86_64"],
         }],
     });
 
@@ -72,7 +72,7 @@ export = async () => {
         connection,
         archive: archive,
         remotePath: to,
-    });
+    }, { dependsOn: poll });
 
     // Run `ls` on the remote to verify that the expected files were copied there.
     // We want to run this after each copy, i.e., when something changed, but not otherwise to avoid unclean refreshes.
