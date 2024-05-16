@@ -53,6 +53,10 @@ sdk/%: $(SCHEMA_FILE)
 	rm -rf $@
 	$(PULUMI) package gen-sdk --language $* $(SCHEMA_FILE) --version "${VERSION_GENERIC}"
 
+sdk/java: $(SCHEMA_FILE)
+	rm -rf $@
+	$(PULUMI) package gen-sdk --language java $(SCHEMA_FILE)
+
 sdk/python: $(SCHEMA_FILE)
 	rm -rf $@
 	$(PULUMI) package gen-sdk --language python $(SCHEMA_FILE) --version "${VERSION_GENERIC}"
