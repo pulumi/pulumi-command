@@ -183,6 +183,7 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 			if err != nil {
 				return err
 			}
+			return sftp.Mkdir(remotePath)
 		}
 		return nil
 	})
