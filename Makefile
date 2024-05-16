@@ -51,16 +51,16 @@ codegen: $(SCHEMA_FILE) sdk/dotnet sdk/go sdk/nodejs sdk/python sdk/java
 .PHONY: sdk/%
 sdk/%: $(SCHEMA_FILE)
 	rm -rf $@
-	$(PULUMI) package gen-sdk --language $* $(SCHEMA_FILE)
+	$(PULUMI) package gen-sdk --language $* $(SCHEMA_FILE) --version "${VERSION_GENERIC}"
 
 sdk/python: $(SCHEMA_FILE)
 	rm -rf $@
-	$(PULUMI) package gen-sdk --language python $(SCHEMA_FILE)
+	$(PULUMI) package gen-sdk --language python $(SCHEMA_FILE) --version "${VERSION_GENERIC}"
 	cp README.md ${PACKDIR}/python/
 
 sdk/dotnet: $(SCHEMA_FILE)
 	rm -rf $@
-	$(PULUMI) package gen-sdk --language dotnet $(SCHEMA_FILE)
+	$(PULUMI) package gen-sdk --language dotnet $(SCHEMA_FILE) --version "${VERSION_GENERIC}"
 	# Copy the logo to the dotnet directory before building so it can be included in the nuget package archive.
 	# https://github.com/pulumi/pulumi-command/issues/243
 	cd ${PACKDIR}/dotnet/&& \
@@ -71,36 +71,30 @@ sdk/dotnet: $(SCHEMA_FILE)
 provider:
 	cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION_GENERIC}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER)
 
-.PHONY: provider
+.PHONY: provider_debug
 provider_debug:
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -gcflags="all=-N -l" -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION_GENERIC}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))
 
 test_provider: tidy_provider
 	cd provider/tests && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} ./...
 
-dotnet_sdk: DOTNET_VERSION := $(shell pulumictl convert-version --language dotnet -v "$(VERSION_GENERIC)")
 dotnet_sdk: sdk/dotnet
 	cd ${PACKDIR}/dotnet/&& \
-		echo "${DOTNET_VERSION}" >version.txt && \
-		dotnet build /p:Version=${DOTNET_VERSION}
+		echo "${VERSION_GENERIC}" > version.txt && \
+		dotnet build
 
 go_sdk:	sdk/go
 
-nodejs_sdk: NODE_VERSION := $(shell pulumictl convert-version --language javascript -v "$(VERSION_GENERIC)")
 nodejs_sdk: sdk/nodejs
 	cd ${PACKDIR}/nodejs/ && \
 		yarn install && \
 		yarn run tsc
 	cp README.md LICENSE ${PACKDIR}/nodejs/package.json ${PACKDIR}/nodejs/yarn.lock ${PACKDIR}/nodejs/bin/
-	sed -i.bak 's/$${VERSION}/$(NODE_VERSION)/g' ${PACKDIR}/nodejs/bin/package.json
 
-python_sdk: PYPI_VERSION := $(shell pulumictl convert-version --language python -v "$(VERSION_GENERIC)")
 python_sdk: sdk/python
 	cp README.md ${PACKDIR}/python/
 	cd ${PACKDIR}/python/ && \
 		rm -rf ./bin/ ../python.bin/ && cp -R . ../python.bin && mv ../python.bin ./bin && \
-		sed -i.bak -e 's/^  version = .*/  version = "$(PYPI_VERSION)"/g' ./bin/pyproject.toml && \
-		rm ./bin/pyproject.toml.bak && \
 		python3 -m venv venv && \
 		./venv/bin/python -m pip install build && \
 		cd ./bin && \

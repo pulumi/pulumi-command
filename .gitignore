@@ -24,6 +24,7 @@ examples/**/venv/
 examples/**/__pycache__/
 
 sdk/java/build
+sdk/java/build.gradle
 sdk/java/.gradle
 sdk/java/gradle
 sdk/java/gradlew
