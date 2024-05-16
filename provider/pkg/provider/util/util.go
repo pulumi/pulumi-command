@@ -16,6 +16,7 @@ package util
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"sync"
 
@@ -23,14 +24,26 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 )
 
-const PULUMI_COMMAND_STDOUT = "PULUMI_COMMAND_STDOUT"
-const PULUMI_COMMAND_STDERR = "PULUMI_COMMAND_STDERR"
+const (
+	PULUMI_COMMAND_STDOUT = "PULUMI_COMMAND_STDOUT"
+	PULUMI_COMMAND_STDERR = "PULUMI_COMMAND_STDERR"
+)
 
-func LogOutput(ctx p.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
+func LogOutput(ctx context.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		ctx.LogStatus(severity, scanner.Text())
+		logger := p.GetLogger(ctx)
+		switch severity {
+		case diag.Debug:
+			logger.DebugStatus(scanner.Text())
+		case diag.Info:
+			logger.InfoStatus(scanner.Text())
+		case diag.Warning:
+			logger.WarningStatus(scanner.Text())
+		case diag.Error:
+			logger.ErrorStatus(scanner.Text())
+		}
 	}
 }
 

@@ -14,11 +14,11 @@
 
 package local
 
-import p "github.com/pulumi/pulumi-go-provider"
+import "context"
 
 // This is the Call method. It takes a RunInputs parameter and runs the command specified in
 // it.
-func (*Run) Call(ctx p.Context, input RunInputs) (RunOutputs, error) {
+func (*Run) Call(ctx context.Context, input RunInputs) (RunOutputs, error) {
 	r := RunOutputs{RunInputs: input}
 	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs, input.Logging)
 	return r, err
