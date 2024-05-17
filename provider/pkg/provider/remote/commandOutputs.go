@@ -16,6 +16,7 @@ package remote
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"strings"
@@ -27,7 +28,7 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func (c *CommandOutputs) run(ctx p.Context, cmd string, logging *common.Logging) error {
+func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *common.Logging) error {
 	client, err := c.Connection.Dial(ctx)
 	if err != nil {
 		return err
@@ -105,9 +106,20 @@ func (c *CommandOutputs) run(ctx p.Context, cmd string, logging *common.Logging)
 	return nil
 }
 
-func logAndWrapSetenvErr(severity diag.Severity, key string, ctx p.Context, err error) error {
-	ctx.Logf(severity, `Unable to set '%s'. This only works if your SSH server is configured to accept
- these variables via AcceptEnv. Alternatively, if a Bash-like shell runs the command on the remote host, you could
- prefix the command itself with the variables in the form 'VAR=value command'`, key)
+func logAndWrapSetenvErr(severity diag.Severity, key string, ctx context.Context, err error) error {
+	l := p.GetLogger(ctx)
+	msg := fmt.Sprintf(`Unable to set '%s'. This only works if your SSH server is configured to accept
+	these variables via AcceptEnv. Alternatively, if a Bash-like shell runs the command on the remote host, you could
+	prefix the command itself with the variables in the form 'VAR=value command'`, key)
+	switch severity {
+	case diag.Error:
+		l.Errorf(msg)
+	case diag.Warning:
+		l.Warningf(msg)
+	case diag.Info:
+		l.Infof(msg)
+	default:
+		l.Debugf(msg)
+	}
 	return fmt.Errorf("could not set environment variable %q: %w", key, err)
 }

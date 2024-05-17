@@ -16,6 +16,7 @@ package local
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/fs"
@@ -26,7 +27,6 @@ import (
 	"strings"
 
 	"github.com/gobwas/glob"
-	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
@@ -35,7 +35,7 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func run(ctx p.Context, command string, in BaseInputs, out *BaseOutputs, logging *common.Logging) error {
+func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, logging *common.Logging) error {
 	contract.Assertf(out != nil, "run:out cannot be nil")
 	var args []string
 	if in.Interpreter != nil && len(*in.Interpreter) > 0 {

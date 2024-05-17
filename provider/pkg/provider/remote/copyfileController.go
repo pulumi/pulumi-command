@@ -15,13 +15,13 @@
 package remote
 
 import (
+	"context"
 	"os"
 
 	"github.com/pkg/sftp"
 
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
@@ -30,14 +30,13 @@ import (
 var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 
 // This is the Create method. This will be run on every CopyFile resource creation.
-func (*CopyFile) Create(ctx p.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
+func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
 	if preview {
 		return "", CopyFileOutputs{input}, nil
 	}
 
-	ctx.Logf(diag.Debug,
-		"Creating file: %s:%s from local file %s",
-		input.Connection.Host, input.RemotePath, input.LocalPath)
+	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
+		*input.Connection.Host, input.RemotePath, input.LocalPath)
 
 	src, err := os.Open(input.LocalPath)
 	if err != nil {
