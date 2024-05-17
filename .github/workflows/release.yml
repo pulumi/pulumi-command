@@ -533,7 +533,7 @@ jobs:
           !*.tar.gz
   dispatch_docs_build:
     runs-on: ubuntu-latest
-    needs: tag_sdk
+    needs: pubish_go_sdk
     steps:
     - name: Install pulumictl
       uses: jaxxstorm/action-install-gh-release@v1.11.0
