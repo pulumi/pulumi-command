@@ -21,7 +21,8 @@ import (
 
 // BaseInputs is the common set of inputs for all local commands.
 type BaseInputs struct {
-	CommonInputs
+	Stdin                  *string            `pulumi:"stdin,optional"`
+	Logging                *Logging           `pulumi:"logging,optional"`
 	Interpreter            *[]string          `pulumi:"interpreter,optional"`
 	Dir                    *string            `pulumi:"dir,optional"`
 	Environment            *map[string]string `pulumi:"environment,optional"`
@@ -33,6 +34,10 @@ type BaseInputs struct {
 // Implementing Annotate lets you provide descriptions and default values for fields and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *BaseInputs) Annotate(a infer.Annotator) {
+	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
+	a.Describe(&c.Logging, `If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.`)
 	a.Describe(&c.Interpreter, "The program and arguments to run the command.\n"+
 		"On Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`")
 	a.Describe(&c.Dir, "The directory from which to run the command from. If `dir` does not exist, then\n"+

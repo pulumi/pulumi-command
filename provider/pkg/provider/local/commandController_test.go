@@ -34,9 +34,7 @@ func TestOptionalLogging(t *testing.T) {
 			ctx := testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
 				BaseInputs: BaseInputs{
-					CommonInputs: CommonInputs{
-						Logging: &logMode.Value,
-					},
+					Logging: &logMode.Value,
 				},
 				ResourceInputs: common.ResourceInputs{
 					Create: pulumi.StringRef("echo foo; echo bar >> /dev/stderr"),

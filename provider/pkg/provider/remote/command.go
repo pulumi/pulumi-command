@@ -18,7 +18,6 @@ import (
 	"github.com/pulumi/pulumi-go-provider/infer"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 )
 
 type Command struct{}
@@ -33,12 +32,13 @@ The connection is established via ssh.`)
 // The arguments for a remote Command resource.
 type CommandInputs struct {
 	common.ResourceInputs
-	local.CommonInputs
 	// the pulumi-go-provider library uses field tags to dictate behavior.
 	// pulumi:"connection" specifies the name of the field in the schema
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.
 	// provider:"replaceOnChanges" specifies that the resource will be replaced if the field changes.
 	// provider:"secret" specifies that a field should be marked secret.
+	Stdin       *string           `pulumi:"stdin,optional"`
+	Logging     *Logging          `pulumi:"logging,optional"`
 	Connection  *Connection       `pulumi:"connection" provider:"secret"`
 	Environment map[string]string `pulumi:"environment,optional"`
 }
@@ -46,6 +46,10 @@ type CommandInputs struct {
 // Implementing Annotate lets you provide descriptions and default values for arguments and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *CommandInputs) Annotate(a infer.Annotator) {
+	a.Describe(&c.Stdin, "Pass a string to the command's process as standard in")
+	a.Describe(&c.Logging, `If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
+outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.`)
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Environment, `Additional environment variables available to the command's process.
 Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
