@@ -48,20 +48,24 @@ func NewProvider() p.Provider {
 			// This contains language specific details for generating the provider's SDKs
 			LanguageMap: map[string]any{
 				"csharp": map[string]any{
+					"respectSchemaVersion": true,
 					"packageReferences": map[string]string{
 						"Pulumi": "3.*",
 					},
 				},
 				"go": map[string]any{
+					"respectSchemaVersion":           true,
 					"generateResourceContainerTypes": true,
 					"importBasePath":                 "github.com/pulumi/pulumi-command/sdk/go/command",
 				},
 				"nodejs": map[string]any{
+					"respectSchemaVersion": true,
 					"dependencies": map[string]string{
 						"@pulumi/pulumi": "^3.0.0",
 					},
 				},
 				"python": map[string]any{
+					"respectSchemaVersion": true,
 					"requires": map[string]string{
 						"pulumi": ">=3.0.0,<4.0.0",
 					},
