@@ -55,8 +55,6 @@ jobs:
       uses: pulumi/provider-version-action@v1
       with:
         set-env: PROVIDER_VERSION
-    - name: Unshallow clone for tags
-      run: git fetch --prune --unshallow --tags
     - name: Install Go
       uses: actions/setup-go@v5
       with:
@@ -126,8 +124,6 @@ jobs:
       uses: pulumi/provider-version-action@v1
       with:
         set-env: PROVIDER_VERSION
-    - name: Unshallow clone for tags
-      run: git fetch --prune --unshallow --tags
     - name: Install Go
       uses: actions/setup-go@v5
       with:
@@ -227,8 +223,6 @@ jobs:
       uses: pulumi/provider-version-action@v1
       with:
         set-env: PROVIDER_VERSION
-    - name: Unshallow clone for tags
-      run: git fetch --prune --unshallow --tags
     - name: Install Go
       uses: actions/setup-go@v5
       with:
@@ -333,8 +327,6 @@ jobs:
       uses: pulumi/provider-version-action@v1
       with:
         set-env: PROVIDER_VERSION
-    - name: Unshallow clone for tags
-      run: git fetch --prune --unshallow --tags
     - name: Install Go
       uses: actions/setup-go@v5
       with:
@@ -399,8 +391,6 @@ jobs:
         path: ci-scripts
         repository: pulumi/scripts
     - run: echo "ci-scripts" >> .git/info/exclude
-    - name: Unshallow clone for tags
-      run: git fetch --prune --unshallow --tags
     - name: Install Go
       uses: actions/setup-go@v5
       with:
@@ -478,8 +468,6 @@ jobs:
       uses: pulumi/provider-version-action@v1
       with:
         set-env: PROVIDER_VERSION
-    - name: Unshallow clone for tags
-      run: git fetch --prune --unshallow --tags
     - name: Install Go
       uses: actions/setup-go@v5
       with:
@@ -509,11 +497,10 @@ jobs:
     - name: Uncompress java SDK
       run: tar -zxf ${{github.workspace}}/sdk/java.tar.gz -C
         ${{github.workspace}}/sdk/java
-    - name: Set PACKAGE_VERSION to Env
-      run: echo "PACKAGE_VERSION=$(pulumictl get version --language generic)" >>
-        $GITHUB_ENV
     - name: Publish Java SDK
       uses: gradle/gradle-build-action@v3
+      env:
+        PACKAGE_VERSION: ${{ env.PROVIDER_VERSION }}
       with:
         arguments: publishToSonatype closeAndReleaseSonatypeStagingRepository
         build-root-directory: ./sdk/java
