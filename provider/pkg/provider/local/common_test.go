@@ -1,21 +1,21 @@
-package common_test
+package local_test
 
 import (
 	"testing"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestShouldLog(t *testing.T) {
 	for _, tc := range []struct {
-		logging                    common.Logging
+		logging                    local.Logging
 		expectStdout, expectStderr bool
 	}{
-		{common.LogStdoutAndStderr, true, true},
-		{common.LogStdout, true, false},
-		{common.LogStderr, false, true},
-		{common.NoLogging, false, false},
+		{local.LogStdoutAndStderr, true, true},
+		{local.LogStdout, true, false},
+		{local.LogStderr, false, true},
+		{local.NoLogging, false, false},
 	} {
 		t.Run(string(tc.logging), func(t *testing.T) {
 			assert.Equal(t, tc.expectStdout, tc.logging.ShouldLogStdout())

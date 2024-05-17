@@ -15,14 +15,13 @@
 package local
 
 import (
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
 // BaseInputs is the common set of inputs for all local commands.
 type BaseInputs struct {
-	common.CommonInputs
+	CommonInputs
 	Interpreter            *[]string          `pulumi:"interpreter,optional"`
 	Dir                    *string            `pulumi:"dir,optional"`
 	Environment            *map[string]string `pulumi:"environment,optional"`

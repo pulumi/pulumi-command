@@ -18,6 +18,7 @@ import (
 	"github.com/pulumi/pulumi-go-provider/infer"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 )
 
 type Command struct{}
@@ -32,7 +33,7 @@ The connection is established via ssh.`)
 // The arguments for a remote Command resource.
 type CommandInputs struct {
 	common.ResourceInputs
-	common.CommonInputs
+	local.CommonInputs
 	// the pulumi-go-provider library uses field tags to dictate behavior.
 	// pulumi:"connection" specifies the name of the field in the schema
 	// pulumi:"optional" specifies that a field is optional. This must be a pointer.

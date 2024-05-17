@@ -26,7 +26,7 @@ import (
 )
 
 func TestOptionalLogging(t *testing.T) {
-	for _, logMode := range common.Logging.Values(common.LogStdoutAndStderr) {
+	for _, logMode := range Logging.Values(LogStdoutAndStderr) {
 
 		t.Run(logMode.Name, func(t *testing.T) {
 			cmd := Command{}
@@ -34,7 +34,7 @@ func TestOptionalLogging(t *testing.T) {
 			ctx := testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
 				BaseInputs: BaseInputs{
-					CommonInputs: common.CommonInputs{
+					CommonInputs: CommonInputs{
 						Logging: &logMode.Value,
 					},
 				},
