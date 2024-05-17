@@ -15,7 +15,8 @@
 package remote
 
 import (
-	p "github.com/pulumi/pulumi-go-provider"
+	"context"
+
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
@@ -27,7 +28,7 @@ var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 
 // This is the Create method. This will be run on every Command resource creation.
-func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
+func (*Command) Create(ctx context.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
 	state := CommandOutputs{CommandInputs: input}
 	var err error
 	id, err := resource.NewUniqueHex(name, 8, 0)
@@ -53,7 +54,7 @@ func (*Command) Create(ctx p.Context, name string, input CommandInputs, preview 
 }
 
 // The Update method will be run on every update.
-func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
+func (*Command) Update(ctx context.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
 	state := CommandOutputs{CommandInputs: news, BaseOutputs: olds.BaseOutputs}
 	if preview {
 		return state, nil
@@ -70,7 +71,7 @@ func (*Command) Update(ctx p.Context, id string, olds CommandOutputs, news Comma
 }
 
 // The Delete method will run when the resource is deleted.
-func (*Command) Delete(ctx p.Context, id string, props CommandOutputs) error {
+func (*Command) Delete(ctx context.Context, id string, props CommandOutputs) error {
 	if props.Delete == nil {
 		return nil
 	}
