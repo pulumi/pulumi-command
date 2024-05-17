@@ -16,6 +16,9 @@ export const CopyFile: typeof import("./copyFile").CopyFile = null as any;
 utilities.lazyLoad(exports, ["CopyFile"], () => require("./copyFile"));
 
 
+// Export enums:
+export * from "../types/enums/remote";
+
 const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {

@@ -7,7 +7,6 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/pulumi/pulumi-command/sdk/go/command/common"
 	"github.com/pulumi/pulumi-command/sdk/go/command/internal"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -86,7 +85,7 @@ type Command struct {
 	// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
 	// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
 	// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
-	Logging common.LoggingPtrOutput `pulumi:"logging"`
+	Logging LoggingPtrOutput `pulumi:"logging"`
 	// The standard error of the command's process
 	Stderr pulumi.StringOutput `pulumi:"stderr"`
 	// Pass a string to the command's process as standard in
@@ -210,7 +209,7 @@ type commandArgs struct {
 	// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
 	// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
 	// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
-	Logging *common.Logging `pulumi:"logging"`
+	Logging *Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
 	// Trigger replacements on changes to this input.
@@ -285,7 +284,7 @@ type CommandArgs struct {
 	// If the command's stdout and stderr should be logged. This doesn't affect the capturing of
 	// stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
 	// outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
-	Logging common.LoggingPtrInput
+	Logging LoggingPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
 	// Trigger replacements on changes to this input.
@@ -480,8 +479,8 @@ func (o CommandOutput) Interpreter() pulumi.StringArrayOutput {
 // If the command's stdout and stderr should be logged. This doesn't affect the capturing of
 // stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
 // outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
-func (o CommandOutput) Logging() common.LoggingPtrOutput {
-	return o.ApplyT(func(v *Command) common.LoggingPtrOutput { return v.Logging }).(common.LoggingPtrOutput)
+func (o CommandOutput) Logging() LoggingPtrOutput {
+	return o.ApplyT(func(v *Command) LoggingPtrOutput { return v.Logging }).(LoggingPtrOutput)
 }
 
 // The standard error of the command's process

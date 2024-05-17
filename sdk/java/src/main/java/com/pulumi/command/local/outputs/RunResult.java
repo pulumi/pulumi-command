@@ -5,7 +5,7 @@ package com.pulumi.command.local.outputs;
 
 import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
-import com.pulumi.command.common.enums.Logging;
+import com.pulumi.command.local.enums.Logging;
 import com.pulumi.core.annotations.CustomType;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;

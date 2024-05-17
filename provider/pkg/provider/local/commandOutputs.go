@@ -31,11 +31,10 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, logging *common.Logging) error {
+func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, logging *Logging) error {
 	contract.Assertf(out != nil, "run:out cannot be nil")
 	var args []string
 	if in.Interpreter != nil && len(*in.Interpreter) > 0 {

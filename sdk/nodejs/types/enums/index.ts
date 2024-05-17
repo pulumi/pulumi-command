@@ -2,8 +2,10 @@
 // *** Do not edit by hand unless you're certain you know what you are doing! ***
 
 // Export sub-modules:
-import * as common from "./common";
+import * as local from "./local";
+import * as remote from "./remote";
 
 export {
-    common,
+    local,
+    remote,
 };

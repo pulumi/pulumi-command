@@ -24,11 +24,10 @@ import (
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util"
 )
 
-func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *common.Logging) error {
+func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *Logging) error {
 	client, err := c.Connection.Dial(ctx)
 	if err != nil {
 		return err

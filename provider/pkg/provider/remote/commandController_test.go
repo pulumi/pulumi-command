@@ -51,15 +51,13 @@ func TestOptionalLogging(t *testing.T) {
 		_ = server.Close()
 	})
 
-	for _, logMode := range common.Logging.Values(common.LogStdoutAndStderr) {
+	for _, logMode := range Logging.Values(LogStdoutAndStderr) {
 		t.Run(logMode.Name, func(t *testing.T) {
 			cmd := Command{}
 
 			ctx := testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
-				CommonInputs: common.CommonInputs{
-					Logging: &logMode.Value,
-				},
+				Logging: &logMode.Value,
 				ResourceInputs: common.ResourceInputs{
 					Create: pulumi.StringRef("ignored"),
 				},

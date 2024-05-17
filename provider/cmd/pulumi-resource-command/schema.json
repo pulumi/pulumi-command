@@ -55,7 +55,7 @@
   },
   "config": {},
   "types": {
-    "command:common:Logging": {
+    "command:local:Logging": {
       "type": "string",
       "enum": [
         {
@@ -127,6 +127,27 @@
       "type": "object",
       "required": [
         "host"
+      ]
+    },
+    "command:remote:Logging": {
+      "type": "string",
+      "enum": [
+        {
+          "description": "Capture stdout in logs but not stderr",
+          "value": "stdout"
+        },
+        {
+          "description": "Capture stderr in logs but not stdout",
+          "value": "stderr"
+        },
+        {
+          "description": "Capture stdout and stderr in logs",
+          "value": "stdoutAndStderr"
+        },
+        {
+          "description": "Capture no logs",
+          "value": "none"
+        }
       ]
     },
     "command:remote:ProxyConnection": {
@@ -243,7 +264,7 @@
           "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
         },
         "logging": {
-          "$ref": "#/types/command:common:Logging",
+          "$ref": "#/types/command:local:Logging",
           "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stderr": {
@@ -323,7 +344,7 @@
           "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
         },
         "logging": {
-          "$ref": "#/types/command:common:Logging",
+          "$ref": "#/types/command:local:Logging",
           "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stdin": {
@@ -368,7 +389,7 @@
           "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
         },
         "logging": {
-          "$ref": "#/types/command:common:Logging",
+          "$ref": "#/types/command:remote:Logging",
           "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stderr": {
@@ -424,7 +445,7 @@
           "description": "Additional environment variables available to the command's process.\nNote that this only works if the SSH server is configured to accept these variables via AcceptEnv.\nAlternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself\nwith the variables in the form 'VAR=value command'."
         },
         "logging": {
-          "$ref": "#/types/command:common:Logging",
+          "$ref": "#/types/command:remote:Logging",
           "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
         },
         "stdin": {
@@ -554,7 +575,7 @@
             "description": "The program and arguments to run the command.\nOn Linux and macOS, defaults to: `[\"/bin/sh\", \"-c\"]`. On Windows, defaults to: `[\"cmd\", \"/C\"]`"
           },
           "logging": {
-            "$ref": "#/types/command:common:Logging",
+            "$ref": "#/types/command:local:Logging",
             "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
           },
           "stdin": {
@@ -622,7 +643,7 @@
             "type": "array"
           },
           "logging": {
-            "$ref": "#/types/command:common:Logging",
+            "$ref": "#/types/command:local:Logging",
             "description": "If the command's stdout and stderr should be logged. This doesn't affect the capturing of\nstdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the\noutputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr."
           },
           "stderr": {

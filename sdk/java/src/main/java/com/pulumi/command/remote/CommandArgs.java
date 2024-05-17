@@ -3,7 +3,7 @@
 
 package com.pulumi.command.remote;
 
-import com.pulumi.command.common.enums.Logging;
+import com.pulumi.command.remote.enums.Logging;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;

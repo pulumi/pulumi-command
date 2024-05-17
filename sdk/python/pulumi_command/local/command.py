@@ -8,7 +8,7 @@ import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
 from .. import _utilities
-from .. import common
+from ._enums import *
 
 __all__ = ['CommandArgs', 'Command']
 
@@ -23,7 +23,7 @@ class CommandArgs:
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 logging: Optional[pulumi.Input['common.Logging']] = None,
+                 logging: Optional[pulumi.Input['Logging']] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None):
@@ -117,7 +117,7 @@ class CommandArgs:
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        :param pulumi.Input['Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
                stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
                outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
@@ -332,7 +332,7 @@ class CommandArgs:
 
     @property
     @pulumi.getter
-    def logging(self) -> Optional[pulumi.Input['common.Logging']]:
+    def logging(self) -> Optional[pulumi.Input['Logging']]:
         """
         If the command's stdout and stderr should be logged. This doesn't affect the capturing of
         stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
@@ -341,7 +341,7 @@ class CommandArgs:
         return pulumi.get(self, "logging")
 
     @logging.setter
-    def logging(self, value: Optional[pulumi.Input['common.Logging']]):
+    def logging(self, value: Optional[pulumi.Input['Logging']]):
         pulumi.set(self, "logging", value)
 
     @property
@@ -397,7 +397,7 @@ class Command(pulumi.CustomResource):
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 logging: Optional[pulumi.Input['common.Logging']] = None,
+                 logging: Optional[pulumi.Input['Logging']] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -499,7 +499,7 @@ class Command(pulumi.CustomResource):
         :param pulumi.Input[Mapping[str, pulumi.Input[str]]] environment: Additional environment variables available to the command's process.
         :param pulumi.Input[Sequence[pulumi.Input[str]]] interpreter: The program and arguments to run the command.
                On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
-        :param pulumi.Input['common.Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
+        :param pulumi.Input['Logging'] logging: If the command's stdout and stderr should be logged. This doesn't affect the capturing of
                stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
                outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
@@ -545,7 +545,7 @@ class Command(pulumi.CustomResource):
                  dir: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
                  interpreter: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
-                 logging: Optional[pulumi.Input['common.Logging']] = None,
+                 logging: Optional[pulumi.Input['Logging']] = None,
                  stdin: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  update: Optional[pulumi.Input[str]] = None,
@@ -781,7 +781,7 @@ class Command(pulumi.CustomResource):
 
     @property
     @pulumi.getter
-    def logging(self) -> pulumi.Output[Optional['common.Logging']]:
+    def logging(self) -> pulumi.Output[Optional['Logging']]:
         """
         If the command's stdout and stderr should be logged. This doesn't affect the capturing of
         stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
