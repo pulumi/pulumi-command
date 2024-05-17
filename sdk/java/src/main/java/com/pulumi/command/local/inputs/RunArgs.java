@@ -3,7 +3,7 @@
 
 package com.pulumi.command.local.inputs;
 
-import com.pulumi.command.common.enums.Logging;
+import com.pulumi.command.local.enums.Logging;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.core.internal.Codegen;

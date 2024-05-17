@@ -139,7 +139,7 @@ export interface RunArgs {
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    logging?: enums.common.Logging;
+    logging?: enums.local.Logging;
     /**
      * Pass a string to the command's process as standard in
      */
@@ -267,7 +267,7 @@ export interface RunResult {
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    readonly logging?: enums.common.Logging;
+    readonly logging?: enums.local.Logging;
     /**
      * The standard error of the command's process
      */
@@ -401,7 +401,7 @@ export interface RunOutputArgs {
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    logging?: pulumi.Input<enums.common.Logging>;
+    logging?: pulumi.Input<enums.local.Logging>;
     /**
      * Pass a string to the command's process as standard in
      */

@@ -64,7 +64,7 @@ export class Command extends pulumi.CustomResource {
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    public readonly logging!: pulumi.Output<enums.common.Logging | undefined>;
+    public readonly logging!: pulumi.Output<enums.local.Logging | undefined>;
     /**
      * The standard error of the command's process
      */
@@ -164,7 +164,7 @@ export interface CommandArgs {
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    logging?: pulumi.Input<enums.common.Logging>;
+    logging?: pulumi.Input<enums.local.Logging>;
     /**
      * Pass a string to the command's process as standard in
      */

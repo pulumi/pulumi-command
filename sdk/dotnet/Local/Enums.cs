@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel;
 using Pulumi;
 
-namespace Pulumi.Command.Common
+namespace Pulumi.Command.Local
 {
     [EnumType]
     public readonly struct Logging : IEquatable<Logging>

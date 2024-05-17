@@ -16,6 +16,9 @@ export const runOutput: typeof import("./run").runOutput = null as any;
 utilities.lazyLoad(exports, ["run","runOutput"], () => require("./run"));
 
 
+// Export enums:
+export * from "../types/enums/local";
+
 const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {
