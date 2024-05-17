@@ -3,7 +3,9 @@
 
 // Export sub-modules:
 import * as local from "./local";
+import * as remote from "./remote";
 
 export {
     local,
+    remote,
 };

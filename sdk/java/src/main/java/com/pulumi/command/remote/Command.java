@@ -4,8 +4,8 @@
 package com.pulumi.command.remote;
 
 import com.pulumi.command.Utilities;
-import com.pulumi.command.local.enums.Logging;
 import com.pulumi.command.remote.CommandArgs;
+import com.pulumi.command.remote.enums.Logging;
 import com.pulumi.command.remote.outputs.Connection;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
