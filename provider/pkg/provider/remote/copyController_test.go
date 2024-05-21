@@ -100,7 +100,7 @@ func TestCopyDirectories(t *testing.T) {
 		assert.Equal(t, "new content", string(content))
 	})
 
-	t.Run("copy dir recursively, replacing file with directory", func(t *testing.T) {
+	t.Run("does not replace file with directory", func(t *testing.T) {
 		dest := filepath.Join(t.TempDir(), "dest")
 		err = copyDir(sftpClient, srcDir, dest)
 		require.NoError(t, err)
@@ -112,8 +112,7 @@ func TestCopyDirectories(t *testing.T) {
 		require.NoError(t, err)
 
 		err = copyDir(sftpClient, srcDir, dest)
-		require.NoError(t, err)
-		assertDirectoryTree(t, dest)
+		require.Error(t, err)
 	})
 }
 
