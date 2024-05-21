@@ -17,6 +17,7 @@ package remote
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -179,11 +180,7 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 		if dirInfo == nil {
 			return sftp.Mkdir(remotePath)
 		} else if !dirInfo.IsDir() {
-			err = sftp.Remove(remotePath)
-			if err != nil {
-				return err
-			}
-			return sftp.Mkdir(remotePath)
+			return fmt.Errorf("remote path %s exists but is not a directory", remotePath)
 		}
 		return nil
 	})
