@@ -64,7 +64,7 @@ export = async () => {
 
     ////// Start of the actual test //////
 
-    const from = path.join(__dirname, "src");
+    const from = path.join(__dirname, "src/");
     const to = config.get("destDir")!;
 
     const archive = new pulumi.asset.FileArchive(from);

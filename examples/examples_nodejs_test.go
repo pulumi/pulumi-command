@@ -267,12 +267,11 @@ func TestEc2DirCopy(t *testing.T) {
 
 				assert.Equal(t,
 					dest+"\n"+
-						dest+"/src\n"+
-						dest+"/src/file1\n"+
-						dest+"/src/one\n"+
-						dest+"/src/one/file2\n"+
-						dest+"/src/one/two\n"+
-						dest+"/src/one/two/file3",
+						dest+"/file1\n"+
+						dest+"/one\n"+
+						dest+"/one/file2\n"+
+						dest+"/one/two\n"+
+						dest+"/one/two/file3",
 					remoteLS)
 			},
 			EditDirs: []integration.EditDir{
@@ -289,13 +288,12 @@ func TestEc2DirCopy(t *testing.T) {
 
 						assert.Equal(t,
 							dest+"\n"+
-								dest+"/src\n"+
-								dest+"/src/file1\n"+
-								dest+"/src/newfile\n"+ // added
-								dest+"/src/one\n"+
-								dest+"/src/one/file2\n"+
-								dest+"/src/one/two\n"+
-								dest+"/src/one/two/file3",
+								dest+"/file1\n"+
+								dest+"/newfile\n"+ // added
+								dest+"/one\n"+
+								dest+"/one/file2\n"+
+								dest+"/one/two\n"+
+								dest+"/one/two/file3",
 							remoteLS)
 					},
 				},
