@@ -117,7 +117,11 @@ func copy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 	}
 	defer client.Close()
 
-	sftp, err := sftp.NewClient(client)
+	// The docs warns that concurrent writes "require special consideration. A write to a later
+	/// offset in a file after an error, could end up with a file length longer than what was
+	// successfully written."
+	// We don't do subsequent writes to the same file, only a single ReadFrom, so we should be fine.
+	sftp, err := sftp.NewClient(client, sftp.UseConcurrentWrites(true))
 	if err != nil {
 		return CopyOutputs{input}, err
 	}
