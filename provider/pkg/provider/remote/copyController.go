@@ -135,7 +135,7 @@ func copy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 func remoteStat(sftp *sftp.Client, path string) (fs.FileInfo, error) {
 	info, err := sftp.Stat(path)
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return nil, err
+		return nil, fmt.Errorf("failed to stat remote path %s: %w", path, err)
 	}
 	return info, nil
 }
@@ -171,7 +171,7 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 		if destStat == nil {
 			err = sftp.Mkdir(dest)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
 			}
 		}
 
@@ -179,7 +179,7 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
 			err = sftp.Mkdir(dest)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
 			}
 		}
 		err = copyDir(sftp, sourcePath, dest)
@@ -202,12 +202,15 @@ func copyFile(sftp *sftp.Client, src, dst string) error {
 
 	remote, err := sftp.Create(dst)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create remote file %s: %w", dst, err)
 	}
 	defer remote.Close()
 
 	_, err = remote.ReadFrom(local)
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to copy file %s to remote path %s: %w", src, dst, err)
+	}
+	return nil
 }
 
 // copyDir copies a directory recursively from the local file system to a remote host.
@@ -228,11 +231,13 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 		dirInfo, err := sftp.Stat(remotePath)
 		// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
 		if err != nil && !errors.Is(err, os.ErrNotExist) {
-			return err
+			return fmt.Errorf("failed to stat remote path %s: %w", remotePath, err)
 		}
 
 		if dirInfo == nil {
-			return sftp.Mkdir(remotePath)
+			if err = sftp.Mkdir(remotePath); err != nil {
+				return fmt.Errorf("failed to create remote directory %s: %w", remotePath, err)
+			}
 		} else if !dirInfo.IsDir() {
 			return fmt.Errorf("remote path %s exists but is not a directory", remotePath)
 		}
