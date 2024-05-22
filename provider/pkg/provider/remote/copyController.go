@@ -21,6 +21,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/sftp"
 
@@ -76,7 +77,35 @@ func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resou
 	return inputs, failures, nil
 }
 
-func doCopy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
+// This is the Create method. This will be run on every Copy resource creation.
+func (*Copy) Create(ctx context.Context, name string, input CopyInputs, preview bool) (string, CopyOutputs, error) {
+	if preview {
+		return "", CopyOutputs{input}, nil
+	}
+
+	outputs, err := copy(ctx, input)
+	if err != nil {
+		return "", CopyOutputs{input}, err
+	}
+
+	id, err := resource.NewUniqueHex("", 8, 0)
+	return id, outputs, err
+}
+
+func (c *Copy) Update(ctx context.Context, id string, olds CopyOutputs, news CopyInputs, preview bool) (CopyOutputs, error) {
+	if preview {
+		return CopyOutputs{news}, nil
+	}
+
+	needCopy := news.hash() != olds.hash() || news.RemotePath != olds.RemotePath
+	if needCopy {
+		return copy(ctx, news)
+	}
+	return CopyOutputs{news}, nil
+}
+
+// copy unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.
+func copy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 	sourcePath := input.sourcePath()
 
 	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
@@ -94,49 +123,70 @@ func doCopy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 	}
 	defer sftp.Close()
 
+	err = sftpCopy(sftp, sourcePath, input.RemotePath)
+	return CopyOutputs{input}, err
+}
+
+// If the file does not exist, returns nil, nil.
+func remoteStat(sftp *sftp.Client, path string) (fs.FileInfo, error) {
+	info, err := sftp.Stat(path)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
+	return info, nil
+}
+
+func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 	src, err := os.Open(sourcePath)
 	if err != nil {
-		return CopyOutputs{input}, err
+		return err
 	}
 	defer src.Close()
 
 	srcInfo, err := src.Stat()
 	if err != nil {
-		return CopyOutputs{input}, err
-	}
-	if srcInfo.IsDir() {
-		err = copyDir(sftp, sourcePath, input.RemotePath)
-	} else {
-		err = copyFile(sftp, sourcePath, input.RemotePath)
-	}
-	return CopyOutputs{input}, err
-}
-
-// This is the Create method. This will be run on every Copy resource creation.
-func (*Copy) Create(ctx context.Context, name string, input CopyInputs, preview bool) (string, CopyOutputs, error) {
-	if preview {
-		return "", CopyOutputs{input}, nil
+		return err
 	}
 
-	outputs, err := doCopy(ctx, input)
+	var destStat fs.FileInfo
+	destStat, err = remoteStat(sftp, destPath)
 	if err != nil {
-		return "", CopyOutputs{input}, err
+		return err
 	}
 
-	id, err := resource.NewUniqueHex("", 8, 0)
-	return id, outputs, err
-}
+	// Before copying, we might need to adjust some paths. Files have different semantics from
+	// directories, and source directories depend on whether they have a trailing slash.
+	//
+	// source | dest - exists as dir | dest - does not exist | dest - exists as file
+	// -------|----------------------|-----------------------|-----------------------
+	// dir    | dest/dir             | dest/dir              | error
+	// dir/   | dest/x for x in dir  | dest/dir              | error
+	// file   | dest/file            | dest                  | dest (overwritten)
+	dest := destPath
+	if srcInfo.IsDir() {
+		if destStat == nil {
+			err = sftp.Mkdir(dest)
+			if err != nil {
+				return err
+			}
+		}
 
-func (c *Copy) Update(ctx context.Context, id string, olds CopyOutputs, news CopyInputs, preview bool) (CopyOutputs, error) {
-	if preview {
-		return CopyOutputs{news}, nil
+		if !strings.HasSuffix(sourcePath, "/") {
+			dest = filepath.Join(dest, filepath.Base(sourcePath))
+			err = sftp.Mkdir(dest)
+			if err != nil {
+				return err
+			}
+		}
+		err = copyDir(sftp, sourcePath, dest)
+	} else {
+		// If the file is f and the destination is existing dir/, copy to dir/f.
+		if destStat != nil && destStat.IsDir() {
+			dest = filepath.Join(dest, filepath.Base(sourcePath))
+		}
+		err = copyFile(sftp, sourcePath, dest)
 	}
-
-	needCopy := news.hash() != olds.hash() || news.RemotePath != olds.RemotePath
-	if needCopy {
-		return doCopy(ctx, news)
-	}
-	return CopyOutputs{news}, nil
+	return err
 }
 
 func copyFile(sftp *sftp.Client, src, dst string) error {
@@ -157,7 +207,7 @@ func copyFile(sftp *sftp.Client, src, dst string) error {
 }
 
 // copyDir copies a directory recursively from the local file system to a remote host.
-// Note that the current is naive and sequential and therefore can be slow.
+// Note that the current implementation is naive and sequential and therefore can be slow.
 func copyDir(sftp *sftp.Client, src, dst string) error {
 	fileSystem := os.DirFS(src)
 	return fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, err error) error {
