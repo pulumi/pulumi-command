@@ -56,10 +56,10 @@ func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resou
 	}
 
 	inputs, newFailures, err := infer.DefaultCheck[CopyInputs](newInputs)
+	failures = append(failures, newFailures...)
 	if err != nil {
 		return inputs, failures, err
 	}
-	failures = append(failures, newFailures...)
 
 	if hasAsset && !inputs.Asset.IsPath() {
 		failures = append(failures, p.CheckFailure{
