@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/pulumi/pulumi-command/sdk/go/command/local"
+	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -20,8 +20,15 @@ func RandStringBytes(n int) string {
 
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
-		random, err := local.NewCommand(ctx, "my-bucket", &local.CommandArgs{
-			Create: pulumi.String(fmt.Sprintf("RAND=%s openssl rand -hex 100000 | tr 'a' '\n'", RandStringBytes(32))),
+		connection := remote.ConnectionArgs{
+			Host:     pulumi.String("192.168.3.201"),
+			User:     pulumi.StringPtr("root"),
+			Password: pulumi.StringPtr("un2Trois$"),
+		}
+		random, err := remote.NewCommand(ctx, "my-bucket-z", &remote.CommandArgs{
+			Connection:             connection,
+			Create:                 pulumi.String(fmt.Sprintf("RAND=%s openssl rand -hex 100000 | tr 'a' '\n'", RandStringBytes(32))),
+			AddPreviousOutputInEnv: pulumi.BoolPtr(false),
 		})
 		if err != nil {
 			return err

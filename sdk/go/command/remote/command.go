@@ -17,6 +17,7 @@ import (
 type Command struct {
 	pulumi.CustomResourceState
 
+	AddPreviousOutputInEnv pulumi.BoolPtrOutput `pulumi:"addPreviousOutputInEnv"`
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionOutput `pulumi:"connection"`
 	// The command to run on create.
@@ -104,6 +105,7 @@ func (CommandState) ElementType() reflect.Type {
 }
 
 type commandArgs struct {
+	AddPreviousOutputInEnv *bool `pulumi:"addPreviousOutputInEnv"`
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`
 	// The command to run on create.
@@ -134,6 +136,7 @@ type commandArgs struct {
 
 // The set of arguments for constructing a Command resource.
 type CommandArgs struct {
+	AddPreviousOutputInEnv pulumi.BoolPtrInput
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionInput
 	// The command to run on create.
@@ -247,6 +250,10 @@ func (o CommandOutput) ToCommandOutput() CommandOutput {
 
 func (o CommandOutput) ToCommandOutputWithContext(ctx context.Context) CommandOutput {
 	return o
+}
+
+func (o CommandOutput) AddPreviousOutputInEnv() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *Command) pulumi.BoolPtrOutput { return v.AddPreviousOutputInEnv }).(pulumi.BoolPtrOutput)
 }
 
 // The parameters with which to connect to the remote host.

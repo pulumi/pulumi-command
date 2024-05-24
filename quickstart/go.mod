@@ -92,4 +92,4 @@ require (
 	lukechampine.com/frand v1.4.2 // indirect
 )
 
-replace github.com/pulumi/pulumi-command/sdk/go => ../sdk/go
+//replace github.com/pulumi/pulumi-command/sdk => ../sdk

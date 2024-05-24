@@ -368,6 +368,9 @@
     "command:remote:Command": {
       "description": "A command to run on a remote host.\nThe connection is established via ssh.",
       "properties": {
+        "addPreviousOutputInEnv": {
+          "type": "boolean"
+        },
         "connection": {
           "$ref": "#/types/command:remote:Connection",
           "description": "The parameters with which to connect to the remote host.",
@@ -424,6 +427,9 @@
         "stdout"
       ],
       "inputProperties": {
+        "addPreviousOutputInEnv": {
+          "type": "boolean"
+        },
         "connection": {
           "$ref": "#/types/command:remote:Connection",
           "description": "The parameters with which to connect to the remote host.",
