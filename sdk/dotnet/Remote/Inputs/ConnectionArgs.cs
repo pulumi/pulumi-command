@@ -46,7 +46,7 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<int>? PerDialTimeout { get; set; }
 
         /// <summary>
-        /// The port to connect to.
+        /// The port to connect to. Defaults to 22.
         /// </summary>
         [Input("port")]
         public Input<double>? Port { get; set; }

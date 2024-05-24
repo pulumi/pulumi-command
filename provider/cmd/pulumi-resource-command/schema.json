@@ -103,7 +103,7 @@
         },
         "port": {
           "type": "number",
-          "description": "The port to connect to.",
+          "description": "The port to connect to. Defaults to 22.",
           "default": 22
         },
         "privateKey": {
@@ -490,7 +490,8 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger replacements on changes to this input."
+          "description": "Trigger replacements on changes to this input.",
+          "replaceOnChanges": true
         }
       },
       "type": "object",
@@ -518,7 +519,8 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger replacements on changes to this input."
+          "description": "Trigger replacements on changes to this input.",
+          "replaceOnChanges": true
         }
       },
       "requiredInputs": [

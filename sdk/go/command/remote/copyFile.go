@@ -50,6 +50,10 @@ func NewCopyFile(ctx *pulumi.Context,
 		"connection",
 	})
 	opts = append(opts, secrets)
+	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
+		"triggers[*]",
+	})
+	opts = append(opts, replaceOnChanges)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource CopyFile
 	err := ctx.RegisterResource("command:remote:CopyFile", name, args, &resource, opts...)

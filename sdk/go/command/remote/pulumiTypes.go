@@ -25,7 +25,7 @@ type Connection struct {
 	Password *string `pulumi:"password"`
 	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
 	PerDialTimeout *int `pulumi:"perDialTimeout"`
-	// The port to connect to.
+	// The port to connect to. Defaults to 22.
 	Port *float64 `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey *string `pulumi:"privateKey"`
@@ -87,7 +87,7 @@ type ConnectionArgs struct {
 	Password pulumi.StringPtrInput `pulumi:"password"`
 	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
 	PerDialTimeout pulumi.IntPtrInput `pulumi:"perDialTimeout"`
-	// The port to connect to.
+	// The port to connect to. Defaults to 22.
 	Port pulumi.Float64PtrInput `pulumi:"port"`
 	// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
 	PrivateKey pulumi.StringPtrInput `pulumi:"privateKey"`
@@ -172,7 +172,7 @@ func (o ConnectionOutput) PerDialTimeout() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v Connection) *int { return v.PerDialTimeout }).(pulumi.IntPtrOutput)
 }
 
-// The port to connect to.
+// The port to connect to. Defaults to 22.
 func (o ConnectionOutput) Port() pulumi.Float64PtrOutput {
 	return o.ApplyT(func(v Connection) *float64 { return v.Port }).(pulumi.Float64PtrOutput)
 }

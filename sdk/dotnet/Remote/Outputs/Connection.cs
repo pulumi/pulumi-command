@@ -37,7 +37,7 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly int? PerDialTimeout;
         /// <summary>
-        /// The port to connect to.
+        /// The port to connect to. Defaults to 22.
         /// </summary>
         public readonly double? Port;
         /// <summary>

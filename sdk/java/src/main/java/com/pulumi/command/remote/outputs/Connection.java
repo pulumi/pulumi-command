@@ -41,7 +41,7 @@ public final class Connection {
      */
     private @Nullable Integer perDialTimeout;
     /**
-     * @return The port to connect to.
+     * @return The port to connect to. Defaults to 22.
      * 
      */
     private @Nullable Double port;
@@ -103,7 +103,7 @@ public final class Connection {
         return Optional.ofNullable(this.perDialTimeout);
     }
     /**
-     * @return The port to connect to.
+     * @return The port to connect to. Defaults to 22.
      * 
      */
     public Optional<Double> port() {
