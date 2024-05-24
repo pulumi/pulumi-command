@@ -60,7 +60,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.SetDefault(&c.User, "root")
 	a.Describe(&c.Password, "The password we should use for the connection.")
 	a.Describe(&c.Host, "The address of the resource to connect to.")
-	a.Describe(&c.Port, "The port to connect to.")
+	a.Describe(&c.Port, "The port to connect to. Defaults to 22.")
 	a.SetDefault(&c.Port, 22)
 	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
