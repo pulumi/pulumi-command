@@ -38,6 +38,7 @@ export class Command extends pulumi.CustomResource {
         return obj['__pulumiType'] === Command.__pulumiType;
     }
 
+    public readonly addPreviousOutputInEnv!: pulumi.Output<boolean | undefined>;
     /**
      * The parameters with which to connect to the remote host.
      */
@@ -103,6 +104,7 @@ export class Command extends pulumi.CustomResource {
             if ((!args || args.connection === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
+            resourceInputs["addPreviousOutputInEnv"] = args ? args.addPreviousOutputInEnv : undefined;
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;
@@ -114,6 +116,7 @@ export class Command extends pulumi.CustomResource {
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {
+            resourceInputs["addPreviousOutputInEnv"] = undefined /*out*/;
             resourceInputs["connection"] = undefined /*out*/;
             resourceInputs["create"] = undefined /*out*/;
             resourceInputs["delete"] = undefined /*out*/;
@@ -138,6 +141,7 @@ export class Command extends pulumi.CustomResource {
  * The set of arguments for constructing a Command resource.
  */
 export interface CommandArgs {
+    addPreviousOutputInEnv?: pulumi.Input<boolean>;
     /**
      * The parameters with which to connect to the remote host.
      */

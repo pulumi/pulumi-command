@@ -16,6 +16,9 @@ namespace Pulumi.Command.Remote
     [CommandResourceType("command:remote:Command")]
     public partial class Command : global::Pulumi.CustomResource
     {
+        [Output("addPreviousOutputInEnv")]
+        public Output<bool?> AddPreviousOutputInEnv { get; private set; } = null!;
+
         /// <summary>
         /// The parameters with which to connect to the remote host.
         /// </summary>
@@ -139,6 +142,9 @@ namespace Pulumi.Command.Remote
 
     public sealed class CommandArgs : global::Pulumi.ResourceArgs
     {
+        [Input("addPreviousOutputInEnv")]
+        public Input<bool>? AddPreviousOutputInEnv { get; set; }
+
         [Input("connection", required: true)]
         private Input<Inputs.ConnectionArgs>? _connection;
 

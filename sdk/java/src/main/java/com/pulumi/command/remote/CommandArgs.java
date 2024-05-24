@@ -8,6 +8,7 @@ import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
+import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -20,6 +21,13 @@ import javax.annotation.Nullable;
 public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final CommandArgs Empty = new CommandArgs();
+
+    @Import(name="addPreviousOutputInEnv")
+    private @Nullable Output<Boolean> addPreviousOutputInEnv;
+
+    public Optional<Output<Boolean>> addPreviousOutputInEnv() {
+        return Optional.ofNullable(this.addPreviousOutputInEnv);
+    }
 
     /**
      * The parameters with which to connect to the remote host.
@@ -164,6 +172,7 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     private CommandArgs() {}
 
     private CommandArgs(CommandArgs $) {
+        this.addPreviousOutputInEnv = $.addPreviousOutputInEnv;
         this.connection = $.connection;
         this.create = $.create;
         this.delete = $.delete;
@@ -190,6 +199,15 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder(CommandArgs defaults) {
             $ = new CommandArgs(Objects.requireNonNull(defaults));
+        }
+
+        public Builder addPreviousOutputInEnv(@Nullable Output<Boolean> addPreviousOutputInEnv) {
+            $.addPreviousOutputInEnv = addPreviousOutputInEnv;
+            return this;
+        }
+
+        public Builder addPreviousOutputInEnv(Boolean addPreviousOutputInEnv) {
+            return addPreviousOutputInEnv(Output.of(addPreviousOutputInEnv));
         }
 
         /**

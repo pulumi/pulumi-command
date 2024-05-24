@@ -18,6 +18,7 @@ __all__ = ['CommandArgs', 'Command']
 class CommandArgs:
     def __init__(__self__, *,
                  connection: pulumi.Input['ConnectionArgs'],
+                 add_previous_output_in_env: Optional[pulumi.Input[bool]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
                  environment: Optional[pulumi.Input[Mapping[str, pulumi.Input[str]]]] = None,
@@ -47,6 +48,8 @@ class CommandArgs:
                create or update steps.
         """
         pulumi.set(__self__, "connection", connection)
+        if add_previous_output_in_env is not None:
+            pulumi.set(__self__, "add_previous_output_in_env", add_previous_output_in_env)
         if create is not None:
             pulumi.set(__self__, "create", create)
         if delete is not None:
@@ -73,6 +76,15 @@ class CommandArgs:
     @connection.setter
     def connection(self, value: pulumi.Input['ConnectionArgs']):
         pulumi.set(self, "connection", value)
+
+    @property
+    @pulumi.getter(name="addPreviousOutputInEnv")
+    def add_previous_output_in_env(self) -> Optional[pulumi.Input[bool]]:
+        return pulumi.get(self, "add_previous_output_in_env")
+
+    @add_previous_output_in_env.setter
+    def add_previous_output_in_env(self, value: Optional[pulumi.Input[bool]]):
+        pulumi.set(self, "add_previous_output_in_env", value)
 
     @property
     @pulumi.getter
@@ -174,6 +186,7 @@ class Command(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 add_previous_output_in_env: Optional[pulumi.Input[bool]] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
@@ -233,6 +246,7 @@ class Command(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
+                 add_previous_output_in_env: Optional[pulumi.Input[bool]] = None,
                  connection: Optional[pulumi.Input[pulumi.InputType['ConnectionArgs']]] = None,
                  create: Optional[pulumi.Input[str]] = None,
                  delete: Optional[pulumi.Input[str]] = None,
@@ -250,6 +264,7 @@ class Command(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = CommandArgs.__new__(CommandArgs)
 
+            __props__.__dict__["add_previous_output_in_env"] = add_previous_output_in_env
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")
             __props__.__dict__["connection"] = None if connection is None else pulumi.Output.secret(connection)
@@ -288,6 +303,7 @@ class Command(pulumi.CustomResource):
 
         __props__ = CommandArgs.__new__(CommandArgs)
 
+        __props__.__dict__["add_previous_output_in_env"] = None
         __props__.__dict__["connection"] = None
         __props__.__dict__["create"] = None
         __props__.__dict__["delete"] = None
@@ -299,6 +315,11 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["triggers"] = None
         __props__.__dict__["update"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
+
+    @property
+    @pulumi.getter(name="addPreviousOutputInEnv")
+    def add_previous_output_in_env(self) -> pulumi.Output[Optional[bool]]:
+        return pulumi.get(self, "add_previous_output_in_env")
 
     @property
     @pulumi.getter

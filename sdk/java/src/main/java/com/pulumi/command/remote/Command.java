@@ -11,6 +11,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Export;
 import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
+import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
 import java.util.List;
@@ -25,6 +26,12 @@ import javax.annotation.Nullable;
  */
 @ResourceType(type="command:remote:Command")
 public class Command extends com.pulumi.resources.CustomResource {
+    @Export(name="addPreviousOutputInEnv", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> addPreviousOutputInEnv;
+
+    public Output<Optional<Boolean>> addPreviousOutputInEnv() {
+        return Codegen.optional(this.addPreviousOutputInEnv);
+    }
     /**
      * The parameters with which to connect to the remote host.
      * 
