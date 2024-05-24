@@ -29,7 +29,7 @@ func (c *CopyFile) Annotate(a infer.Annotator) {
 
 type CopyFileInputs struct {
 	Connection *Connection    `pulumi:"connection" provider:"secret"`
-	Triggers   *[]interface{} `pulumi:"triggers,optional" providers:"replaceOnDelete"`
+	Triggers   *[]interface{} `pulumi:"triggers,optional" provider:"replaceOnChanges"`
 	LocalPath  string         `pulumi:"localPath"`
 	RemotePath string         `pulumi:"remotePath"`
 }
