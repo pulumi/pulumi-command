@@ -35,7 +35,7 @@ class ConnectionArgs:
         :param pulumi.Input[int] dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         :param pulumi.Input[str] password: The password we should use for the connection.
         :param pulumi.Input[int] per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
-        :param pulumi.Input[float] port: The port to connect to.
+        :param pulumi.Input[float] port: The port to connect to. Defaults to 22.
         :param pulumi.Input[str] private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         :param pulumi.Input[str] private_key_password: The password to use in case the private key is encrypted.
         :param pulumi.Input['ProxyConnectionArgs'] proxy: The connection settings for the bastion/proxy host.
@@ -133,7 +133,7 @@ class ConnectionArgs:
     @pulumi.getter
     def port(self) -> Optional[pulumi.Input[float]]:
         """
-        The port to connect to.
+        The port to connect to. Defaults to 22.
         """
         return pulumi.get(self, "port")
 

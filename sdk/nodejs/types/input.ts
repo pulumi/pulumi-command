@@ -34,7 +34,7 @@ export namespace remote {
          */
         perDialTimeout?: pulumi.Input<number>;
         /**
-         * The port to connect to.
+         * The port to connect to. Defaults to 22.
          */
         port?: pulumi.Input<number>;
         /**

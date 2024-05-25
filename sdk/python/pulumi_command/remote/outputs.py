@@ -64,7 +64,7 @@ class Connection(dict):
         :param int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         :param str password: The password we should use for the connection.
         :param int per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
-        :param float port: The port to connect to.
+        :param float port: The port to connect to. Defaults to 22.
         :param str private_key: The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         :param str private_key_password: The password to use in case the private key is encrypted.
         :param 'ProxyConnection' proxy: The connection settings for the bastion/proxy host.
@@ -142,7 +142,7 @@ class Connection(dict):
     @pulumi.getter
     def port(self) -> Optional[float]:
         """
-        The port to connect to.
+        The port to connect to. Defaults to 22.
         """
         return pulumi.get(self, "port")
 

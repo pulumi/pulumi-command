@@ -100,14 +100,14 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The port to connect to.
+     * The port to connect to. Defaults to 22.
      * 
      */
     @Import(name="port")
     private @Nullable Output<Double> port;
 
     /**
-     * @return The port to connect to.
+     * @return The port to connect to. Defaults to 22.
      * 
      */
     public Optional<Output<Double>> port() {
@@ -313,7 +313,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param port The port to connect to.
+         * @param port The port to connect to. Defaults to 22.
          * 
          * @return builder
          * 
@@ -324,7 +324,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param port The port to connect to.
+         * @param port The port to connect to. Defaults to 22.
          * 
          * @return builder
          * 

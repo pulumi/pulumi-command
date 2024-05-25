@@ -151,6 +151,8 @@ class CopyFile(pulumi.CustomResource):
             __props__.__dict__["triggers"] = triggers
         secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["connection"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
+        replace_on_changes = pulumi.ResourceOptions(replace_on_changes=["triggers[*]"])
+        opts = pulumi.ResourceOptions.merge(opts, replace_on_changes)
         super(CopyFile, __self__).__init__(
             'command:remote:CopyFile',
             resource_name,
