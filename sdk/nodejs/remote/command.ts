@@ -109,7 +109,7 @@ export class Command extends pulumi.CustomResource {
             if ((!args || args.connection === undefined) && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
-            resourceInputs["addPreviousOutputInEnv"] = args ? args.addPreviousOutputInEnv : undefined;
+            resourceInputs["addPreviousOutputInEnv"] = (args ? args.addPreviousOutputInEnv : undefined) ?? true;
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
             resourceInputs["create"] = args ? args.create : undefined;
             resourceInputs["delete"] = args ? args.delete : undefined;

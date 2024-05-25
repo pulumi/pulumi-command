@@ -63,6 +63,9 @@ func NewCommand(ctx *pulumi.Context,
 	if args.Connection == nil {
 		return nil, errors.New("invalid value for required argument 'Connection'")
 	}
+	if args.AddPreviousOutputInEnv == nil {
+		args.AddPreviousOutputInEnv = pulumi.BoolPtr(true)
+	}
 	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
 	if args.Connection != nil {
 		args.Connection = pulumi.ToSecret(args.Connection).(ConnectionInput)

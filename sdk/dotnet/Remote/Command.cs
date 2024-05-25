@@ -237,6 +237,7 @@ namespace Pulumi.Command.Remote
 
         public CommandArgs()
         {
+            AddPreviousOutputInEnv = true;
         }
         public static new CommandArgs Empty => new CommandArgs();
     }
