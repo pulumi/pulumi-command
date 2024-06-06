@@ -1,6 +1,6 @@
 {
     "name": "@pulumi/command",
-    "version": "0.12.0-alpha.1716647022+68fd618",
+    "version": "0.12.0-alpha.1717404902+5b78b0c",
     "keywords": [
         "pulumi",
         "command",
@@ -23,6 +23,6 @@
     "pulumi": {
         "resource": true,
         "name": "command",
-        "version": "0.12.0-alpha.1716647022+68fd618"
+        "version": "0.12.0-alpha.1717404902+5b78b0c"
     }
 }
