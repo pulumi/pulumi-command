@@ -6,6 +6,7 @@ replace github.com/pulumi/pulumi-command/provider => ../
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/gliderlabs/ssh v0.3.7
 	github.com/pulumi/pulumi-command/provider v0.0.0-00010101000000-000000000000
 	github.com/pulumi/pulumi-go-provider v0.17.0
 	github.com/pulumi/pulumi/sdk/v3 v3.116.1
@@ -18,6 +19,7 @@ require (
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
+	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
