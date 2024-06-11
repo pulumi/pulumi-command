@@ -2,6 +2,9 @@ package tests
 
 import (
 	"fmt"
+	"github.com/gliderlabs/ssh"
+	"net"
+	"strings"
 	"testing"
 
 	"github.com/blang/semver"
@@ -223,6 +226,123 @@ func TestRemoteCommand(t *testing.T) {
 	})
 }
 
+func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
+	// Start a local SSH server that writes the PULUMI_COMMAND_STDOUT environment variable
+	// on the format "PULUMI_COMMAND_STDOUT=<value>" to the client using stdout.
+	const (
+		host          = "127.0.0.1"
+		port          = 3333
+		user          = "arbitrary-user"
+		createCommand = "arbitrary create command"
+	)
+
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
+	require.NoErrorf(t, err, "net.Listen()")
+
+	server := ssh.Server{
+		Handler: func(session ssh.Session) {
+			// Find the PULUMI_COMMAND_STDOUT environment variable
+			var envVar string
+			for _, v := range session.Environ() {
+				if strings.HasPrefix(v, "PULUMI_COMMAND_STDOUT=") {
+					envVar = v
+					break
+				}
+			}
+
+			response := fmt.Sprintf("Response{%s}", envVar)
+			_, err := session.Write([]byte(response))
+			require.NoErrorf(t, err, "session.Write(%s)", response)
+		},
+	}
+	go func() {
+		// "Serve always returns a non-nil error."
+		_ = server.Serve(listener)
+	}()
+	t.Cleanup(func() {
+		_ = server.Close()
+	})
+
+	cmd := provider()
+	urn := urn("remote", "Command", "dial")
+
+	// Run a create against an in-memory provider, assert it succeeded, and return the created property map.
+	connection := resource.NewObjectProperty(resource.PropertyMap{
+		"host":           resource.NewStringProperty(host),
+		"port":           resource.NewNumberProperty(port),
+		"user":           resource.NewStringProperty("user"), // unused but prevents nil panic
+		"perDialTimeout": resource.NewNumberProperty(1),      // unused but prevents nil panic
+	})
+
+	create := func() resource.PropertyMap {
+		resp, err := cmd.Create(p.CreateRequest{
+			Urn: urn,
+			Properties: resource.PropertyMap{
+				"connection":             connection,
+				"create":                 resource.NewStringProperty(createCommand),
+				"addPreviousOutputInEnv": resource.NewBoolProperty(true),
+			},
+		})
+		require.NoError(t, err)
+		return resp.Properties
+	}
+
+	// The state that we expect a non-preview create to return.
+	//
+	// We use this as the final expect for create and the old state during update.
+	createdState := resource.PropertyMap{
+		"connection":             connection,
+		"create":                 resource.PropertyValue{V: createCommand},
+		"stderr":                 resource.PropertyValue{V: ""},
+		"stdout":                 resource.PropertyValue{V: "Response{}"},
+		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
+	}
+
+	// Run an update against an in-memory provider, assert it succeeded, and return
+	// the new property map.
+	update := func(addPreviousOutputInEnv bool) resource.PropertyMap {
+		resp, err := cmd.Update(p.UpdateRequest{
+			ID:   "echo1234",
+			Urn:  urn,
+			Olds: createdState.Copy(),
+			News: resource.PropertyMap{
+				"connection":             connection,
+				"create":                 resource.NewStringProperty(createCommand),
+				"addPreviousOutputInEnv": resource.NewBoolProperty(addPreviousOutputInEnv),
+			},
+		})
+		require.NoError(t, err)
+		return resp.Properties
+	}
+
+	t.Run("create-actual", func(t *testing.T) {
+		assert.Equal(t, createdState, create())
+	})
+
+	t.Run("update-actual-with-std", func(t *testing.T) {
+		assert.Equal(t, resource.PropertyMap{
+			"connection": connection,
+			"create":     resource.PropertyValue{V: createCommand},
+			"stderr":     resource.PropertyValue{V: ""},
+			// Running with addPreviousOutputInEnv=true sets the environment variable:
+			"stdout":                 resource.PropertyValue{V: "Response{PULUMI_COMMAND_STDOUT=Response{}}"},
+			"addPreviousOutputInEnv": resource.PropertyValue{V: true},
+		}, update(true))
+	})
+
+	t.Run("update-actual-without-std", func(t *testing.T) {
+		assert.Equal(t, resource.PropertyMap{
+			"connection": connection,
+			"create":     resource.PropertyValue{V: createCommand},
+			"stderr":     resource.PropertyValue{V: ""},
+			// Running with addPreviousOutputInEnv does not set the environment variable.
+			"stdout":                 resource.PropertyValue{V: "Response{}"},
+			"addPreviousOutputInEnv": resource.PropertyValue{V: false},
+		}, update(false))
+	})
+
+}
+
 // Ensure that we correctly apply defaults to `connection.port`.
 //
 // User issue is https://github.com/pulumi/pulumi-command/issues/248.
@@ -251,6 +371,7 @@ func TestRegress248(t *testing.T) {
 			"dialErrorLimit": pNumber(10),
 			"perDialTimeout": pNumber(15),
 		}),
+		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
 	}, resp.Inputs)
 }
 
