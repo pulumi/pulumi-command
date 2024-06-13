@@ -2,12 +2,13 @@ package testutil
 
 import (
 	"fmt"
-	"github.com/gliderlabs/ssh"
-	"github.com/stretchr/testify/require"
 	"net"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/gliderlabs/ssh"
+	"github.com/stretchr/testify/require"
 )
 
 type TestSshServer struct {
