@@ -3,7 +3,6 @@
 
 package com.pulumi.command.remote;
 
-import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.Utilities;
 import com.pulumi.command.remote.CopyArgs;
@@ -39,34 +38,6 @@ public class Copy extends com.pulumi.resources.CustomResource {
         return this.connection;
     }
     /**
-     * An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-     * 
-     */
-    @Export(name="localArchive", refs={Archive.class}, tree="[0]")
-    private Output</* @Nullable */ Archive> localArchive;
-
-    /**
-     * @return An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-     * 
-     */
-    public Output<Optional<Archive>> localArchive() {
-        return Codegen.optional(this.localArchive);
-    }
-    /**
-     * An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-     * 
-     */
-    @Export(name="localAsset", refs={AssetOrArchive.class}, tree="[0]")
-    private Output</* @Nullable */ AssetOrArchive> localAsset;
-
-    /**
-     * @return An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-     * 
-     */
-    public Output<Optional<AssetOrArchive>> localAsset() {
-        return Codegen.optional(this.localAsset);
-    }
-    /**
      * The destination path in the remote host.
      * 
      */
@@ -79,6 +50,20 @@ public class Copy extends com.pulumi.resources.CustomResource {
      */
     public Output<String> remotePath() {
         return this.remotePath;
+    }
+    /**
+     * An asset or an archive to upload as the source of the copy. It must be path based.
+     * 
+     */
+    @Export(name="source", refs={AssetOrArchive.class}, tree="[0]")
+    private Output<AssetOrArchive> source;
+
+    /**
+     * @return An asset or an archive to upload as the source of the copy. It must be path based.
+     * 
+     */
+    public Output<AssetOrArchive> source() {
+        return this.source;
     }
     /**
      * Trigger replacements on changes to this input.

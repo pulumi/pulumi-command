@@ -16,8 +16,7 @@ package remote
 
 import (
 	"github.com/pulumi/pulumi-go-provider/infer"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
+	"github.com/pulumi/pulumi-go-provider/infer/types"
 )
 
 type Copy struct{}
@@ -30,33 +29,31 @@ func (c *Copy) Annotate(a infer.Annotator) {
 }
 
 type CopyInputs struct {
-	Connection *Connection      `pulumi:"connection" provider:"secret"`
-	Triggers   *[]interface{}   `pulumi:"triggers,optional" provider:"replaceOnChanges"`
-	Asset      *asset.Asset     `pulumi:"localAsset,optional"`
-	Archive    *archive.Archive `pulumi:"localArchive,optional"`
-	RemotePath string           `pulumi:"remotePath"`
+	Connection *Connection          `pulumi:"connection" provider:"secret"`
+	Triggers   *[]interface{}       `pulumi:"triggers,optional" provider:"replaceOnChanges"`
+	Source     types.AssetOrArchive `pulumi:"source"`
+	RemotePath string               `pulumi:"remotePath"`
 }
 
 func (c *CopyInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
-	a.Describe(&c.Asset, "An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.")
-	a.Describe(&c.Archive, "An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.")
+	a.Describe(&c.Source, "An asset or an archive to upload as the source of the copy. It must be path based.")
 	a.Describe(&c.RemotePath, "The destination path in the remote host.")
 }
 
 func (c *CopyInputs) sourcePath() string {
-	if c.Asset != nil {
-		return c.Asset.Path
+	if c.Source.Asset != nil {
+		return c.Source.Asset.Path
 	}
-	return c.Archive.Path
+	return c.Source.Archive.Path
 }
 
 func (c *CopyInputs) hash() string {
-	if c.Asset != nil {
-		return c.Asset.Hash
+	if c.Source.Archive != nil {
+		return c.Source.Archive.Hash
 	}
-	return c.Archive.Hash
+	return c.Source.Asset.Hash
 }
 
 type CopyOutputs struct {

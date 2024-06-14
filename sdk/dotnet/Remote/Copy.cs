@@ -22,22 +22,16 @@ namespace Pulumi.Command.Remote
         public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
-        /// An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-        /// </summary>
-        [Output("localArchive")]
-        public Output<Archive?> LocalArchive { get; private set; } = null!;
-
-        /// <summary>
-        /// An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-        /// </summary>
-        [Output("localAsset")]
-        public Output<AssetOrArchive?> LocalAsset { get; private set; } = null!;
-
-        /// <summary>
         /// The destination path in the remote host.
         /// </summary>
         [Output("remotePath")]
         public Output<string> RemotePath { get; private set; } = null!;
+
+        /// <summary>
+        /// An asset or an archive to upload as the source of the copy. It must be path based.
+        /// </summary>
+        [Output("source")]
+        public Output<AssetOrArchive> Source { get; private set; } = null!;
 
         /// <summary>
         /// Trigger replacements on changes to this input.
@@ -115,22 +109,16 @@ namespace Pulumi.Command.Remote
         }
 
         /// <summary>
-        /// An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-        /// </summary>
-        [Input("localArchive")]
-        public Input<Archive>? LocalArchive { get; set; }
-
-        /// <summary>
-        /// An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-        /// </summary>
-        [Input("localAsset")]
-        public Input<AssetOrArchive>? LocalAsset { get; set; }
-
-        /// <summary>
         /// The destination path in the remote host.
         /// </summary>
         [Input("remotePath", required: true)]
         public Input<string> RemotePath { get; set; } = null!;
+
+        /// <summary>
+        /// An asset or an archive to upload as the source of the copy. It must be path based.
+        /// </summary>
+        [Input("source", required: true)]
+        public Input<AssetOrArchive> Source { get; set; } = null!;
 
         [Input("triggers")]
         private InputList<object>? _triggers;

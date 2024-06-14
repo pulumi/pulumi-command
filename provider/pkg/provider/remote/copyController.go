@@ -39,8 +39,14 @@ var _ = (infer.CustomUpdate[CopyInputs, CopyOutputs])((*Copy)(nil))
 func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyInputs, []p.CheckFailure, error) {
 	var failures []p.CheckFailure
 
-	hasAsset := newInputs.HasValue("asset")
-	hasArchive := newInputs.HasValue("archive")
+	inputs, newFailures, err := infer.DefaultCheck[CopyInputs](newInputs)
+	failures = append(failures, newFailures...)
+	if err != nil {
+		return inputs, failures, err
+	}
+
+	hasAsset := inputs.Source.Asset != nil
+	hasArchive := inputs.Source.Archive != nil
 
 	if hasAsset && hasArchive {
 		failures = append(failures, p.CheckFailure{
@@ -55,19 +61,13 @@ func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resou
 		})
 	}
 
-	inputs, newFailures, err := infer.DefaultCheck[CopyInputs](newInputs)
-	failures = append(failures, newFailures...)
-	if err != nil {
-		return inputs, failures, err
-	}
-
-	if hasAsset && !inputs.Asset.IsPath() {
+	if hasAsset && !inputs.Source.Asset.IsPath() {
 		failures = append(failures, p.CheckFailure{
 			Property: "asset",
 			Reason:   "asset must be a path-based file asset",
 		})
 	}
-	if hasArchive && !inputs.Archive.IsPath() {
+	if hasArchive && !inputs.Source.Archive.IsPath() {
 		failures = append(failures, p.CheckFailure{
 			Property: "archive",
 			Reason:   "archive must be a path to a file or directory",
