@@ -301,7 +301,6 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 	}
 
 	t.Run("update-actual-with-std", func(t *testing.T) {
-		t.Parallel()
 		assert.Equal(t, resource.PropertyMap{
 			"connection": connection,
 			"create":     resource.PropertyValue{V: createCommand},
@@ -313,7 +312,6 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 	})
 
 	t.Run("update-actual-without-std", func(t *testing.T) {
-		t.Parallel()
 		assert.Equal(t, resource.PropertyMap{
 			"connection": connection,
 			"create":     resource.PropertyValue{V: createCommand},
