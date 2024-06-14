@@ -18,12 +18,10 @@ type Copy struct {
 
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionOutput `pulumi:"connection"`
-	// An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-	LocalArchive pulumi.ArchiveOutput `pulumi:"localArchive"`
-	// An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-	LocalAsset pulumi.AssetOrArchiveOutput `pulumi:"localAsset"`
 	// The destination path in the remote host.
 	RemotePath pulumi.StringOutput `pulumi:"remotePath"`
+	// An asset or an archive to upload as the source of the copy. It must be path based.
+	Source pulumi.AssetOrArchiveOutput `pulumi:"source"`
 	// Trigger replacements on changes to this input.
 	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 }
@@ -40,6 +38,9 @@ func NewCopy(ctx *pulumi.Context,
 	}
 	if args.RemotePath == nil {
 		return nil, errors.New("invalid value for required argument 'RemotePath'")
+	}
+	if args.Source == nil {
+		return nil, errors.New("invalid value for required argument 'Source'")
 	}
 	args.Connection = args.Connection.ToConnectionOutput().ApplyT(func(v Connection) Connection { return *v.Defaults() }).(ConnectionOutput)
 	if args.Connection != nil {
@@ -88,12 +89,10 @@ func (CopyState) ElementType() reflect.Type {
 type copyArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`
-	// An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-	LocalArchive pulumi.Archive `pulumi:"localArchive"`
-	// An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-	LocalAsset pulumi.AssetOrArchive `pulumi:"localAsset"`
 	// The destination path in the remote host.
 	RemotePath string `pulumi:"remotePath"`
+	// An asset or an archive to upload as the source of the copy. It must be path based.
+	Source pulumi.AssetOrArchive `pulumi:"source"`
 	// Trigger replacements on changes to this input.
 	Triggers []interface{} `pulumi:"triggers"`
 }
@@ -102,12 +101,10 @@ type copyArgs struct {
 type CopyArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionInput
-	// An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-	LocalArchive pulumi.ArchiveInput
-	// An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-	LocalAsset pulumi.AssetOrArchiveInput
 	// The destination path in the remote host.
 	RemotePath pulumi.StringInput
+	// An asset or an archive to upload as the source of the copy. It must be path based.
+	Source pulumi.AssetOrArchiveInput
 	// Trigger replacements on changes to this input.
 	Triggers pulumi.ArrayInput
 }
@@ -204,19 +201,14 @@ func (o CopyOutput) Connection() ConnectionOutput {
 	return o.ApplyT(func(v *Copy) ConnectionOutput { return v.Connection }).(ConnectionOutput)
 }
 
-// An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-func (o CopyOutput) LocalArchive() pulumi.ArchiveOutput {
-	return o.ApplyT(func(v *Copy) pulumi.ArchiveOutput { return v.LocalArchive }).(pulumi.ArchiveOutput)
-}
-
-// An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-func (o CopyOutput) LocalAsset() pulumi.AssetOrArchiveOutput {
-	return o.ApplyT(func(v *Copy) pulumi.AssetOrArchiveOutput { return v.LocalAsset }).(pulumi.AssetOrArchiveOutput)
-}
-
 // The destination path in the remote host.
 func (o CopyOutput) RemotePath() pulumi.StringOutput {
 	return o.ApplyT(func(v *Copy) pulumi.StringOutput { return v.RemotePath }).(pulumi.StringOutput)
+}
+
+// An asset or an archive to upload as the source of the copy. It must be path based.
+func (o CopyOutput) Source() pulumi.AssetOrArchiveOutput {
+	return o.ApplyT(func(v *Copy) pulumi.AssetOrArchiveOutput { return v.Source }).(pulumi.AssetOrArchiveOutput)
 }
 
 // Trigger replacements on changes to this input.

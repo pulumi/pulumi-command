@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/pulumi/pulumi-go-provider/infer/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
@@ -154,10 +155,15 @@ func TestCheck(t *testing.T) {
 	copy := &Copy{}
 
 	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) CopyInputs {
+		aa := types.AssetOrArchive{}
+		if asset != nil {
+			aa.Asset = asset
+		} else if archive != nil {
+			aa.Archive = archive
+		}
 		return CopyInputs{
 			Connection: validConnection,
-			Asset:      asset,
-			Archive:    archive,
+			Source:     aa,
 			RemotePath: "path/to/remote",
 		}
 	}

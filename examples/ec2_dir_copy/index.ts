@@ -70,11 +70,11 @@ export = async () => {
     const archive = new pulumi.asset.FileArchive(from);
     const copy = new remote.Copy("copy", {
         connection,
-        archive: archive,
+        source: archive,
         remotePath: to,
     }, { dependsOn: poll });
 
-    // Run `ls` on the remote to verify that the expected files were copied there.
+    // Verify that the expected files were copied to the remote.
     // We want to run this after each copy, i.e., when something changed, but not otherwise to avoid unclean refreshes.
     // We use the hash of the source directory as a trigger to achieve this, since the trigger needs to be a primitive
     // value and we cannot use the Copy resource itself.

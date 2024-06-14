@@ -3,7 +3,6 @@
 
 package com.pulumi.command.remote;
 
-import com.pulumi.asset.Archive;
 import com.pulumi.asset.AssetOrArchive;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
@@ -37,36 +36,6 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-     * 
-     */
-    @Import(name="localArchive")
-    private @Nullable Output<Archive> localArchive;
-
-    /**
-     * @return An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-     * 
-     */
-    public Optional<Output<Archive>> localArchive() {
-        return Optional.ofNullable(this.localArchive);
-    }
-
-    /**
-     * An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-     * 
-     */
-    @Import(name="localAsset")
-    private @Nullable Output<AssetOrArchive> localAsset;
-
-    /**
-     * @return An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-     * 
-     */
-    public Optional<Output<AssetOrArchive>> localAsset() {
-        return Optional.ofNullable(this.localAsset);
-    }
-
-    /**
      * The destination path in the remote host.
      * 
      */
@@ -79,6 +48,21 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
      */
     public Output<String> remotePath() {
         return this.remotePath;
+    }
+
+    /**
+     * An asset or an archive to upload as the source of the copy. It must be path based.
+     * 
+     */
+    @Import(name="source", required=true)
+    private Output<AssetOrArchive> source;
+
+    /**
+     * @return An asset or an archive to upload as the source of the copy. It must be path based.
+     * 
+     */
+    public Output<AssetOrArchive> source() {
+        return this.source;
     }
 
     /**
@@ -100,9 +84,8 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
 
     private CopyArgs(CopyArgs $) {
         this.connection = $.connection;
-        this.localArchive = $.localArchive;
-        this.localAsset = $.localAsset;
         this.remotePath = $.remotePath;
+        this.source = $.source;
         this.triggers = $.triggers;
     }
 
@@ -146,48 +129,6 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param localArchive An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder localArchive(@Nullable Output<Archive> localArchive) {
-            $.localArchive = localArchive;
-            return this;
-        }
-
-        /**
-         * @param localArchive An archive to upload as the source of the copy. It must be a path based archive. Only one of Asset or Archive can be set.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder localArchive(Archive localArchive) {
-            return localArchive(Output.of(localArchive));
-        }
-
-        /**
-         * @param localAsset An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder localAsset(@Nullable Output<AssetOrArchive> localAsset) {
-            $.localAsset = localAsset;
-            return this;
-        }
-
-        /**
-         * @param localAsset An asset to upload as the source of the copy. It must be a path based asset. Only one of Asset or Archive can be set.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder localAsset(AssetOrArchive localAsset) {
-            return localAsset(Output.of(localAsset));
-        }
-
-        /**
          * @param remotePath The destination path in the remote host.
          * 
          * @return builder
@@ -206,6 +147,27 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder remotePath(String remotePath) {
             return remotePath(Output.of(remotePath));
+        }
+
+        /**
+         * @param source An asset or an archive to upload as the source of the copy. It must be path based.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder source(Output<AssetOrArchive> source) {
+            $.source = source;
+            return this;
+        }
+
+        /**
+         * @param source An asset or an archive to upload as the source of the copy. It must be path based.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder source(AssetOrArchive source) {
+            return source(Output.of(source));
         }
 
         /**
@@ -245,6 +207,9 @@ public final class CopyArgs extends com.pulumi.resources.ResourceArgs {
             }
             if ($.remotePath == null) {
                 throw new MissingRequiredPropertyException("CopyArgs", "remotePath");
+            }
+            if ($.source == null) {
+                throw new MissingRequiredPropertyException("CopyArgs", "source");
             }
             return $;
         }
