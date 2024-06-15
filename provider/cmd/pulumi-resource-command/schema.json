@@ -284,7 +284,7 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger replacements on changes to this input.",
+          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\n\nHere are some examples of triggers in TypeScript. Changes to any of the four will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is\nthe trigger, not the contents of index.ts, since triggers are simply opaque values.\n\n```typescriptimport * as local from \"@pulumi/command/local\";\nimport * as random from \"@pulumi/random\";\nimport { asset } from \"@pulumi/pulumi\";\nimport * as path from \"path\";\n\nconst str = \"foo\";\n\nconst rand = new random.RandomString(\"rand\", { length: 5 });\n\nconst fileAsset = new asset.FileAsset(path.join(__dirname, \"index.ts\"));\n\nconst localFile = new local.Command(\"localFile\", {\n    create: `touch foo.txt`,\n    archivePaths: [\"*.txt\"]\n});\n\nconst cmd = new local.Command(\"pwd\", {\n    create: `echo create > op.txt`,\n    delete: `echo delete >> op.txt`,\n    triggers: [str, rand.result, fileAsset, localFile.archive],\n});```",
           "replaceOnChanges": true
         },
         "update": {
@@ -356,7 +356,7 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger replacements on changes to this input.",
+          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\n\nHere are some examples of triggers in TypeScript. Changes to any of the four will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is\nthe trigger, not the contents of index.ts, since triggers are simply opaque values.\n\n```typescriptimport * as local from \"@pulumi/command/local\";\nimport * as random from \"@pulumi/random\";\nimport { asset } from \"@pulumi/pulumi\";\nimport * as path from \"path\";\n\nconst str = \"foo\";\n\nconst rand = new random.RandomString(\"rand\", { length: 5 });\n\nconst fileAsset = new asset.FileAsset(path.join(__dirname, \"index.ts\"));\n\nconst localFile = new local.Command(\"localFile\", {\n    create: `touch foo.txt`,\n    archivePaths: [\"*.txt\"]\n});\n\nconst cmd = new local.Command(\"pwd\", {\n    create: `echo create > op.txt`,\n    delete: `echo delete >> op.txt`,\n    triggers: [str, rand.result, fileAsset, localFile.archive],\n});```",
           "replaceOnChanges": true
         },
         "update": {
@@ -414,7 +414,7 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger replacements on changes to this input.",
+          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\n\nHere are some examples of triggers in TypeScript. Changes to any of the four will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is\nthe trigger, not the contents of index.ts, since triggers are simply opaque values.\n\n```typescriptimport * as local from \"@pulumi/command/local\";\nimport * as random from \"@pulumi/random\";\nimport { asset } from \"@pulumi/pulumi\";\nimport * as path from \"path\";\n\nconst str = \"foo\";\n\nconst rand = new random.RandomString(\"rand\", { length: 5 });\n\nconst fileAsset = new asset.FileAsset(path.join(__dirname, \"index.ts\"));\n\nconst localFile = new local.Command(\"localFile\", {\n    create: `touch foo.txt`,\n    archivePaths: [\"*.txt\"]\n});\n\nconst cmd = new local.Command(\"pwd\", {\n    create: `echo create > op.txt`,\n    delete: `echo delete >> op.txt`,\n    triggers: [str, rand.result, fileAsset, localFile.archive],\n});```",
           "replaceOnChanges": true
         },
         "update": {
@@ -467,7 +467,7 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger replacements on changes to this input.",
+          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\n\nHere are some examples of triggers in TypeScript. Changes to any of the four will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is\nthe trigger, not the contents of index.ts, since triggers are simply opaque values.\n\n```typescriptimport * as local from \"@pulumi/command/local\";\nimport * as random from \"@pulumi/random\";\nimport { asset } from \"@pulumi/pulumi\";\nimport * as path from \"path\";\n\nconst str = \"foo\";\n\nconst rand = new random.RandomString(\"rand\", { length: 5 });\n\nconst fileAsset = new asset.FileAsset(path.join(__dirname, \"index.ts\"));\n\nconst localFile = new local.Command(\"localFile\", {\n    create: `touch foo.txt`,\n    archivePaths: [\"*.txt\"]\n});\n\nconst cmd = new local.Command(\"pwd\", {\n    create: `echo create > op.txt`,\n    delete: `echo delete >> op.txt`,\n    triggers: [str, rand.result, fileAsset, localFile.archive],\n});```",
           "replaceOnChanges": true
         },
         "update": {
