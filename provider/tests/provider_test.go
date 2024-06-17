@@ -3,7 +3,6 @@ package tests
 import (
 	"fmt"
 	"github.com/gliderlabs/ssh"
-	"net"
 	"strings"
 	"testing"
 
@@ -16,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
 	"github.com/pulumi/pulumi-command/provider/pkg/version"
 )
 
@@ -230,37 +230,22 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 	// Start a local SSH server that writes the PULUMI_COMMAND_STDOUT environment variable
 	// on the format "PULUMI_COMMAND_STDOUT=<value>" to the client using stdout.
 	const (
-		host          = "127.0.0.1"
-		port          = 3333
-		user          = "arbitrary-user"
 		createCommand = "arbitrary create command"
 	)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
-	require.NoErrorf(t, err, "net.Listen()")
-
-	server := ssh.Server{
-		Handler: func(session ssh.Session) {
-			// Find the PULUMI_COMMAND_STDOUT environment variable
-			var envVar string
-			for _, v := range session.Environ() {
-				if strings.HasPrefix(v, "PULUMI_COMMAND_STDOUT=") {
-					envVar = v
-					break
-				}
+	sshServer := testutil.NewTestSshServer(t, func(session ssh.Session) {
+		// Find the PULUMI_COMMAND_STDOUT environment variable
+		var envVar string
+		for _, v := range session.Environ() {
+			if strings.HasPrefix(v, "PULUMI_COMMAND_STDOUT=") {
+				envVar = v
+				break
 			}
+		}
 
-			response := fmt.Sprintf("Response{%s}", envVar)
-			_, err := session.Write([]byte(response))
-			require.NoErrorf(t, err, "session.Write(%s)", response)
-		},
-	}
-	go func() {
-		// "Serve always returns a non-nil error."
-		_ = server.Serve(listener)
-	}()
-	t.Cleanup(func() {
-		_ = server.Close()
+		response := fmt.Sprintf("Response{%s}", envVar)
+		_, err := session.Write([]byte(response))
+		require.NoErrorf(t, err, "session.Write(%s)", response)
 	})
 
 	cmd := provider()
@@ -268,14 +253,25 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 
 	// Run a create against an in-memory provider, assert it succeeded, and return the created property map.
 	connection := resource.NewObjectProperty(resource.PropertyMap{
-		"host":           resource.NewStringProperty(host),
-		"port":           resource.NewNumberProperty(port),
-		"user":           resource.NewStringProperty("user"), // unused but prevents nil panic
-		"perDialTimeout": resource.NewNumberProperty(1),      // unused but prevents nil panic
+		"host":           resource.NewStringProperty(sshServer.Host),
+		"port":           resource.NewNumberProperty(float64(sshServer.Port)),
+		"user":           resource.NewStringProperty("arbitrary-user"), // unused but prevents nil panic
+		"perDialTimeout": resource.NewNumberProperty(1),                // unused but prevents nil panic
 	})
 
-	create := func() resource.PropertyMap {
-		resp, err := cmd.Create(p.CreateRequest{
+	// The state that we expect a non-preview create to return.
+	//
+	// We use this as the final expect for create and the old state during update.
+	initialState := resource.PropertyMap{
+		"connection":             connection,
+		"create":                 resource.PropertyValue{V: createCommand},
+		"stderr":                 resource.PropertyValue{V: ""},
+		"stdout":                 resource.PropertyValue{V: "Response{}"},
+		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
+	}
+
+	t.Run("create", func(t *testing.T) {
+		createResponse, err := cmd.Create(p.CreateRequest{
 			Urn: urn,
 			Properties: resource.PropertyMap{
 				"connection":             connection,
@@ -284,19 +280,8 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 			},
 		})
 		require.NoError(t, err)
-		return resp.Properties
-	}
-
-	// The state that we expect a non-preview create to return.
-	//
-	// We use this as the final expect for create and the old state during update.
-	createdState := resource.PropertyMap{
-		"connection":             connection,
-		"create":                 resource.PropertyValue{V: createCommand},
-		"stderr":                 resource.PropertyValue{V: ""},
-		"stdout":                 resource.PropertyValue{V: "Response{}"},
-		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
-	}
+		require.Equal(t, initialState, createResponse.Properties)
+	})
 
 	// Run an update against an in-memory provider, assert it succeeded, and return
 	// the new property map.
@@ -304,7 +289,7 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 		resp, err := cmd.Update(p.UpdateRequest{
 			ID:   "echo1234",
 			Urn:  urn,
-			Olds: createdState.Copy(),
+			Olds: initialState.Copy(),
 			News: resource.PropertyMap{
 				"connection":             connection,
 				"create":                 resource.NewStringProperty(createCommand),
@@ -314,10 +299,6 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 		require.NoError(t, err)
 		return resp.Properties
 	}
-
-	t.Run("create-actual", func(t *testing.T) {
-		assert.Equal(t, createdState, create())
-	})
 
 	t.Run("update-actual-with-std", func(t *testing.T) {
 		assert.Equal(t, resource.PropertyMap{
@@ -335,7 +316,7 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 			"connection": connection,
 			"create":     resource.PropertyValue{V: createCommand},
 			"stderr":     resource.PropertyValue{V: ""},
-			// Running with addPreviousOutputInEnv does not set the environment variable.
+			// Running without addPreviousOutputInEnv does not set the environment variable:
 			"stdout":                 resource.PropertyValue{V: "Response{}"},
 			"addPreviousOutputInEnv": resource.PropertyValue{V: false},
 		}, update(false))
