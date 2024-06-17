@@ -45,7 +45,8 @@ func TestOptionalLogging(t *testing.T) {
 		},
 	}
 	go func() {
-		require.NoError(t, server.ListenAndServe())
+		// "ListenAndServe always returns a non-nil error."
+		_ = server.ListenAndServe()
 	}()
 	t.Cleanup(func() {
 		_ = server.Close()

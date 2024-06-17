@@ -20,6 +20,8 @@ import (
 	"io"
 	"sync"
 
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
+
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 )
@@ -31,16 +33,21 @@ func LogOutput(ctx context.Context, r io.Reader, doneCh chan<- struct{}, severit
 	defer close(doneCh)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
+		msg := scanner.Text()
 		l := p.GetLogger(ctx)
 		switch severity {
 		case diag.Info:
-			l.InfoStatus(scanner.Text())
+			l.InfoStatus(msg)
 		case diag.Warning:
-			l.WarningStatus(scanner.Text())
+			l.WarningStatus(msg)
 		case diag.Error:
-			l.ErrorStatus(scanner.Text())
+			l.ErrorStatus(msg)
 		default:
-			l.DebugStatus(scanner.Text())
+			l.DebugStatus(msg)
+		}
+
+		if testCtx, ok := ctx.(*testutil.TestContext); ok {
+			testCtx.Log(severity, msg)
 		}
 	}
 }
