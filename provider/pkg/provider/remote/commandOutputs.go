@@ -48,23 +48,25 @@ func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *Logging) 
 		}
 	}
 
-	// Set remote Stdout and Stderr environment variables optimistically, but log and continue if they fail.
-	if c.Stdout != "" {
-		err := session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
-		if err != nil {
-			// Set remote Stdout var optimistically, but warn and continue on failure.
-			//
-			//nolint:errcheck
-			logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDOUT, ctx, err)
+	if c.AddPreviousOutputInEnv == nil || *c.AddPreviousOutputInEnv {
+		// Set remote Stdout and Stderr environment variables optimistically, but log and continue if they fail.
+		if c.Stdout != "" {
+			err := session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
+			if err != nil {
+				// Set remote Stdout var optimistically, but warn and continue on failure.
+				//
+				//nolint:errcheck
+				logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDOUT, ctx, err)
+			}
 		}
-	}
-	if c.Stderr != "" {
-		err := session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
-		if err != nil {
-			// Set remote STDERR var optimistically, but warn and continue on failure.
-			//
-			//nolint:errcheck
-			logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDERR, ctx, err)
+		if c.Stderr != "" {
+			err := session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
+			if err != nil {
+				// Set remote STDERR var optimistically, but warn and continue on failure.
+				//
+				//nolint:errcheck
+				logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDERR, ctx, err)
+			}
 		}
 	}
 
