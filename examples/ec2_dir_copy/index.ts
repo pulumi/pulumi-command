@@ -8,6 +8,9 @@ import { hashElement } from "folder-hash";
 import { size } from "./size";
 
 export = async () => {
+    // Get a key pair to connect to the EC2 instance. If the name of an existing key pair is
+    // provided, use it, otherwise create one. We get the private key from config, or default to
+    // the default id_rsa SSH key.
     const config = new pulumi.Config();
     const keyName = config.get("keyName") ??
         new aws.ec2.KeyPair("key", { publicKey: config.require("publicKey") }).keyName;
@@ -16,14 +19,15 @@ export = async () => {
         Buffer.from(privateKeyBase64, 'base64').toString('ascii') :
         fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa")).toString("utf8");
 
+    // Create a security group that allows SSH traffic.
     const secgrp = new aws.ec2.SecurityGroup("secgrp", {
         description: "Foo",
         ingress: [
             { protocol: "tcp", fromPort: 22, toPort: 22, cidrBlocks: ["0.0.0.0/0"] },
-            { protocol: "tcp", fromPort: 80, toPort: 80, cidrBlocks: ["0.0.0.0/0"] },
         ],
     });
 
+    // Get the latest Amazon Linux AMI (image) for the region we're using.
     const ami = aws.ec2.getAmiOutput({
         owners: ["amazon"],
         mostRecent: true,
@@ -33,6 +37,7 @@ export = async () => {
         }],
     });
 
+    // Create the EC2 instance we will copy files to.
     const server = new aws.ec2.Instance("server", {
         instanceType: size,
         ami: ami.id,
@@ -42,18 +47,14 @@ export = async () => {
         replaceOnChanges: ["instanceType"],
     });
 
+    // The configuration of our SSH connection to the instance.
     const connection: types.input.remote.ConnectionArgs = {
         host: server.publicIp,
         user: "ec2-user",
         privateKey: privateKey,
     };
 
-    const connectionNoDialRetry: types.input.remote.ConnectionArgs = {
-        ...connection,
-        dialErrorLimit: 1,
-    };
-
-    // We poll the server until it responds.
+    // Poll the server until it responds.
     //
     // Because other commands depend on this command, other commands are guaranteed
     // to hit an already booted server.
