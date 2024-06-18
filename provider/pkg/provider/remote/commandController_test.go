@@ -16,7 +16,6 @@ package remote
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -29,31 +28,16 @@ import (
 )
 
 func TestOptionalLogging(t *testing.T) {
-	const (
-		host = "localhost"
-		port = 2222
-	)
-
-	// This SSH server always writes "foo" to stdout and "bar" to stderr, no matter the command.
-	server := &ssh.Server{
-		Addr: fmt.Sprintf("%s:%d", host, port),
-		Handler: func(s ssh.Session) {
-			_, err := io.WriteString(s, "foo")
-			require.NoError(t, err)
-			_, err = io.WriteString(s.Stderr(), "bar")
-			require.NoError(t, err)
-		},
-	}
-	go func() {
-		// "ListenAndServe always returns a non-nil error."
-		_ = server.ListenAndServe()
-	}()
-	t.Cleanup(func() {
-		_ = server.Close()
-	})
-
 	for _, logMode := range Logging.Values(LogStdoutAndStderr) {
 		t.Run(logMode.Name, func(t *testing.T) {
+			// This SSH server always writes "foo" to stdout and "bar" to stderr, no matter the command.
+			server := testutil.NewTestSshServer(t, func(s ssh.Session) {
+				_, err := io.WriteString(s, "foo")
+				require.NoError(t, err)
+				_, err = io.WriteString(s.Stderr(), "bar")
+				require.NoError(t, err)
+			})
+
 			cmd := Command{}
 
 			ctx := testutil.TestContext{Context: context.Background()}
@@ -64,8 +48,8 @@ func TestOptionalLogging(t *testing.T) {
 				},
 				Connection: &Connection{
 					connectionBase: connectionBase{
-						Host:           pulumi.StringRef(host),
-						Port:           pulumi.Float64Ref(float64(port)),
+						Host:           pulumi.StringRef(server.Host),
+						Port:           pulumi.Float64Ref(float64(server.Port)),
 						User:           pulumi.StringRef("user"), // unused but prevents nil panic
 						PerDialTimeout: pulumi.IntRef(1),         // unused but prevents nil panic
 					},
