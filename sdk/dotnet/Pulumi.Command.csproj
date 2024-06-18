@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://pulumi.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/pulumi/pulumi-command</RepositoryUrl>
     <PackageIcon>logo.png</PackageIcon>
-    <Version>0.12.0-alpha.1716647022+68fd618</Version>
+    <Version>0.12.0-alpha.1718647559</Version>
 
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
