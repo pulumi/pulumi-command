@@ -28,8 +28,15 @@ import (
 )
 
 func TestOptionalLogging(t *testing.T) {
-	for _, logMode := range Logging.Values(LogStdoutAndStderr) {
+	for _, sharedLogMode := range Logging.Values(LogStdoutAndStderr) {
+		// Get a copy of the log mode that doesn't get changed by the next iteration in the for loop,
+		// to allow running in parallel.
+		// See 'The long-standing "for" loop gotcha' here: https://go.dev/blog/go1.22
+		// This can be removed after upgrading to go 1.22.
+		logMode := sharedLogMode
 		t.Run(logMode.Name, func(t *testing.T) {
+			t.Parallel()
+
 			// This SSH server always writes "foo" to stdout and "bar" to stderr, no matter the command.
 			server := testutil.NewTestSshServer(t, func(s ssh.Session) {
 				_, err := io.WriteString(s, "foo")
