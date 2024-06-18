@@ -260,14 +260,20 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * Trigger replacements on changes to this input.
+     * Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+     * Please see the resource documentation for examples.
      * 
      */
     @Import(name="triggers")
     private @Nullable Output<List<Object>> triggers;
 
     /**
-     * @return Trigger replacements on changes to this input.
+     * @return Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+     * Please see the resource documentation for examples.
      * 
      */
     public Optional<Output<List<Object>>> triggers() {
@@ -696,7 +702,10 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param triggers Trigger replacements on changes to this input.
+         * @param triggers Trigger a resource replacement on changes to any of these values. The
+         * trigger values can be of any type. If a value is different in the current update compared to the
+         * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+         * Please see the resource documentation for examples.
          * 
          * @return builder
          * 
@@ -707,7 +716,10 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param triggers Trigger replacements on changes to this input.
+         * @param triggers Trigger a resource replacement on changes to any of these values. The
+         * trigger values can be of any type. If a value is different in the current update compared to the
+         * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+         * Please see the resource documentation for examples.
          * 
          * @return builder
          * 
@@ -717,7 +729,10 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param triggers Trigger replacements on changes to this input.
+         * @param triggers Trigger a resource replacement on changes to any of these values. The
+         * trigger values can be of any type. If a value is different in the current update compared to the
+         * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+         * Please see the resource documentation for examples.
          * 
          * @return builder
          * 

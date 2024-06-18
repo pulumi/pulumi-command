@@ -80,7 +80,10 @@ namespace Pulumi.Command.Remote
         public Output<string> Stdout { get; private set; } = null!;
 
         /// <summary>
-        /// Trigger replacements on changes to this input.
+        /// Trigger a resource replacement on changes to any of these values. The
+        /// trigger values can be of any type. If a value is different in the current update compared to the
+        /// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        /// Please see the resource documentation for examples.
         /// </summary>
         [Output("triggers")]
         public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
@@ -218,7 +221,10 @@ namespace Pulumi.Command.Remote
         private InputList<object>? _triggers;
 
         /// <summary>
-        /// Trigger replacements on changes to this input.
+        /// Trigger a resource replacement on changes to any of these values. The
+        /// trigger values can be of any type. If a value is different in the current update compared to the
+        /// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        /// Please see the resource documentation for examples.
         /// </summary>
         public InputList<object> Triggers
         {

@@ -9,10 +9,34 @@ import * as utilities from "../utilities";
 
 /**
  * A local command to be executed.
- * This command can be inserted into the life cycles of other resources using the
- * `dependsOn` or `parent` resource options. A command is considered to have
- * failed when it finished with a non-zero exit code. This will fail the CRUD step
- * of the `Command` resource.
+ *
+ * This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
+ *
+ * ## Example Usage
+ * ### Triggers
+ *
+ * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is the trigger, not the contents of index.ts, since triggers are simply opaque values.
+ *
+ * ```typescript
+ * import * as local from "@pulumi/command/local";
+ * import * as random from "@pulumi/random";
+ * import { asset } from "@pulumi/pulumi";
+ * import * as path from "path";
+ *
+ * const str = "foo";
+ * const fileAsset = new pulumi.asset.FileAsset("Pulumi.yaml");
+ * const rand = new random.RandomString("rand", {length: 5});
+ * const localFile = new command.local.Command("localFile", {
+ *     create: "touch foo.txt",
+ *     archivePaths: ["*.txt"],
+ * });
+ *
+ * const cmd = new local.Command("pwd", {
+ *     create: "echo create > op.txt",
+ *     delete: "echo delete >> op.txt",
+ *     triggers: [str, rand.result, fileAsset, localFile.archive],
+ * });
+ * ```
  */
 export class Command extends pulumi.CustomResource {
     /**
@@ -181,7 +205,10 @@ export class Command extends pulumi.CustomResource {
      */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
     /**
-     * Trigger replacements on changes to this input.
+     * Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+     * Please see the resource documentation for examples.
      */
     public readonly triggers!: pulumi.Output<any[] | undefined>;
     /**
@@ -371,7 +398,10 @@ export interface CommandArgs {
      */
     stdin?: pulumi.Input<string>;
     /**
-     * Trigger replacements on changes to this input.
+     * Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+     * Please see the resource documentation for examples.
      */
     triggers?: pulumi.Input<any[]>;
     /**

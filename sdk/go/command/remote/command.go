@@ -44,7 +44,10 @@ type Command struct {
 	Stdin pulumi.StringPtrOutput `pulumi:"stdin"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
-	// Trigger replacements on changes to this input.
+	// Trigger a resource replacement on changes to any of these values. The
+	// trigger values can be of any type. If a value is different in the current update compared to the
+	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// Please see the resource documentation for examples.
 	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 	// The command to run on update, if empty, create will
 	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
@@ -134,7 +137,10 @@ type commandArgs struct {
 	Logging *Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
-	// Trigger replacements on changes to this input.
+	// Trigger a resource replacement on changes to any of these values. The
+	// trigger values can be of any type. If a value is different in the current update compared to the
+	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// Please see the resource documentation for examples.
 	Triggers []interface{} `pulumi:"triggers"`
 	// The command to run on update, if empty, create will
 	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
@@ -168,7 +174,10 @@ type CommandArgs struct {
 	Logging LoggingPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
-	// Trigger replacements on changes to this input.
+	// Trigger a resource replacement on changes to any of these values. The
+	// trigger values can be of any type. If a value is different in the current update compared to the
+	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// Please see the resource documentation for examples.
 	Triggers pulumi.ArrayInput
 	// The command to run on update, if empty, create will
 	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
@@ -318,7 +327,10 @@ func (o CommandOutput) Stdout() pulumi.StringOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringOutput { return v.Stdout }).(pulumi.StringOutput)
 }
 
-// Trigger replacements on changes to this input.
+// Trigger a resource replacement on changes to any of these values. The
+// trigger values can be of any type. If a value is different in the current update compared to the
+// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+// Please see the resource documentation for examples.
 func (o CommandOutput) Triggers() pulumi.ArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
 }

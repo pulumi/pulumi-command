@@ -84,7 +84,10 @@ export class Command extends pulumi.CustomResource {
      */
     public /*out*/ readonly stdout!: pulumi.Output<string>;
     /**
-     * Trigger replacements on changes to this input.
+     * Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+     * Please see the resource documentation for examples.
      */
     public readonly triggers!: pulumi.Output<any[] | undefined>;
     /**
@@ -184,7 +187,10 @@ export interface CommandArgs {
      */
     stdin?: pulumi.Input<string>;
     /**
-     * Trigger replacements on changes to this input.
+     * Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+     * Please see the resource documentation for examples.
      */
     triggers?: pulumi.Input<any[]>;
     /**

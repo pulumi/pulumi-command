@@ -44,7 +44,10 @@ class CommandArgs:
                stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
                outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
-        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger a resource replacement on changes to any of these values. The
+               trigger values can be of any type. If a value is different in the current update compared to the
+               previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+               Please see the resource documentation for examples.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
                run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
                are set to the stdout and stderr properties of the Command resource from previous 
@@ -167,7 +170,10 @@ class CommandArgs:
     @pulumi.getter
     def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
         """
-        Trigger replacements on changes to this input.
+        Trigger a resource replacement on changes to any of these values. The
+        trigger values can be of any type. If a value is different in the current update compared to the
+        previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        Please see the resource documentation for examples.
         """
         return pulumi.get(self, "triggers")
 
@@ -228,7 +234,10 @@ class Command(pulumi.CustomResource):
                stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
                outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
-        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger a resource replacement on changes to any of these values. The
+               trigger values can be of any type. If a value is different in the current update compared to the
+               previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+               Please see the resource documentation for examples.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
                run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
                are set to the stdout and stderr properties of the Command resource from previous 
@@ -416,7 +425,10 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def triggers(self) -> pulumi.Output[Optional[Sequence[Any]]]:
         """
-        Trigger replacements on changes to this input.
+        Trigger a resource replacement on changes to any of these values. The
+        trigger values can be of any type. If a value is different in the current update compared to the
+        previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        Please see the resource documentation for examples.
         """
         return pulumi.get(self, "triggers")
 
