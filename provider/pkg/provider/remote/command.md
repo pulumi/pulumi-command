@@ -1,6 +1,4 @@
-A local command to be executed.
-
-This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
+A command to run on a remote host. The connection is established via ssh.
 
 {{% examples %}}
 ## Example Usage
@@ -22,8 +20,10 @@ const localFile = new command.local.Command("localFile", {
     create: "touch foo.txt",
     archivePaths: ["*.txt"],
 });
-
-const cmd = new command.local.Command("cmd", {
+const cmd = new command.remote.Command("cmd", {
+    connection: {
+        host: "insert host here",
+    },
     create: "echo create > op.txt",
     delete: "echo delete >> op.txt",
     triggers: [
@@ -33,6 +33,7 @@ const cmd = new command.local.Command("cmd", {
         localFile.archive,
     ],
 });
+
 ```
 
 ```python
@@ -47,7 +48,10 @@ local_file = command.local.Command("localFile",
     create="touch foo.txt",
     archive_paths=["*.txt"])
 
-cmd = command.local.Command("cmd",
+cmd = command.remote.Command("cmd",
+    connection=command.remote.ConnectionArgs(
+        host="insert host here",
+    ),
     create="echo create > op.txt",
     delete="echo delete >> op.txt",
     triggers=[
@@ -63,6 +67,7 @@ package main
 
 import (
 	"github.com/pulumi/pulumi-command/sdk/go/command/local"
+	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
 	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -90,7 +95,10 @@ func main() {
 			return err
 		}
 
-		_, err = local.NewCommand(ctx, "cmd", &local.CommandArgs{
+		_, err = remote.NewCommand(ctx, "cmd", &remote.CommandArgs{
+			Connection: &remote.ConnectionArgs{
+				Host: pulumi.String("insert host here"),
+			},
 			Create: pulumi.String("echo create > op.txt"),
 			Delete: pulumi.String("echo delete >> op.txt"),
 			Triggers: pulumi.Array{
@@ -113,7 +121,7 @@ using Pulumi;
 using Command = Pulumi.Command;
 using Random = Pulumi.Random;
 
-return await Deployment.RunAsync(() =>
+return await Deployment.RunAsync(() => 
 {
     var str = "foo";
 
@@ -133,8 +141,12 @@ return await Deployment.RunAsync(() =>
         },
     });
 
-    var cmd = new Command.Local.Command("cmd", new()
+    var cmd = new Command.Remote.Command("cmd", new()
     {
+        Connection = new Command.Remote.Inputs.ConnectionArgs
+        {
+            Host = "insert host here",
+        },
         Create = "echo create > op.txt",
         Delete = "echo delete >> op.txt",
         Triggers = new object[]
@@ -168,9 +180,12 @@ public class App {
             .build());
 
         var cmd = new Command("cmd", CommandArgs.builder()
+            .connection(ConnectionArgs.builder()
+                .host("insert host here")
+                .build())
             .create("echo create > op.txt")
             .delete("echo delete >> op.txt")
-            .triggers(
+            .triggers(            
                 rand.result(),
                 fileAssetVar,
                 localFile.archive())
@@ -183,6 +198,7 @@ public class App {
 ```yaml
 config: {}
 outputs: {}
+
 resources:
   rand:
     type: random:index/randomString:RandomString
@@ -197,8 +213,10 @@ resources:
         - "*.txt"
 
   cmd:
-    type: command:local:Command
+    type: command:remote:Command
     properties:
+      connection:
+        host: "insert host here"
       create: echo create > op.txt
       delete: echo delete >> op.txt
       triggers:
@@ -210,6 +228,7 @@ variables:
   fileAsset:
     fn::fileAsset: "Pulumi.yaml"
 ```
+
 {{% /example %}}
 
 {{% /examples %}}
