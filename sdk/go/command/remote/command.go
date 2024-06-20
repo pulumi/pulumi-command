@@ -12,8 +12,69 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// A command to run on a remote host.
-// The connection is established via ssh.
+// A command to run on a remote host. The connection is established via ssh.
+//
+// ## Example Usage
+// ### Triggers
+//
+// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/pulumi/pulumi-command/sdk/go/command/local"
+//	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
+//	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			str := pulumi.String("foo")
+//
+//			fileAsset := pulumi.NewFileAsset("Pulumi.yaml")
+//
+//			rand, err := random.NewRandomString(ctx, "rand", &random.RandomStringArgs{
+//				Length: pulumi.Int(5),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//			localFile, err := local.NewCommand(ctx, "localFile", &local.CommandArgs{
+//				Create: pulumi.String("touch foo.txt"),
+//				ArchivePaths: pulumi.StringArray{
+//					pulumi.String("*.txt"),
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//			_, err = remote.NewCommand(ctx, "cmd", &remote.CommandArgs{
+//				Connection: &remote.ConnectionArgs{
+//					Host: pulumi.String("insert host here"),
+//				},
+//				Create: pulumi.String("echo create > op.txt"),
+//				Delete: pulumi.String("echo delete >> op.txt"),
+//				Triggers: pulumi.Array{
+//					str,
+//					rand.Result,
+//					fileAsset,
+//					localFile.Archive,
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 type Command struct {
 	pulumi.CustomResourceState
 
@@ -44,7 +105,10 @@ type Command struct {
 	Stdin pulumi.StringPtrOutput `pulumi:"stdin"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
-	// Trigger replacements on changes to this input.
+	// Trigger a resource replacement on changes to any of these values. The
+	// trigger values can be of any type. If a value is different in the current update compared to the
+	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// Please see the resource documentation for examples.
 	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
 	// The command to run on update, if empty, create will
 	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
@@ -134,7 +198,10 @@ type commandArgs struct {
 	Logging *Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
-	// Trigger replacements on changes to this input.
+	// Trigger a resource replacement on changes to any of these values. The
+	// trigger values can be of any type. If a value is different in the current update compared to the
+	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// Please see the resource documentation for examples.
 	Triggers []interface{} `pulumi:"triggers"`
 	// The command to run on update, if empty, create will
 	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
@@ -168,7 +235,10 @@ type CommandArgs struct {
 	Logging LoggingPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
-	// Trigger replacements on changes to this input.
+	// Trigger a resource replacement on changes to any of these values. The
+	// trigger values can be of any type. If a value is different in the current update compared to the
+	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// Please see the resource documentation for examples.
 	Triggers pulumi.ArrayInput
 	// The command to run on update, if empty, create will
 	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
@@ -318,7 +388,10 @@ func (o CommandOutput) Stdout() pulumi.StringOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringOutput { return v.Stdout }).(pulumi.StringOutput)
 }
 
-// Trigger replacements on changes to this input.
+// Trigger a resource replacement on changes to any of these values. The
+// trigger values can be of any type. If a value is different in the current update compared to the
+// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+// Please see the resource documentation for examples.
 func (o CommandOutput) Triggers() pulumi.ArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
 }

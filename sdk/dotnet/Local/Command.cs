@@ -11,10 +11,54 @@ namespace Pulumi.Command.Local
 {
     /// <summary>
     /// A local command to be executed.
-    /// This command can be inserted into the life cycles of other resources using the
-    /// `dependsOn` or `parent` resource options. A command is considered to have
-    /// failed when it finished with a non-zero exit code. This will fail the CRUD step
-    /// of the `Command` resource.
+    /// 
+    /// This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
+    /// 
+    /// ## Example Usage
+    /// ### Triggers
+    /// 
+    /// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+    /// 
+    /// ```csharp
+    /// using Pulumi;
+    /// using Command = Pulumi.Command;
+    /// using Random = Pulumi.Random;
+    /// 
+    /// return await Deployment.RunAsync(() =&gt;
+    /// {
+    ///     var str = "foo";
+    /// 
+    ///     var fileAssetVar = new FileAsset("Pulumi.yaml");
+    /// 
+    ///     var rand = new Random.RandomString("rand", new()
+    ///     {
+    ///         Length = 5,
+    ///     });
+    /// 
+    ///     var localFile = new Command.Local.Command("localFile", new()
+    ///     {
+    ///         Create = "touch foo.txt",
+    ///         ArchivePaths = new[]
+    ///         {
+    ///             "*.txt",
+    ///         },
+    ///     });
+    /// 
+    ///     var cmd = new Command.Local.Command("cmd", new()
+    ///     {
+    ///         Create = "echo create &gt; op.txt",
+    ///         Delete = "echo delete &gt;&gt; op.txt",
+    ///         Triggers = new object[]
+    ///         {
+    ///             str,
+    ///             rand.Result,
+    ///             fileAssetVar,
+    ///             localFile.Archive,
+    ///         },
+    ///     });
+    /// 
+    /// });
+    /// ```
     /// </summary>
     [CommandResourceType("command:local:Command")]
     public partial class Command : global::Pulumi.CustomResource
@@ -187,7 +231,10 @@ namespace Pulumi.Command.Local
         public Output<string> Stdout { get; private set; } = null!;
 
         /// <summary>
-        /// Trigger replacements on changes to this input.
+        /// Trigger a resource replacement on changes to any of these values. The
+        /// trigger values can be of any type. If a value is different in the current update compared to the
+        /// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        /// Please see the resource documentation for examples.
         /// </summary>
         [Output("triggers")]
         public Output<ImmutableArray<object>> Triggers { get; private set; } = null!;
@@ -420,7 +467,10 @@ namespace Pulumi.Command.Local
         private InputList<object>? _triggers;
 
         /// <summary>
-        /// Trigger replacements on changes to this input.
+        /// Trigger a resource replacement on changes to any of these values. The
+        /// trigger values can be of any type. If a value is different in the current update compared to the
+        /// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        /// Please see the resource documentation for examples.
         /// </summary>
         public InputList<object> Triggers
         {

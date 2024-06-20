@@ -44,7 +44,10 @@ class CommandArgs:
                stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
                outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
-        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger a resource replacement on changes to any of these values. The
+               trigger values can be of any type. If a value is different in the current update compared to the
+               previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+               Please see the resource documentation for examples.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
                run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
                are set to the stdout and stderr properties of the Command resource from previous 
@@ -167,7 +170,10 @@ class CommandArgs:
     @pulumi.getter
     def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
         """
-        Trigger replacements on changes to this input.
+        Trigger a resource replacement on changes to any of these values. The
+        trigger values can be of any type. If a value is different in the current update compared to the
+        previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        Please see the resource documentation for examples.
         """
         return pulumi.get(self, "triggers")
 
@@ -207,8 +213,38 @@ class Command(pulumi.CustomResource):
                  update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
-        A command to run on a remote host.
-        The connection is established via ssh.
+        A command to run on a remote host. The connection is established via ssh.
+
+        ## Example Usage
+        ### Triggers
+
+        This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+        import pulumi_random as random
+
+        foo = "foo"
+        file_asset_var = pulumi.FileAsset("Pulumi.yaml")
+        rand = random.RandomString("rand", length=5)
+        local_file = command.local.Command("localFile",
+            create="touch foo.txt",
+            archive_paths=["*.txt"])
+
+        cmd = command.remote.Command("cmd",
+            connection=command.remote.ConnectionArgs(
+                host="insert host here",
+            ),
+            create="echo create > op.txt",
+            delete="echo delete >> op.txt",
+            triggers=[
+                foo,
+                rand.result,
+                file_asset_var,
+                local_file.archive,
+            ])
+        ```
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -228,7 +264,10 @@ class Command(pulumi.CustomResource):
                stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
                outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
         :param pulumi.Input[str] stdin: Pass a string to the command's process as standard in
-        :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
+        :param pulumi.Input[Sequence[Any]] triggers: Trigger a resource replacement on changes to any of these values. The
+               trigger values can be of any type. If a value is different in the current update compared to the
+               previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+               Please see the resource documentation for examples.
         :param pulumi.Input[str] update: The command to run on update, if empty, create will 
                run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR 
                are set to the stdout and stderr properties of the Command resource from previous 
@@ -241,8 +280,38 @@ class Command(pulumi.CustomResource):
                  args: CommandArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        A command to run on a remote host.
-        The connection is established via ssh.
+        A command to run on a remote host. The connection is established via ssh.
+
+        ## Example Usage
+        ### Triggers
+
+        This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+        import pulumi_random as random
+
+        foo = "foo"
+        file_asset_var = pulumi.FileAsset("Pulumi.yaml")
+        rand = random.RandomString("rand", length=5)
+        local_file = command.local.Command("localFile",
+            create="touch foo.txt",
+            archive_paths=["*.txt"])
+
+        cmd = command.remote.Command("cmd",
+            connection=command.remote.ConnectionArgs(
+                host="insert host here",
+            ),
+            create="echo create > op.txt",
+            delete="echo delete >> op.txt",
+            triggers=[
+                foo,
+                rand.result,
+                file_asset_var,
+                local_file.archive,
+            ])
+        ```
 
         :param str resource_name: The name of the resource.
         :param CommandArgs args: The arguments to use to populate this resource's properties.
@@ -416,7 +485,10 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def triggers(self) -> pulumi.Output[Optional[Sequence[Any]]]:
         """
-        Trigger replacements on changes to this input.
+        Trigger a resource replacement on changes to any of these values. The
+        trigger values can be of any type. If a value is different in the current update compared to the
+        previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+        Please see the resource documentation for examples.
         """
         return pulumi.get(self, "triggers")
 

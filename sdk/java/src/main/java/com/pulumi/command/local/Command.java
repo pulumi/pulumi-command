@@ -22,10 +22,46 @@ import javax.annotation.Nullable;
 
 /**
  * A local command to be executed.
- * This command can be inserted into the life cycles of other resources using the
- * `dependsOn` or `parent` resource options. A command is considered to have
- * failed when it finished with a non-zero exit code. This will fail the CRUD step
- * of the `Command` resource.
+ * 
+ * This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
+ * 
+ * ## Example Usage
+ * ### Triggers
+ * 
+ * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+ * 
+ * <pre>
+ * {@code
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         final var fileAssetVar = new FileAsset("Pulumi.yaml");
+ * 
+ *         var rand = new RandomString("rand", RandomStringArgs.builder()
+ *             .length(5)
+ *             .build());
+ * 
+ *         var localFile = new Command("localFile", CommandArgs.builder()
+ *             .create("touch foo.txt")
+ *             .archivePaths("*.txt")
+ *             .build());
+ * 
+ *         var cmd = new Command("cmd", CommandArgs.builder()
+ *             .create("echo create > op.txt")
+ *             .delete("echo delete >> op.txt")
+ *             .triggers(
+ *                 rand.result(),
+ *                 fileAssetVar,
+ *                 localFile.archive())
+ *             .build());
+ * 
+ *     }
+ * }
+ * }
+ * </pre>
  * 
  */
 @ResourceType(type="command:local:Command")
@@ -317,14 +353,20 @@ public class Command extends com.pulumi.resources.CustomResource {
         return this.stdout;
     }
     /**
-     * Trigger replacements on changes to this input.
+     * Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+     * Please see the resource documentation for examples.
      * 
      */
     @Export(name="triggers", refs={List.class,Object.class}, tree="[0,1]")
     private Output</* @Nullable */ List<Object>> triggers;
 
     /**
-     * @return Trigger replacements on changes to this input.
+     * @return Trigger a resource replacement on changes to any of these values. The
+     * trigger values can be of any type. If a value is different in the current update compared to the
+     * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+     * Please see the resource documentation for examples.
      * 
      */
     public Output<Optional<List<Object>>> triggers() {

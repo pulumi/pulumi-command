@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This file contains metadata around the types for
-
 package local
 
 import (
+	_ "embed"
+
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
+
+//go:embed command.md
+var resourceDoc string
 
 // This is the type that implements the Command resource methods.
 // The methods are declared in the commandController.go file.
@@ -34,11 +37,7 @@ var _ = (infer.Annotated)((*Command)(nil))
 // Implementing Annotate lets you provide descriptions and default values for resources and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *Command) Annotate(a infer.Annotator) {
-	a.Describe(&c, "A local command to be executed.\n"+
-		"This command can be inserted into the life cycles of other resources using the\n"+
-		"`dependsOn` or `parent` resource options. A command is considered to have\n"+
-		"failed when it finished with a non-zero exit code. This will fail the CRUD step\n"+
-		"of the `Command` resource.")
+	a.Describe(&c, resourceDoc)
 }
 
 // These are the inputs (or arguments) to a Command resource.

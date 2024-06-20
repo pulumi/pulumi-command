@@ -15,18 +15,22 @@
 package remote
 
 import (
+	_ "embed"
+
 	"github.com/pulumi/pulumi-go-provider/infer"
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 )
+
+//go:embed command.md
+var resourceDoc string
 
 type Command struct{}
 
 // Implementing Annotate lets you provide descriptions for resources and they will
 // be visible in the provider's schema and the generated SDKs.
 func (c *Command) Annotate(a infer.Annotator) {
-	a.Describe(&c, `A command to run on a remote host.
-The connection is established via ssh.`)
+	a.Describe(&c, resourceDoc)
 }
 
 // The arguments for a remote Command resource.
