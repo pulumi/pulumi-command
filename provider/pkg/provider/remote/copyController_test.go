@@ -8,14 +8,15 @@ import (
 	"path/filepath"
 	"testing"
 
+	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer/types"
+
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
 
 	"github.com/gliderlabs/ssh"
 	"github.com/pkg/sftp"
-	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	xssh "golang.org/x/crypto/ssh"
@@ -147,73 +148,67 @@ func TestCopyDirectories(t *testing.T) {
 }
 
 func TestCheck(t *testing.T) {
-	host := "host"
-	validConnection := &Connection{
-		connectionBase: connectionBase{Host: &host},
+	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) resource.PropertyMap {
+		m := map[string]any{
+			"connection": map[string]any{
+				"host": "myhost",
+			},
+			"remotePath": "path/to/remote",
+			// AssetOrArchive has special handling in pulumi-go-provider and is kept as a primitive.
+			"source": types.AssetOrArchive{
+				Asset:   asset,
+				Archive: archive,
+			},
+		}
+		return resource.NewPropertyMapFromMap(m)
 	}
 
-	copy := &CopyToRemote{}
-
-	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) CopyToRemoteInputs {
-		aa := types.AssetOrArchive{}
-		if asset != nil {
-			aa.Asset = asset
-		} else if archive != nil {
-			aa.Archive = archive
-		}
-		return CopyToRemoteInputs{
-			Connection: validConnection,
-			Source:     aa,
-			RemotePath: "path/to/remote",
-		}
-	}
-
-	checkNoError := func(news CopyToRemoteInputs) []p.CheckFailure {
-		newsRaw := resource.NewPropertyMap(news)
-		_, failures, err := copy.Check(context.Background(), "urn", nil, newsRaw)
+	check := func(news resource.PropertyMap) []p.CheckFailure {
+		copy := &CopyToRemote{}
+		_, failures, err := copy.Check(context.Background(), "urn", nil, news)
 		require.NoError(t, err)
 		return failures
 	}
 
 	t.Run("happy path, asset", func(t *testing.T) {
 		news := makeNewInput(&asset.Asset{Path: "path/to/file"}, nil)
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Empty(t, failures)
 	})
 
 	t.Run("happy path, archive", func(t *testing.T) {
 		news := makeNewInput(nil, &archive.Archive{Path: "path/to/file"})
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Empty(t, failures)
 	})
 
 	t.Run("asset or archive, not both", func(t *testing.T) {
 		news := makeNewInput(&asset.Asset{Path: "path/to/file"}, &archive.Archive{Path: "path/to/file"})
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Len(t, failures, 1)
 	})
 
 	t.Run("need asset or archive", func(t *testing.T) {
 		news := makeNewInput(nil, nil)
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Len(t, failures, 1)
 	})
 
 	t.Run("asset must be path-based", func(t *testing.T) {
 		news := makeNewInput(&asset.Asset{URI: "http://example.com"}, nil)
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Len(t, failures, 1)
 	})
 
 	t.Run("archive must be path-based", func(t *testing.T) {
 		news := makeNewInput(nil, &archive.Archive{URI: "http://example.com"})
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Len(t, failures, 1)
 	})
 
 	t.Run("can diagnose multiple issues", func(t *testing.T) {
 		news := makeNewInput(&asset.Asset{URI: "http://example.com"}, &archive.Archive{URI: "http://example.com"})
-		failures := checkNoError(news)
+		failures := check(news)
 		assert.Len(t, failures, 3)
 	})
 }
