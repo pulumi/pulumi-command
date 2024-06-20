@@ -10,8 +10,57 @@ using Pulumi.Serialization;
 namespace Pulumi.Command.Remote
 {
     /// <summary>
-    /// A command to run on a remote host.
-    /// The connection is established via ssh.
+    /// A command to run on a remote host. The connection is established via ssh.
+    /// 
+    /// ## Example Usage
+    /// ### Triggers
+    /// 
+    /// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+    /// 
+    /// ```csharp
+    /// using Pulumi;
+    /// using Command = Pulumi.Command;
+    /// using Random = Pulumi.Random;
+    /// 
+    /// return await Deployment.RunAsync(() =&gt; 
+    /// {
+    ///     var str = "foo";
+    /// 
+    ///     var fileAssetVar = new FileAsset("Pulumi.yaml");
+    /// 
+    ///     var rand = new Random.RandomString("rand", new()
+    ///     {
+    ///         Length = 5,
+    ///     });
+    /// 
+    ///     var localFile = new Command.Local.Command("localFile", new()
+    ///     {
+    ///         Create = "touch foo.txt",
+    ///         ArchivePaths = new[]
+    ///         {
+    ///             "*.txt",
+    ///         },
+    ///     });
+    /// 
+    ///     var cmd = new Command.Remote.Command("cmd", new()
+    ///     {
+    ///         Connection = new Command.Remote.Inputs.ConnectionArgs
+    ///         {
+    ///             Host = "insert host here",
+    ///         },
+    ///         Create = "echo create &gt; op.txt",
+    ///         Delete = "echo delete &gt;&gt; op.txt",
+    ///         Triggers = new object[]
+    ///         {
+    ///             str,
+    ///             rand.Result,
+    ///             fileAssetVar,
+    ///             localFile.Archive,
+    ///         },
+    ///     });
+    /// 
+    /// });
+    /// ```
     /// </summary>
     [CommandResourceType("command:remote:Command")]
     public partial class Command : global::Pulumi.CustomResource

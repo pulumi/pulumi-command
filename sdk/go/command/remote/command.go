@@ -12,8 +12,69 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// A command to run on a remote host.
-// The connection is established via ssh.
+// A command to run on a remote host. The connection is established via ssh.
+//
+// ## Example Usage
+// ### Triggers
+//
+// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/pulumi/pulumi-command/sdk/go/command/local"
+//	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
+//	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			str := pulumi.String("foo")
+//
+//			fileAsset := pulumi.NewFileAsset("Pulumi.yaml")
+//
+//			rand, err := random.NewRandomString(ctx, "rand", &random.RandomStringArgs{
+//				Length: pulumi.Int(5),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//			localFile, err := local.NewCommand(ctx, "localFile", &local.CommandArgs{
+//				Create: pulumi.String("touch foo.txt"),
+//				ArchivePaths: pulumi.StringArray{
+//					pulumi.String("*.txt"),
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//			_, err = remote.NewCommand(ctx, "cmd", &remote.CommandArgs{
+//				Connection: &remote.ConnectionArgs{
+//					Host: pulumi.String("insert host here"),
+//				},
+//				Create: pulumi.String("echo create > op.txt"),
+//				Delete: pulumi.String("echo delete >> op.txt"),
+//				Triggers: pulumi.Array{
+//					str,
+//					rand.Result,
+//					fileAsset,
+//					localFile.Archive,
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			return nil
+//		})
+//	}
+//
+// ```
 type Command struct {
 	pulumi.CustomResourceState
 

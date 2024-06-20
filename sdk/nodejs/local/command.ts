@@ -18,23 +18,27 @@ import * as utilities from "../utilities";
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  *
  * ```typescript
- * import * as local from "@pulumi/command/local";
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as command from "@pulumi/command";
  * import * as random from "@pulumi/random";
- * import { asset } from "@pulumi/pulumi";
- * import * as path from "path";
  *
  * const str = "foo";
  * const fileAsset = new pulumi.asset.FileAsset("Pulumi.yaml");
  * const rand = new random.RandomString("rand", {length: 5});
- * const localFile = new local.Command("localFile", {
+ * const localFile = new command.local.Command("localFile", {
  *     create: "touch foo.txt",
  *     archivePaths: ["*.txt"],
  * });
  *
- * const cmd = new local.Command("pwd", {
+ * const cmd = new command.local.Command("cmd", {
  *     create: "echo create > op.txt",
  *     delete: "echo delete >> op.txt",
- *     triggers: [str, rand.result, fileAsset, localFile.archive],
+ *     triggers: [
+ *         str,
+ *         rand.result,
+ *         fileAsset,
+ *         localFile.archive,
+ *     ],
  * });
  * ```
  */

@@ -32,17 +32,6 @@ import javax.annotation.Nullable;
  * 
  * <pre>
  * {@code
- * package generated_program;
- * 
- * import com.pulumi.Context;
- * import com.pulumi.Pulumi;
- * import com.pulumi.core.Output;
- * import com.pulumi.random.RandomString;
- * import com.pulumi.random.RandomStringArgs;
- * import com.pulumi.command.local.Command;
- * import com.pulumi.command.local.CommandArgs;
- * import com.pulumi.asset.FileAsset;
- * 
  * public class App {
  *     public static void main(String[] args) {
  *         Pulumi.run(App::stack);
@@ -64,7 +53,6 @@ import javax.annotation.Nullable;
  *             .create("echo create > op.txt")
  *             .delete("echo delete >> op.txt")
  *             .triggers(
- *                 "foo",
  *                 rand.result(),
  *                 fileAssetVar,
  *                 localFile.archive())

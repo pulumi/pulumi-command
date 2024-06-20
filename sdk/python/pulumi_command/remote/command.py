@@ -213,8 +213,38 @@ class Command(pulumi.CustomResource):
                  update: Optional[pulumi.Input[str]] = None,
                  __props__=None):
         """
-        A command to run on a remote host.
-        The connection is established via ssh.
+        A command to run on a remote host. The connection is established via ssh.
+
+        ## Example Usage
+        ### Triggers
+
+        This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+        import pulumi_random as random
+
+        foo = "foo"
+        file_asset_var = pulumi.FileAsset("Pulumi.yaml")
+        rand = random.RandomString("rand", length=5)
+        local_file = command.local.Command("localFile",
+            create="touch foo.txt",
+            archive_paths=["*.txt"])
+
+        cmd = command.remote.Command("cmd",
+            connection=command.remote.ConnectionArgs(
+                host="insert host here",
+            ),
+            create="echo create > op.txt",
+            delete="echo delete >> op.txt",
+            triggers=[
+                foo,
+                rand.result,
+                file_asset_var,
+                local_file.archive,
+            ])
+        ```
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -250,8 +280,38 @@ class Command(pulumi.CustomResource):
                  args: CommandArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        A command to run on a remote host.
-        The connection is established via ssh.
+        A command to run on a remote host. The connection is established via ssh.
+
+        ## Example Usage
+        ### Triggers
+
+        This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+        import pulumi_random as random
+
+        foo = "foo"
+        file_asset_var = pulumi.FileAsset("Pulumi.yaml")
+        rand = random.RandomString("rand", length=5)
+        local_file = command.local.Command("localFile",
+            create="touch foo.txt",
+            archive_paths=["*.txt"])
+
+        cmd = command.remote.Command("cmd",
+            connection=command.remote.ConnectionArgs(
+                host="insert host here",
+            ),
+            create="echo create > op.txt",
+            delete="echo delete >> op.txt",
+            triggers=[
+                foo,
+                rand.result,
+                file_asset_var,
+                local_file.archive,
+            ])
+        ```
 
         :param str resource_name: The name of the resource.
         :param CommandArgs args: The arguments to use to populate this resource's properties.

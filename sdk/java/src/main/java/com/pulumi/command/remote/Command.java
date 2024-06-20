@@ -20,8 +20,48 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 /**
- * A command to run on a remote host.
- * The connection is established via ssh.
+ * A command to run on a remote host. The connection is established via ssh.
+ * 
+ * ## Example Usage
+ * ### Triggers
+ * 
+ * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+ * 
+ * <pre>
+ * {@code
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         final var fileAssetVar = new FileAsset("Pulumi.yaml");
+ * 
+ *         var rand = new RandomString("rand", RandomStringArgs.builder()
+ *             .length(5)
+ *             .build());
+ * 
+ *         var localFile = new Command("localFile", CommandArgs.builder()
+ *             .create("touch foo.txt")
+ *             .archivePaths("*.txt")
+ *             .build());
+ * 
+ *         var cmd = new Command("cmd", CommandArgs.builder()
+ *             .connection(ConnectionArgs.builder()
+ *                 .host("insert host here")
+ *                 .build())
+ *             .create("echo create > op.txt")
+ *             .delete("echo delete >> op.txt")
+ *             .triggers(            
+ *                 rand.result(),
+ *                 fileAssetVar,
+ *                 localFile.archive())
+ *             .build());
+ * 
+ *     }
+ * }
+ * }
+ * </pre>
  * 
  */
 @ResourceType(type="command:remote:Command")
