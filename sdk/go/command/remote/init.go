@@ -23,6 +23,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 	switch typ {
 	case "command:remote:Command":
 		r = &Command{}
+	case "command:remote:CopyFile":
+		r = &CopyFile{}
 	case "command:remote:CopyToRemote":
 		r = &CopyToRemote{}
 	default:
