@@ -5,7 +5,7 @@
   keywords = ["pulumi", "command", "category/utility", "kind/native"]
   readme = "README.md"
   requires-python = ">=3.8"
-  version = "0.12.0a1718647559"
+  version = "1.0.0a0+dev"
   [project.license]
     text = "Apache-2.0"
   [project.urls]

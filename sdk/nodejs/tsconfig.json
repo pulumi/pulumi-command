@@ -19,7 +19,7 @@
         "local/run.ts",
         "provider.ts",
         "remote/command.ts",
-        "remote/copyFile.ts",
+        "remote/copyToRemote.ts",
         "remote/index.ts",
         "types/enums/index.ts",
         "types/enums/local/index.ts",

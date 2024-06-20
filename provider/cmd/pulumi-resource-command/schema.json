@@ -479,21 +479,21 @@
         "connection"
       ]
     },
-    "command:remote:CopyFile": {
-      "description": "Copy a local file to a remote host.",
+    "command:remote:CopyToRemote": {
+      "description": "Copy an Asset or Archive to a remote host.",
       "properties": {
         "connection": {
           "$ref": "#/types/command:remote:Connection",
           "description": "The parameters with which to connect to the remote host.",
           "secret": true
         },
-        "localPath": {
-          "type": "string",
-          "description": "The path of the file to be copied."
-        },
         "remotePath": {
           "type": "string",
-          "description": "The destination path in the remote host."
+          "description": "The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail."
+        },
+        "source": {
+          "$ref": "pulumi.json#/Asset",
+          "description": "An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files."
         },
         "triggers": {
           "type": "array",
@@ -507,8 +507,8 @@
       "type": "object",
       "required": [
         "connection",
-        "localPath",
-        "remotePath"
+        "remotePath",
+        "source"
       ],
       "inputProperties": {
         "connection": {
@@ -516,13 +516,13 @@
           "description": "The parameters with which to connect to the remote host.",
           "secret": true
         },
-        "localPath": {
-          "type": "string",
-          "description": "The path of the file to be copied."
-        },
         "remotePath": {
           "type": "string",
-          "description": "The destination path in the remote host."
+          "description": "The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail."
+        },
+        "source": {
+          "$ref": "pulumi.json#/Asset",
+          "description": "An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files."
         },
         "triggers": {
           "type": "array",
@@ -535,8 +535,8 @@
       },
       "requiredInputs": [
         "connection",
-        "localPath",
-        "remotePath"
+        "remotePath",
+        "source"
       ]
     }
   },
