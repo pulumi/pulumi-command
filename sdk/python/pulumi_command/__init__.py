@@ -34,7 +34,7 @@ _utilities.register(
   "fqn": "pulumi_command.remote",
   "classes": {
    "command:remote:Command": "Command",
-   "command:remote:Copy": "Copy"
+   "command:remote:CopyToRemote": "CopyToRemote"
   }
  }
 ]

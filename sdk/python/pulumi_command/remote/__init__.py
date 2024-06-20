@@ -7,6 +7,6 @@ import typing
 # Export this package's modules as members:
 from ._enums import *
 from .command import *
-from .copy import *
+from .copy_to_remote import *
 from ._inputs import *
 from . import outputs

@@ -69,7 +69,7 @@ export = async () => {
     const to = config.get("destDir")!;
 
     const archive = new pulumi.asset.FileArchive(from);
-    const copy = new remote.Copy("copy", {
+    const copy = new remote.CopyToRemote("copy", {
         connection,
         source: archive,
         remotePath: to,

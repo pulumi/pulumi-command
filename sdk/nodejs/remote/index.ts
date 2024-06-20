@@ -10,10 +10,10 @@ export type Command = import("./command").Command;
 export const Command: typeof import("./command").Command = null as any;
 utilities.lazyLoad(exports, ["Command"], () => require("./command"));
 
-export { CopyArgs } from "./copy";
-export type Copy = import("./copy").Copy;
-export const Copy: typeof import("./copy").Copy = null as any;
-utilities.lazyLoad(exports, ["Copy"], () => require("./copy"));
+export { CopyToRemoteArgs } from "./copyToRemote";
+export type CopyToRemote = import("./copyToRemote").CopyToRemote;
+export const CopyToRemote: typeof import("./copyToRemote").CopyToRemote = null as any;
+utilities.lazyLoad(exports, ["CopyToRemote"], () => require("./copyToRemote"));
 
 
 // Export enums:
@@ -25,8 +25,8 @@ const _module = {
         switch (type) {
             case "command:remote:Command":
                 return new Command(name, <any>undefined, { urn })
-            case "command:remote:Copy":
-                return new Copy(name, <any>undefined, { urn })
+            case "command:remote:CopyToRemote":
+                return new CopyToRemote(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }
