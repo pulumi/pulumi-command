@@ -152,23 +152,23 @@ func TestCheck(t *testing.T) {
 		connectionBase: connectionBase{Host: &host},
 	}
 
-	copy := &Copy{}
+	copy := &CopyToRemote{}
 
-	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) CopyInputs {
+	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) CopyToRemoteInputs {
 		aa := types.AssetOrArchive{}
 		if asset != nil {
 			aa.Asset = asset
 		} else if archive != nil {
 			aa.Archive = archive
 		}
-		return CopyInputs{
+		return CopyToRemoteInputs{
 			Connection: validConnection,
 			Source:     aa,
 			RemotePath: "path/to/remote",
 		}
 	}
 
-	checkNoError := func(news CopyInputs) []p.CheckFailure {
+	checkNoError := func(news CopyToRemoteInputs) []p.CheckFailure {
 		newsRaw := resource.NewPropertyMap(news)
 		_, failures, err := copy.Check(context.Background(), "urn", nil, newsRaw)
 		require.NoError(t, err)

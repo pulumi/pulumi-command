@@ -32,14 +32,14 @@ import (
 
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
-var _ = (infer.CustomResource[CopyInputs, CopyOutputs])((*Copy)(nil))
-var _ = (infer.CustomCheck[CopyInputs])((*Copy)(nil))
-var _ = (infer.CustomUpdate[CopyInputs, CopyOutputs])((*Copy)(nil))
+var _ = (infer.CustomResource[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
+var _ = (infer.CustomCheck[CopyToRemoteInputs])((*CopyToRemote)(nil))
+var _ = (infer.CustomUpdate[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
 
-func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyInputs, []p.CheckFailure, error) {
+func (c *CopyToRemote) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyToRemoteInputs, []p.CheckFailure, error) {
 	var failures []p.CheckFailure
 
-	inputs, newFailures, err := infer.DefaultCheck[CopyInputs](newInputs)
+	inputs, newFailures, err := infer.DefaultCheck[CopyToRemoteInputs](newInputs)
 	failures = append(failures, newFailures...)
 	if err != nil {
 		return inputs, failures, err
@@ -78,34 +78,34 @@ func (c *Copy) Check(ctx context.Context, urn string, oldInputs, newInputs resou
 }
 
 // This is the Create method. This will be run on every Copy resource creation.
-func (*Copy) Create(ctx context.Context, name string, input CopyInputs, preview bool) (string, CopyOutputs, error) {
+func (*CopyToRemote) Create(ctx context.Context, name string, input CopyToRemoteInputs, preview bool) (string, CopyToRemoteOutputs, error) {
 	if preview {
-		return "", CopyOutputs{input}, nil
+		return "", CopyToRemoteOutputs{input}, nil
 	}
 
 	outputs, err := copy(ctx, input)
 	if err != nil {
-		return "", CopyOutputs{input}, err
+		return "", CopyToRemoteOutputs{input}, err
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
 	return id, outputs, err
 }
 
-func (c *Copy) Update(ctx context.Context, id string, olds CopyOutputs, news CopyInputs, preview bool) (CopyOutputs, error) {
+func (c *CopyToRemote) Update(ctx context.Context, id string, olds CopyToRemoteOutputs, news CopyToRemoteInputs, preview bool) (CopyToRemoteOutputs, error) {
 	if preview {
-		return CopyOutputs{news}, nil
+		return CopyToRemoteOutputs{news}, nil
 	}
 
 	needCopy := news.hash() != olds.hash() || news.RemotePath != olds.RemotePath
 	if needCopy {
 		return copy(ctx, news)
 	}
-	return CopyOutputs{news}, nil
+	return CopyToRemoteOutputs{news}, nil
 }
 
 // copy unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.
-func copy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
+func copy(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, error) {
 	sourcePath := input.sourcePath()
 
 	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
@@ -113,7 +113,7 @@ func copy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
-		return CopyOutputs{input}, err
+		return CopyToRemoteOutputs{input}, err
 	}
 	defer client.Close()
 
@@ -123,12 +123,12 @@ func copy(ctx context.Context, input CopyInputs) (CopyOutputs, error) {
 	// We don't do subsequent writes to the same file, only a single ReadFrom, so we should be fine.
 	sftp, err := sftp.NewClient(client, sftp.UseConcurrentWrites(true))
 	if err != nil {
-		return CopyOutputs{input}, err
+		return CopyToRemoteOutputs{input}, err
 	}
 	defer sftp.Close()
 
 	err = sftpCopy(sftp, sourcePath, input.RemotePath)
-	return CopyOutputs{input}, err
+	return CopyToRemoteOutputs{input}, err
 }
 
 // If the file does not exist, returns nil, nil.

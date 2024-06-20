@@ -50,13 +50,13 @@ func TestArchiveHash(t *testing.T) {
 	require.Equal(t, input.Source.Archive.Hash, input.hash())
 }
 
-func createArchiveInput(t *testing.T) (string, *CopyInputs) {
+func createArchiveInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	archivePath := filepath.Join(t.TempDir(), "archive.zip")
 	require.NoError(t, os.WriteFile(archivePath, []byte("hello, world"), 0644))
 	archive, err := resource.NewPathArchive(archivePath)
 	require.NoError(t, err)
 
-	c := &CopyInputs{
+	c := &CopyToRemoteInputs{
 		Source: types.AssetOrArchive{
 			Archive: archive,
 		},
@@ -64,13 +64,13 @@ func createArchiveInput(t *testing.T) (string, *CopyInputs) {
 	return archivePath, c
 }
 
-func createAssetInput(t *testing.T) (string, *CopyInputs) {
+func createAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	assetPath := filepath.Join(t.TempDir(), "asset")
 	require.NoError(t, os.WriteFile(assetPath, []byte("hello, world"), 0644))
 	asset, err := resource.NewPathAsset(assetPath)
 	require.NoError(t, err)
 
-	c := &CopyInputs{
+	c := &CopyToRemoteInputs{
 		Source: types.AssetOrArchive{
 			Asset: asset,
 		},

@@ -90,9 +90,9 @@ new local.Command("localPrivateIP", {
     delete: `rm private_ip.txt`,
 }, { deleteBeforeReplace: true, dependsOn: hostname });
 
-const sizeFile = new remote.Copy("size", {
+const sizeFile = new remote.CopyToRemote("size", {
     connection: connection,
-    asset: new asset.FileAsset("./size.ts"),
+    source: new asset.FileAsset("./size.ts"),
     remotePath: "size.ts",
 }, { dependsOn: hostname })
 
