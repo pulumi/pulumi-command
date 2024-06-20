@@ -17,7 +17,7 @@ namespace Pulumi.Command.Local
     /// ## Example Usage
     /// ### Triggers
     /// 
-    /// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is the trigger, not the contents of index.ts, since triggers are simply opaque values.
+    /// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
     /// 
     /// ```csharp
     /// using Pulumi;

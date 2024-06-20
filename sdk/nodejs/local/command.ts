@@ -15,7 +15,7 @@ import * as utilities from "../utilities";
  * ## Example Usage
  * ### Triggers
  *
- * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run. However, note that for `fileAsset` it's the variable itself that is the trigger, not the contents of index.ts, since triggers are simply opaque values.
+ * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  *
  * ```typescript
  * import * as local from "@pulumi/command/local";
@@ -26,7 +26,7 @@ import * as utilities from "../utilities";
  * const str = "foo";
  * const fileAsset = new pulumi.asset.FileAsset("Pulumi.yaml");
  * const rand = new random.RandomString("rand", {length: 5});
- * const localFile = new command.local.Command("localFile", {
+ * const localFile = new local.Command("localFile", {
  *     create: "touch foo.txt",
  *     archivePaths: ["*.txt"],
  * });
