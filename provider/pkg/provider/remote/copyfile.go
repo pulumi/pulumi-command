@@ -25,6 +25,8 @@ var _ = (infer.Annotated)((*CopyFile)(nil))
 // CopyFile implements Annotate which allows you to attach descriptions to the CopyFile resource.
 func (c *CopyFile) Annotate(a infer.Annotator) {
 	a.Describe(&c, "Copy a local file to a remote host.")
+	a.SetResourceDeprecationMessage("This resource is deprecated and will be removed in a future release. " +
+		"Please use the `CopyToRemote` resource instead.")
 }
 
 type CopyFileInputs struct {

@@ -535,7 +535,8 @@
         "connection",
         "localPath",
         "remotePath"
-      ]
+      ],
+      "deprecationMessage": "This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead."
     },
     "command:remote:CopyToRemote": {
       "description": "Copy an Asset or Archive to a remote host.",
