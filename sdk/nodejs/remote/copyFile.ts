@@ -9,6 +9,8 @@ import * as utilities from "../utilities";
 
 /**
  * Copy a local file to a remote host.
+ *
+ * @deprecated This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.
  */
 export class CopyFile extends pulumi.CustomResource {
     /**
@@ -20,6 +22,7 @@ export class CopyFile extends pulumi.CustomResource {
      * @param opts Optional settings to control the behavior of the CustomResource.
      */
     public static get(name: string, id: pulumi.Input<pulumi.ID>, opts?: pulumi.CustomResourceOptions): CopyFile {
+        pulumi.log.warn("CopyFile is deprecated: This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.")
         return new CopyFile(name, undefined as any, { ...opts, id: id });
     }
 
@@ -61,7 +64,9 @@ export class CopyFile extends pulumi.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param opts A bag of options that control this resource's behavior.
      */
+    /** @deprecated This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead. */
     constructor(name: string, args: CopyFileArgs, opts?: pulumi.CustomResourceOptions) {
+        pulumi.log.warn("CopyFile is deprecated: This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.")
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {

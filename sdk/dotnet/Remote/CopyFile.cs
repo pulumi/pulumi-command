@@ -12,6 +12,7 @@ namespace Pulumi.Command.Remote
     /// <summary>
     /// Copy a local file to a remote host.
     /// </summary>
+    [Obsolete(@"This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.")]
     [CommandResourceType("command:remote:CopyFile")]
     public partial class CopyFile : global::Pulumi.CustomResource
     {

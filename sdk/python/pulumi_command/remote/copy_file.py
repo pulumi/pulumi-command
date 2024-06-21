@@ -82,7 +82,12 @@ class CopyFileArgs:
         pulumi.set(self, "triggers", value)
 
 
+warnings.warn("""This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.""", DeprecationWarning)
+
+
 class CopyFile(pulumi.CustomResource):
+    warnings.warn("""This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.""", DeprecationWarning)
+
     @overload
     def __init__(__self__,
                  resource_name: str,
@@ -131,6 +136,7 @@ class CopyFile(pulumi.CustomResource):
                  remote_path: Optional[pulumi.Input[str]] = None,
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
                  __props__=None):
+        pulumi.log.warn("""CopyFile is deprecated: This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.""")
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
             raise TypeError('Expected resource options to be a ResourceOptions instance')

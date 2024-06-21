@@ -13,6 +13,8 @@ import (
 )
 
 // Copy a local file to a remote host.
+//
+// Deprecated: This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.
 type CopyFile struct {
 	pulumi.CustomResourceState
 
