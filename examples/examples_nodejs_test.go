@@ -303,6 +303,36 @@ func TestEc2DirCopy(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
+func TestEc2CopyFile(t *testing.T) {
+	key, keyCleanup := genEC2KeyPair(t)
+	defer keyCleanup()
+
+	const dest = "/tmp/TestEc2CopyFile"
+	basePath := filepath.Join(getCwd(t), "ec2_copyfile")
+
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir: basePath,
+			Config: map[string]string{
+				"keyName": aws.StringValue(key.KeyName),
+				"destDir": dest,
+			},
+			Secrets: map[string]string{
+				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
+			},
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				remoteLSOutput, ok := stack.Outputs["lsRemote"]
+				require.True(t, ok)
+				remoteLS, ok := remoteLSOutput.(string)
+				require.True(t, ok)
+
+				assert.Contains(t, remoteLS, "TestEc2CopyFile")
+			},
+		})
+
+	integration.ProgramTest(t, &test)
+}
+
 func TestLambdaInvoke(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{

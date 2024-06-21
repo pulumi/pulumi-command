@@ -99,6 +99,7 @@ func NewProvider() p.Provider {
 			](),
 			infer.Resource[*remote.Command, remote.CommandInputs, remote.CommandOutputs](),
 			infer.Resource[*remote.CopyToRemote, remote.CopyToRemoteInputs, remote.CopyToRemoteOutputs](),
+			infer.Resource[*remote.CopyFile, remote.CopyFileInputs, remote.CopyFileOutputs](),
 		},
 		// Functions or invokes that are provided by the provider.
 		Functions: []infer.InferredFunction{

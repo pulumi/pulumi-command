@@ -1,0 +1,7 @@
+name: copy-remote
+runtime: nodejs
+description: A command example copying a directory via sFTP
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: ""
