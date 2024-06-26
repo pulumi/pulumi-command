@@ -3,10 +3,11 @@ A command to run on a remote host. The connection is established via ssh.
 {{% examples %}}
 ## Example Usage
 
-{{% example %}}
 ### Triggers
 
 This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
+
+{{% example %}}
 
 ```typescript
 import * as pulumi from "@pulumi/pulumi";

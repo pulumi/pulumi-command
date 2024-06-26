@@ -9,6 +9,64 @@ import * as utilities from "../utilities";
 
 /**
  * Copy an Asset or Archive to a remote host.
+ *
+ * ## Example usage
+ *
+ * This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
+ *
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import { remote, types } from "@pulumi/command";
+ * import * as fs from "fs";
+ * import * as os from "os";
+ * import * as path from "path";
+ *
+ * export = async () => {
+ *     const config = new pulumi.Config();
+ *
+ *     // Get the private key to connect to the server. If a key is
+ *     // provided, use it, otherwise default to the standard id_rsa SSH key.
+ *     const privateKeyBase64 = config.get("privateKeyBase64");
+ *     const privateKey = privateKeyBase64 ?
+ *         Buffer.from(privateKeyBase64, 'base64').toString('ascii') :
+ *         fs.readFileSync(path.join(os.homedir(), ".ssh", "id_rsa")).toString("utf8");
+ *
+ *     const serverPublicIp = config.require("serverPublicIp");
+ *     const userName = config.require("userName");
+ *
+ *     // The configuration of our SSH connection to the instance.
+ *     const connection: types.input.remote.ConnectionArgs = {
+ *         host: serverPublicIp,
+ *         user: userName,
+ *         privateKey: privateKey,
+ *     };
+ *
+ *     // Set up source and target of the remote copy.
+ *     const from = config.require("payload")!;
+ *     const archive = new pulumi.asset.FileArchive(from);
+ *     const to = config.require("destDir")!;
+ *
+ *     // Copy the files to the remote.
+ *     const copy = new remote.CopyToRemote("copy", {
+ *         connection,
+ *         source: archive,
+ *         remotePath: to,
+ *     });
+ *
+ *     // Verify that the expected files were copied to the remote.
+ *     // We want to run this after each copy, i.e., when something changed,
+ *     // so we use the asset to be copied as a trigger.
+ *     const find = new remote.Command("ls", {
+ *         connection,
+ *         create: `find ${to}/${from} | sort`,
+ *         triggers: [archive],
+ *     }, { dependsOn: copy });
+ *
+ *     return {
+ *         remoteContents: find.stdout
+ *     }
+ * }
+ * ```
  */
 export class CopyToRemote extends pulumi.CustomResource {
     /**

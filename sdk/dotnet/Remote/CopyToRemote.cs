@@ -11,6 +11,67 @@ namespace Pulumi.Command.Remote
 {
     /// <summary>
     /// Copy an Asset or Archive to a remote host.
+    /// 
+    /// ## Example usage
+    /// 
+    /// This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
+    /// 
+    /// ```csharp
+    /// using System.Collections.Generic;
+    /// using Pulumi;
+    /// using Command = Pulumi.Command;
+    /// 
+    /// return await Deployment.RunAsync(() =&gt; 
+    /// {
+    ///     var config = new Config();
+    ///     var serverPublicIp = config.Require("serverPublicIp");
+    ///     var userName = config.Require("userName");
+    ///     var privateKey = config.Require("privateKey");
+    ///     var payload = config.Require("payload");
+    ///     var destDir = config.Require("destDir");
+    ///     
+    ///     var archive = new FileArchive(payload);
+    /// 
+    ///     // The configuration of our SSH connection to the instance.
+    ///     var conn = new Command.Remote.Inputs.ConnectionArgs
+    ///     {
+    ///         Host = serverPublicIp,
+    ///         User = userName,
+    ///         PrivateKey = privateKey,
+    ///     };
+    /// 
+    ///     // Copy the files to the remote.
+    ///     var copy = new Command.Remote.CopyToRemote("copy", new()
+    ///     {
+    ///         Connection = conn,
+    ///         Source = archive,
+    ///     });
+    /// 
+    ///     // Verify that the expected files were copied to the remote.
+    ///     // We want to run this after each copy, i.e., when something changed,
+    ///     // so we use the asset to be copied as a trigger.
+    ///     var find = new Command.Remote.Command("find", new()
+    ///     {
+    ///         Connection = conn,
+    ///         Create = $"find {destDir}/{payload} | sort",
+    ///         Triggers = new[]
+    ///         {
+    ///             archive,
+    ///         },
+    ///     }, new CustomResourceOptions
+    ///     {
+    ///         DependsOn =
+    ///         {
+    ///             copy,
+    ///         },
+    ///     });
+    /// 
+    ///     return new Dictionary&lt;string, object?&gt;
+    ///     {
+    ///         ["remoteContents"] = find.Stdout,
+    ///     };
+    /// });
+    /// ```
     /// </summary>
     [CommandResourceType("command:remote:CopyToRemote")]
     public partial class CopyToRemote : global::Pulumi.CustomResource

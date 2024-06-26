@@ -15,6 +15,99 @@ namespace Pulumi.Command.Local
     /// This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
     /// 
     /// ## Example Usage
+    /// 
+    /// ### Basic Example
+    /// 
+    /// This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+    /// 
+    /// ```csharp
+    /// using System.Collections.Generic;
+    /// using Pulumi;
+    /// using Pulumi.Command.Local;
+    /// 
+    /// await Deployment.RunAsync(() =&gt;
+    /// {
+    ///     var command = new Command("random", new CommandArgs
+    ///     {
+    ///         Create = "openssl rand -hex 16"
+    ///     });
+    /// 
+    ///     return new Dictionary&lt;string, object?&gt;
+    ///     {
+    ///         ["stdOut"] = command.Stdout
+    ///     };
+    /// });
+    /// ```
+    /// 
+    /// ### Invoking a Lambda during Pulumi deployment
+    /// 
+    /// This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
+    /// 
+    /// ```csharp
+    /// using System.Collections.Generic;
+    /// using System.Text.Json;
+    /// using Pulumi;
+    /// using Aws = Pulumi.Aws;
+    /// using Command = Pulumi.Command;
+    /// 
+    /// return await Deployment.RunAsync(() =&gt; 
+    /// {
+    ///     var awsConfig = new Config("aws");
+    /// 
+    ///     var lambdaRole = new Aws.Iam.Role("lambdaRole", new()
+    ///     {
+    ///         AssumeRolePolicy = JsonSerializer.Serialize(new Dictionary&lt;string, object?&gt;
+    ///         {
+    ///             ["Version"] = "2012-10-17",
+    ///             ["Statement"] = new[]
+    ///             {
+    ///                 new Dictionary&lt;string, object?&gt;
+    ///                 {
+    ///                     ["Action"] = "sts:AssumeRole",
+    ///                     ["Effect"] = "Allow",
+    ///                     ["Principal"] = new Dictionary&lt;string, object?&gt;
+    ///                     {
+    ///                         ["Service"] = "lambda.amazonaws.com",
+    ///                     },
+    ///                 },
+    ///             },
+    ///         }),
+    ///     });
+    /// 
+    ///     var lambdaFunction = new Aws.Lambda.Function("lambdaFunction", new()
+    ///     {
+    ///         Name = "f",
+    ///         Publish = true,
+    ///         Role = lambdaRole.Arn,
+    ///         Handler = "index.handler",
+    ///         Runtime = Aws.Lambda.Runtime.NodeJS20dX,
+    ///         Code = new FileArchive("./handler"),
+    ///     });
+    /// 
+    ///     var invokeCommand = new Command.Local.Command("invokeCommand", new()
+    ///     {
+    ///         Create = $"aws lambda invoke --function-name \"$FN\" --payload '{{\"stackName\": \"{Deployment.Instance.StackName}\"}}' --cli-binary-format raw-in-base64-out out.txt &gt;/dev/null &amp;&amp; cat out.txt | tr -d '\"'  &amp;&amp; rm out.txt",
+    ///         Environment = 
+    ///         {
+    ///             { "FN", lambdaFunction.Arn },
+    ///             { "AWS_REGION", awsConfig.Require("region") },
+    ///             { "AWS_PAGER", "" },
+    ///         },
+    ///     }, new CustomResourceOptions
+    ///     {
+    ///         DependsOn =
+    ///         {
+    ///             lambdaFunction,
+    ///         },
+    ///     });
+    /// 
+    ///     return new Dictionary&lt;string, object?&gt;
+    ///     {
+    ///         ["output"] = invokeCommand.Stdout,
+    ///     };
+    /// });
+    /// ```
+    /// 
     /// ### Triggers
     /// 
     /// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.

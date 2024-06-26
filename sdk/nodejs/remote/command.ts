@@ -11,6 +11,7 @@ import * as utilities from "../utilities";
  * A command to run on a remote host. The connection is established via ssh.
  *
  * ## Example Usage
+ *
  * ### Triggers
  *
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.

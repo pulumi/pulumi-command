@@ -15,9 +15,14 @@
 package remote
 
 import (
+	_ "embed"
+
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi-go-provider/infer/types"
 )
+
+//go:embed copyToRemote.md
+var copyResourceDoc string
 
 type CopyToRemote struct{}
 
@@ -25,7 +30,7 @@ var _ = (infer.Annotated)((*CopyToRemote)(nil))
 
 // Copy implements Annotate which allows you to attach descriptions to the Copy resource.
 func (c *CopyToRemote) Annotate(a infer.Annotator) {
-	a.Describe(&c, "Copy an Asset or Archive to a remote host.")
+	a.Describe(&c, copyResourceDoc)
 }
 
 type CopyToRemoteInputs struct {

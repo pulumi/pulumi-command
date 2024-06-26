@@ -95,6 +95,49 @@ class CopyToRemote(pulumi.CustomResource):
         """
         Copy an Asset or Archive to a remote host.
 
+        ## Example usage
+
+        This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+
+        config = pulumi.Config()
+
+        server_public_ip = config.require("serverPublicIp")
+        user_name = config.require("userName")
+        private_key = config.require("privateKey")
+        payload = config.require("payload")
+        dest_dir = config.require("destDir")
+
+        archive = pulumi.FileArchive(payload)
+
+        # The configuration of our SSH connection to the instance.
+        conn = command.remote.ConnectionArgs(
+            host = server_public_ip,
+            user = user_name,
+            privateKey = private_key,
+        )
+
+        # Copy the files to the remote.
+        copy = command.remote.CopyToRemote("copy",
+            connection=conn,
+            source=archive,
+            destination=dest_dir)
+
+        # Verify that the expected files were copied to the remote.
+        # We want to run this after each copy, i.e., when something changed,
+        # so we use the asset to be copied as a trigger.
+        find = command.remote.Command("find",
+            connection=conn,
+            create=f"find {dest_dir}/{payload} | sort",
+            triggers=[archive],
+            opts = pulumi.ResourceOptions(depends_on=[copy]))
+
+        pulumi.export("remoteContents", find.stdout)
+        ```
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[pulumi.InputType['ConnectionArgs']] connection: The parameters with which to connect to the remote host.
@@ -110,6 +153,49 @@ class CopyToRemote(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Copy an Asset or Archive to a remote host.
+
+        ## Example usage
+
+        This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+
+        config = pulumi.Config()
+
+        server_public_ip = config.require("serverPublicIp")
+        user_name = config.require("userName")
+        private_key = config.require("privateKey")
+        payload = config.require("payload")
+        dest_dir = config.require("destDir")
+
+        archive = pulumi.FileArchive(payload)
+
+        # The configuration of our SSH connection to the instance.
+        conn = command.remote.ConnectionArgs(
+            host = server_public_ip,
+            user = user_name,
+            privateKey = private_key,
+        )
+
+        # Copy the files to the remote.
+        copy = command.remote.CopyToRemote("copy",
+            connection=conn,
+            source=archive,
+            destination=dest_dir)
+
+        # Verify that the expected files were copied to the remote.
+        # We want to run this after each copy, i.e., when something changed,
+        # so we use the asset to be copied as a trigger.
+        find = command.remote.Command("find",
+            connection=conn,
+            create=f"find {dest_dir}/{payload} | sort",
+            triggers=[archive],
+            opts = pulumi.ResourceOptions(depends_on=[copy]))
+
+        pulumi.export("remoteContents", find.stdout)
+        ```
 
         :param str resource_name: The name of the resource.
         :param CopyToRemoteArgs args: The arguments to use to populate this resource's properties.

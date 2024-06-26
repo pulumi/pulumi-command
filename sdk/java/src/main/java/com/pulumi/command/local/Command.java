@@ -26,6 +26,84 @@ import javax.annotation.Nullable;
  * This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
  * 
  * ## Example Usage
+ * 
+ * ### Basic Example
+ * 
+ * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+ * 
+ * ### Invoking a Lambda during Pulumi deployment
+ * 
+ * This example show using a local command to invoke an AWS Lambda once it&#39;s deployed. The Lambda invocation could also depend on other resources.
+ * 
+ * <pre>
+ * {@code
+ * package generated_program;
+ * 
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.aws.iam.Role;
+ * import com.pulumi.aws.iam.RoleArgs;
+ * import com.pulumi.aws.lambda.Function;
+ * import com.pulumi.aws.lambda.FunctionArgs;
+ * import com.pulumi.command.local.Command;
+ * import com.pulumi.command.local.CommandArgs;
+ * import static com.pulumi.codegen.internal.Serialization.*;
+ * import com.pulumi.resources.CustomResourceOptions;
+ * import com.pulumi.asset.FileArchive;
+ * import java.util.Map;
+ * 
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         var awsConfig = ctx.config("aws");
+ *         var awsRegion = awsConfig.require("region");
+ * 
+ *         var lambdaRole = new Role("lambdaRole", RoleArgs.builder()
+ *                 .assumeRolePolicy(serializeJson(
+ *                         jsonObject(
+ *                                 jsonProperty("Version", "2012-10-17"),
+ *                                 jsonProperty("Statement", jsonArray(jsonObject(
+ *                                         jsonProperty("Action", "sts:AssumeRole"),
+ *                                         jsonProperty("Effect", "Allow"),
+ *                                         jsonProperty("Principal", jsonObject(
+ *                                                 jsonProperty("Service", "lambda.amazonaws.com")))))))))
+ *                 .build());
+ * 
+ *         var lambdaFunction = new Function("lambdaFunction", FunctionArgs.builder()
+ *                 .name("f")
+ *                 .publish(true)
+ *                 .role(lambdaRole.arn())
+ *                 .handler("index.handler")
+ *                 .runtime("nodejs20.x")
+ *                 .code(new FileArchive("./handler"))
+ *                 .build());
+ * 
+ *         var lambdaInvokeOut = lambdaFunction.arn().applyValue(arn -> {
+ *             var invokeCommand = new Command("invokeCommand", CommandArgs.builder()
+ *                     .create(String.format(
+ *                             "aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"%s\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt",
+ *                             ctx.stackName()))
+ *                     .environment(Map.ofEntries(
+ *                             Map.entry("FN", arn),
+ *                             Map.entry("AWS_REGION", awsRegion),
+ *                             Map.entry("AWS_PAGER", "")))
+ *                     .build(),
+ *                     CustomResourceOptions.builder()
+ *                             .dependsOn(lambdaFunction)
+ *                             .build());
+ * 
+ *             return invokeCommand.stdout();
+ *         });
+ * 
+ *         ctx.export("output", lambdaInvokeOut);
+ *     }
+ * }
+ * }
+ * </pre>
+ * 
  * ### Triggers
  * 
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
