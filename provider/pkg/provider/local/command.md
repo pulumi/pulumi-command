@@ -62,7 +62,6 @@ import (
 
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
-
 		random, err := local.NewCommand(ctx, "my-bucket", &local.CommandArgs{
 			Create: pulumi.String("openssl rand -hex 16"),
 		})
@@ -74,6 +73,39 @@ func main() {
 		return nil
 	})
 }
+```
+
+```java
+package generated_program;
+
+import com.pulumi.Context;
+import com.pulumi.Pulumi;
+import com.pulumi.command.local.Command;
+import com.pulumi.command.local.CommandArgs;
+
+public class App {
+    public static void main(String[] args) {
+        Pulumi.run(App::stack);
+    }
+
+    public static void stack(Context ctx) {
+        var random = new Command("random", CommandArgs.builder()
+            .create("openssl rand -hex 16")
+            .build());
+
+        ctx.export("rand", random.stdout());
+    }
+}
+```
+
+```yaml
+outputs:
+  rand: "${random.stdout}"
+resources:
+  random:
+    type: command:local:Command
+    properties:
+      create: "openssl rand -hex 16"
 ```
 
 {{% /example %}}
