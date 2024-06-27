@@ -33,7 +33,6 @@ import (
 //
 //	func main() {
 //		pulumi.Run(func(ctx *pulumi.Context) error {
-//
 //			random, err := local.NewCommand(ctx, "my-bucket", &local.CommandArgs{
 //				Create: pulumi.String("openssl rand -hex 16"),
 //			})

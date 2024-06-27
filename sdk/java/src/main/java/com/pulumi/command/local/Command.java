@@ -27,6 +27,35 @@ import javax.annotation.Nullable;
  * 
  * ## Example Usage
  * 
+ * ### Basic Example
+ * 
+ * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+ * 
+ * <pre>
+ * {@code
+ * package generated_program;
+ * 
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.command.local.Command;
+ * import com.pulumi.command.local.CommandArgs;
+ * 
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         var random = new Command("random", CommandArgs.builder()
+ *             .create("openssl rand -hex 16")
+ *             .build());
+ * 
+ *         ctx.export("rand", random.stdout());
+ *     }
+ * }
+ * }
+ * </pre>
+ * 
  * ### Invoking a Lambda during Pulumi Deployment
  * 
  * This example show using a local command to invoke an AWS Lambda once it&#39;s deployed. The Lambda invocation could also depend on other resources.
