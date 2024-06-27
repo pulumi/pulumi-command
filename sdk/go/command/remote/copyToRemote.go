@@ -13,6 +13,68 @@ import (
 )
 
 // Copy an Asset or Archive to a remote host.
+//
+// ## Example usage
+//
+// This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"fmt"
+//
+//	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			cfg := config.New(ctx, "")
+//			serverPublicIp := cfg.Require("serverPublicIp")
+//			userName := cfg.Require("userName")
+//			privateKey := cfg.Require("privateKey")
+//			payload := cfg.Require("payload")
+//			destDir := cfg.Require("destDir")
+//
+//			archive := pulumi.NewFileArchive(payload)
+//
+//			conn := remote.ConnectionArgs{
+//				Host:       pulumi.String(serverPublicIp),
+//				User:       pulumi.String(userName),
+//				PrivateKey: pulumi.String(privateKey),
+//			}
+//
+//			copy, err := remote.NewCopyToRemote(ctx, "copy", &remote.CopyToRemoteArgs{
+//				Connection: conn,
+//				Source:     archive,
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//			find, err := remote.NewCommand(ctx, "find", &remote.CommandArgs{
+//				Connection: conn,
+//				Create:     pulumi.String(fmt.Sprintf("find %v/%v | sort", destDir, payload)),
+//				Triggers: pulumi.Array{
+//					archive,
+//				},
+//			}, pulumi.DependsOn([]pulumi.Resource{
+//				copy,
+//			}))
+//			if err != nil {
+//				return err
+//			}
+//
+//			ctx.Export("remoteContents", find.Stdout)
+//			return nil
+//		})
+//	}
+//
+// ```
 type CopyToRemote struct {
 	pulumi.CustomResourceState
 

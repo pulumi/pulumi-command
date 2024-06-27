@@ -15,8 +15,46 @@ import (
 // A command to run on a remote host. The connection is established via ssh.
 //
 // ## Example Usage
-// ### Triggers
 //
+// ### A Basic Example
+// This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			cfg := config.New(ctx, "")
+//			server := cfg.Require("server")
+//			userName := cfg.Require("userName")
+//			privateKey := cfg.Require("privateKey")
+//			hostnameCmd, err := remote.NewCommand(ctx, "hostnameCmd", &remote.CommandArgs{
+//				Create: pulumi.String("hostname"),
+//				Connection: &remote.ConnectionArgs{
+//					Host:       pulumi.String(server),
+//					User:       pulumi.String(userName),
+//					PrivateKey: pulumi.String(privateKey),
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("hostname", hostnameCmd.Stdout)
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ### Triggers
 // This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 //
 // ```go

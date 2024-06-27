@@ -13,7 +13,50 @@ import * as utilities from "../utilities";
  * This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
  *
  * ## Example Usage
- * ### Triggers
+ *
+ * ### Basic Example
+ *
+ * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+ *
+ * ```typescript
+ * import { local } from "@pulumi/command";
+ *
+ * const random = new local.Command("random", {
+ *     create: "openssl rand -hex 16",
+ * });
+ *
+ * export const output = random.stdout;
+ * ```
+ *
+ * ### Invoking a Lambda during Pulumi Deployment
+ *
+ * This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
+ *
+ * ```typescript
+ * import * as aws from "@pulumi/aws";
+ * import { local } from "@pulumi/command";
+ * import { getStack } from "@pulumi/pulumi";
+ *
+ * const f = new aws.lambda.CallbackFunction("f", {
+ *     publish: true,
+ *     callback: async (ev: any) => {
+ *         return `Stack ${ev.stackName} is deployed!`;
+ *     }
+ * });
+ *
+ * const invoke = new local.Command("execf", {
+ *     create: `aws lambda invoke --function-name "$FN" --payload '{"stackName": "${getStack()}"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '"'  && rm out.txt`,
+ *     environment: {
+ *         FN: f.qualifiedArn,
+ *         AWS_REGION: aws.config.region!,
+ *         AWS_PAGER: "",
+ *     },
+ * }, { dependsOn: f })
+ *
+ * export const output = invoke.stdout;
+ * ```
+ *
+ * ### Using Triggers
  *
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  *

@@ -265,21 +265,46 @@ curl \
 
 There are cases where it's important to run some cleanup operation before destroying a resource such as when destroying the resource does not properly handle orderly cleanup.  For example, destroying an EKS Cluster will not ensure that all Kubernetes object finalizers are run, which may lead to leaking external resources managed by those Kubernetes resources.  This example shows how we can use a `delete`-only `Command` to ensure some cleanup is run within a cluster before destroying it.
 
+```yaml
+resources:
+  cluster:
+    type: eks:Cluster
+
+  cleanupKubernetesNamespaces:
+    # We could also use `RemoteCommand` to run this from
+    # within a node in the cluster.
+    type: command:local:Command
+    properties:
+      # This will run before the cluster is destroyed.
+      # Everything else will need to depend on this resource
+      # to ensure this cleanup doesn't happen too early.
+      delete: |
+        kubectl --kubeconfig <(echo "$KUBECONFIG_DATA") delete namespace nginx
+      # Process substitution "<()" doesn't work in the default interpreter sh.
+      interpreter: ["/bin/bash", "-c"]
+      environment:
+        KUBECONFIG_DATA: "${cluster.kubeconfigJson}"
+```
+
 ```ts
-import { local } from "@pulumi/command";
+import * as pulumi from "@pulumi/pulumi";
+import * as command from "@pulumi/command";
 import * as eks from "@pulumi/eks";
-import * as random from "@pulumi/random";
-import { interpolate } from "@pulumi/pulumi";
 
 const cluster = new eks.Cluster("cluster", {});
 
 // We could also use `RemoteCommand` to run this from within a node in the cluster
-const cleanupKubernetesNamespaces = new local.Command("cleanupKubernetesNamespaces", {
+const cleanupKubernetesNamespaces = new command.local.Command("cleanupKubernetesNamespaces", {
     // This will run before the cluster is destroyed.  Everything else will need to 
     // depend on this resource to ensure this cleanup doesn't happen too early.
-    delete: "kubectl delete --all namespaces",
+    "delete": "kubectl --kubeconfig <(echo \"$KUBECONFIG_DATA\") delete namespace nginx\n",
+    // Process substitution "<()" doesn't work in the default interpreter sh.
+    interpreter: [
+        "/bin/bash",
+        "-c",
+    ],
     environment: {
-        KUBECONFIG: cluster.kubeconfig,
+        KUBECONFIG_DATA: cluster.kubeconfigJson,
     },
 });
 ```

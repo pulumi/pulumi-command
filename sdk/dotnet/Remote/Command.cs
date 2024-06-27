@@ -13,8 +13,41 @@ namespace Pulumi.Command.Remote
     /// A command to run on a remote host. The connection is established via ssh.
     /// 
     /// ## Example Usage
-    /// ### Triggers
     /// 
+    /// ### A Basic Example
+    /// This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
+    /// 
+    /// ```csharp
+    /// using System.Collections.Generic;
+    /// using System.Linq;
+    /// using Pulumi;
+    /// using Command = Pulumi.Command;
+    /// 
+    /// return await Deployment.RunAsync(() =&gt;
+    /// {
+    ///     var config = new Config();
+    ///     var server = config.Require("server");
+    ///     var userName = config.Require("userName");
+    ///     var privateKey = config.Require("privateKey");
+    ///     var hostnameCmd = new Command.Remote.Command("hostnameCmd", new()
+    ///     {
+    ///         Create = "hostname",
+    ///         Connection = new Command.Remote.Inputs.ConnectionArgs
+    ///         {
+    ///             Host = server,
+    ///             User = userName,
+    ///             PrivateKey = privateKey,
+    ///         },
+    ///     });
+    /// 
+    ///     return new Dictionary&lt;string, object?&gt;
+    ///     {
+    ///         ["hostname"] = hostnameCmd.Stdout,
+    ///     };
+    /// });
+    /// ```
+    /// 
+    /// ### Triggers
     /// This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
     /// 
     /// ```csharp
@@ -22,7 +55,7 @@ namespace Pulumi.Command.Remote
     /// using Command = Pulumi.Command;
     /// using Random = Pulumi.Random;
     /// 
-    /// return await Deployment.RunAsync(() =&gt; 
+    /// return await Deployment.RunAsync(() =&gt;
     /// {
     ///     var str = "foo";
     /// 

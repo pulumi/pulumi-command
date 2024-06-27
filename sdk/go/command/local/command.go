@@ -16,7 +16,116 @@ import (
 // This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
 //
 // ## Example Usage
-// ### Triggers
+//
+// ### Basic Example
+//
+// This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"github.com/pulumi/pulumi-command/sdk/go/command/local"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			random, err := local.NewCommand(ctx, "my-bucket", &local.CommandArgs{
+//				Create: pulumi.String("openssl rand -hex 16"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//
+//			ctx.Export("output", random.Stdout)
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ### Invoking a Lambda during Pulumi Deployment
+//
+// This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
+//
+// ```go
+// package main
+//
+// import (
+//
+//	"encoding/json"
+//	"fmt"
+//
+//	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
+//	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/lambda"
+//	"github.com/pulumi/pulumi-command/sdk/go/command/local"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
+//
+// )
+//
+//	func main() {
+//		pulumi.Run(func(ctx *pulumi.Context) error {
+//			awsConfig := config.New(ctx, "aws")
+//			awsRegion := awsConfig.Require("region")
+//
+//			tmpJSON0, err := json.Marshal(map[string]interface{}{
+//				"Version": "2012-10-17",
+//				"Statement": []map[string]interface{}{
+//					{
+//						"Action": "sts:AssumeRole",
+//						"Effect": "Allow",
+//						"Principal": map[string]interface{}{
+//							"Service": "lambda.amazonaws.com",
+//						},
+//					},
+//				},
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			json0 := string(tmpJSON0)
+//			lambdaRole, err := iam.NewRole(ctx, "lambdaRole", &iam.RoleArgs{
+//				AssumeRolePolicy: pulumi.String(json0),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			lambdaFunction, err := lambda.NewFunction(ctx, "lambdaFunction", &lambda.FunctionArgs{
+//				Name:    pulumi.String("f"),
+//				Publish: pulumi.Bool(true),
+//				Role:    lambdaRole.Arn,
+//				Handler: pulumi.String("index.handler"),
+//				Runtime: pulumi.String(lambda.RuntimeNodeJS20dX),
+//				Code:    pulumi.NewFileArchive("./handler"),
+//			})
+//			if err != nil {
+//				return err
+//			}
+//			invokeCommand, err := local.NewCommand(ctx, "invokeCommand", &local.CommandArgs{
+//				Create: pulumi.String(fmt.Sprintf("aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"%v\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt", ctx.Stack())),
+//				Environment: pulumi.StringMap{
+//					"FN":         lambdaFunction.Arn,
+//					"AWS_REGION": pulumi.String(awsRegion),
+//					"AWS_PAGER":  pulumi.String(""),
+//				},
+//			}, pulumi.DependsOn([]pulumi.Resource{
+//				lambdaFunction,
+//			}))
+//			if err != nil {
+//				return err
+//			}
+//			ctx.Export("output", invokeCommand.Stdout)
+//			return nil
+//		})
+//	}
+//
+// ```
+//
+// ### Using Triggers
 //
 // This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 //

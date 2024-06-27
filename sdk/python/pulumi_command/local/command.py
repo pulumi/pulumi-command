@@ -414,7 +414,67 @@ class Command(pulumi.CustomResource):
         This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
 
         ## Example Usage
-        ### Triggers
+
+        ### Basic Example
+
+        This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+
+        ```python
+        import pulumi
+        from pulumi_command import local
+
+        random = local.Command("random",
+            create="openssl rand -hex 16"
+        )
+
+        pulumi.export("random", random.stdout)
+        ```
+
+        ### Invoking a Lambda during Pulumi Deployment
+
+        This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
+
+        ```python
+        import pulumi
+        import json
+        import pulumi_aws as aws
+        import pulumi_command as command
+
+        lambda_role = aws.iam.Role("lambdaRole", assume_role_policy=json.dumps({
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "lambda.amazonaws.com",
+                },
+            }],
+        }))
+
+        lambda_function = aws.lambda_.Function("lambdaFunction",
+            name="f",
+            publish=True,
+            role=lambda_role.arn,
+            handler="index.handler",
+            runtime=aws.lambda_.Runtime.NODE_JS20D_X,
+            code=pulumi.FileArchive("./handler"))
+
+        aws_config = pulumi.Config("aws")
+        aws_region = aws_config.require("region")
+
+        invoke_command = command.local.Command("invokeCommand",
+            create=f"aws lambda invoke --function-name \\"$FN\\" --payload '{{\\"stackName\\": \\"{pulumi.get_stack()}\\"}}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\\"'  && rm out.txt",
+            environment={
+                "FN": lambda_function.arn,
+                "AWS_REGION": aws_region,
+                "AWS_PAGER": "",
+            },
+            opts = pulumi.ResourceOptions(depends_on=[lambda_function]))
+
+        pulumi.export("output", invoke_command.stdout)
+        ```
+
+        ### Using Triggers
 
         This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 
@@ -556,7 +616,67 @@ class Command(pulumi.CustomResource):
         This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
 
         ## Example Usage
-        ### Triggers
+
+        ### Basic Example
+
+        This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+
+        ```python
+        import pulumi
+        from pulumi_command import local
+
+        random = local.Command("random",
+            create="openssl rand -hex 16"
+        )
+
+        pulumi.export("random", random.stdout)
+        ```
+
+        ### Invoking a Lambda during Pulumi Deployment
+
+        This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
+
+        ```python
+        import pulumi
+        import json
+        import pulumi_aws as aws
+        import pulumi_command as command
+
+        lambda_role = aws.iam.Role("lambdaRole", assume_role_policy=json.dumps({
+            "Version": "2012-10-17",
+            "Statement": [{
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "lambda.amazonaws.com",
+                },
+            }],
+        }))
+
+        lambda_function = aws.lambda_.Function("lambdaFunction",
+            name="f",
+            publish=True,
+            role=lambda_role.arn,
+            handler="index.handler",
+            runtime=aws.lambda_.Runtime.NODE_JS20D_X,
+            code=pulumi.FileArchive("./handler"))
+
+        aws_config = pulumi.Config("aws")
+        aws_region = aws_config.require("region")
+
+        invoke_command = command.local.Command("invokeCommand",
+            create=f"aws lambda invoke --function-name \\"$FN\\" --payload '{{\\"stackName\\": \\"{pulumi.get_stack()}\\"}}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\\"'  && rm out.txt",
+            environment={
+                "FN": lambda_function.arn,
+                "AWS_REGION": aws_region,
+                "AWS_PAGER": "",
+            },
+            opts = pulumi.ResourceOptions(depends_on=[lambda_function]))
+
+        pulumi.export("output", invoke_command.stdout)
+        ```
+
+        ### Using Triggers
 
         This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 

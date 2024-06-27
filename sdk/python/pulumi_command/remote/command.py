@@ -216,8 +216,29 @@ class Command(pulumi.CustomResource):
         A command to run on a remote host. The connection is established via ssh.
 
         ## Example Usage
-        ### Triggers
 
+        ### A Basic Example
+        This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+
+        config = pulumi.Config()
+        server = config.require("server")
+        user_name = config.require("userName")
+        private_key = config.require("privateKey")
+        hostname_cmd = command.remote.Command("hostnameCmd",
+            create="hostname",
+            connection=command.remote.ConnectionArgs(
+                host=server,
+                user=user_name,
+                private_key=private_key,
+            ))
+        pulumi.export("hostname", hostname_cmd.stdout)
+        ```
+
+        ### Triggers
         This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 
         ```python
@@ -283,8 +304,29 @@ class Command(pulumi.CustomResource):
         A command to run on a remote host. The connection is established via ssh.
 
         ## Example Usage
-        ### Triggers
 
+        ### A Basic Example
+        This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
+
+        ```python
+        import pulumi
+        import pulumi_command as command
+
+        config = pulumi.Config()
+        server = config.require("server")
+        user_name = config.require("userName")
+        private_key = config.require("privateKey")
+        hostname_cmd = command.remote.Command("hostnameCmd",
+            create="hostname",
+            connection=command.remote.ConnectionArgs(
+                host=server,
+                user=user_name,
+                private_key=private_key,
+            ))
+        pulumi.export("hostname", hostname_cmd.stdout)
+        ```
+
+        ### Triggers
         This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 
         ```python

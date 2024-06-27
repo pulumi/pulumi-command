@@ -26,7 +26,111 @@ import javax.annotation.Nullable;
  * This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
  * 
  * ## Example Usage
- * ### Triggers
+ * 
+ * ### Basic Example
+ * 
+ * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
+ * 
+ * <pre>
+ * {@code
+ * package generated_program;
+ * 
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.command.local.Command;
+ * import com.pulumi.command.local.CommandArgs;
+ * 
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         var random = new Command("random", CommandArgs.builder()
+ *             .create("openssl rand -hex 16")
+ *             .build());
+ * 
+ *         ctx.export("rand", random.stdout());
+ *     }
+ * }
+ * }
+ * </pre>
+ * 
+ * ### Invoking a Lambda during Pulumi Deployment
+ * 
+ * This example show using a local command to invoke an AWS Lambda once it&#39;s deployed. The Lambda invocation could also depend on other resources.
+ * 
+ * <pre>
+ * {@code
+ * package generated_program;
+ * 
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.aws.iam.Role;
+ * import com.pulumi.aws.iam.RoleArgs;
+ * import com.pulumi.aws.lambda.Function;
+ * import com.pulumi.aws.lambda.FunctionArgs;
+ * import com.pulumi.command.local.Command;
+ * import com.pulumi.command.local.CommandArgs;
+ * import static com.pulumi.codegen.internal.Serialization.*;
+ * import com.pulumi.resources.CustomResourceOptions;
+ * import com.pulumi.asset.FileArchive;
+ * import java.util.Map;
+ * 
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         var awsConfig = ctx.config("aws");
+ *         var awsRegion = awsConfig.require("region");
+ * 
+ *         var lambdaRole = new Role("lambdaRole", RoleArgs.builder()
+ *                 .assumeRolePolicy(serializeJson(
+ *                         jsonObject(
+ *                                 jsonProperty("Version", "2012-10-17"),
+ *                                 jsonProperty("Statement", jsonArray(jsonObject(
+ *                                         jsonProperty("Action", "sts:AssumeRole"),
+ *                                         jsonProperty("Effect", "Allow"),
+ *                                         jsonProperty("Principal", jsonObject(
+ *                                                 jsonProperty("Service", "lambda.amazonaws.com")))))))))
+ *                 .build());
+ * 
+ *         var lambdaFunction = new Function("lambdaFunction", FunctionArgs.builder()
+ *                 .name("f")
+ *                 .publish(true)
+ *                 .role(lambdaRole.arn())
+ *                 .handler("index.handler")
+ *                 .runtime("nodejs20.x")
+ *                 .code(new FileArchive("./handler"))
+ *                 .build());
+ * 
+ *         // Work around the lack of Output.all for Maps in Java. We cannot use a plain Map because
+ *         // `lambdaFunction.arn()` is an Output<String>.
+ *         var invokeEnv = Output.tuple(
+ *                 Output.of("FN"), lambdaFunction.arn(),
+ *                 Output.of("AWS_REGION"), Output.of(awsRegion),
+ *                 Output.of("AWS_PAGER"), Output.of("")
+ *         ).applyValue(t -> Map.of(t.t1, t.t2, t.t3, t.t4, t.t5, t.t6));
+ * 
+ *         var invokeCommand = new Command("invokeCommand", CommandArgs.builder()
+ *                 .create(String.format(
+ *                         "aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"%s\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt",
+ *                         ctx.stackName()))
+ *                 .environment(invokeEnv)
+ *                 .build(),
+ *                 CustomResourceOptions.builder()
+ *                         .dependsOn(lambdaFunction)
+ *                         .build());
+ * 
+ *         ctx.export("output", invokeCommand.stdout());
+ *     }
+ * }
+ * }
+ * </pre>
+ * 
+ * ### Using Triggers
  * 
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  * 

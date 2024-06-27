@@ -20,6 +20,76 @@ import javax.annotation.Nullable;
 /**
  * Copy an Asset or Archive to a remote host.
  * 
+ * ## Example usage
+ * 
+ * This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
+ * 
+ * <pre>
+ * {@code
+ * package generated_program;
+ * 
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.core.Output;
+ * import com.pulumi.command.remote.Command;
+ * import com.pulumi.command.remote.CommandArgs;
+ * import com.pulumi.command.remote.CopyToRemote;
+ * import com.pulumi.command.remote.inputs.*;
+ * import com.pulumi.resources.CustomResourceOptions;
+ * import com.pulumi.asset.FileArchive;
+ * import java.util.List;
+ * import java.util.ArrayList;
+ * import java.util.Map;
+ * import java.io.File;
+ * import java.nio.file.Files;
+ * import java.nio.file.Paths;
+ * 
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         final var config = ctx.config();
+ *         final var serverPublicIp = config.require("serverPublicIp");
+ *         final var userName = config.require("userName");
+ *         final var privateKey = config.require("privateKey");
+ *         final var payload = config.require("payload");
+ *         final var destDir = config.require("destDir");
+ * 
+ *         final var archive = new FileArchive(payload);
+ * 
+ *         // The configuration of our SSH connection to the instance.
+ *         final var conn = ConnectionArgs.builder()
+ *             .host(serverPublicIp)
+ *             .user(userName)
+ *             .privateKey(privateKey)
+ *             .build();
+ * 
+ *         // Copy the files to the remote.
+ *         var copy = new CopyToRemote("copy", CopyToRemoteArgs.builder()
+ *             .connection(conn)
+ *             .source(archive)
+ *             .destination(destDir)
+ *             .build());
+ * 
+ *         // Verify that the expected files were copied to the remote.
+ *         // We want to run this after each copy, i.e., when something changed,
+ *         // so we use the asset to be copied as a trigger.
+ *         var find = new Command("find", CommandArgs.builder()
+ *             .connection(conn)
+ *             .create(String.format("find %s/%s | sort", destDir,payload))
+ *             .triggers(archive)
+ *             .build(), CustomResourceOptions.builder()
+ *                 .dependsOn(copy)
+ *                 .build());
+ * 
+ *         ctx.export("remoteContents", find.stdout());
+ *     }
+ * }
+ * }
+ * </pre>
+ * 
  */
 @ResourceType(type="command:remote:CopyToRemote")
 public class CopyToRemote extends com.pulumi.resources.CustomResource {
