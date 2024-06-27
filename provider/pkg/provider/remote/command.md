@@ -6,7 +6,7 @@ A command to run on a remote host. The connection is established via ssh.
 
 {{% example %}}
 
-### A basic example
+### A Basic Example
 This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
 
 ```typescript
