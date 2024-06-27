@@ -1,10 +1,177 @@
 A command to run on a remote host. The connection is established via ssh.
 
 {{% examples %}}
+
 ## Example Usage
 
-### Triggers
+{{% example %}}
 
+### A basic example
+This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
+
+```typescript
+import * as pulumi from "@pulumi/pulumi";
+import * as command from "@pulumi/command";
+
+const config = new pulumi.Config();
+const server = config.require("server");
+const userName = config.require("userName");
+const privateKey = config.require("privateKey");
+
+const hostnameCmd = new command.remote.Command("hostnameCmd", {
+    create: "hostname",
+    connection: {
+        host: server,
+        user: userName,
+        privateKey: privateKey,
+    },
+});
+export const hostname = hostnameCmd.stdout;
+```
+
+```python
+import pulumi
+import pulumi_command as command
+
+config = pulumi.Config()
+server = config.require("server")
+user_name = config.require("userName")
+private_key = config.require("privateKey")
+hostname_cmd = command.remote.Command("hostnameCmd",
+    create="hostname",
+    connection=command.remote.ConnectionArgs(
+        host=server,
+        user=user_name,
+        private_key=private_key,
+    ))
+pulumi.export("hostname", hostname_cmd.stdout)
+```
+
+```go
+package main
+
+import (
+	"github.com/pulumi/pulumi-command/sdk/go/command/remote"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
+)
+
+func main() {
+	pulumi.Run(func(ctx *pulumi.Context) error {
+		cfg := config.New(ctx, "")
+		server := cfg.Require("server")
+		userName := cfg.Require("userName")
+		privateKey := cfg.Require("privateKey")
+		hostnameCmd, err := remote.NewCommand(ctx, "hostnameCmd", &remote.CommandArgs{
+			Create: pulumi.String("hostname"),
+			Connection: &remote.ConnectionArgs{
+				Host:       pulumi.String(server),
+				User:       pulumi.String(userName),
+				PrivateKey: pulumi.String(privateKey),
+			},
+		})
+		if err != nil {
+			return err
+		}
+		ctx.Export("hostname", hostnameCmd.Stdout)
+		return nil
+	})
+}
+```
+
+```csharp
+using System.Collections.Generic;
+using System.Linq;
+using Pulumi;
+using Command = Pulumi.Command;
+
+return await Deployment.RunAsync(() =>
+{
+    var config = new Config();
+    var server = config.Require("server");
+    var userName = config.Require("userName");
+    var privateKey = config.Require("privateKey");
+    var hostnameCmd = new Command.Remote.Command("hostnameCmd", new()
+    {
+        Create = "hostname",
+        Connection = new Command.Remote.Inputs.ConnectionArgs
+        {
+            Host = server,
+            User = userName,
+            PrivateKey = privateKey,
+        },
+    });
+
+    return new Dictionary<string, object?>
+    {
+        ["hostname"] = hostnameCmd.Stdout,
+    };
+});
+```
+
+```java
+package generated_program;
+
+import com.pulumi.Context;
+import com.pulumi.Pulumi;
+import com.pulumi.core.Output;
+import com.pulumi.command.remote.Command;
+import com.pulumi.command.remote.CommandArgs;
+import com.pulumi.command.remote.inputs.ConnectionArgs;
+
+public class App {
+    public static void main(String[] args) {
+        Pulumi.run(App::stack);
+    }
+
+    public static void stack(Context ctx) {
+        final var config = ctx.config();
+        final var server = config.require("server");
+        final var userName = config.require("userName");
+        final var privateKey = config.require("privateKey");
+        var hostnameCmd = new Command("hostnameCmd", CommandArgs.builder()
+            .create("hostname")
+            .connection(ConnectionArgs.builder()
+                .host(server)
+                .user(userName)
+                .privateKey(privateKey)
+                .build())
+            .build());
+
+        ctx.export("hostname", hostnameCmd.stdout());
+    }
+}
+```
+
+```yaml
+outputs:
+  hostname: ${hostnameCmd.stdout}
+
+config:
+  server:
+    type: string
+  userName:
+    type: string
+  privateKey:
+    type: string
+
+resources:
+  hostnameCmd:
+    type: command:remote:Command
+    properties:
+      create: "hostname"
+      # The configuration of our SSH connection to the server.
+      connection:
+        host: ${server}
+        user: ${userName}
+        privateKey: ${privateKey}
+```
+
+{{% /example %}}
+
+{{% example %}}
+
+### Triggers
 This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 
 {{% example %}}
@@ -122,7 +289,7 @@ using Pulumi;
 using Command = Pulumi.Command;
 using Random = Pulumi.Random;
 
-return await Deployment.RunAsync(() => 
+return await Deployment.RunAsync(() =>
 {
     var str = "foo";
 
