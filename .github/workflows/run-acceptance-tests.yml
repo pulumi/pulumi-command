@@ -83,6 +83,8 @@ jobs:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
       uses: pulumi/actions@v5
+      with:
+        pulumi-version-file: .pulumi.version
     - name: Build codegen binaries
       run: make codegen
     - name: Build Provider
@@ -155,6 +157,8 @@ jobs:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
       uses: pulumi/actions@v5
+      with:
+        pulumi-version-file: .pulumi.version
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
@@ -257,6 +261,8 @@ jobs:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
       uses: pulumi/actions@v5
+      with:
+        pulumi-version-file: .pulumi.version
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
