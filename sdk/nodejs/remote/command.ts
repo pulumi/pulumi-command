@@ -12,8 +12,30 @@ import * as utilities from "../utilities";
  *
  * ## Example Usage
  *
- * ### Triggers
+ * ### A Basic Example
+ * This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
  *
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as command from "@pulumi/command";
+ *
+ * const config = new pulumi.Config();
+ * const server = config.require("server");
+ * const userName = config.require("userName");
+ * const privateKey = config.require("privateKey");
+ *
+ * const hostnameCmd = new command.remote.Command("hostnameCmd", {
+ *     create: "hostname",
+ *     connection: {
+ *         host: server,
+ *         user: userName,
+ *         privateKey: privateKey,
+ *     },
+ * });
+ * export const hostname = hostnameCmd.stdout;
+ * ```
+ *
+ * ### Triggers
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  *
  * ```typescript

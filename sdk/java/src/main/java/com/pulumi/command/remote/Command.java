@@ -24,8 +24,46 @@ import javax.annotation.Nullable;
  * 
  * ## Example Usage
  * 
- * ### Triggers
+ * ### A Basic Example
+ * This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
  * 
+ * <pre>
+ * {@code
+ * package generated_program;
+ * 
+ * import com.pulumi.Context;
+ * import com.pulumi.Pulumi;
+ * import com.pulumi.core.Output;
+ * import com.pulumi.command.remote.Command;
+ * import com.pulumi.command.remote.CommandArgs;
+ * import com.pulumi.command.remote.inputs.ConnectionArgs;
+ * 
+ * public class App {
+ *     public static void main(String[] args) {
+ *         Pulumi.run(App::stack);
+ *     }
+ * 
+ *     public static void stack(Context ctx) {
+ *         final var config = ctx.config();
+ *         final var server = config.require("server");
+ *         final var userName = config.require("userName");
+ *         final var privateKey = config.require("privateKey");
+ *         var hostnameCmd = new Command("hostnameCmd", CommandArgs.builder()
+ *             .create("hostname")
+ *             .connection(ConnectionArgs.builder()
+ *                 .host(server)
+ *                 .user(userName)
+ *                 .privateKey(privateKey)
+ *                 .build())
+ *             .build());
+ * 
+ *         ctx.export("hostname", hostnameCmd.stdout());
+ *     }
+ * }
+ * }
+ * </pre>
+ * 
+ * ### Triggers
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  * 
  * <pre>

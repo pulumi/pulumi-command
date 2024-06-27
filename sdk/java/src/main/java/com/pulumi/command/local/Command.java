@@ -27,11 +27,7 @@ import javax.annotation.Nullable;
  * 
  * ## Example Usage
  * 
- * ### Basic Example
- * 
- * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
- * 
- * ### Invoking a Lambda during Pulumi deployment
+ * ### Invoking a Lambda during Pulumi Deployment
  * 
  * This example show using a local command to invoke an AWS Lambda once it&#39;s deployed. The Lambda invocation could also depend on other resources.
  * 
@@ -104,7 +100,7 @@ import javax.annotation.Nullable;
  * }
  * </pre>
  * 
- * ### Triggers
+ * ### Using Triggers
  * 
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  * 

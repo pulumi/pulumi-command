@@ -18,7 +18,17 @@ import * as utilities from "../utilities";
  *
  * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
  *
- * ### Invoking a Lambda during Pulumi deployment
+ * ```typescript
+ * import { local } from "@pulumi/command";
+ *
+ * const random = new local.Command("random", {
+ *     create: "openssl rand -hex 16",
+ * });
+ *
+ * export const output = random.stdout;
+ * ```
+ *
+ * ### Invoking a Lambda during Pulumi Deployment
  *
  * This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
  *
@@ -46,7 +56,7 @@ import * as utilities from "../utilities";
  * export const output = invoke.stdout;
  * ```
  *
- * ### Triggers
+ * ### Using Triggers
  *
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  *

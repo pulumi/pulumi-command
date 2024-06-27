@@ -48,7 +48,7 @@ import (
 //
 // ```
 //
-// ### Invoking a Lambda during Pulumi deployment
+// ### Invoking a Lambda during Pulumi Deployment
 //
 // This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
 //
@@ -126,7 +126,7 @@ import (
 //
 // ```
 //
-// ### Triggers
+// ### Using Triggers
 //
 // This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
 //
