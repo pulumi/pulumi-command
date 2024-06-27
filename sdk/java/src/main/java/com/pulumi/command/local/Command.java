@@ -106,24 +106,25 @@ import javax.annotation.Nullable;
  *                 .code(new FileArchive("./handler"))
  *                 .build());
  * 
- *         var lambdaInvokeOut = lambdaFunction.arn().applyValue(arn -> {
- *             var invokeCommand = new Command("invokeCommand", CommandArgs.builder()
- *                     .create(String.format(
- *                             "aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"%s\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt",
- *                             ctx.stackName()))
- *                     .environment(Map.ofEntries(
- *                             Map.entry("FN", arn),
- *                             Map.entry("AWS_REGION", awsRegion),
- *                             Map.entry("AWS_PAGER", "")))
- *                     .build(),
- *                     CustomResourceOptions.builder()
- *                             .dependsOn(lambdaFunction)
- *                             .build());
+ *         // Work around the lack of Output.all for Maps in Java. We cannot use a plain Map because
+ *         // `lambdaFunction.arn()` is an Output<String>.
+ *         var invokeEnv = Output.tuple(
+ *                 Output.of("FN"), lambdaFunction.arn(),
+ *                 Output.of("AWS_REGION"), Output.of(awsRegion),
+ *                 Output.of("AWS_PAGER"), Output.of("")
+ *         ).applyValue(t -> Map.of(t.t1, t.t2, t.t3, t.t4, t.t5, t.t6));
  * 
- *             return invokeCommand.stdout();
- *         });
+ *         var invokeCommand = new Command("invokeCommand", CommandArgs.builder()
+ *                 .create(String.format(
+ *                         "aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"%s\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt",
+ *                         ctx.stackName()))
+ *                 .environment(invokeEnv)
+ *                 .build(),
+ *                 CustomResourceOptions.builder()
+ *                         .dependsOn(lambdaFunction)
+ *                         .build());
  * 
- *         ctx.export("output", lambdaInvokeOut);
+ *         ctx.export("output", invokeCommand.stdout());
  *     }
  * }
  * }
