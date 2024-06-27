@@ -6,23 +6,13 @@ This command can be inserted into the life cycles of other resources using the `
 
 ## Example Usage
 
+{{% example %}}
+
 ### Basic Example
 
 This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
 
-{{% example %}}
-
-```js
-const command = require("@pulumi/command");
-
-const random = new command.local.Command("random", {
-    create: "openssl rand -hex 16"
-});
-
-exports.output = random.stdout;
-```
-
-```ts
+```typescript
 import { local } from "@pulumi/command";
 
 const random = new local.Command("random", {
@@ -88,11 +78,11 @@ func main() {
 
 {{% /example %}}
 
+{{% example %}}
+
 ### Invoking a Lambda during Pulumi deployment
 
 This example show using a local command to invoke an AWS Lambda once it's deployed. The Lambda invocation could also depend on other resources.
-
-{{% example %}}
 
 ```typescript
 import * as aws from "@pulumi/aws";
@@ -362,7 +352,6 @@ public class App {
 ```
 
 ```yaml
-
 resources:
   lambdaRole:
     type: aws:iam:Role
@@ -405,11 +394,11 @@ outputs:
 
 {{% /example %}}
 
+{{% example %}}
+
 ### Triggers
 
 This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
-
-{{% example %}}
 
 ```typescript
 import * as pulumi from "@pulumi/pulumi";
