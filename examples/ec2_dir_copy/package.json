@@ -5,6 +5,7 @@
         "@types/node": "^18"
     },
     "dependencies": {
+        "@grpc/grpc-js": "^1.10.10",
         "@pulumi/aws": "^6.0.0",
         "@pulumi/awsx": "^2.0.2",
         "@pulumi/command": "^0.11",
