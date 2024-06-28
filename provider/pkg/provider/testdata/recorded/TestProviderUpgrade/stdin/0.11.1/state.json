@@ -1,0 +1,71 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2024-06-28T13:37:03.255213+02:00",
+            "magic": "fdff5d115ed98f71a6d1a039669a8634e8e3e1fb9e810720cb957e73b3c02d81",
+            "version": "v3.121.0"
+        },
+        "secrets_providers": {
+            "type": "passphrase",
+            "state": {
+                "salt": "v1:GXd0O/kaQgo=:v1:YdrR5fPDpbZP1fGI:fIiCCPwpvAypu4RwMQ0b7DB4SYDALw=="
+            }
+        },
+        "resources": [
+            {
+                "urn": "urn:pulumi:p-it-tmpfritzbo-stdin-b37f4498::command-random::pulumi:pulumi:Stack::command-random-p-it-tmpfritzbo-stdin-b37f4498",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "output": "the quick brown fox"
+                },
+                "created": "2024-06-28T11:37:02.952551Z",
+                "modified": "2024-06-28T11:37:02.952551Z",
+                "sourcePosition": "project:///node_modules/@pulumi/runtime/stack.ts#36,23"
+            },
+            {
+                "urn": "urn:pulumi:p-it-tmpfritzbo-stdin-b37f4498::command-random::pulumi:providers:command::default_0_11_1",
+                "custom": true,
+                "id": "2a798b5a-9941-4327-935f-da94bf9b9f0c",
+                "type": "pulumi:providers:command",
+                "inputs": {
+                    "version": "0.11.1"
+                },
+                "outputs": {
+                    "version": "0.11.1"
+                },
+                "created": "2024-06-28T11:37:03.228507Z",
+                "modified": "2024-06-28T11:37:03.228507Z"
+            },
+            {
+                "urn": "urn:pulumi:p-it-tmpfritzbo-stdin-b37f4498::command-random::command:local:Command::stdin",
+                "custom": true,
+                "id": "stdin1dbce440",
+                "type": "command:local:Command",
+                "inputs": {
+                    "addPreviousOutputInEnv": true,
+                    "create": "head -n 1",
+                    "stdin": "the quick brown fox\njumped over\nthe lazy dog"
+                },
+                "outputs": {
+                    "addPreviousOutputInEnv": true,
+                    "create": "head -n 1",
+                    "stderr": "",
+                    "stdin": "the quick brown fox\njumped over\nthe lazy dog",
+                    "stdout": "the quick brown fox"
+                },
+                "parent": "urn:pulumi:p-it-tmpfritzbo-stdin-b37f4498::command-random::pulumi:pulumi:Stack::command-random-p-it-tmpfritzbo-stdin-b37f4498",
+                "provider": "urn:pulumi:p-it-tmpfritzbo-stdin-b37f4498::command-random::pulumi:providers:command::default_0_11_1::2a798b5a-9941-4327-935f-da94bf9b9f0c",
+                "propertyDependencies": {
+                    "addPreviousOutputInEnv": [],
+                    "create": [],
+                    "stdin": []
+                },
+                "created": "2024-06-28T11:37:03.236875Z",
+                "modified": "2024-06-28T11:37:03.236875Z",
+                "sourcePosition": "project:///index.ts#4,16"
+            }
+        ]
+    }
+}
