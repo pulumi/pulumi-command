@@ -7,25 +7,24 @@ import (
 	"testing"
 
 	"github.com/pulumi/providertest"
+	"github.com/pulumi/providertest/pulumitest"
+	"github.com/pulumi/providertest/pulumitest/assertpreview"
 )
 
 const baselineVersion = "0.11.1"
 
 func TestUpgradeLocalCommand(t *testing.T) {
 	t.Run("stdin", func(t *testing.T) {
-		runExampleParallel(t, "stdin")
+		test(t, "stdin")
 	})
 }
 
-func runExampleParallel(t *testing.T, example string, opts ...providertest.Option) {
+func test(t *testing.T, example string) {
 	t.Parallel()
-	test(fmt.Sprintf("../../../examples/%s", example), opts...).Run(t)
-}
 
-func test(dir string, opts ...providertest.Option) *providertest.ProviderTest {
-	opts = append(opts,
-		providertest.WithProviderName("command"),
-		providertest.WithBaselineVersion(baselineVersion),
-	)
-	return providertest.NewProviderTest(dir, opts...)
+	dir := fmt.Sprintf("../../../examples/%s", example)
+
+	test := pulumitest.NewPulumiTest(t, dir)
+	result := providertest.PreviewProviderUpgrade(t, test, "command", baselineVersion)
+	assertpreview.HasNoReplacements(t, result)
 }

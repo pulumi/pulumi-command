@@ -1,0 +1,71 @@
+{
+  "version": 3,
+  "deployment": {
+    "manifest": {
+      "time": "2024-06-28T17:09:49.247995+02:00",
+      "magic": "fdff5d115ed98f71a6d1a039669a8634e8e3e1fb9e810720cb957e73b3c02d81",
+      "version": "v3.121.0"
+    },
+    "secrets_providers": {
+      "type": "passphrase",
+      "state": {
+        "salt": "v1:b8g4hK418io=:v1:yvpLPIh9Tq0ppgvj:/1IMuvDpfiypmeskdCjx4eX7Wn+tCw=="
+      }
+    },
+    "resources": [
+      {
+        "urn": "urn:pulumi:test::command-random::pulumi:pulumi:Stack::command-random-test",
+        "custom": false,
+        "type": "pulumi:pulumi:Stack",
+        "outputs": {
+          "output": "the quick brown fox"
+        },
+        "created": "2024-06-28T15:09:48.007562Z",
+        "modified": "2024-06-28T15:09:48.007562Z",
+        "sourcePosition": "project:///node_modules/@pulumi/runtime/stack.ts#36,23"
+      },
+      {
+        "urn": "urn:pulumi:test::command-random::pulumi:providers:command::default_0_11_1",
+        "custom": true,
+        "id": "da5f149c-ad5d-47d1-950a-84ce47984797",
+        "type": "pulumi:providers:command",
+        "inputs": {
+          "version": "0.11.1"
+        },
+        "outputs": {
+          "version": "0.11.1"
+        },
+        "created": "2024-06-28T15:09:49.186853Z",
+        "modified": "2024-06-28T15:09:49.186853Z"
+      },
+      {
+        "urn": "urn:pulumi:test::command-random::command:local:Command::stdin",
+        "custom": true,
+        "id": "stdin30aceb66",
+        "type": "command:local:Command",
+        "inputs": {
+          "addPreviousOutputInEnv": true,
+          "create": "head -n 1",
+          "stdin": "the quick brown fox\njumped over\nthe lazy dog"
+        },
+        "outputs": {
+          "addPreviousOutputInEnv": true,
+          "create": "head -n 1",
+          "stderr": "",
+          "stdin": "the quick brown fox\njumped over\nthe lazy dog",
+          "stdout": "the quick brown fox"
+        },
+        "parent": "urn:pulumi:test::command-random::pulumi:pulumi:Stack::command-random-test",
+        "provider": "urn:pulumi:test::command-random::pulumi:providers:command::default_0_11_1::da5f149c-ad5d-47d1-950a-84ce47984797",
+        "propertyDependencies": {
+          "addPreviousOutputInEnv": [],
+          "create": [],
+          "stdin": []
+        },
+        "created": "2024-06-28T15:09:49.216982Z",
+        "modified": "2024-06-28T15:09:49.216982Z",
+        "sourcePosition": "project:///index.ts#4,16"
+      }
+    ]
+  }
+}
