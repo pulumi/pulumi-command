@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	github.com/aws/aws-sdk-go v1.50.36
-	github.com/pulumi/pulumi/pkg/v3 v3.122.0
-	github.com/pulumi/pulumi/sdk/v3 v3.122.0
+	github.com/pulumi/pulumi/pkg/v3 v3.123.0
+	github.com/pulumi/pulumi/sdk/v3 v3.123.0
 	github.com/stretchr/testify v1.9.0
 )
 
