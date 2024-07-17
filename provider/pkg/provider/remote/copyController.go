@@ -177,10 +177,8 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 
 		if !strings.HasSuffix(sourcePath, "/") {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
-			err = sftp.Mkdir(dest)
-			if err != nil {
-				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
-			}
+			// It's ok if the dir exists, we'll copy into it.
+			_ = sftp.Mkdir(dest)
 		}
 		err = copyDir(sftp, sourcePath, dest)
 	} else {
