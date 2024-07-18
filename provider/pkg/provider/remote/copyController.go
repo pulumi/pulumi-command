@@ -141,7 +141,7 @@ func remoteStat(sftpClient *sftp.Client, path string) (fs.FileInfo, error) {
 	return info, nil
 }
 
-func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
+func sftpCopy(sftpClient *sftp.Client, sourcePath, destPath string) error {
 	src, err := os.Open(sourcePath)
 	if err != nil {
 		return err
@@ -154,7 +154,7 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 	}
 
 	var destStat fs.FileInfo
-	destStat, err = remoteStat(sftp, destPath)
+	destStat, err = remoteStat(sftpClient, destPath)
 	if err != nil {
 		return err
 	}
@@ -170,7 +170,7 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 	dest := destPath
 	if srcInfo.IsDir() {
 		if destStat == nil {
-			err = sftp.Mkdir(dest)
+			err = sftpClient.Mkdir(dest)
 			if err != nil {
 				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
 			}
@@ -178,16 +178,28 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 
 		if !strings.HasSuffix(sourcePath, "/") {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
+			destStat, err := remoteStat(sftpClient, dest)
+			if err != nil {
+				return err
+			}
 			// It's ok if the dir exists, we'll copy into it.
-			_ = sftp.Mkdir(dest)
+			if destStat != nil && !destStat.IsDir() {
+				return fmt.Errorf("remote path %s exists but is not a directory", dest)
+			}
+			if destStat == nil {
+				err = sftpClient.Mkdir(dest)
+				if err != nil {
+					return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
+				}
+			}
 		}
-		err = copyDir(sftp, sourcePath, dest)
+		err = copyDir(sftpClient, sourcePath, dest)
 	} else {
 		// If the file is f and the destination is existing dir/, copy to dir/f.
 		if destStat != nil && destStat.IsDir() {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
 		}
-		err = copyFile(sftp, sourcePath, dest)
+		err = copyFile(sftpClient, sourcePath, dest)
 	}
 	return err
 }
