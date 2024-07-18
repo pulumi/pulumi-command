@@ -132,15 +132,16 @@ func copy(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, e
 }
 
 // If the file does not exist, returns nil, nil.
-func remoteStat(sftp *sftp.Client, path string) (fs.FileInfo, error) {
-	info, err := sftp.Stat(path)
+func remoteStat(sftpClient *sftp.Client, path string) (fs.FileInfo, error) {
+	info, err := sftpClient.Stat(path)
+	// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return nil, fmt.Errorf("failed to stat remote path %s: %w", path, err)
 	}
 	return info, nil
 }
 
-func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
+func sftpCopy(sftpClient *sftp.Client, sourcePath, destPath string) error {
 	src, err := os.Open(sourcePath)
 	if err != nil {
 		return err
@@ -153,7 +154,7 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 	}
 
 	var destStat fs.FileInfo
-	destStat, err = remoteStat(sftp, destPath)
+	destStat, err = remoteStat(sftpClient, destPath)
 	if err != nil {
 		return err
 	}
@@ -169,7 +170,7 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 	dest := destPath
 	if srcInfo.IsDir() {
 		if destStat == nil {
-			err = sftp.Mkdir(dest)
+			err = sftpClient.Mkdir(dest)
 			if err != nil {
 				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
 			}
@@ -177,18 +178,28 @@ func sftpCopy(sftp *sftp.Client, sourcePath, destPath string) error {
 
 		if !strings.HasSuffix(sourcePath, "/") {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
-			err = sftp.Mkdir(dest)
+			destStat, err := remoteStat(sftpClient, dest)
 			if err != nil {
-				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
+				return err
+			}
+			// It's ok if the dir exists, we'll copy into it.
+			if destStat != nil && !destStat.IsDir() {
+				return fmt.Errorf("remote path %s exists but is not a directory", dest)
+			}
+			if destStat == nil {
+				err = sftpClient.Mkdir(dest)
+				if err != nil {
+					return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
+				}
 			}
 		}
-		err = copyDir(sftp, sourcePath, dest)
+		err = copyDir(sftpClient, sourcePath, dest)
 	} else {
 		// If the file is f and the destination is existing dir/, copy to dir/f.
 		if destStat != nil && destStat.IsDir() {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
 		}
-		err = copyFile(sftp, sourcePath, dest)
+		err = copyFile(sftpClient, sourcePath, dest)
 	}
 	return err
 }
@@ -228,10 +239,9 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 			return copyFile(sftp, filepath.Join(src, path), remotePath)
 		}
 
-		dirInfo, err := sftp.Stat(remotePath)
-		// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
-		if err != nil && !errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("failed to stat remote path %s: %w", remotePath, err)
+		dirInfo, err := remoteStat(sftp, remotePath)
+		if err != nil {
+			return err
 		}
 
 		if dirInfo == nil {
