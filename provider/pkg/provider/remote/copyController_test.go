@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer/types"
@@ -50,10 +51,21 @@ func startSshServer(t *testing.T, baseDir string) *sftp.Client {
 		_ = server.Close()
 	})
 
-	sshClient, err := xssh.Dial("tcp", serverAddr, &xssh.ClientConfig{
-		HostKeyCallback: xssh.InsecureIgnoreHostKey(),
-	})
+	// Wait until SSH server is up
+	var sshClient *xssh.Client
+	var err error
+	for i := 0; i < 20; i++ {
+		sshClient, err = xssh.Dial("tcp", serverAddr, &xssh.ClientConfig{
+			HostKeyCallback: xssh.InsecureIgnoreHostKey(),
+		})
+		if err == nil {
+			fmt.Printf("SSH server is up at attempt %d\n", i)
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
 	require.NoError(t, err)
+
 	sftpClient, err := sftp.NewClient(sshClient)
 	require.NoError(t, err)
 	return sftpClient
