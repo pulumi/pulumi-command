@@ -132,8 +132,9 @@ func copy(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, e
 }
 
 // If the file does not exist, returns nil, nil.
-func remoteStat(sftp *sftp.Client, path string) (fs.FileInfo, error) {
-	info, err := sftp.Stat(path)
+func remoteStat(sftpClient *sftp.Client, path string) (fs.FileInfo, error) {
+	info, err := sftpClient.Stat(path)
+	// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return nil, fmt.Errorf("failed to stat remote path %s: %w", path, err)
 	}
@@ -226,10 +227,9 @@ func copyDir(sftp *sftp.Client, src, dst string) error {
 			return copyFile(sftp, filepath.Join(src, path), remotePath)
 		}
 
-		dirInfo, err := sftp.Stat(remotePath)
-		// sftp normalizes the error to os.ErrNotExist, see client.go: normaliseError.
-		if err != nil && !errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("failed to stat remote path %s: %w", remotePath, err)
+		dirInfo, err := remoteStat(sftp, remotePath)
+		if err != nil {
+			return err
 		}
 
 		if dirInfo == nil {
