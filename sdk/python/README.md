@@ -189,7 +189,7 @@ export const output = rand.stdout;
 
 ### Using `local.Command `with CURL to manage external REST API
 
-This example uses `local.Command` to create a simple resource provider for managing GitHub labels, by invoking `curl` commands on `create` and `delete` commands against the GitHub REST API.  A similar approach could be applied to build other simple providers against any REST API directly from within Pulumi programs in any language.  This approach is somewhat limited by the fact that `local.Command` does not yet support `diff`/`update`/`read`.  Support for those may be [added in the future](https://github.com/pulumi/pulumi-command/issues/20).
+This example uses `local.Command` to create a simple resource provider for managing GitHub labels, by invoking `curl` commands on `create` and `delete` commands against the GitHub REST API. A similar approach could be applied to build other simple providers against any REST API directly from within Pulumi programs in any language. This approach is somewhat limited by the fact that `local.Command` does not yet support `diff`/`read`. Support for [Read](https://github.com/pulumi/pulumi-command/issues/432) and [Diff](https://github.com/pulumi/pulumi-command/issues/433) may be added in the future.
 
 This example also shows how `local.Command` can be used as an implementation detail inside a nicer abstraction, like the `GitHubLabel` component defined below.
 
