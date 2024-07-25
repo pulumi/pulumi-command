@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/pulumi/pulumi-command/sdk v0.0.1
-	github.com/pulumi/pulumi/sdk/v3 v3.122.0
+	github.com/pulumi/pulumi/sdk/v3 v3.126.0
 )
 
 require (
