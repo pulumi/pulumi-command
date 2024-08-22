@@ -154,7 +154,7 @@ public class CopyToRemote extends com.pulumi.resources.CustomResource {
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public CopyToRemote(String name) {
+    public CopyToRemote(java.lang.String name) {
         this(name, CopyToRemoteArgs.Empty);
     }
     /**
@@ -162,7 +162,7 @@ public class CopyToRemote extends com.pulumi.resources.CustomResource {
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public CopyToRemote(String name, CopyToRemoteArgs args) {
+    public CopyToRemote(java.lang.String name, CopyToRemoteArgs args) {
         this(name, args, null);
     }
     /**
@@ -171,15 +171,22 @@ public class CopyToRemote extends com.pulumi.resources.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public CopyToRemote(String name, CopyToRemoteArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("command:remote:CopyToRemote", name, args == null ? CopyToRemoteArgs.Empty : args, makeResourceOptions(options, Codegen.empty()));
+    public CopyToRemote(java.lang.String name, CopyToRemoteArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("command:remote:CopyToRemote", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), false);
     }
 
-    private CopyToRemote(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("command:remote:CopyToRemote", name, null, makeResourceOptions(options, id));
+    private CopyToRemote(java.lang.String name, Output<java.lang.String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("command:remote:CopyToRemote", name, null, makeResourceOptions(options, id), false);
     }
 
-    private static com.pulumi.resources.CustomResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.CustomResourceOptions options, @Nullable Output<String> id) {
+    private static CopyToRemoteArgs makeArgs(CopyToRemoteArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? CopyToRemoteArgs.Empty : args;
+    }
+
+    private static com.pulumi.resources.CustomResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.CustomResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.CustomResourceOptions.builder()
             .version(Utilities.getVersion())
             .additionalSecretOutputs(List.of(
@@ -197,7 +204,7 @@ public class CopyToRemote extends com.pulumi.resources.CustomResource {
      * @param id The _unique_ provider ID of the resource to lookup.
      * @param options Optional settings to control the behavior of the CustomResource.
      */
-    public static CopyToRemote get(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+    public static CopyToRemote get(java.lang.String name, Output<java.lang.String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
         return new CopyToRemote(name, id, options);
     }
 }

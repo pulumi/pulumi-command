@@ -294,7 +294,7 @@ public class Command extends com.pulumi.resources.CustomResource {
      *
      * @param name The _unique_ name of the resulting resource.
      */
-    public Command(String name) {
+    public Command(java.lang.String name) {
         this(name, CommandArgs.Empty);
     }
     /**
@@ -302,7 +302,7 @@ public class Command extends com.pulumi.resources.CustomResource {
      * @param name The _unique_ name of the resulting resource.
      * @param args The arguments to use to populate this resource's properties.
      */
-    public Command(String name, CommandArgs args) {
+    public Command(java.lang.String name, CommandArgs args) {
         this(name, args, null);
     }
     /**
@@ -311,15 +311,22 @@ public class Command extends com.pulumi.resources.CustomResource {
      * @param args The arguments to use to populate this resource's properties.
      * @param options A bag of options that control this resource's behavior.
      */
-    public Command(String name, CommandArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("command:remote:Command", name, args == null ? CommandArgs.Empty : args, makeResourceOptions(options, Codegen.empty()));
+    public Command(java.lang.String name, CommandArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("command:remote:Command", name, makeArgs(args, options), makeResourceOptions(options, Codegen.empty()), false);
     }
 
-    private Command(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
-        super("command:remote:Command", name, null, makeResourceOptions(options, id));
+    private Command(java.lang.String name, Output<java.lang.String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        super("command:remote:Command", name, null, makeResourceOptions(options, id), false);
     }
 
-    private static com.pulumi.resources.CustomResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.CustomResourceOptions options, @Nullable Output<String> id) {
+    private static CommandArgs makeArgs(CommandArgs args, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+        if (options != null && options.getUrn().isPresent()) {
+            return null;
+        }
+        return args == null ? CommandArgs.Empty : args;
+    }
+
+    private static com.pulumi.resources.CustomResourceOptions makeResourceOptions(@Nullable com.pulumi.resources.CustomResourceOptions options, @Nullable Output<java.lang.String> id) {
         var defaultOptions = com.pulumi.resources.CustomResourceOptions.builder()
             .version(Utilities.getVersion())
             .additionalSecretOutputs(List.of(
@@ -337,7 +344,7 @@ public class Command extends com.pulumi.resources.CustomResource {
      * @param id The _unique_ provider ID of the resource to lookup.
      * @param options Optional settings to control the behavior of the CustomResource.
      */
-    public static Command get(String name, Output<String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
+    public static Command get(java.lang.String name, Output<java.lang.String> id, @Nullable com.pulumi.resources.CustomResourceOptions options) {
         return new Command(name, id, options);
     }
 }
