@@ -114,13 +114,13 @@ func logAndWrapSetenvErr(severity diag.Severity, key string, ctx context.Context
 	prefix the command itself with the variables in the form 'VAR=value command'`, key)
 	switch severity {
 	case diag.Error:
-		l.Errorf(msg)
+		l.Error(msg)
 	case diag.Warning:
-		l.Warningf(msg)
+		l.Warning(msg)
 	case diag.Info:
-		l.Infof(msg)
+		l.Info(msg)
 	default:
-		l.Debugf(msg)
+		l.Debug(msg)
 	}
 	return fmt.Errorf("could not set environment variable %q: %w", key, err)
 }
