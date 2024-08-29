@@ -122,7 +122,7 @@ build_sdks: dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 only_build:: build
 
 lint:
-	cd provider && golangci-lint --config ../.golangci.yml run
+	cd provider && golangci-lint --path-prefix provider --config ../.golangci.yml run
 
 
 install:: install_nodejs_sdk install_dotnet_sdk
