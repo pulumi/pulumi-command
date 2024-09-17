@@ -43,7 +43,7 @@ import java.util.StringJoiner;
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return new StringJoiner(", ", "Logging[", "]")
                 .add("value='" + this.value + "'")
                 .toString();
