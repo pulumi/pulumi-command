@@ -4,9 +4,14 @@
 
 import copy
 import warnings
+import sys
 import pulumi
 import pulumi.runtime
 from typing import Any, Mapping, Optional, Sequence, Union, overload
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, TypedDict, TypeAlias
+else:
+    from typing_extensions import NotRequired, TypedDict, TypeAlias
 from .. import _utilities
 from ._enums import *
 
@@ -399,9 +404,6 @@ def run(add_previous_output_in_env: Optional[bool] = None,
         stderr=pulumi.get(__ret__, 'stderr'),
         stdin=pulumi.get(__ret__, 'stdin'),
         stdout=pulumi.get(__ret__, 'stdout'))
-
-
-@_utilities.lift_output_func(run)
 def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]] = None,
                archive_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
                asset_paths: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
@@ -507,4 +509,29 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
            outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
     :param str stdin: Pass a string to the command's process as standard in
     """
-    ...
+    __args__ = dict()
+    __args__['addPreviousOutputInEnv'] = add_previous_output_in_env
+    __args__['archivePaths'] = archive_paths
+    __args__['assetPaths'] = asset_paths
+    __args__['command'] = command
+    __args__['dir'] = dir
+    __args__['environment'] = environment
+    __args__['interpreter'] = interpreter
+    __args__['logging'] = logging
+    __args__['stdin'] = stdin
+    opts = pulumi.InvokeOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
+    __ret__ = pulumi.runtime.invoke_output('command:local:run', __args__, opts=opts, typ=RunResult)
+    return __ret__.apply(lambda __response__: RunResult(
+        add_previous_output_in_env=pulumi.get(__response__, 'add_previous_output_in_env'),
+        archive=pulumi.get(__response__, 'archive'),
+        archive_paths=pulumi.get(__response__, 'archive_paths'),
+        asset_paths=pulumi.get(__response__, 'asset_paths'),
+        assets=pulumi.get(__response__, 'assets'),
+        command=pulumi.get(__response__, 'command'),
+        dir=pulumi.get(__response__, 'dir'),
+        environment=pulumi.get(__response__, 'environment'),
+        interpreter=pulumi.get(__response__, 'interpreter'),
+        logging=pulumi.get(__response__, 'logging'),
+        stderr=pulumi.get(__response__, 'stderr'),
+        stdin=pulumi.get(__response__, 'stdin'),
+        stdout=pulumi.get(__response__, 'stdout')))
