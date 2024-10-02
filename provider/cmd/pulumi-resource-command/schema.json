@@ -38,17 +38,11 @@
       "gradleNexusPublishPluginVersion": "1.1.0"
     },
     "nodejs": {
-      "dependencies": {
-        "@pulumi/pulumi": "^3.0.0"
-      },
       "respectSchemaVersion": true
     },
     "python": {
       "pyproject": {
         "enabled": true
-      },
-      "requires": {
-        "pulumi": ">=3.0.0,<4.0.0"
       },
       "respectSchemaVersion": true
     }

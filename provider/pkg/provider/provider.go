@@ -60,15 +60,9 @@ func NewProvider() p.Provider {
 				},
 				"nodejs": map[string]any{
 					"respectSchemaVersion": true,
-					"dependencies": map[string]string{
-						"@pulumi/pulumi": "^3.0.0",
-					},
 				},
 				"python": map[string]any{
 					"respectSchemaVersion": true,
-					"requires": map[string]string{
-						"pulumi": ">=3.0.0,<4.0.0",
-					},
 					"pyproject": map[string]bool{
 						"enabled": true,
 					},
