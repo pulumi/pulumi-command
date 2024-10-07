@@ -122,7 +122,7 @@ func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
 
 func dialWithRetry[T any](ctx context.Context, msg string, maxAttempts int, f func() (T, error)) (T, error) {
 	var userError error
-	_, data, err := retry.Until(ctx, retry.Acceptor{
+	ok, data, err := retry.Until(ctx, retry.Acceptor{
 		Accept: func(try int, _ time.Duration) (bool, any, error) {
 			var result T
 			result, userError = f()
@@ -145,11 +145,14 @@ func dialWithRetry[T any](ctx context.Context, msg string, maxAttempts int, f fu
 			return false, nil, nil
 		},
 	})
-	if err == nil {
+	if ok && err == nil {
 		return data.(T), nil
 	}
 
 	var t T
+	if err == nil {
+		err = ctx.Err()
+	}
 	return t, err
 }
 
