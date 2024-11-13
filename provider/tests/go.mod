@@ -9,7 +9,7 @@ require (
 	github.com/gliderlabs/ssh v0.3.7
 	github.com/pulumi/pulumi-command/provider v0.0.0-00010101000000-000000000000
 	github.com/pulumi/pulumi-go-provider v0.20.0
-	github.com/pulumi/pulumi/sdk/v3 v3.132.0
+	github.com/pulumi/pulumi/sdk/v3 v3.138.0
 	github.com/stretchr/testify v1.9.0
 )
 

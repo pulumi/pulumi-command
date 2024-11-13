@@ -8,7 +8,7 @@ require (
 	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/providertest v0.0.13
 	github.com/pulumi/pulumi-go-provider v0.20.0
-	github.com/pulumi/pulumi/sdk/v3 v3.132.0
+	github.com/pulumi/pulumi/sdk/v3 v3.138.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.25.0
 )
