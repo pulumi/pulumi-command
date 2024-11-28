@@ -413,7 +413,7 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
                interpreter: Optional[pulumi.Input[Optional[Sequence[str]]]] = None,
                logging: Optional[pulumi.Input[Optional['Logging']]] = None,
                stdin: Optional[pulumi.Input[Optional[str]]] = None,
-               opts: Optional[pulumi.InvokeOptions] = None) -> pulumi.Output[RunResult]:
+               opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[RunResult]:
     """
     A local command to be executed.
     This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
@@ -519,7 +519,7 @@ def run_output(add_previous_output_in_env: Optional[pulumi.Input[Optional[bool]]
     __args__['interpreter'] = interpreter
     __args__['logging'] = logging
     __args__['stdin'] = stdin
-    opts = pulumi.InvokeOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
+    opts = pulumi.InvokeOutputOptions.merge(_utilities.get_invoke_opts_defaults(), opts)
     __ret__ = pulumi.runtime.invoke_output('command:local:run', __args__, opts=opts, typ=RunResult)
     return __ret__.apply(lambda __response__: RunResult(
         add_previous_output_in_env=pulumi.get(__response__, 'add_previous_output_in_env'),
