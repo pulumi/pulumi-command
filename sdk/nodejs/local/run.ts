@@ -284,7 +284,7 @@ export interface RunResult {
  * A local command to be executed.
  * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
  */
-export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOptions): pulumi.Output<RunResult> {
+export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOutputOptions): pulumi.Output<RunResult> {
     opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts || {});
     return pulumi.runtime.invokeOutput("command:local:run", {
         "addPreviousOutputInEnv": args.addPreviousOutputInEnv,
