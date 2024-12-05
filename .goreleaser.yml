@@ -19,6 +19,8 @@ builds:
   ignore: []
   main: ./cmd/pulumi-resource-command/
   ldflags:
+  - -s
+  - -w
   - -X github.com/pulumi/pulumi-command/provider/pkg/version.Version={{.Tag}}
   binary: pulumi-resource-command
 archives:
