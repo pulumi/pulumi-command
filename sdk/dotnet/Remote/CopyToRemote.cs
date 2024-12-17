@@ -21,7 +21,7 @@ namespace Pulumi.Command.Remote
     /// using Pulumi;
     /// using Command = Pulumi.Command;
     /// 
-    /// return await Deployment.RunAsync(() =&gt; 
+    /// return await Deployment.RunAsync(() =&gt;
     /// {
     ///     var config = new Config();
     ///     var serverPublicIp = config.Require("serverPublicIp");
@@ -29,7 +29,7 @@ namespace Pulumi.Command.Remote
     ///     var privateKey = config.Require("privateKey");
     ///     var payload = config.Require("payload");
     ///     var destDir = config.Require("destDir");
-    ///     
+    /// 
     ///     var archive = new FileArchive(payload);
     /// 
     ///     // The configuration of our SSH connection to the instance.
