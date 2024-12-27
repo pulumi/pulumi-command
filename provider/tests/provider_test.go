@@ -2,11 +2,11 @@ package tests
 
 import (
 	"fmt"
-	"github.com/gliderlabs/ssh"
 	"strings"
 	"testing"
 
 	"github.com/blang/semver"
+	"github.com/gliderlabs/ssh"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
@@ -345,13 +345,13 @@ func TestRegress248(t *testing.T) {
 	assert.Empty(t, resp.Failures)
 	assert.Equal(t, resource.PropertyMap{
 		"create": pString("<create command>"),
-		"connection": resource.NewObjectProperty(resource.PropertyMap{
+		"connection": resource.MakeSecret(resource.NewObjectProperty(resource.PropertyMap{
 			"host":           pString("<required value>"),
 			"port":           pNumber(22),
 			"user":           pString("root"),
 			"dialErrorLimit": pNumber(10),
 			"perDialTimeout": pNumber(15),
-		}),
+		})),
 		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
 	}, resp.Inputs)
 }

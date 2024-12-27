@@ -36,7 +36,7 @@ tidy_examples:
 	cd examples && go mod tidy
 
 tidy_provider:
-	cd provider && go mod tidy && cd tests && go mod tidy
+	cd provider && go mod tidy
 
 $(SCHEMA_FILE): provider $(PULUMI)
 	$(PULUMI) package get-schema $(WORKING_DIR)/bin/${PROVIDER} | \
@@ -80,7 +80,7 @@ provider_debug:
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -gcflags="all=-N -l" -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION_GENERIC}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))
 
 test_provider: tidy_provider
-	cd provider && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} ./...
+	cd provider && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} -coverprofile="coverage.txt" ./...
 
 dotnet_sdk: sdk/dotnet
 	cd ${PACKDIR}/dotnet/&& \
