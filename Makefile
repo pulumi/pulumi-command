@@ -36,7 +36,7 @@ tidy_examples:
 	cd examples && go mod tidy
 
 tidy_provider:
-	cd provider && go mod tidy && cd tests && go mod tidy
+	cd provider && go mod tidy
 
 $(SCHEMA_FILE): provider $(PULUMI)
 	$(PULUMI) package get-schema $(WORKING_DIR)/bin/${PROVIDER} | \
