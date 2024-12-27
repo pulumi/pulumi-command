@@ -39,7 +39,7 @@ var _ = (infer.CustomUpdate[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRe
 func (c *CopyToRemote) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyToRemoteInputs, []p.CheckFailure, error) {
 	var failures []p.CheckFailure
 
-	inputs, newFailures, err := infer.DefaultCheck[CopyToRemoteInputs](newInputs)
+	inputs, newFailures, err := infer.DefaultCheck[CopyToRemoteInputs](ctx, newInputs)
 	failures = append(failures, newFailures...)
 	if err != nil {
 		return inputs, failures, err
