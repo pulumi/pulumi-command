@@ -165,7 +165,7 @@ jobs:
     needs: prerequisites
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: ${{ ! contains(github.actor, 'renovate') }}
       matrix:
         language:
         - nodejs
