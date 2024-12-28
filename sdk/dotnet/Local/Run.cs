@@ -24,6 +24,13 @@ namespace Pulumi.Command.Local
         /// </summary>
         public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOptions? options = null)
             => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
+
+        /// <summary>
+        /// A local command to be executed.
+        /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+        /// </summary>
+        public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOutputOptions options)
+            => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
     }
 
 
