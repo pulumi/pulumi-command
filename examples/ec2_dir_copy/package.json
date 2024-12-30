@@ -6,10 +6,10 @@
     },
     "dependencies": {
         "@grpc/grpc-js": "^1.10.10",
-        "@pulumi/aws": "^6.0.0",
-        "@pulumi/awsx": "^2.0.2",
-        "@pulumi/command": "^1.0.0",
-        "@pulumi/pulumi": "^3.113.0",
+        "@pulumi/aws": "6.32.0",
+        "@pulumi/awsx": "2.8.0",
+        "@pulumi/command": "1.0.0",
+        "@pulumi/pulumi": "3.113.3",
         "@types/folder-hash": "^4.0.4",
         "folder-hash": "^4.0.4",
         "typescript": "^5.0.0"
