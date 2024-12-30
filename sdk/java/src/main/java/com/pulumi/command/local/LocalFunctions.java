@@ -11,6 +11,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.TypeShape;
 import com.pulumi.deployment.Deployment;
 import com.pulumi.deployment.InvokeOptions;
+import com.pulumi.deployment.InvokeOutputOptions;
 import java.util.concurrent.CompletableFuture;
 
 public final class LocalFunctions {
@@ -36,6 +37,14 @@ public final class LocalFunctions {
      * 
      */
     public static Output<RunResult> run(RunArgs args, InvokeOptions options) {
+        return Deployment.getInstance().invoke("command:local:run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
+    }
+    /**
+     * A local command to be executed.
+     * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+     * 
+     */
+    public static Output<RunResult> run(RunArgs args, InvokeOutputOptions options) {
         return Deployment.getInstance().invoke("command:local:run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
     }
     /**
