@@ -30,11 +30,6 @@
     },
     "java": {
       "buildFiles": "gradle",
-      "dependencies": {
-        "com.google.code.findbugs:jsr305": "3.0.2",
-        "com.google.code.gson:gson": "2.8.9",
-        "com.pulumi:pulumi": "0.10.0"
-      },
       "gradleNexusPublishPluginVersion": "2.0.0"
     },
     "nodejs": {

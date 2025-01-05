@@ -183,23 +183,12 @@ func (val *RunResult) Defaults() *RunResult {
 	}
 	return &tmp
 }
-
 func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOption) RunResultOutput {
-	return pulumi.ToOutputWithContext(context.Background(), args).
+	return pulumi.ToOutputWithContext(ctx.Context(), args).
 		ApplyT(func(v interface{}) (RunResultOutput, error) {
 			args := v.(RunArgs)
-			opts = internal.PkgInvokeDefaultOpts(opts)
-			var rv RunResult
-			secret, err := ctx.InvokePackageRaw("command:local:run", args.Defaults(), &rv, "", opts...)
-			if err != nil {
-				return RunResultOutput{}, err
-			}
-
-			output := pulumi.ToOutput(rv).(RunResultOutput)
-			if secret {
-				return pulumi.ToSecret(output).(RunResultOutput), nil
-			}
-			return output, nil
+			options := pulumi.InvokeOutputOptions{InvokeOptions: internal.PkgInvokeDefaultOpts(opts)}
+			return ctx.InvokeOutput("command:local:run", args.Defaults(), RunResultOutput{}, options).(RunResultOutput), nil
 		}).(RunResultOutput)
 }
 
