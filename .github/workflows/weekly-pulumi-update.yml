@@ -41,7 +41,7 @@ jobs:
       with:
         lfs: true
     - name: Install Go
-      uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+      uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
       with:
         go-version: ${{ env.GOVERSION }}
         cache-dependency-path: "**/*.sum"
@@ -50,7 +50,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@c7fad9e2f0b79653172b36538b8b34b3c0291952 # v6.0.0
+      uses: pulumi/actions@13b8b7177d6fb736766875dac9b78aab07bd785f # v6.0.1
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup DotNet
@@ -115,10 +115,14 @@ jobs:
     - name: Create PR
       id: create-pr
       if: steps.gomod.outputs.changes != 0
-      run: |
+      run: >
         ver=$(cat .pulumi.version)
+
         msg="Automated upgrade: bump pulumi/pulumi to ${ver}"
-        gh pr create -t "$msg" -b "$msg" -B master
+
+        # See https://github.com/cli/cli/issues/6485#issuecomment-2560935183 for --head workaround
+
+        gh pr create -t "$msg" -b "$msg" --head $(git branch --show-current)
       env:
         GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
     name: weekly-pulumi-update
