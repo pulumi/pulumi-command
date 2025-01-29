@@ -1,16 +1,16 @@
 module github.com/pulumi/pulumi-command/provider
 
-go 1.22
+go 1.23
 
-toolchain go1.23.3
+toolchain go1.23.5
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gliderlabs/ssh v0.3.8
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.6
-	github.com/pulumi/providertest v0.1.3
-	github.com/pulumi/pulumi-go-provider v0.24.0
+	github.com/pulumi/providertest v0.1.5
+	github.com/pulumi/pulumi-go-provider v0.24.1
 	github.com/pulumi/pulumi/sdk/v3 v3.147.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.31.0
