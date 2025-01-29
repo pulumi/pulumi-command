@@ -2,7 +2,7 @@
   "name": "lambda-ts",
   "version": "0.1.0",
   "dependencies": {
-    "@pulumi/aws": "^6.0.0",
-    "@pulumi/pulumi": "^3.0.0"
+    "@pulumi/aws": "6.45.0",
+    "@pulumi/pulumi": "3.124.0"
   }
 }
