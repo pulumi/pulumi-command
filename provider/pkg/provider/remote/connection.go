@@ -145,12 +145,14 @@ func dialWithRetry[T any](ctx context.Context, msg string, maxAttempts int, f fu
 			return false, nil, nil
 		},
 	})
+	// It's important to check both `ok` and `err` as sometimes `err` will be nil when `ok` is false, such as when the context is cancelled.
 	if ok && err == nil {
 		return data.(T), nil
 	}
 
 	var t T
 	if err == nil {
+		// `err` is nil but ok was false, use the err reported from the context.
 		err = ctx.Err()
 	}
 	return t, err
