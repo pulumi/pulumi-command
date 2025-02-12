@@ -6,7 +6,7 @@
     },
     "dependencies": {
         "@pulumi/pulumi": "latest",
-        "@pulumi/command": "1.0.1",
+        "@pulumi/command": "1.0.2",
         "@pulumi/random": "4.17.0"
     }
 }
