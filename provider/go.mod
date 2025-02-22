@@ -11,7 +11,7 @@ require (
 	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/providertest v0.1.5
 	github.com/pulumi/pulumi-go-provider v0.24.1
-	github.com/pulumi/pulumi/sdk/v3 v3.151.0
+	github.com/pulumi/pulumi/sdk/v3 v3.152.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.31.0
 )
