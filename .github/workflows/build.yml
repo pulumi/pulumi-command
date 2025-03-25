@@ -66,7 +66,7 @@ jobs:
         go-version: ${{ env.GOVERSION }}
         cache-dependency-path: "**/*.sum"
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+      uses: jaxxstorm/action-install-gh-release@4304621e8c48d66093a8a214af5d5b5bc3b3d943 # v2.0.0
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -179,7 +179,7 @@ jobs:
         go-version: ${{ env.GOVERSION }}
         cache-dependency-path: "**/*.sum"
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+      uses: jaxxstorm/action-install-gh-release@4304621e8c48d66093a8a214af5d5b5bc3b3d943 # v2.0.0
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -187,12 +187,12 @@ jobs:
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup Node
-      uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
       with:
         node-version: ${{ env.NODEVERSION }}
         registry-url: https://registry.npmjs.org
     - name: Setup DotNet
-      uses: actions/setup-dotnet@3951f0dfe7a07e2313ec93c75700083e2005cbab # v4.3.0
+      uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
       with:
         dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Python
@@ -322,7 +322,7 @@ jobs:
         go-version: ${{ env.GOVERSION }}
         cache-dependency-path: "**/*.sum"
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+      uses: jaxxstorm/action-install-gh-release@4304621e8c48d66093a8a214af5d5b5bc3b3d943 # v2.0.0
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -330,12 +330,12 @@ jobs:
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup Node
-      uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
       with:
         node-version: ${{ env.NODEVERSION }}
         registry-url: https://registry.npmjs.org
     - name: Setup DotNet
-      uses: actions/setup-dotnet@3951f0dfe7a07e2313ec93c75700083e2005cbab # v4.3.0
+      uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
       with:
         dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Python
@@ -382,15 +382,19 @@ jobs:
         pip3 install pipenv
     - name: Install dependencies
       run: make install_${{ matrix.language}}_sdk
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
+    - name: Generate Pulumi Access Token
+      id: generate_pulumi_token
+      uses: pulumi/auth-actions@80dec0d5e009a11565cbf87d9ef9103fc7d24198 # v1.0.0
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-region: ${{ env.AWS_REGION }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        role-duration-seconds: 3600
-        role-session-name: ${{ env.PROVIDER }}@githubActions
-        role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+        organization: pulumi
+        requested-token-type: urn:pulumi:token-type:access_token:organization
+        export-environment-variables: false
+    - name: Export AWS Credentials
+      uses: pulumi/esc-action@41fd832f44f4820124b5350b5f84a00f741f234e # v1.3.0
+      env:
+        PULUMI_ACCESS_TOKEN: ${{ steps.generate_pulumi_token.outputs.pulumi-access-token }}
+      with:
+        environment: logins/pulumi-ci
     - name: Install gotestfmt
       uses: GoTestTools/gotestfmt-action@v2
       with:
@@ -437,7 +441,7 @@ jobs:
         swap-storage: true
         large-packages: false
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+      uses: jaxxstorm/action-install-gh-release@4304621e8c48d66093a8a214af5d5b5bc3b3d943 # v2.0.0
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
@@ -494,18 +498,18 @@ jobs:
         go-version: ${{ env.GOVERSION }}
         cache-dependency-path: "**/*.sum"
     - name: Install pulumictl
-      uses: jaxxstorm/action-install-gh-release@cd6b2b78ad38bdd294341cda064ec0692b06215b # v1.14.0
+      uses: jaxxstorm/action-install-gh-release@4304621e8c48d66093a8a214af5d5b5bc3b3d943 # v2.0.0
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
       uses: pulumi/actions@9519177da243fd32cab35cdbf19cce1ab7472fcc # v6.2.0
     - name: Setup Node
-      uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
       with:
         node-version: ${{ env.NODEVERSION }}
         registry-url: https://registry.npmjs.org
     - name: Setup DotNet
-      uses: actions/setup-dotnet@3951f0dfe7a07e2313ec93c75700083e2005cbab # v4.3.0
+      uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
       with:
         dotnet-version: ${{ env.DOTNETVERSION }}
     - name: Setup Python
@@ -568,7 +572,7 @@ jobs:
       run: git grep -l 'go:embed' -- provider | xargs --no-run-if-empty sed -i
         's/go:embed/ goembed/g'
     - name: golangci-lint provider pkg
-      uses: golangci/golangci-lint-action@2226d7cb06a077cd73e56eedd38eecad18e5d837 # v6.5.0
+      uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
       with:
         version: ${{ env.GOLANGCI_LINT_VERSION }}
         args: -c ../.golangci.yml
