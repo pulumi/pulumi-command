@@ -9,7 +9,7 @@ require (
 	github.com/gliderlabs/ssh v0.3.8
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.6
-	github.com/pulumi/providertest v0.2.0
+	github.com/pulumi/providertest v0.3.0
 	github.com/pulumi/pulumi-go-provider v0.26.0
 	github.com/pulumi/pulumi/sdk/v3 v3.163.0
 	github.com/stretchr/testify v1.10.0

@@ -306,7 +306,7 @@
   resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-1.27.0.tgz#1a857dcc95a5ab30122e04417148211e6f945e6c"
   integrity sha512-sAay1RrB+ONOem0OZanAR1ZI/k7yDpnOQSQmTMuGImUQb2y8EbSaCJ94FQluM74xoU03vlb2d2U90hZluL6nQg==
 
-"@opentelemetry/semantic-conventions@1.28.0", "@opentelemetry/semantic-conventions@^1.28":
+"@opentelemetry/semantic-conventions@1.28.0":
   version "1.28.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-1.28.0.tgz#337fb2bca0453d0726696e745f50064411f646d6"
   integrity sha512-lp4qAiMTD4sNWW4DbKLBkfiMZ4jbAboJIGOQr5DvciMRI494OapieI9qiODpOt0XBr1LjIDy1xAGAnVs5supTA==
@@ -369,18 +369,18 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@pulumi/aws@6.70.0":
-  version "6.70.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.70.0.tgz#25a55945919242fd46fd9d7766d1d9e578391534"
-  integrity sha512-A1Coq+tCzuqiJXXdX44fI73BoamEI9cmb1iL53wmqzTsaWuCbz1ktD2thponMFfFONjER9I4Bkqthrd0s2Y9VA==
+"@pulumi/aws@6.77.1":
+  version "6.77.1"
+  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-6.77.1.tgz#a3d1e4b056180ebabb78454beab7684ab7339866"
+  integrity sha512-9wV2m7VtM8UA2HgFlezAWBBlrQnKmGvtvvYgAvQiLmOehKmmbLg/6MLSDUWmNKel84myDtQUFzIy8MbhQBX6ZA==
   dependencies:
     "@pulumi/pulumi" "^3.142.0"
     mime "^2.0.0"
 
-"@pulumi/pulumi@3.153.1", "@pulumi/pulumi@^3.142.0":
-  version "3.153.1"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.153.1.tgz#d84c4c6582123603eb842e30a96a2bb05531a14f"
-  integrity sha512-NeYLOSOVqsUEhPH3eCRGJNuahtWMHEom2E3NR/LoTccH5SGzlgHeL153lQSjmm2reik/l0B+ZCjPB3rN4HAbqw==
+"@pulumi/pulumi@3.163.0", "@pulumi/pulumi@^3.142.0":
+  version "3.163.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.163.0.tgz#50d0c1e8558833e5065617c5961c94b20ab80088"
+  integrity sha512-GWiF52tzNKWxL1MyulRxfXbD+OaFs9Wmt2yATxCxz5JhJTW1JKQIAfi6sj0Hax0jSBM794T9FdAresb/myFFHA==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"
@@ -392,8 +392,6 @@
     "@opentelemetry/resources" "^1.28"
     "@opentelemetry/sdk-trace-base" "^1.28"
     "@opentelemetry/sdk-trace-node" "^1.28"
-    "@opentelemetry/semantic-conventions" "^1.28"
-    "@pulumi/query" "^0.3.0"
     "@types/google-protobuf" "^3.15.5"
     "@types/semver" "^7.5.6"
     "@types/tmp" "^0.2.6"
@@ -412,11 +410,6 @@
     source-map-support "^0.5.6"
     tmp "^0.2.1"
     upath "^1.1.0"
-
-"@pulumi/query@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/query/-/query-0.3.0.tgz#f496608e86a18c3dd31b6c533408e2441c29071d"
-  integrity sha512-xfo+yLRM2zVjVEA4p23IjQWzyWl1ZhWOGobsBqRpIarzLvwNH/RAGaoehdxlhx4X92302DrpdIFgTICMN4P38w==
 
 "@sigstore/bundle@^2.3.2":
   version "2.3.2"
