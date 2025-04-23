@@ -219,6 +219,7 @@ sign-goreleaser-exe-%: bin/jsign-6.0.jar
 			mv $${file}.unsigned $${file}; \
 			az logout; \
 		fi; \
+	fi
 
 # To make an immediately observable change to .ci-mgmt.yaml:
 #
@@ -228,4 +229,4 @@ sign-goreleaser-exe-%: bin/jsign-6.0.jar
 ci-mgmt: .ci-mgmt.yaml
 	go run github.com/pulumi/ci-mgmt/provider-ci@master generate
 .PHONY: ci-mgmt
-	fi
+
