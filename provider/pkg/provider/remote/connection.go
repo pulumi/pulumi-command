@@ -18,7 +18,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"os"
 	"time"
 
 	p "github.com/pulumi/pulumi-go-provider"
@@ -26,10 +25,6 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/retry"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
-)
-
-const (
-	sshAgentSocketEnvVar = "SSH_AUTH_SOCK"
 )
 
 var (
@@ -102,18 +97,20 @@ func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
 				return answers, nil
 			}))
 	}
+
 	var sshAgentSocketPath *string
 	if con.AgentSocketPath != nil {
 		sshAgentSocketPath = con.AgentSocketPath
+	} else {
+		sshAgentSocketPath = tryGetDefaultAgentSocket()
 	}
-	if envAgentSocketPath := os.Getenv(sshAgentSocketEnvVar); sshAgentSocketPath == nil && envAgentSocketPath != "" {
-		sshAgentSocketPath = &envAgentSocketPath
-	}
+
 	if sshAgentSocketPath != nil {
-		conn, err := net.Dial("unix", *sshAgentSocketPath)
+		conn, err := dialAgent(*sshAgentSocketPath)
 		if err != nil {
 			return nil, err
 		}
+
 		config.Auth = append(config.Auth, ssh.PublicKeysCallback(agent.NewClient(conn).Signers))
 	}
 
