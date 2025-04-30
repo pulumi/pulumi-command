@@ -8,6 +8,6 @@
         "@pulumi/aws": "6.78.0",
         "@pulumi/command": "latest",
         "@pulumi/pulumi": "latest",
-        "@pulumi/random": "4.18.1"
+        "@pulumi/random": "4.18.2"
     }
 }
