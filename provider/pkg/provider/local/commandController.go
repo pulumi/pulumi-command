@@ -30,23 +30,26 @@ var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 
 // This is the Create method. This will be run on every Command resource creation.
-func (c *Command) Create(ctx context.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
+func (c *Command) Create(ctx context.Context, req infer.CreateRequest[CommandInputs]) (infer.CreateResponse[CommandOutputs], error) {
+	name := req.ID
+	input := req.Inputs
+	preview := req.Preview
 	state := CommandOutputs{CommandInputs: input}
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
-		return id, state, err
+		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, err
 	}
 
 	// If in preview, don't run the command.
 	if preview {
-		return id, state, nil
+		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, nil
 	}
 	if input.Create == nil {
-		return id, state, nil
+		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, nil
 	}
 	cmd := *input.Create
 	err = run(ctx, cmd, state.BaseInputs, &state.BaseOutputs, input.Logging)
-	return id, state, err
+	return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, err
 }
 
 // WireDependencies controls how secrets and unknowns flow through a resource.
@@ -57,11 +60,15 @@ func (c *Command) Create(ctx context.Context, name string, input CommandInputs, 
 // Because we want every output to depend on every input, we can leave the default behavior.
 
 // The Update method will be run on every update.
-func (c *Command) Update(ctx context.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
+func (c *Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInputs, CommandOutputs]) (infer.UpdateResponse[CommandOutputs], error) {
+	id := req.ID
+	olds := req.State
+	news := req.Inputs
+	preview := req.Preview
 	state := CommandOutputs{CommandInputs: news, BaseOutputs: olds.BaseOutputs}
 	// If in preview, don't run the command.
 	if preview {
-		return state, nil
+		return infer.UpdateResponse[CommandOutputs]{Outputs: state}, nil
 	}
 	// Use Create command if Update is unspecified.
 	cmd := news.Create
@@ -70,10 +77,10 @@ func (c *Command) Update(ctx context.Context, id string, olds CommandOutputs, ne
 	}
 	// If neither are specified, do nothing.
 	if cmd == nil {
-		return state, nil
+		return infer.UpdateResponse[CommandOutputs]{Outputs: state}, nil
 	}
 	err := run(ctx, *cmd, state.BaseInputs, &state.BaseOutputs, news.Logging)
-	return state, err
+	return infer.UpdateResponse[CommandOutputs]{Outputs: state}, err
 }
 
 // The Delete method will run when the resource is deleted.

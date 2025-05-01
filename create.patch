@@ -1,0 +1,128 @@
+@@
+var infer identifier
+
+var ctx, context identifier
+var name identifier
+var inputs, InputType identifier
+var preview identifier
+var OutputType identifier
+
+var r expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+-func (r) Create(ctx context.Context, name string, inputs InputType, preview bool) (string, OutputType, error) { ... }
++func (r) Create(ctx context.Context, req infer.CreateRequest[InputType]) (infer.CreateResponse[OutputType], error) { 
++    name := req.ID
++    inputs := req.Inputs
++    preview := req.Preview
++    ... 
++}
+
+@@
+var infer identifier
+
+var ctx, context identifier
+var name identifier
+var inputs, InputType identifier
+var preview identifier
+var OutputType identifier
+
+var r, rType expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+-func (r rType) Create(ctx context.Context, name string, inputs InputType, preview bool) (string, OutputType, error) { ... }
++func (r rType) Create(ctx context.Context, req infer.CreateRequest[InputType]) (infer.CreateResponse[OutputType], error) { 
++    name := req.ID
++    inputs := req.Inputs
++    preview := req.Preview
++    ... 
++}
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r expression
+var name expression
+var outputs expression
+var err expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r) Create(...) (infer.CreateResponse[OutputType], error) { 
+     ...
+-    return name, outputs, err
++    return infer.CreateResponse[OutputType]{ID: name, Outputs: outputs}, err
+     ...
+ }
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r expression
+var name expression
+var outputs expression
+var err expression
+
+var x expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r) Create(...) (infer.CreateResponse[OutputType], error) { 
+     ...
+     if x {
+         ...
+-        return name, outputs, err
++        return infer.CreateResponse[OutputType]{ID: name, Outputs: outputs}, err
+     }
+     ...
+ }
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r, rType expression
+var name expression
+var outputs expression
+var err expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r rType) Create(...) (infer.CreateResponse[OutputType], error) { 
+     ...
+-    return name, outputs, err
++    return infer.CreateResponse[OutputType]{ID: name, Outputs: outputs}, err
+     ...
+ }
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r, rType expression
+var name expression
+var outputs expression
+var err expression
+
+var x expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r rType) Create(...) (infer.CreateResponse[OutputType], error) { 
+     ...
+     if x {
+         ...
+-        return name, outputs, err
++        return infer.CreateResponse[OutputType]{ID: name, Outputs: outputs}, err
+     }
+     ...
+ }
+

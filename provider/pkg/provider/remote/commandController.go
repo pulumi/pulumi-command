@@ -28,19 +28,22 @@ var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 
 // This is the Create method. This will be run on every Command resource creation.
-func (*Command) Create(ctx context.Context, name string, input CommandInputs, preview bool) (string, CommandOutputs, error) {
+func (*Command) Create(ctx context.Context, req infer.CreateRequest[CommandInputs]) (infer.CreateResponse[CommandOutputs], error) {
+	name := req.ID
+	input := req.Inputs
+	preview := req.Preview
 	state := CommandOutputs{CommandInputs: input}
 	var err error
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
-		return "", state, err
+		return infer.CreateResponse[CommandOutputs]{ID: "", Outputs: state}, err
 	}
 	if preview {
-		return id, state, nil
+		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, nil
 	}
 
 	if state.Create == nil {
-		return id, state, nil
+		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, nil
 	}
 	cmd := ""
 	if state.Create != nil {
@@ -50,14 +53,18 @@ func (*Command) Create(ctx context.Context, name string, input CommandInputs, pr
 	if !preview {
 		err = state.run(ctx, cmd, input.Logging)
 	}
-	return id, state, err
+	return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, err
 }
 
 // The Update method will be run on every update.
-func (*Command) Update(ctx context.Context, id string, olds CommandOutputs, news CommandInputs, preview bool) (CommandOutputs, error) {
+func (*Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInputs, CommandOutputs]) (infer.UpdateResponse[CommandOutputs], error) {
+	id := req.ID
+	olds := req.State
+	news := req.Inputs
+	preview := req.Preview
 	state := CommandOutputs{CommandInputs: news, BaseOutputs: olds.BaseOutputs}
 	if preview {
-		return state, nil
+		return infer.UpdateResponse[CommandOutputs]{Outputs: state}, nil
 	}
 	var err error
 	if !preview {
@@ -67,7 +74,7 @@ func (*Command) Update(ctx context.Context, id string, olds CommandOutputs, news
 			err = state.run(ctx, *news.Create, news.Logging)
 		}
 	}
-	return state, err
+	return infer.UpdateResponse[CommandOutputs]{Outputs: state}, err
 }
 
 // The Delete method will run when the resource is deleted.

@@ -1,0 +1,120 @@
+@@
+var infer identifier
+
+var ctx, context identifier
+var id identifier
+var outputs, OutputType identifier
+
+var r expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+-func (r) Delete(ctx context.Context, id string, outputs OutputType) (OutputType, error) { ... }
++func (r) Delete(ctx context.Context, req infer.DeleteRequest[OutputType]) (infer.DeleteResponse, error) { 
++    id := req.ID
++    outputs := req.State
++    
++    ... 
++}
+
+@@
+var infer identifier
+
+var ctx, context identifier
+var id identifier
+var outputs, OutputType identifier
+
+var r, rType expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+-func (r rType) Delete(ctx context.Context, id string, outputs OutputType) (OutputType, error) { ... }
++func (r rType) Delete(ctx context.Context, req infer.DeleteRequest[OutputType]) (infer.DeleteResponse, error) { 
++    id := req.ID
++    outputs := req.State
++    
++    ... 
++}
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r expression
+var outputs identifier
+var err expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r) Delete(...) (infer.DeleteResponse[OutputType], error) { 
+     ...
+-    return outputs, err
++    return infer.DeleteResponse[OutputType]{Outputs: outputs}, err
+     ...
+ }
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r expression
+var outputs identifier
+var err expression
+
+var x expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r) Delete(...) (infer.DeleteResponse[OutputType], error) { 
+     ...
+     if x {
+         ...
+-        return outputs, err
++        return infer.DeleteResponse[OutputType]{Outputs: outputs}, err
+     }
+     ...
+ }
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r, rType expression
+var outputs identifier
+var err expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r rType) Delete(...) (infer.DeleteResponse[OutputType], error) { 
+     ...
+-    return outputs, err
++    return infer.DeleteResponse[OutputType]{Outputs: outputs}, err
+     ...
+ }
+
+@@
+var infer identifier
+
+var OutputType identifier
+
+var r, rType expression
+var outputs identifier
+var err expression
+
+var x expression
+@@
+ import infer "github.com/pulumi/pulumi-go-provider/infer"
+
+ func (r rType) Delete(...) (infer.DeleteResponse[OutputType], error) { 
+     ...
+     if x {
+         ...
+-        return outputs, err
++        return infer.DeleteResponse[OutputType]{Outputs: outputs}, err
+     }
+     ...
+ }
+

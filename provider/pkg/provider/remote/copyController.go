@@ -78,21 +78,28 @@ func (c *CopyToRemote) Check(ctx context.Context, urn string, oldInputs, newInpu
 }
 
 // This is the Create method. This will be run on every Copy resource creation.
-func (*CopyToRemote) Create(ctx context.Context, name string, input CopyToRemoteInputs, preview bool) (string, CopyToRemoteOutputs, error) {
+func (*CopyToRemote) Create(ctx context.Context, req infer.CreateRequest[CopyToRemoteInputs]) (infer.CreateResponse[CopyToRemoteOutputs], error) {
+	name := req.ID
+	input := req.Inputs
+	preview := req.Preview
 	if preview {
-		return "", CopyToRemoteOutputs{input}, nil
+		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Outputs: CopyToRemoteOutputs{input}}, nil
 	}
 
 	outputs, err := copy(ctx, input)
 	if err != nil {
-		return "", CopyToRemoteOutputs{input}, err
+		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Outputs: CopyToRemoteOutputs{input}}, err
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
-	return id, outputs, err
+	return infer.CreateResponse[CopyToRemoteOutputs]{ID: id, Outputs: outputs}, err
 }
 
-func (c *CopyToRemote) Update(ctx context.Context, id string, olds CopyToRemoteOutputs, news CopyToRemoteInputs, preview bool) (CopyToRemoteOutputs, error) {
+func (c *CopyToRemote) Update(ctx context.Context, req infer.UpdateRequest[CopyToRemoteInputs, CopyToRemoteOutputs]) (infer.UpdateResponse[CopyToRemoteOutputs], error) {
+	id := req.ID
+	olds := req.State
+	news := req.Inputs
+	preview := req.Preview
 	if preview {
 		return CopyToRemoteOutputs{news}, nil
 	}

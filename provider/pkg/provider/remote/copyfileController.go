@@ -30,9 +30,12 @@ import (
 var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 
 // This is the Create method. This will be run on every CopyFile resource creation.
-func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, preview bool) (string, CopyFileOutputs, error) {
+func (*CopyFile) Create(ctx context.Context, req infer.CreateRequest[CopyFileInputs]) (infer.CreateResponse[CopyFileOutputs], error) {
+	name := req.ID
+	input := req.Inputs
+	preview := req.Preview
 	if preview {
-		return "", CopyFileOutputs{input}, nil
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, nil
 	}
 
 	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
@@ -40,19 +43,19 @@ func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, 
 
 	src, err := os.Open(input.LocalPath)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, err
 	}
 	defer src.Close()
 
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, err
 	}
 	defer client.Close()
 
 	sftp, err := sftp.NewClient(client)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, err
 	}
 	defer sftp.Close()
 
@@ -67,5 +70,5 @@ func (*CopyFile) Create(ctx context.Context, name string, input CopyFileInputs, 
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
-	return id, CopyFileOutputs{input}, err
+	return infer.CreateResponse[CopyFileOutputs]{ID: id, Outputs: CopyFileOutputs{input}}, err
 }
