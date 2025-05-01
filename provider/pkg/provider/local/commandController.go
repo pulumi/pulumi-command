@@ -84,7 +84,9 @@ func (c *Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInp
 }
 
 // The Delete method will run when the resource is deleted.
-func (c *Command) Delete(ctx context.Context, id string, props CommandOutputs) error {
+func (c *Command) Delete(ctx context.Context, req infer.DeleteRequest[CommandOutputs]) error {
+	id := req.ID
+	props := req.State
 	if props.Delete == nil {
 		return nil
 	}
