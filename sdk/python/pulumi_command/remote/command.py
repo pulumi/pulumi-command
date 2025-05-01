@@ -203,10 +203,8 @@ class CommandArgs:
         pulumi.set(self, "update", value)
 
 
+@pulumi.type_token("command:remote:Command")
 class Command(pulumi.CustomResource):
-
-    pulumi_type = "command:remote:Command"
-
     @overload
     def __init__(__self__,
                  resource_name: str,
