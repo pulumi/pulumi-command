@@ -21,6 +21,8 @@ type Connection struct {
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
 	// The address of the resource to connect to.
 	Host string `pulumi:"host"`
+	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+	HostKey *string `pulumi:"hostKey"`
 	// The password we should use for the connection.
 	Password *string `pulumi:"password"`
 	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -83,6 +85,8 @@ type ConnectionArgs struct {
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
 	// The address of the resource to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
+	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+	HostKey pulumi.StringPtrInput `pulumi:"hostKey"`
 	// The password we should use for the connection.
 	Password pulumi.StringPtrInput `pulumi:"password"`
 	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -162,6 +166,11 @@ func (o ConnectionOutput) Host() pulumi.StringOutput {
 	return o.ApplyT(func(v Connection) string { return v.Host }).(pulumi.StringOutput)
 }
 
+// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+func (o ConnectionOutput) HostKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v Connection) *string { return v.HostKey }).(pulumi.StringPtrOutput)
+}
+
 // The password we should use for the connection.
 func (o ConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v Connection) *string { return v.Password }).(pulumi.StringPtrOutput)
@@ -205,6 +214,8 @@ type ProxyConnection struct {
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
 	// The address of the bastion host to connect to.
 	Host string `pulumi:"host"`
+	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+	HostKey *string `pulumi:"hostKey"`
 	// The password we should use for the connection to the bastion host.
 	Password *string `pulumi:"password"`
 	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -263,6 +274,8 @@ type ProxyConnectionArgs struct {
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
 	// The address of the bastion host to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
+	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+	HostKey pulumi.StringPtrInput `pulumi:"hostKey"`
 	// The password we should use for the connection to the bastion host.
 	Password pulumi.StringPtrInput `pulumi:"password"`
 	// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -390,6 +403,11 @@ func (o ProxyConnectionOutput) Host() pulumi.StringOutput {
 	return o.ApplyT(func(v ProxyConnection) string { return v.Host }).(pulumi.StringOutput)
 }
 
+// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+func (o ProxyConnectionOutput) HostKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v ProxyConnection) *string { return v.HostKey }).(pulumi.StringPtrOutput)
+}
+
 // The password we should use for the connection to the bastion host.
 func (o ProxyConnectionOutput) Password() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *string { return v.Password }).(pulumi.StringPtrOutput)
@@ -471,6 +489,16 @@ func (o ProxyConnectionPtrOutput) Host() pulumi.StringPtrOutput {
 			return nil
 		}
 		return &v.Host
+	}).(pulumi.StringPtrOutput)
+}
+
+// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+func (o ProxyConnectionPtrOutput) HostKey() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *ProxyConnection) *string {
+		if v == nil {
+			return nil
+		}
+		return v.HostKey
 	}).(pulumi.StringPtrOutput)
 }
 

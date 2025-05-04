@@ -86,6 +86,10 @@
           "type": "string",
           "description": "The address of the resource to connect to."
         },
+        "hostKey": {
+          "type": "string",
+          "description": "The expected host key to verify the server's identity. If not provided, the host key will be ignored."
+        },
         "password": {
           "type": "string",
           "description": "The password we should use for the connection."
@@ -159,6 +163,10 @@
         "host": {
           "type": "string",
           "description": "The address of the bastion host to connect to."
+        },
+        "hostKey": {
+          "type": "string",
+          "description": "The expected host key to verify the server's identity. If not provided, the host key will be ignored."
         },
         "password": {
           "type": "string",
