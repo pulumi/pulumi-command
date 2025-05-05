@@ -55,7 +55,7 @@ func (*CopyFile) Create(ctx context.Context, req infer.CreateRequest[CopyFileInp
 
 	sftp, err := sftp.NewClient(client)
 	if err != nil {
-		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, err
+		return "", CopyFileOutputs{input}, err
 	}
 	defer sftp.Close()
 
