@@ -88,10 +88,8 @@ class CopyToRemoteArgs:
         pulumi.set(self, "triggers", value)
 
 
+@pulumi.type_token("command:remote:CopyToRemote")
 class CopyToRemote(pulumi.CustomResource):
-
-    pulumi_type = "command:remote:CopyToRemote"
-
     @overload
     def __init__(__self__,
                  resource_name: str,
