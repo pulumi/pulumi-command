@@ -70,6 +70,21 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * The expected host key to verify the server&#39;s identity. If not provided, the host key will be ignored.
+     * 
+     */
+    @Import(name="hostKey")
+    private @Nullable Output<String> hostKey;
+
+    /**
+     * @return The expected host key to verify the server&#39;s identity. If not provided, the host key will be ignored.
+     * 
+     */
+    public Optional<Output<String>> hostKey() {
+        return Optional.ofNullable(this.hostKey);
+    }
+
+    /**
      * The password we should use for the connection.
      * 
      */
@@ -180,6 +195,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
         this.agentSocketPath = $.agentSocketPath;
         this.dialErrorLimit = $.dialErrorLimit;
         this.host = $.host;
+        this.hostKey = $.hostKey;
         this.password = $.password;
         this.perDialTimeout = $.perDialTimeout;
         this.port = $.port;
@@ -268,6 +284,27 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder host(String host) {
             return host(Output.of(host));
+        }
+
+        /**
+         * @param hostKey The expected host key to verify the server&#39;s identity. If not provided, the host key will be ignored.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder hostKey(@Nullable Output<String> hostKey) {
+            $.hostKey = hostKey;
+            return this;
+        }
+
+        /**
+         * @param hostKey The expected host key to verify the server&#39;s identity. If not provided, the host key will be ignored.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder hostKey(String hostKey) {
+            return hostKey(Output.of(hostKey));
         }
 
         /**

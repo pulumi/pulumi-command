@@ -35,4 +35,5 @@ func (c *ProxyConnection) Annotate(a infer.Annotator) {
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
 	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
 	a.SetDefault(&c.PerDialTimeout, 15)
+	a.Describe(&c.HostKey, "The expected host key to verify the server's identity. If not provided, the host key will be ignored.")
 }

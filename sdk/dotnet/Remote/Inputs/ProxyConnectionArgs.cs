@@ -34,6 +34,12 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<string> Host { get; set; } = null!;
 
         /// <summary>
+        /// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        /// </summary>
+        [Input("hostKey")]
+        public Input<string>? HostKey { get; set; }
+
+        /// <summary>
         /// The password we should use for the connection to the bastion host.
         /// </summary>
         [Input("password")]

@@ -29,6 +29,10 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly string Host;
         /// <summary>
+        /// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        /// </summary>
+        public readonly string? HostKey;
+        /// <summary>
         /// The password we should use for the connection.
         /// </summary>
         public readonly string? Password;
@@ -65,6 +69,8 @@ namespace Pulumi.Command.Remote.Outputs
 
             string host,
 
+            string? hostKey,
+
             string? password,
 
             int? perDialTimeout,
@@ -82,6 +88,7 @@ namespace Pulumi.Command.Remote.Outputs
             AgentSocketPath = agentSocketPath;
             DialErrorLimit = dialErrorLimit;
             Host = host;
+            HostKey = hostKey;
             Password = password;
             PerDialTimeout = perDialTimeout;
             Port = port;

@@ -52,6 +52,7 @@ type connectionBase struct {
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
 	PerDialTimeout     *int     `pulumi:"perDialTimeout,optional"`
+	HostKey            *string  `pulumi:"hostKey,optional"`
 }
 
 func (c *Connection) Annotate(a infer.Annotator) {
@@ -70,13 +71,28 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
 	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
 	a.SetDefault(&c.PerDialTimeout, 15)
+	a.Describe(&c.HostKey, "The expected host key to verify the server's identity. If not provided, the host key will be ignored.")
 }
 
 func (con *connectionBase) SShConfig() (*ssh.ClientConfig, error) {
+	var hostKeyCallback ssh.HostKeyCallback
+	var hostKeyAlgorithms []string
+	if con.HostKey != nil {
+		publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(*con.HostKey))
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse host key: %w", err)
+		}
+		hostKeyCallback = ssh.FixedHostKey(publicKey)
+		hostKeyAlgorithms = []string{publicKey.Type()}
+	} else {
+		hostKeyCallback = ssh.InsecureIgnoreHostKey()
+	}
+
 	config := &ssh.ClientConfig{
-		User:            *con.User,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout:         time.Second * time.Duration(*con.PerDialTimeout),
+		User:              *con.User,
+		HostKeyCallback:   hostKeyCallback,
+		HostKeyAlgorithms: hostKeyAlgorithms,
+		Timeout:           time.Second * time.Duration(*con.PerDialTimeout),
 	}
 	if con.PrivateKey != nil {
 		var signer ssh.Signer
