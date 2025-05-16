@@ -88,7 +88,8 @@
         },
         "password": {
           "type": "string",
-          "description": "The password we should use for the connection."
+          "description": "The password we should use for the connection.",
+          "secret": true
         },
         "perDialTimeout": {
           "type": "integer",
@@ -102,11 +103,13 @@
         },
         "privateKey": {
           "type": "string",
-          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+          "secret": true
         },
         "privateKeyPassword": {
           "type": "string",
-          "description": "The password to use in case the private key is encrypted."
+          "description": "The password to use in case the private key is encrypted.",
+          "secret": true
         },
         "proxy": {
           "$ref": "#/types/command:remote:ProxyConnection",
@@ -162,7 +165,8 @@
         },
         "password": {
           "type": "string",
-          "description": "The password we should use for the connection to the bastion host."
+          "description": "The password we should use for the connection to the bastion host.",
+          "secret": true
         },
         "perDialTimeout": {
           "type": "integer",
@@ -176,11 +180,13 @@
         },
         "privateKey": {
           "type": "string",
-          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+          "secret": true
         },
         "privateKeyPassword": {
           "type": "string",
-          "description": "The password to use in case the private key is encrypted."
+          "description": "The password to use in case the private key is encrypted.",
+          "secret": true
         },
         "user": {
           "type": "string",
