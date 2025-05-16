@@ -8,8 +8,8 @@ import * as enums from "../types/enums";
 import * as utilities from "../utilities";
 
 /**
- * A local command to be executed.
- * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+ * A local command to be executed unconditionally.
+ * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
  */
 export function run(args: RunArgs, opts?: pulumi.InvokeOptions): Promise<RunResult> {
     opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts || {});
@@ -281,8 +281,8 @@ export interface RunResult {
     readonly stdout: string;
 }
 /**
- * A local command to be executed.
- * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+ * A local command to be executed unconditionally.
+ * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
  */
 export function runOutput(args: RunOutputArgs, opts?: pulumi.InvokeOutputOptions): pulumi.Output<RunResult> {
     opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts || {});

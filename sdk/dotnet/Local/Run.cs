@@ -12,22 +12,22 @@ namespace Pulumi.Command.Local
     public static class Run
     {
         /// <summary>
-        /// A local command to be executed.
-        /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+        /// A local command to be executed unconditionally.
+        /// This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
         /// </summary>
         public static Task<RunResult> InvokeAsync(RunArgs args, InvokeOptions? options = null)
             => global::Pulumi.Deployment.Instance.InvokeAsync<RunResult>("command:local:run", args ?? new RunArgs(), options.WithDefaults());
 
         /// <summary>
-        /// A local command to be executed.
-        /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+        /// A local command to be executed unconditionally.
+        /// This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
         /// </summary>
         public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOptions? options = null)
             => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());
 
         /// <summary>
-        /// A local command to be executed.
-        /// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+        /// A local command to be executed unconditionally.
+        /// This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
         /// </summary>
         public static Output<RunResult> Invoke(RunInvokeArgs args, InvokeOutputOptions options)
             => global::Pulumi.Deployment.Instance.Invoke<RunResult>("command:local:run", args ?? new RunInvokeArgs(), options.WithDefaults());

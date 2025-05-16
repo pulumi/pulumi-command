@@ -11,8 +11,8 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// A local command to be executed.
-// This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+// A local command to be executed unconditionally.
+// This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
 func Run(ctx *pulumi.Context, args *RunArgs, opts ...pulumi.InvokeOption) (*RunResult, error) {
 	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv RunResult

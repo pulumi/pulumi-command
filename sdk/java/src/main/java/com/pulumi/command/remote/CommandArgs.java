@@ -58,14 +58,26 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The command to run on create.
+     * The command to run once on resource creation.
+     * 
+     * If an `update` command isn&#39;t provided, then `create` will also be run when the resource&#39;s inputs are modified.
+     * 
+     * Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
      * 
      */
     @Import(name="create")
     private @Nullable Output<String> create;
 
     /**
-     * @return The command to run on create.
+     * @return The command to run once on resource creation.
+     * 
+     * If an `update` command isn&#39;t provided, then `create` will also be run when the resource&#39;s inputs are modified.
+     * 
+     * Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
      * 
      */
     public Optional<Output<String>> create() {
@@ -73,18 +85,30 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-     * Command resource from previous create or update steps.
+     * The command to run when the resource is updated.
+     * 
+     * If empty, the create command will be executed instead.
+     * 
+     * Note that this command will not run if the resource&#39;s inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
+     * 
+     * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
      * 
      */
     @Import(name="delete")
     private @Nullable Output<String> delete;
 
     /**
-     * @return The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-     * Command resource from previous create or update steps.
+     * @return The command to run when the resource is updated.
+     * 
+     * If empty, the create command will be executed instead.
+     * 
+     * Note that this command will not run if the resource&#39;s inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
+     * 
+     * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
      * 
      */
     public Optional<Output<String>> delete() {
@@ -267,7 +291,13 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param create The command to run on create.
+         * @param create The command to run once on resource creation.
+         * 
+         * If an `update` command isn&#39;t provided, then `create` will also be run when the resource&#39;s inputs are modified.
+         * 
+         * Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+         * 
+         * Use `local.runOutput` if you need to run a command on every execution of your program.
          * 
          * @return builder
          * 
@@ -278,7 +308,13 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param create The command to run on create.
+         * @param create The command to run once on resource creation.
+         * 
+         * If an `update` command isn&#39;t provided, then `create` will also be run when the resource&#39;s inputs are modified.
+         * 
+         * Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+         * 
+         * Use `local.runOutput` if you need to run a command on every execution of your program.
          * 
          * @return builder
          * 
@@ -288,9 +324,15 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param delete The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-         * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-         * Command resource from previous create or update steps.
+         * @param delete The command to run when the resource is updated.
+         * 
+         * If empty, the create command will be executed instead.
+         * 
+         * Note that this command will not run if the resource&#39;s inputs are unchanged.
+         * 
+         * Use `local.runOutput` if you need to run a command on every execution of your program.
+         * 
+         * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
          * 
          * @return builder
          * 
@@ -301,9 +343,15 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param delete The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-         * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-         * Command resource from previous create or update steps.
+         * @param delete The command to run when the resource is updated.
+         * 
+         * If empty, the create command will be executed instead.
+         * 
+         * Note that this command will not run if the resource&#39;s inputs are unchanged.
+         * 
+         * Use `local.runOutput` if you need to run a command on every execution of your program.
+         * 
+         * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
          * 
          * @return builder
          * 

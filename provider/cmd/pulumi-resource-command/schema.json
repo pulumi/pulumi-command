@@ -233,11 +233,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         },
         "dir": {
           "type": "string",
@@ -313,11 +313,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         },
         "dir": {
           "type": "string",
@@ -374,11 +374,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         },
         "environment": {
           "type": "object",
@@ -435,11 +435,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         },
         "environment": {
           "type": "object",
@@ -595,7 +595,7 @@
   },
   "functions": {
     "command:local:run": {
-      "description": "A local command to be executed.\nThis command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.",
+      "description": "A local command to be executed unconditionally.\nThis command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.",
       "inputs": {
         "properties": {
           "addPreviousOutputInEnv": {

@@ -114,10 +114,22 @@ class CommandArgs:
                - assets/logos/logo.svg
                - src/index.js
                ```
-        :param pulumi.Input[builtins.str] create: The command to run on create.
-        :param pulumi.Input[builtins.str] delete: The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-               and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-               Command resource from previous create or update steps.
+        :param pulumi.Input[builtins.str] create: The command to run once on resource creation.
+               
+               If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+               
+               Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+               
+               Use `local.runOutput` if you need to run a command on every execution of your program.
+        :param pulumi.Input[builtins.str] delete: The command to run when the resource is updated.
+               
+               If empty, the create command will be executed instead.
+               
+               Note that this command will not run if the resource's inputs are unchanged.
+               
+               Use `local.runOutput` if you need to run a command on every execution of your program.
+               
+               The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
         :param pulumi.Input[builtins.str] dir: The directory from which to run the command from. If `dir` does not exist, then
                `Command` will fail.
         :param pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]] environment: Additional environment variables available to the command's process.
@@ -279,7 +291,13 @@ class CommandArgs:
     @pulumi.getter
     def create(self) -> Optional[pulumi.Input[builtins.str]]:
         """
-        The command to run on create.
+        The command to run once on resource creation.
+
+        If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+
+        Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+
+        Use `local.runOutput` if you need to run a command on every execution of your program.
         """
         return pulumi.get(self, "create")
 
@@ -291,9 +309,15 @@ class CommandArgs:
     @pulumi.getter
     def delete(self) -> Optional[pulumi.Input[builtins.str]]:
         """
-        The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-        and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-        Command resource from previous create or update steps.
+        The command to run when the resource is updated.
+
+        If empty, the create command will be executed instead.
+
+        Note that this command will not run if the resource's inputs are unchanged.
+
+        Use `local.runOutput` if you need to run a command on every execution of your program.
+
+        The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
         """
         return pulumi.get(self, "delete")
 
@@ -589,10 +613,22 @@ class Command(pulumi.CustomResource):
                - assets/logos/logo.svg
                - src/index.js
                ```
-        :param pulumi.Input[builtins.str] create: The command to run on create.
-        :param pulumi.Input[builtins.str] delete: The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-               and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-               Command resource from previous create or update steps.
+        :param pulumi.Input[builtins.str] create: The command to run once on resource creation.
+               
+               If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+               
+               Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+               
+               Use `local.runOutput` if you need to run a command on every execution of your program.
+        :param pulumi.Input[builtins.str] delete: The command to run when the resource is updated.
+               
+               If empty, the create command will be executed instead.
+               
+               Note that this command will not run if the resource's inputs are unchanged.
+               
+               Use `local.runOutput` if you need to run a command on every execution of your program.
+               
+               The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
         :param pulumi.Input[builtins.str] dir: The directory from which to run the command from. If `dir` does not exist, then
                `Command` will fail.
         :param pulumi.Input[Mapping[str, pulumi.Input[builtins.str]]] environment: Additional environment variables available to the command's process.
@@ -927,7 +963,13 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def create(self) -> pulumi.Output[Optional[builtins.str]]:
         """
-        The command to run on create.
+        The command to run once on resource creation.
+
+        If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+
+        Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+
+        Use `local.runOutput` if you need to run a command on every execution of your program.
         """
         return pulumi.get(self, "create")
 
@@ -935,9 +977,15 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def delete(self) -> pulumi.Output[Optional[builtins.str]]:
         """
-        The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-        and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-        Command resource from previous create or update steps.
+        The command to run when the resource is updated.
+
+        If empty, the create command will be executed instead.
+
+        Note that this command will not run if the resource's inputs are unchanged.
+
+        Use `local.runOutput` if you need to run a command on every execution of your program.
+
+        The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
         """
         return pulumi.get(self, "delete")
 

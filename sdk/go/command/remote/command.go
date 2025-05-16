@@ -122,11 +122,23 @@ type Command struct {
 	AddPreviousOutputInEnv pulumi.BoolPtrOutput `pulumi:"addPreviousOutputInEnv"`
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionOutput `pulumi:"connection"`
-	// The command to run on create.
+	// The command to run once on resource creation.
+	//
+	// If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+	//
+	// Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
-	// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-	// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-	// Command resource from previous create or update steps.
+	// The command to run when the resource is updated.
+	//
+	// If empty, the create command will be executed instead.
+	//
+	// Note that this command will not run if the resource's inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
+	//
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
@@ -219,11 +231,23 @@ type commandArgs struct {
 	AddPreviousOutputInEnv *bool `pulumi:"addPreviousOutputInEnv"`
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`
-	// The command to run on create.
+	// The command to run once on resource creation.
+	//
+	// If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+	//
+	// Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create *string `pulumi:"create"`
-	// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-	// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-	// Command resource from previous create or update steps.
+	// The command to run when the resource is updated.
+	//
+	// If empty, the create command will be executed instead.
+	//
+	// Note that this command will not run if the resource's inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
+	//
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
@@ -256,11 +280,23 @@ type CommandArgs struct {
 	AddPreviousOutputInEnv pulumi.BoolPtrInput
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionInput
-	// The command to run on create.
+	// The command to run once on resource creation.
+	//
+	// If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+	//
+	// Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create pulumi.StringPtrInput
-	// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-	// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-	// Command resource from previous create or update steps.
+	// The command to run when the resource is updated.
+	//
+	// If empty, the create command will be executed instead.
+	//
+	// Note that this command will not run if the resource's inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
+	//
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
 	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
@@ -384,14 +420,26 @@ func (o CommandOutput) Connection() ConnectionOutput {
 	return o.ApplyT(func(v *Command) ConnectionOutput { return v.Connection }).(ConnectionOutput)
 }
 
-// The command to run on create.
+// The command to run once on resource creation.
+//
+// If an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.
+//
+// Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+//
+// Use `local.runOutput` if you need to run a command on every execution of your program.
 func (o CommandOutput) Create() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Create }).(pulumi.StringPtrOutput)
 }
 
-// The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-// and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-// Command resource from previous create or update steps.
+// The command to run when the resource is updated.
+//
+// If empty, the create command will be executed instead.
+//
+// Note that this command will not run if the resource's inputs are unchanged.
+//
+// Use `local.runOutput` if you need to run a command on every execution of your program.
+//
+// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 func (o CommandOutput) Delete() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Delete }).(pulumi.StringPtrOutput)
 }
