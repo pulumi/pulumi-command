@@ -25,9 +25,9 @@ type Run struct{}
 // Implementing Annotate lets you provide descriptions and default values for functions and they will
 // be visible in the provider's schema and the generated SDKs.
 func (r *Run) Annotate(a infer.Annotator) {
-	a.Describe(&r, "A local command to be executed.\n"+
+	a.Describe(&r, "A local command to be executed unconditionally.\n"+
 		"This command will always be run on any preview or deployment. "+
-		"Use `local.Command` to avoid duplicating executions.")
+		"Use `local.Command` to conditionally execute commands as part of the resource lifecycle.")
 }
 
 type RunInputs struct {

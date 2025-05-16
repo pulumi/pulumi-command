@@ -621,7 +621,16 @@ func (o CommandOutput) Assets() pulumi.AssetOrArchiveMapOutput {
 	return o.ApplyT(func(v *Command) pulumi.AssetOrArchiveMapOutput { return v.Assets }).(pulumi.AssetOrArchiveMapOutput)
 }
 
-// The command to run on create.
+// The command to run once on resource creation.
+//
+// If an `update` command isn't provided, then `create` will also be run when
+// the resource's inputs are modified.
+//
+// Note that this command will not be executed if the resource has already been
+// created and its inputs are unchanged.
+//
+// Use `local.runOutput` if you need to run a command on every execution of
+// your program.
 func (o CommandOutput) Create() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Create }).(pulumi.StringPtrOutput)
 }
@@ -680,8 +689,16 @@ func (o CommandOutput) Triggers() pulumi.ArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
 }
 
-// The command to run on update, if empty, create will
-// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
+// The command to run when the resource is updated.
+//
+// If empty, the create command will be executed instead.
+//
+// Note that this command will not run if the resource's inputs are unchanged.
+//
+// Use `local.runOutput` if you need to run a command on every execution of
+// your program.
+//
+// The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
 // are set to the stdout and stderr properties of the Command resource from previous
 // create or update steps.
 func (o CommandOutput) Update() pulumi.StringPtrOutput {
