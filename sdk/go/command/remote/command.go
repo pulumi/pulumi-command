@@ -130,15 +130,9 @@ type Command struct {
 	//
 	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
-	// The command to run when the resource is updated.
+	// The command to run on resource delettion.
 	//
-	// If empty, the create command will be executed instead.
-	//
-	// Note that this command will not run if the resource's inputs are unchanged.
-	//
-	// Use `local.runOutput` if you need to run a command on every execution of your program.
-	//
-	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
@@ -155,15 +149,23 @@ type Command struct {
 	Stdin pulumi.StringPtrOutput `pulumi:"stdin"`
 	// The standard output of the command's process
 	Stdout pulumi.StringOutput `pulumi:"stdout"`
-	// Trigger a resource replacement on changes to any of these values. The
-	// trigger values can be of any type. If a value is different in the current update compared to the
-	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// The resource will be updated (or replaced) if any of these values change.
+	//
+	// The trigger values can be of any type.
+	//
+	// If the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.
+	//
 	// Please see the resource documentation for examples.
 	Triggers pulumi.ArrayOutput `pulumi:"triggers"`
-	// The command to run on update, if empty, create will
-	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
-	// are set to the stdout and stderr properties of the Command resource from previous
-	// create or update steps.
+	// The command to run when the resource is updated.
+	//
+	// If empty, the create command will be executed instead.
+	//
+	// Note that this command will not run if the resource's inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
+	//
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 	Update pulumi.StringPtrOutput `pulumi:"update"`
 }
 
@@ -239,15 +241,9 @@ type commandArgs struct {
 	//
 	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create *string `pulumi:"create"`
-	// The command to run when the resource is updated.
+	// The command to run on resource delettion.
 	//
-	// If empty, the create command will be executed instead.
-	//
-	// Note that this command will not run if the resource's inputs are unchanged.
-	//
-	// Use `local.runOutput` if you need to run a command on every execution of your program.
-	//
-	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 	Delete *string `pulumi:"delete"`
 	// Additional environment variables available to the command's process.
 	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
@@ -260,15 +256,23 @@ type commandArgs struct {
 	Logging *Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
-	// Trigger a resource replacement on changes to any of these values. The
-	// trigger values can be of any type. If a value is different in the current update compared to the
-	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// The resource will be updated (or replaced) if any of these values change.
+	//
+	// The trigger values can be of any type.
+	//
+	// If the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.
+	//
 	// Please see the resource documentation for examples.
 	Triggers []interface{} `pulumi:"triggers"`
-	// The command to run on update, if empty, create will
-	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
-	// are set to the stdout and stderr properties of the Command resource from previous
-	// create or update steps.
+	// The command to run when the resource is updated.
+	//
+	// If empty, the create command will be executed instead.
+	//
+	// Note that this command will not run if the resource's inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
+	//
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 	Update *string `pulumi:"update"`
 }
 
@@ -288,15 +292,9 @@ type CommandArgs struct {
 	//
 	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create pulumi.StringPtrInput
-	// The command to run when the resource is updated.
+	// The command to run on resource delettion.
 	//
-	// If empty, the create command will be executed instead.
-	//
-	// Note that this command will not run if the resource's inputs are unchanged.
-	//
-	// Use `local.runOutput` if you need to run a command on every execution of your program.
-	//
-	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 	Delete pulumi.StringPtrInput
 	// Additional environment variables available to the command's process.
 	// Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
@@ -309,15 +307,23 @@ type CommandArgs struct {
 	Logging LoggingPtrInput
 	// Pass a string to the command's process as standard in
 	Stdin pulumi.StringPtrInput
-	// Trigger a resource replacement on changes to any of these values. The
-	// trigger values can be of any type. If a value is different in the current update compared to the
-	// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+	// The resource will be updated (or replaced) if any of these values change.
+	//
+	// The trigger values can be of any type.
+	//
+	// If the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.
+	//
 	// Please see the resource documentation for examples.
 	Triggers pulumi.ArrayInput
-	// The command to run on update, if empty, create will
-	// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
-	// are set to the stdout and stderr properties of the Command resource from previous
-	// create or update steps.
+	// The command to run when the resource is updated.
+	//
+	// If empty, the create command will be executed instead.
+	//
+	// Note that this command will not run if the resource's inputs are unchanged.
+	//
+	// Use `local.runOutput` if you need to run a command on every execution of your program.
+	//
+	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 	Update pulumi.StringPtrInput
 }
 
@@ -431,15 +437,9 @@ func (o CommandOutput) Create() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Create }).(pulumi.StringPtrOutput)
 }
 
-// The command to run when the resource is updated.
+// The command to run on resource delettion.
 //
-// If empty, the create command will be executed instead.
-//
-// Note that this command will not run if the resource's inputs are unchanged.
-//
-// Use `local.runOutput` if you need to run a command on every execution of your program.
-//
-// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
+// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 func (o CommandOutput) Delete() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Delete }).(pulumi.StringPtrOutput)
 }
@@ -474,18 +474,26 @@ func (o CommandOutput) Stdout() pulumi.StringOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringOutput { return v.Stdout }).(pulumi.StringOutput)
 }
 
-// Trigger a resource replacement on changes to any of these values. The
-// trigger values can be of any type. If a value is different in the current update compared to the
-// previous update, the resource will be replaced, i.e., the "create" command will be re-run.
+// The resource will be updated (or replaced) if any of these values change.
+//
+// The trigger values can be of any type.
+//
+// If the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.
+//
 // Please see the resource documentation for examples.
 func (o CommandOutput) Triggers() pulumi.ArrayOutput {
 	return o.ApplyT(func(v *Command) pulumi.ArrayOutput { return v.Triggers }).(pulumi.ArrayOutput)
 }
 
-// The command to run on update, if empty, create will
-// run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
-// are set to the stdout and stderr properties of the Command resource from previous
-// create or update steps.
+// The command to run when the resource is updated.
+//
+// If empty, the create command will be executed instead.
+//
+// Note that this command will not run if the resource's inputs are unchanged.
+//
+// Use `local.runOutput` if you need to run a command on every execution of your program.
+//
+// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
 func (o CommandOutput) Update() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Update }).(pulumi.StringPtrOutput)
 }
