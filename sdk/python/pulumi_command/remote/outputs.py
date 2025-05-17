@@ -34,6 +34,8 @@ class Connection(dict):
             suggest = "agent_socket_path"
         elif key == "dialErrorLimit":
             suggest = "dial_error_limit"
+        elif key == "hostKey":
+            suggest = "host_key"
         elif key == "perDialTimeout":
             suggest = "per_dial_timeout"
         elif key == "privateKey":
@@ -56,6 +58,7 @@ class Connection(dict):
                  host: builtins.str,
                  agent_socket_path: Optional[builtins.str] = None,
                  dial_error_limit: Optional[builtins.int] = None,
+                 host_key: Optional[builtins.str] = None,
                  password: Optional[builtins.str] = None,
                  per_dial_timeout: Optional[builtins.int] = None,
                  port: Optional[builtins.float] = None,
@@ -68,6 +71,7 @@ class Connection(dict):
         :param builtins.str host: The address of the resource to connect to.
         :param builtins.str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param builtins.int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+        :param builtins.str host_key: The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         :param builtins.str password: The password we should use for the connection.
         :param builtins.int per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
         :param builtins.float port: The port to connect to. Defaults to 22.
@@ -83,6 +87,8 @@ class Connection(dict):
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if host_key is not None:
+            pulumi.set(__self__, "host_key", host_key)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if per_dial_timeout is None:
@@ -127,6 +133,14 @@ class Connection(dict):
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
         return pulumi.get(self, "dial_error_limit")
+
+    @property
+    @pulumi.getter(name="hostKey")
+    def host_key(self) -> Optional[builtins.str]:
+        """
+        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        """
+        return pulumi.get(self, "host_key")
 
     @property
     @pulumi.getter
@@ -197,6 +211,8 @@ class ProxyConnection(dict):
             suggest = "agent_socket_path"
         elif key == "dialErrorLimit":
             suggest = "dial_error_limit"
+        elif key == "hostKey":
+            suggest = "host_key"
         elif key == "perDialTimeout":
             suggest = "per_dial_timeout"
         elif key == "privateKey":
@@ -219,6 +235,7 @@ class ProxyConnection(dict):
                  host: builtins.str,
                  agent_socket_path: Optional[builtins.str] = None,
                  dial_error_limit: Optional[builtins.int] = None,
+                 host_key: Optional[builtins.str] = None,
                  password: Optional[builtins.str] = None,
                  per_dial_timeout: Optional[builtins.int] = None,
                  port: Optional[builtins.float] = None,
@@ -230,6 +247,7 @@ class ProxyConnection(dict):
         :param builtins.str host: The address of the bastion host to connect to.
         :param builtins.str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param builtins.int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+        :param builtins.str host_key: The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         :param builtins.str password: The password we should use for the connection to the bastion host.
         :param builtins.int per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
         :param builtins.float port: The port of the bastion host to connect to.
@@ -244,6 +262,8 @@ class ProxyConnection(dict):
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if host_key is not None:
+            pulumi.set(__self__, "host_key", host_key)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if per_dial_timeout is None:
@@ -286,6 +306,14 @@ class ProxyConnection(dict):
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
         return pulumi.get(self, "dial_error_limit")
+
+    @property
+    @pulumi.getter(name="hostKey")
+    def host_key(self) -> Optional[builtins.str]:
+        """
+        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        """
+        return pulumi.get(self, "host_key")
 
     @property
     @pulumi.getter

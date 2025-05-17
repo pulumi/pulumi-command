@@ -37,6 +37,12 @@ namespace Pulumi.Command.Remote.Inputs
         private Input<string>? _password;
 
         /// <summary>
+        /// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        /// </summary>
+        [Input("hostKey")]
+        public Input<string>? HostKey { get; set; }
+
+        /// <summary>
         /// The password we should use for the connection.
         /// </summary>
         public Input<string>? Password

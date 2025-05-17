@@ -42,6 +42,10 @@ if not MYPY:
         """
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
+        host_key: NotRequired[pulumi.Input[builtins.str]]
+        """
+        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        """
         password: NotRequired[pulumi.Input[builtins.str]]
         """
         The password we should use for the connection.
@@ -79,6 +83,7 @@ class ConnectionArgs:
                  host: pulumi.Input[builtins.str],
                  agent_socket_path: Optional[pulumi.Input[builtins.str]] = None,
                  dial_error_limit: Optional[pulumi.Input[builtins.int]] = None,
+                 host_key: Optional[pulumi.Input[builtins.str]] = None,
                  password: Optional[pulumi.Input[builtins.str]] = None,
                  per_dial_timeout: Optional[pulumi.Input[builtins.int]] = None,
                  port: Optional[pulumi.Input[builtins.float]] = None,
@@ -91,6 +96,7 @@ class ConnectionArgs:
         :param pulumi.Input[builtins.str] host: The address of the resource to connect to.
         :param pulumi.Input[builtins.str] agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param pulumi.Input[builtins.int] dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+        :param pulumi.Input[builtins.str] host_key: The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         :param pulumi.Input[builtins.str] password: The password we should use for the connection.
         :param pulumi.Input[builtins.int] per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
         :param pulumi.Input[builtins.float] port: The port to connect to. Defaults to 22.
@@ -106,6 +112,8 @@ class ConnectionArgs:
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if host_key is not None:
+            pulumi.set(__self__, "host_key", host_key)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if per_dial_timeout is None:
@@ -162,6 +170,18 @@ class ConnectionArgs:
     @dial_error_limit.setter
     def dial_error_limit(self, value: Optional[pulumi.Input[builtins.int]]):
         pulumi.set(self, "dial_error_limit", value)
+
+    @property
+    @pulumi.getter(name="hostKey")
+    def host_key(self) -> Optional[pulumi.Input[builtins.str]]:
+        """
+        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        """
+        return pulumi.get(self, "host_key")
+
+    @host_key.setter
+    def host_key(self, value: Optional[pulumi.Input[builtins.str]]):
+        pulumi.set(self, "host_key", value)
 
     @property
     @pulumi.getter
@@ -265,6 +285,10 @@ if not MYPY:
         """
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
+        host_key: NotRequired[pulumi.Input[builtins.str]]
+        """
+        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        """
         password: NotRequired[pulumi.Input[builtins.str]]
         """
         The password we should use for the connection to the bastion host.
@@ -298,6 +322,7 @@ class ProxyConnectionArgs:
                  host: pulumi.Input[builtins.str],
                  agent_socket_path: Optional[pulumi.Input[builtins.str]] = None,
                  dial_error_limit: Optional[pulumi.Input[builtins.int]] = None,
+                 host_key: Optional[pulumi.Input[builtins.str]] = None,
                  password: Optional[pulumi.Input[builtins.str]] = None,
                  per_dial_timeout: Optional[pulumi.Input[builtins.int]] = None,
                  port: Optional[pulumi.Input[builtins.float]] = None,
@@ -309,6 +334,7 @@ class ProxyConnectionArgs:
         :param pulumi.Input[builtins.str] host: The address of the bastion host to connect to.
         :param pulumi.Input[builtins.str] agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param pulumi.Input[builtins.int] dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+        :param pulumi.Input[builtins.str] host_key: The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         :param pulumi.Input[builtins.str] password: The password we should use for the connection to the bastion host.
         :param pulumi.Input[builtins.int] per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
         :param pulumi.Input[builtins.float] port: The port of the bastion host to connect to.
@@ -323,6 +349,8 @@ class ProxyConnectionArgs:
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if host_key is not None:
+            pulumi.set(__self__, "host_key", host_key)
         if password is not None:
             pulumi.set(__self__, "password", password)
         if per_dial_timeout is None:
@@ -377,6 +405,18 @@ class ProxyConnectionArgs:
     @dial_error_limit.setter
     def dial_error_limit(self, value: Optional[pulumi.Input[builtins.int]]):
         pulumi.set(self, "dial_error_limit", value)
+
+    @property
+    @pulumi.getter(name="hostKey")
+    def host_key(self) -> Optional[pulumi.Input[builtins.str]]:
+        """
+        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+        """
+        return pulumi.get(self, "host_key")
+
+    @host_key.setter
+    def host_key(self, value: Optional[pulumi.Input[builtins.str]]):
+        pulumi.set(self, "host_key", value)
 
     @property
     @pulumi.getter
