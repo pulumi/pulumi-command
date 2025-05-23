@@ -120,14 +120,14 @@ func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, l
 	}
 
 	if in.ArchivePaths != nil {
-		archiveAssets := map[string]interface{}{}
+		archiveAssets := map[string]any{}
 		assets, err := globAssets(cmd.Dir, *in.ArchivePaths)
 		if err != nil {
 			return err
 		}
 
 		for path, asset := range assets {
-			archiveAssets[path] = asset
+			archiveAssets[path] = asset.Asset
 		}
 
 		archive, err := resource.NewAssetArchive(archiveAssets)
