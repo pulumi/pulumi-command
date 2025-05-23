@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.24.3
 
 require (
-	github.com/pulumi/pulumi-command/sdk v1.0.4
+	github.com/pulumi/pulumi-command/sdk v1.0.5
 	github.com/pulumi/pulumi/sdk/v3 v3.171.0
 )
 
