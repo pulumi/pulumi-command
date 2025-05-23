@@ -31,11 +31,10 @@ var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil)
 
 // This is the Create method. This will be run on every CopyFile resource creation.
 func (*CopyFile) Create(ctx context.Context, req infer.CreateRequest[CopyFileInputs]) (infer.CreateResponse[CopyFileOutputs], error) {
-	name := req.ID
 	input := req.Inputs
-	preview := req.Preview
+	preview := req.DryRun
 	if preview {
-		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, nil
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Output: CopyFileOutputs{input}}, nil
 	}
 
 	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
@@ -43,32 +42,32 @@ func (*CopyFile) Create(ctx context.Context, req infer.CreateRequest[CopyFileInp
 
 	src, err := os.Open(input.LocalPath)
 	if err != nil {
-		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, err
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Output: CopyFileOutputs{input}}, err
 	}
 	defer src.Close()
 
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
-		return infer.CreateResponse[CopyFileOutputs]{ID: "", Outputs: CopyFileOutputs{input}}, err
+		return infer.CreateResponse[CopyFileOutputs]{ID: "", Output: CopyFileOutputs{input}}, err
 	}
 	defer client.Close()
 
 	sftp, err := sftp.NewClient(client)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return infer.CreateResponse[CopyFileOutputs]{}, err
 	}
 	defer sftp.Close()
 
 	dst, err := sftp.Create(input.RemotePath)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return infer.CreateResponse[CopyFileOutputs]{}, err
 	}
 
 	_, err = dst.ReadFrom(src)
 	if err != nil {
-		return "", CopyFileOutputs{input}, err
+		return infer.CreateResponse[CopyFileOutputs]{}, err
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
-	return infer.CreateResponse[CopyFileOutputs]{ID: id, Outputs: CopyFileOutputs{input}}, err
+	return infer.CreateResponse[CopyFileOutputs]{ID: id, Output: CopyFileOutputs{input}}, err
 }

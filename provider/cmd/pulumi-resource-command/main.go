@@ -15,11 +15,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
-
-	p "github.com/pulumi/pulumi-go-provider"
 
 	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
 	"github.com/pulumi/pulumi-command/provider/pkg/version"
@@ -34,7 +33,7 @@ func main() {
 	commandProvider := command.NewProvider()
 
 	// This method starts serving requests using the Command provider.
-	err := p.RunProvider("command", version, commandProvider)
+	err := commandProvider.Run(context.Background(), "command", version)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s", err.Error())
 		os.Exit(1)

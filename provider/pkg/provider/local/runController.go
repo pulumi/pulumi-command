@@ -14,12 +14,17 @@
 
 package local
 
-import "context"
+import (
+	"context"
 
-// This is the Call method. It takes a RunInputs parameter and runs the command specified in
+	"github.com/pulumi/pulumi-go-provider/infer"
+)
+
+// Invoke takes a RunInputs parameter and runs the command specified in
 // it.
-func (*Run) Call(ctx context.Context, input RunInputs) (RunOutputs, error) {
+func (*Run) Invoke(ctx context.Context, req infer.FunctionRequest[RunInputs]) (infer.FunctionResponse[RunOutputs], error) {
+	input := req.Input
 	r := RunOutputs{RunInputs: input}
 	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs, input.Logging)
-	return r, err
+	return infer.FunctionResponse[RunOutputs]{Output: r}, err
 }

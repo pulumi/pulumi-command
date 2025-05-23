@@ -36,13 +36,14 @@ var _ = (infer.CustomResource[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyTo
 var _ = (infer.CustomCheck[CopyToRemoteInputs])((*CopyToRemote)(nil))
 var _ = (infer.CustomUpdate[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
 
-func (c *CopyToRemote) Check(ctx context.Context, urn string, oldInputs, newInputs resource.PropertyMap) (CopyToRemoteInputs, []p.CheckFailure, error) {
+func (c *CopyToRemote) Check(ctx context.Context, req infer.CheckRequest) (infer.CheckResponse[CopyToRemoteInputs], error) {
 	var failures []p.CheckFailure
 
+	newInputs := req.NewInputs
 	inputs, newFailures, err := infer.DefaultCheck[CopyToRemoteInputs](ctx, newInputs)
 	failures = append(failures, newFailures...)
 	if err != nil {
-		return inputs, failures, err
+		return infer.CheckResponse[CopyToRemoteInputs]{Inputs: inputs, Failures: failures}, err
 	}
 
 	hasAsset := inputs.Source.Asset != nil
@@ -74,41 +75,40 @@ func (c *CopyToRemote) Check(ctx context.Context, urn string, oldInputs, newInpu
 		})
 	}
 
-	return inputs, failures, nil
+	return infer.CheckResponse[CopyToRemoteInputs]{Inputs: inputs, Failures: failures}, nil
 }
 
 // This is the Create method. This will be run on every Copy resource creation.
 func (*CopyToRemote) Create(ctx context.Context, req infer.CreateRequest[CopyToRemoteInputs]) (infer.CreateResponse[CopyToRemoteOutputs], error) {
-	name := req.ID
 	input := req.Inputs
-	preview := req.Preview
+	preview := req.DryRun
 	if preview {
-		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Outputs: CopyToRemoteOutputs{input}}, nil
+		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Output: CopyToRemoteOutputs{input}}, nil
 	}
 
 	outputs, err := copy(ctx, input)
 	if err != nil {
-		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Outputs: CopyToRemoteOutputs{input}}, err
+		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Output: CopyToRemoteOutputs{input}}, err
 	}
 
 	id, err := resource.NewUniqueHex("", 8, 0)
-	return infer.CreateResponse[CopyToRemoteOutputs]{ID: id, Outputs: outputs}, err
+	return infer.CreateResponse[CopyToRemoteOutputs]{ID: id, Output: outputs}, err
 }
 
 func (c *CopyToRemote) Update(ctx context.Context, req infer.UpdateRequest[CopyToRemoteInputs, CopyToRemoteOutputs]) (infer.UpdateResponse[CopyToRemoteOutputs], error) {
-	id := req.ID
 	olds := req.State
 	news := req.Inputs
-	preview := req.Preview
+	preview := req.DryRun
 	if preview {
-		return CopyToRemoteOutputs{news}, nil
+		return infer.UpdateResponse[CopyToRemoteOutputs]{Output: CopyToRemoteOutputs{news}}, nil
 	}
 
 	needCopy := news.hash() != olds.hash() || news.RemotePath != olds.RemotePath
 	if needCopy {
-		return copy(ctx, news)
+		outputs, err := copy(ctx, news)
+		return infer.UpdateResponse[CopyToRemoteOutputs]{Output: outputs}, err
 	}
-	return CopyToRemoteOutputs{news}, nil
+	return infer.UpdateResponse[CopyToRemoteOutputs]{Output: CopyToRemoteOutputs{news}}, nil
 }
 
 // copy unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.

@@ -29,21 +29,21 @@ var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 
 // This is the Create method. This will be run on every Command resource creation.
 func (*Command) Create(ctx context.Context, req infer.CreateRequest[CommandInputs]) (infer.CreateResponse[CommandOutputs], error) {
-	name := req.ID
+	name := req.Name
 	input := req.Inputs
-	preview := req.Preview
+	preview := req.DryRun
 	state := CommandOutputs{CommandInputs: input}
 	var err error
 	id, err := resource.NewUniqueHex(name, 8, 0)
 	if err != nil {
-		return infer.CreateResponse[CommandOutputs]{ID: "", Outputs: state}, err
+		return infer.CreateResponse[CommandOutputs]{ID: "", Output: state}, err
 	}
 	if preview {
-		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, nil
+		return infer.CreateResponse[CommandOutputs]{ID: id, Output: state}, nil
 	}
 
 	if state.Create == nil {
-		return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, nil
+		return infer.CreateResponse[CommandOutputs]{ID: id, Output: state}, nil
 	}
 	cmd := ""
 	if state.Create != nil {
@@ -53,18 +53,17 @@ func (*Command) Create(ctx context.Context, req infer.CreateRequest[CommandInput
 	if !preview {
 		err = state.run(ctx, cmd, input.Logging)
 	}
-	return infer.CreateResponse[CommandOutputs]{ID: id, Outputs: state}, err
+	return infer.CreateResponse[CommandOutputs]{ID: id, Output: state}, err
 }
 
 // The Update method will be run on every update.
 func (*Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInputs, CommandOutputs]) (infer.UpdateResponse[CommandOutputs], error) {
-	id := req.ID
 	olds := req.State
 	news := req.Inputs
-	preview := req.Preview
+	preview := req.DryRun
 	state := CommandOutputs{CommandInputs: news, BaseOutputs: olds.BaseOutputs}
 	if preview {
-		return infer.UpdateResponse[CommandOutputs]{Outputs: state}, nil
+		return infer.UpdateResponse[CommandOutputs]{Output: state}, nil
 	}
 	var err error
 	if !preview {
@@ -74,15 +73,14 @@ func (*Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInput
 			err = state.run(ctx, *news.Create, news.Logging)
 		}
 	}
-	return infer.UpdateResponse[CommandOutputs]{Outputs: state}, err
+	return infer.UpdateResponse[CommandOutputs]{Output: state}, err
 }
 
 // The Delete method will run when the resource is deleted.
-func (*Command) Delete(ctx context.Context, req infer.DeleteRequest[CommandOutputs]) error {
-	id := req.ID
+func (*Command) Delete(ctx context.Context, req infer.DeleteRequest[CommandOutputs]) (infer.DeleteResponse, error) {
 	props := req.State
 	if props.Delete == nil {
-		return nil
+		return infer.DeleteResponse{}, nil
 	}
-	return props.run(ctx, *props.Delete, props.Logging)
+	return infer.DeleteResponse{}, props.run(ctx, *props.Delete, props.Logging)
 }
