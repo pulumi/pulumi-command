@@ -31,6 +31,11 @@ public final class Connection {
      */
     private String host;
     /**
+     * @return The expected host key to verify the server&#39;s identity. If not provided, the host key will be ignored.
+     * 
+     */
+    private @Nullable String hostKey;
+    /**
      * @return The password we should use for the connection.
      * 
      */
@@ -87,6 +92,13 @@ public final class Connection {
      */
     public String host() {
         return this.host;
+    }
+    /**
+     * @return The expected host key to verify the server&#39;s identity. If not provided, the host key will be ignored.
+     * 
+     */
+    public Optional<String> hostKey() {
+        return Optional.ofNullable(this.hostKey);
     }
     /**
      * @return The password we should use for the connection.
@@ -150,6 +162,7 @@ public final class Connection {
         private @Nullable String agentSocketPath;
         private @Nullable Integer dialErrorLimit;
         private String host;
+        private @Nullable String hostKey;
         private @Nullable String password;
         private @Nullable Integer perDialTimeout;
         private @Nullable Double port;
@@ -163,6 +176,7 @@ public final class Connection {
     	      this.agentSocketPath = defaults.agentSocketPath;
     	      this.dialErrorLimit = defaults.dialErrorLimit;
     	      this.host = defaults.host;
+    	      this.hostKey = defaults.hostKey;
     	      this.password = defaults.password;
     	      this.perDialTimeout = defaults.perDialTimeout;
     	      this.port = defaults.port;
@@ -190,6 +204,12 @@ public final class Connection {
               throw new MissingRequiredPropertyException("Connection", "host");
             }
             this.host = host;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder hostKey(@Nullable String hostKey) {
+
+            this.hostKey = hostKey;
             return this;
         }
         @CustomType.Setter
@@ -239,6 +259,7 @@ public final class Connection {
             _resultValue.agentSocketPath = agentSocketPath;
             _resultValue.dialErrorLimit = dialErrorLimit;
             _resultValue.host = host;
+            _resultValue.hostKey = hostKey;
             _resultValue.password = password;
             _resultValue.perDialTimeout = perDialTimeout;
             _resultValue.port = port;

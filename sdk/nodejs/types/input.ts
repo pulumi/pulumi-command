@@ -26,6 +26,10 @@ export namespace remote {
          */
         host: pulumi.Input<string>;
         /**
+         * The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+         */
+        hostKey?: pulumi.Input<string>;
+        /**
          * The password we should use for the connection.
          */
         password?: pulumi.Input<string>;
@@ -84,6 +88,10 @@ export namespace remote {
          * The address of the bastion host to connect to.
          */
         host: pulumi.Input<string>;
+        /**
+         * The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+         */
+        hostKey?: pulumi.Input<string>;
         /**
          * The password we should use for the connection to the bastion host.
          */
