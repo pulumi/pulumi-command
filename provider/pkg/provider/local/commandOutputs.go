@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/gobwas/glob"
+	"github.com/pulumi/pulumi-go-provider/infer/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
@@ -119,14 +120,14 @@ func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, l
 	}
 
 	if in.ArchivePaths != nil {
-		archiveAssets := map[string]interface{}{}
+		archiveAssets := map[string]any{}
 		assets, err := globAssets(cmd.Dir, *in.ArchivePaths)
 		if err != nil {
 			return err
 		}
 
 		for path, asset := range assets {
-			archiveAssets[path] = asset
+			archiveAssets[path] = asset.Asset
 		}
 
 		archive, err := resource.NewAssetArchive(archiveAssets)
@@ -142,8 +143,8 @@ func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, l
 	return nil
 }
 
-func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) {
-	assets := map[string]*resource.Asset{}
+func globAssets(dir string, globs []string) (map[string]*types.AssetOrArchive, error) {
+	assets := map[string]*types.AssetOrArchive{}
 	compiledGlobs := make([]glob.Glob, len(globs))
 	isGlobExclude := make([]bool, len(globs))
 	for i, g := range globs {
@@ -172,10 +173,11 @@ func globAssets(dir string, globs []string) (map[string]*resource.Asset, error) 
 			if isGlobExclude[i] {
 				delete(assets, p)
 			} else {
-				assets[p], err = resource.NewPathAsset(path.Join(dir, p))
+				asset, err := resource.NewPathAsset(path.Join(dir, p))
 				if err != nil {
 					return err
 				}
+				assets[p] = &types.AssetOrArchive{Asset: asset}
 			}
 		}
 		return nil

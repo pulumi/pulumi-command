@@ -10,7 +10,7 @@ require (
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/providertest v0.3.1
-	github.com/pulumi/pulumi-go-provider v0.26.0
+	github.com/pulumi/pulumi-go-provider v1.0.1
 	github.com/pulumi/pulumi/sdk/v3 v3.171.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.37.0
@@ -48,6 +48,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/glog v1.2.4 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -64,7 +65,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect

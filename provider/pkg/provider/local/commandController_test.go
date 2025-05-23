@@ -21,17 +21,17 @@ import (
 
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
+	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/stretchr/testify/require"
 )
 
 func TestOptionalLogging(t *testing.T) {
 	for _, logMode := range Logging.Values(LogStdoutAndStderr) {
-
 		t.Run(logMode.Name, func(t *testing.T) {
 			cmd := Command{}
 
-			ctx := testutil.TestContext{Context: context.Background()}
+			ctx := &testutil.TestContext{Context: context.Background()}
 			input := CommandInputs{
 				BaseInputs: BaseInputs{
 					Logging: &logMode.Value,
@@ -41,7 +41,7 @@ func TestOptionalLogging(t *testing.T) {
 				},
 			}
 
-			_, _, err := cmd.Create(&ctx, "name", input, false /* preview */)
+			_, err := cmd.Create(ctx, infer.CreateRequest[CommandInputs]{Name: "name", Inputs: input, DryRun: false})
 			require.NoError(t, err)
 
 			log := ctx.Output.String()

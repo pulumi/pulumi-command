@@ -16,6 +16,7 @@ package local
 
 import (
 	"github.com/pulumi/pulumi-go-provider/infer"
+	"github.com/pulumi/pulumi-go-provider/infer/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
@@ -127,10 +128,10 @@ Defaults to true.`)
 }
 
 type BaseOutputs struct {
-	Stdout  string                      `pulumi:"stdout"`
-	Stderr  string                      `pulumi:"stderr"`
-	Assets  *map[string]*resource.Asset `pulumi:"assets,optional"`
-	Archive *resource.Archive           `pulumi:"archive,optional"`
+	Stdout  string                            `pulumi:"stdout"`
+	Stderr  string                            `pulumi:"stderr"`
+	Assets  *map[string]*types.AssetOrArchive `pulumi:"assets,optional"`
+	Archive *resource.Archive                 `pulumi:"archive,optional"`
 }
 
 // Implementing Annotate lets you provide descriptions and default values for fields and they will

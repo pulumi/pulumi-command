@@ -81,24 +81,15 @@ func NewProvider() p.Provider {
 		// A list of `infer.Resource` that are provided by the provider.
 		Resources: []infer.InferredResource{
 			// The Command resource implementation is commented extensively for new pulumi-go-provider developers.
-			infer.Resource[
-				// 1. This type is an interface that implements the logic for the Resource
-				//    these methods include `Create`, `Update`, `Delete`, and `WireDependencies`.
-				//    `WireDependencies` should be implemented to preserve the secretness of an input
-				*local.Command,
-				// 2. The type of the Inputs/Arguments to supply to the Resource.
-				local.CommandInputs,
-				// 3. The type of the Output/Properties/Fields of a created Resource.
-				local.CommandOutputs,
-			](),
-			infer.Resource[*remote.Command, remote.CommandInputs, remote.CommandOutputs](),
-			infer.Resource[*remote.CopyToRemote, remote.CopyToRemoteInputs, remote.CopyToRemoteOutputs](),
-			infer.Resource[*remote.CopyFile, remote.CopyFileInputs, remote.CopyFileOutputs](),
+			infer.Resource(&local.Command{}),
+			infer.Resource(&remote.Command{}),
+			infer.Resource(&remote.CopyToRemote{}),
+			infer.Resource(&remote.CopyFile{}),
 		},
 		// Functions or invokes that are provided by the provider.
 		Functions: []infer.InferredFunction{
 			// The Run function is commented extensively for new pulumi-go-provider developers.
-			infer.Function[*local.Run, local.RunInputs, local.RunOutputs](),
+			infer.Function(&local.Run{}),
 		},
 	})
 }
