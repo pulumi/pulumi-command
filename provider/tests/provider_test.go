@@ -340,7 +340,6 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 // User issue is https://github.com/pulumi/pulumi-command/issues/248.
 func TestRegress248(t *testing.T) {
 	t.Parallel()
-	type pMap = resource.PropertyMap
 	resp, err := provider(t).Check(p.CheckRequest{
 		Urn: urn("remote", "Command", "check"),
 		Inputs: property.NewMap(map[string]property.Value{
