@@ -11,6 +11,7 @@ import (
 	"github.com/pulumi/pulumi-go-provider/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/tokens"
+	"github.com/pulumi/pulumi/sdk/v3/go/property"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -19,9 +20,16 @@ import (
 	"github.com/pulumi/pulumi-command/provider/pkg/version"
 )
 
-func provider() integration.Server {
+func provider(t *testing.T) integration.Server {
 	v := semver.MustParse(version.Version)
-	return integration.NewServer(command.Name, v, command.NewProvider())
+	p, err := integration.NewServer(
+		t.Context(),
+		command.Name,
+		v,
+		integration.WithProvider(command.NewProvider()),
+	)
+	require.NoError(t, err)
+	return p
 }
 
 func urn(mod, res, name string) resource.URN {
@@ -39,24 +47,22 @@ func urn(mod, res, name string) resource.URN {
 
 func TestLocalCommand(t *testing.T) {
 	t.Parallel()
-	cmd := provider()
+	cmd := provider(t)
 	urn := urn("local", "Command", "echo")
-	unknown := resource.NewOutputProperty(resource.Output{
-		Element: resource.NewObjectProperty(resource.PropertyMap{}),
-		Known:   false,
-	})
-	c := resource.MakeComputed
+	property.New(property.Computed)
+	computed := property.New(property.Computed)
+	unknown := property.WithGoValue(computed, property.NewMap(nil))
 
 	// Run a create against an in-memory provider, assert it succeeded, and return the
 	// created property map.
-	create := func(preview bool, env resource.PropertyValue) resource.PropertyMap {
+	create := func(preview bool, env property.Value) property.Map {
 		resp, err := cmd.Create(p.CreateRequest{
 			Urn: urn,
-			Properties: resource.PropertyMap{
-				"create":      resource.NewStringProperty("echo hello, $NAME!"),
+			Properties: property.NewMap(map[string]property.Value{
+				"create":      property.New("echo hello, $NAME!"),
 				"environment": env,
-			},
-			Preview: preview,
+			}),
+			DryRun: preview,
 		})
 		require.NoError(t, err)
 		return resp.Properties
@@ -65,27 +71,27 @@ func TestLocalCommand(t *testing.T) {
 	// The state that we expect a non-preview create to return.
 	//
 	// We use this as the final expect for create and the old state during update.
-	createdState := resource.PropertyMap{
-		"create": resource.PropertyValue{V: "echo hello, $NAME!"},
-		"stderr": resource.PropertyValue{V: ""},
-		"stdout": resource.PropertyValue{V: "hello, world!"},
-		"environment": resource.NewObjectProperty(resource.PropertyMap{
-			"NAME": resource.NewStringProperty("world"),
-		}),
-	}
+	createdState := property.NewMap(map[string]property.Value{
+		"create": property.New("echo hello, $NAME!"),
+		"stderr": property.New(""),
+		"stdout": property.New("hello, world!"),
+		"environment": property.New(property.NewMap(map[string]property.Value{
+			"NAME": property.New("world"),
+		})),
+	})
 
 	// Run an update against an in-memory provider, assert it succeeded, and return
 	// the new property map.
-	update := func(preview bool, env resource.PropertyValue) resource.PropertyMap {
+	update := func(preview bool, env property.Value) property.Map {
 		resp, err := cmd.Update(p.UpdateRequest{
-			ID:      "echo1234",
-			Urn:     urn,
-			Preview: preview,
-			Olds:    createdState.Copy(),
-			News: resource.PropertyMap{
-				"create":      resource.NewStringProperty("echo hello, $NAME!"),
+			ID:     "echo1234",
+			Urn:    urn,
+			DryRun: preview,
+			State:  createdState,
+			Inputs: property.NewMap(map[string]property.Value{
+				"create":      property.New("echo hello, $NAME!"),
 				"environment": env,
-			},
+			}),
 		})
 		require.NoError(t, err)
 		return resp.Properties
@@ -93,84 +99,81 @@ func TestLocalCommand(t *testing.T) {
 
 	t.Run("create-preview", func(t *testing.T) {
 		t.Parallel()
-		assert.Equal(t, resource.PropertyMap{
-			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
-			"stderr":      c(resource.PropertyValue{V: ""}),
-			"stdout":      c(resource.PropertyValue{V: ""}),
+		assert.Equal(t, property.NewMap(map[string]property.Value{
+			"create":      property.New("echo hello, $NAME!"),
+			"stderr":      computed,
+			"stdout":      computed,
 			"environment": unknown,
-		},
+		}),
 			create(true /* preview */, unknown))
 	})
 
 	t.Run("create-actual", func(t *testing.T) {
 		t.Parallel()
 		assert.Equal(t, createdState,
-			create(false /* preview */, resource.NewObjectProperty(resource.PropertyMap{
-				"NAME": resource.NewStringProperty("world"),
-			})))
+			create(false /* preview */, property.New(property.NewMap(map[string]property.Value{
+				"NAME": property.New("world"),
+			}))))
 	})
 
 	t.Run("update-preview", func(t *testing.T) {
 		t.Parallel()
-		assert.Equal(t, resource.PropertyMap{
-			"create":      resource.PropertyValue{V: "echo hello, $NAME!"},
-			"stderr":      c(resource.PropertyValue{V: ""}),
-			"stdout":      c(resource.PropertyValue{V: "hello, world!"}),
+		assert.Equal(t, property.NewMap(map[string]property.Value{
+			"create":      property.New("echo hello, $NAME!"),
+			"stderr":      computed,
+			"stdout":      computed,
 			"environment": unknown,
-		}, update(true /* preview */, unknown))
+		}), update(true /* preview */, unknown))
 	})
 	t.Run("update-actual", func(t *testing.T) {
 		t.Parallel()
-		assert.Equal(t, resource.PropertyMap{
-			"create": resource.PropertyValue{V: "echo hello, $NAME!"},
-			"environment": resource.NewObjectProperty(resource.PropertyMap{
-				"NAME": resource.NewStringProperty("Pulumi"),
-			}),
-			"stderr": resource.PropertyValue{V: ""},
-			"stdout": resource.PropertyValue{V: "hello, Pulumi!"},
-		}, update(false /* preview */, resource.NewObjectProperty(resource.PropertyMap{
-			"NAME": resource.NewStringProperty("Pulumi"),
-		})))
+		assert.Equal(t, property.NewMap(map[string]property.Value{
+			"create": property.New("echo hello, $NAME!"),
+			"environment": property.New(property.NewMap(map[string]property.Value{
+				"NAME": property.New("Pulumi"),
+			})),
+
+			"stderr": property.New(""),
+			"stdout": property.New("hello, Pulumi!"),
+		}),
+
+			update(false /* preview */, property.New(property.NewMap(map[string]property.Value{
+				"NAME": property.New("Pulumi"),
+			}))))
 	})
 }
 
 func TestLocalCommandStdoutStderrFlag(t *testing.T) {
-	cmd := provider()
+	cmd := provider(t)
 	urn := urn("local", "Command", "echo")
 
 	// Run a create against an in-memory provider, assert it succeeded, and return the
 	// created property map.
-	create := func() resource.PropertyMap {
+	create := func() property.Map {
 		resp, err := cmd.Create(p.CreateRequest{
 			Urn: urn,
-			Properties: resource.PropertyMap{
-				"create": resource.NewStringProperty("echo std, $PULUMI_COMMAND_STDOUT"),
-			},
+			Properties: property.NewMap(map[string]property.Value{
+				"create": property.New("echo std, $PULUMI_COMMAND_STDOUT"),
+			}),
 		})
 		require.NoError(t, err)
 		return resp.Properties
 	}
+	createdState := property.NewMap(map[string]property.Value{
+		"create": property.New("echo std, $PULUMI_COMMAND_STDOUT"),
+		"stderr": property.New(""),
+		"stdout": property.New("std,"),
+	})
 
-	// The state that we expect a non-preview create to return.
-	//
-	// We use this as the final expect for create and the old state during update.
-	createdState := resource.PropertyMap{
-		"create": resource.PropertyValue{V: "echo std, $PULUMI_COMMAND_STDOUT"},
-		"stderr": resource.PropertyValue{V: ""},
-		"stdout": resource.PropertyValue{V: "std,"},
-	}
-
-	// Run an update against an in-memory provider, assert it succeeded, and return
-	// the new property map.
-	update := func(addPreviousOutputInEnv bool) resource.PropertyMap {
+	update := func(addPreviousOutputInEnv bool) property.Map {
 		resp, err := cmd.Update(p.UpdateRequest{
-			ID:   "echo1234",
-			Urn:  urn,
-			Olds: createdState.Copy(),
-			News: resource.PropertyMap{
-				"create":                 resource.NewStringProperty("echo std, $PULUMI_COMMAND_STDOUT"),
-				"addPreviousOutputInEnv": resource.NewBoolProperty(addPreviousOutputInEnv),
-			},
+			ID:    "echo1234",
+			Urn:   urn,
+			State: createdState,
+			Inputs: property.NewMap(map[string]property.Value{
+				"create":                 property.New("echo std, $PULUMI_COMMAND_STDOUT"),
+				"addPreviousOutputInEnv": property.New(addPreviousOutputInEnv),
+			}),
 		})
 		require.NoError(t, err)
 		return resp.Properties
@@ -182,46 +185,49 @@ func TestLocalCommandStdoutStderrFlag(t *testing.T) {
 	})
 
 	t.Run("update-actual-with-std", func(t *testing.T) {
-		assert.Equal(t, resource.PropertyMap{
-			"create":                 resource.PropertyValue{V: "echo std, $PULUMI_COMMAND_STDOUT"},
-			"stderr":                 resource.PropertyValue{V: ""},
-			"stdout":                 resource.PropertyValue{V: "std, std,"},
-			"addPreviousOutputInEnv": resource.PropertyValue{V: true},
-		}, update(true))
+		assert.Equal(t, property.NewMap(map[string]property.Value{
+			"create":                 property.New("echo std, $PULUMI_COMMAND_STDOUT"),
+			"stderr":                 property.New(""),
+			"stdout":                 property.New("std, std,"),
+			"addPreviousOutputInEnv": property.New(true),
+		}),
+
+			update(true))
 	})
 
 	t.Run("update-actual-without-std", func(t *testing.T) {
-		assert.Equal(t, resource.PropertyMap{
-			"create":                 resource.PropertyValue{V: "echo std, $PULUMI_COMMAND_STDOUT"},
-			"stderr":                 resource.PropertyValue{V: ""},
-			"stdout":                 resource.PropertyValue{V: "std,"},
-			"addPreviousOutputInEnv": resource.PropertyValue{V: false},
-		}, update(false))
-	})
+		assert.Equal(t, property.NewMap(map[string]property.Value{
+			"create":                 property.New("echo std, $PULUMI_COMMAND_STDOUT"),
+			"stderr":                 property.New(""),
+			"stdout":                 property.New("std,"),
+			"addPreviousOutputInEnv": property.New(false),
+		}),
 
+			update(false))
+	})
 }
 
 func TestRemoteCommand(t *testing.T) {
 	t.Parallel()
-	pString := resource.NewStringProperty
-	sec := resource.MakeSecret
 
 	t.Run("regress-256", func(t *testing.T) {
-		resp, err := provider().Create(p.CreateRequest{
-			Urn:     urn("remote", "Command", "check"),
-			Preview: true,
-			Properties: resource.PropertyMap{
-				"create": pString("<create command>"),
-				"connection": sec(resource.NewObjectProperty(resource.PropertyMap{
-					"host": pString("<host port>"),
-				})),
-			}})
+		resp, err := provider(t).Create(p.CreateRequest{
+			Urn:    urn("remote", "Command", "check"),
+			DryRun: true,
+			Properties: property.NewMap(map[string]property.Value{
+				"create": property.New("<create command>"),
+				"connection": property.New(property.NewMap(map[string]property.Value{
+					"host": property.New("<host port>"),
+				})).WithSecret(true),
+			}),
+		})
 		require.NoError(t, err)
 
-		for _, v := range []resource.PropertyKey{"stdout", "stderr"} {
-			p := resp.Properties[v]
-			assert.True(t, p.ContainsUnknowns())
-			assert.False(t, p.IsSecret() || (p.IsOutput() && p.OutputValue().Secret))
+		for _, key := range []string{"stdout", "stderr"} {
+			p := resp.Properties.Get(key)
+			assert.True(t, p.HasComputed())
+			assert.False(t, p.HasSecrets())
+			// assert.False(t, p.IsSecret() || (p.IsOutput() && p.OutputValue().Secret))
 		}
 	})
 }
@@ -248,36 +254,38 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 		require.NoErrorf(t, err, "session.Write(%s)", response)
 	})
 
-	cmd := provider()
+	cmd := provider(t)
 	urn := urn("remote", "Command", "dial")
 
 	// Run a create against an in-memory provider, assert it succeeded, and return the created property map.
-	connection := resource.NewObjectProperty(resource.PropertyMap{
-		"host":           resource.NewStringProperty(sshServer.Host),
-		"port":           resource.NewNumberProperty(float64(sshServer.Port)),
-		"user":           resource.NewStringProperty("arbitrary-user"), // unused but prevents nil panic
-		"perDialTimeout": resource.NewNumberProperty(1),                // unused but prevents nil panic
-	})
+	connection := property.New(property.NewMap(map[string]property.Value{
+		"host":           property.New(sshServer.Host),
+		"port":           property.New(float64(sshServer.Port)),
+		"user":           property.New("arbitrary-user"), // unused but prevents nil panic
+		"perDialTimeout": property.New(1.0),
+	}))
+
+	// unused but prevents nil panic
 
 	// The state that we expect a non-preview create to return.
 	//
 	// We use this as the final expect for create and the old state during update.
-	initialState := resource.PropertyMap{
+	initialState := property.NewMap(map[string]property.Value{
 		"connection":             connection,
-		"create":                 resource.PropertyValue{V: createCommand},
-		"stderr":                 resource.PropertyValue{V: ""},
-		"stdout":                 resource.PropertyValue{V: "Response{}"},
-		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
-	}
+		"create":                 property.New(createCommand),
+		"stderr":                 property.New(""),
+		"stdout":                 property.New("Response{}"),
+		"addPreviousOutputInEnv": property.New(true),
+	})
 
 	t.Run("create", func(t *testing.T) {
 		createResponse, err := cmd.Create(p.CreateRequest{
 			Urn: urn,
-			Properties: resource.PropertyMap{
+			Properties: property.NewMap(map[string]property.Value{
 				"connection":             connection,
-				"create":                 resource.NewStringProperty(createCommand),
-				"addPreviousOutputInEnv": resource.NewBoolProperty(true),
-			},
+				"create":                 property.New(createCommand),
+				"addPreviousOutputInEnv": property.New(true),
+			}),
 		})
 		require.NoError(t, err)
 		require.Equal(t, initialState, createResponse.Properties)
@@ -285,43 +293,46 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 
 	// Run an update against an in-memory provider, assert it succeeded, and return
 	// the new property map.
-	update := func(addPreviousOutputInEnv bool) resource.PropertyMap {
+	update := func(addPreviousOutputInEnv bool) property.Map {
 		resp, err := cmd.Update(p.UpdateRequest{
-			ID:   "echo1234",
-			Urn:  urn,
-			Olds: initialState.Copy(),
-			News: resource.PropertyMap{
+			ID:    "echo1234",
+			Urn:   urn,
+			State: initialState,
+			Inputs: property.NewMap(map[string]property.Value{
 				"connection":             connection,
-				"create":                 resource.NewStringProperty(createCommand),
-				"addPreviousOutputInEnv": resource.NewBoolProperty(addPreviousOutputInEnv),
-			},
+				"create":                 property.New(createCommand),
+				"addPreviousOutputInEnv": property.New(addPreviousOutputInEnv),
+			}),
 		})
 		require.NoError(t, err)
 		return resp.Properties
 	}
 
 	t.Run("update-actual-with-std", func(t *testing.T) {
-		assert.Equal(t, resource.PropertyMap{
+		assert.Equal(t, property.NewMap(map[string]property.Value{
 			"connection": connection,
-			"create":     resource.PropertyValue{V: createCommand},
-			"stderr":     resource.PropertyValue{V: ""},
+			"create":     property.New(createCommand),
+			"stderr":     property.New(""),
 			// Running with addPreviousOutputInEnv=true sets the environment variable:
-			"stdout":                 resource.PropertyValue{V: "Response{PULUMI_COMMAND_STDOUT=Response{}}"},
-			"addPreviousOutputInEnv": resource.PropertyValue{V: true},
-		}, update(true))
+			"stdout":                 property.New("Response{PULUMI_COMMAND_STDOUT=Response{}}"),
+			"addPreviousOutputInEnv": property.New(true),
+		}),
+
+			update(true))
 	})
 
 	t.Run("update-actual-without-std", func(t *testing.T) {
-		assert.Equal(t, resource.PropertyMap{
+		assert.Equal(t, property.NewMap(map[string]property.Value{
 			"connection": connection,
-			"create":     resource.PropertyValue{V: createCommand},
-			"stderr":     resource.PropertyValue{V: ""},
+			"create":     property.New(createCommand),
+			"stderr":     property.New(""),
 			// Running without addPreviousOutputInEnv does not set the environment variable:
-			"stdout":                 resource.PropertyValue{V: "Response{}"},
-			"addPreviousOutputInEnv": resource.PropertyValue{V: false},
-		}, update(false))
-	})
+			"stdout":                 property.New("Response{}"),
+			"addPreviousOutputInEnv": property.New(false),
+		}),
 
+			update(false))
+	})
 }
 
 // Ensure that we correctly apply defaults to `connection.port`.
@@ -330,49 +341,46 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 func TestRegress248(t *testing.T) {
 	t.Parallel()
 	type pMap = resource.PropertyMap
-	pString := resource.NewStringProperty
-	pNumber := resource.NewNumberProperty
-	resp, err := provider().Check(p.CheckRequest{
+	resp, err := provider(t).Check(p.CheckRequest{
 		Urn: urn("remote", "Command", "check"),
-		News: resource.PropertyMap{
-			"create": pString("<create command>"),
-			"connection": resource.NewObjectProperty(pMap{
-				"host": pString("<required value>"),
-			}),
-		},
+		Inputs: property.NewMap(map[string]property.Value{
+			"create": property.New("<create command>"),
+			"connection": property.New(property.NewMap(map[string]property.Value{
+				"host": property.New("<required value>"),
+			})),
+		}),
 	})
 	require.NoError(t, err)
 	assert.Empty(t, resp.Failures)
-	assert.Equal(t, resource.PropertyMap{
-		"create": pString("<create command>"),
-		"connection": resource.MakeSecret(resource.NewObjectProperty(resource.PropertyMap{
-			"host":           pString("<required value>"),
-			"port":           pNumber(22),
-			"user":           pString("root"),
-			"dialErrorLimit": pNumber(10),
-			"perDialTimeout": pNumber(15),
-		})),
-		"addPreviousOutputInEnv": resource.NewBoolProperty(true),
-	}, resp.Inputs)
+	assert.Equal(t, property.NewMap(map[string]property.Value{
+		"create": property.New("<create command>"),
+		"connection": property.New(property.NewMap(map[string]property.Value{
+			"host":           property.New("<required value>"),
+			"port":           property.New(22.0),
+			"user":           property.New("root"),
+			"dialErrorLimit": property.New(10.0),
+			"perDialTimeout": property.New(15.0),
+		})).WithSecret(true),
+		"addPreviousOutputInEnv": property.New(true),
+	}),
+
+		resp.Inputs)
 }
 
 func TestLocalRun(t *testing.T) {
 	t.Parallel()
 
-	type pMap = resource.PropertyMap
-	pString := resource.NewStringProperty
-
-	resp, err := provider().Invoke(p.InvokeRequest{
+	resp, err := provider(t).Invoke(p.InvokeRequest{
 		Token: "command:local:run",
-		Args: pMap{
-			"command": pString(`echo "Hello, World!"`),
-		},
+		Args: property.NewMap(map[string]property.Value{
+			"command": property.New(`echo "Hello, World!"`),
+		}),
 	})
 	require.NoError(t, err)
-	assert.Equal(t, pMap{
-		"command":                pString(`echo "Hello, World!"`),
-		"stderr":                 pString(""),
-		"stdout":                 pString("Hello, World!"),
-		"addPreviousOutputInEnv": resource.NewProperty(true),
-	}, resp.Return)
+	assert.Equal(t, property.NewMap(map[string]property.Value{
+		"command":                property.New(`echo "Hello, World!"`),
+		"stderr":                 property.New(""),
+		"stdout":                 property.New("Hello, World!"),
+		"addPreviousOutputInEnv": property.New(true),
+	}), resp.Return)
 }

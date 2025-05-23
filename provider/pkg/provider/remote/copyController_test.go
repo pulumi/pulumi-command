@@ -10,11 +10,13 @@ import (
 	"time"
 
 	p "github.com/pulumi/pulumi-go-provider"
+	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi-go-provider/infer/types"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
+	"github.com/pulumi/pulumi/sdk/v3/go/property"
 
 	"github.com/gliderlabs/ssh"
 	"github.com/pkg/sftp"
@@ -75,7 +77,7 @@ func initCopyTest(t *testing.T) (srcDir, destDir string, sftpClient *sftp.Client
 	baseDir := t.TempDir()
 
 	destDir = filepath.Join(baseDir, "dest")
-	require.NoError(t, os.Mkdir(destDir, 0755))
+	require.NoError(t, os.Mkdir(destDir, 0o755))
 
 	sftpClient = startSshServer(t, destDir)
 
@@ -88,7 +90,7 @@ func initCopyTest(t *testing.T) (srcDir, destDir string, sftpClient *sftp.Client
 	//   file2
 	//   two/
 	//     file3
-	require.NoError(t, os.MkdirAll(filepath.Join(srcDir, "one", "two"), 0755))
+	require.NoError(t, os.MkdirAll(filepath.Join(srcDir, "one", "two"), 0o755))
 	_, err := os.Create(filepath.Join(srcDir, "file1"))
 	require.NoError(t, err)
 	_, err = os.Create(filepath.Join(srcDir, "one", "file2"))
@@ -160,7 +162,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		fileTwo := filepath.Join(destDir, "src", "one", "two")
 		require.NoError(t, os.RemoveAll(fileTwo))
-		require.NoError(t, os.WriteFile(fileTwo, []byte("dir turned to file"), 0644))
+		require.NoError(t, os.WriteFile(fileTwo, []byte("dir turned to file"), 0o644))
 
 		require.Error(t, sftpCopy(sftpClient, srcDir, destDir))
 	})
@@ -179,7 +181,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		// modify the file
 		srcFile := filepath.Join(srcDir, "file1")
-		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0644))
+		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o644))
 
 		// copy it to remote again
 		require.NoError(t, sftpCopy(sftpClient, srcFile, destFile))
@@ -197,7 +199,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		// modify the file
 		srcFile := filepath.Join(srcDir, "file1")
-		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0644))
+		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o644))
 
 		// copy it to remote again
 		require.NoError(t, sftpCopy(sftpClient, srcDir, destDir))
@@ -215,7 +217,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		// modify the file
 		srcFile := filepath.Join(srcDir, "file1")
-		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0644))
+		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o644))
 
 		// copy it to remote again
 		require.NoError(t, sftpCopy(sftpClient, srcDir+"/", destDir))
@@ -226,7 +228,7 @@ func TestCopyDirectories(t *testing.T) {
 }
 
 func TestCheck(t *testing.T) {
-	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) resource.PropertyMap {
+	makeNewInput := func(asset *asset.Asset, archive *archive.Archive) property.Map {
 		m := map[string]any{
 			"connection": map[string]any{
 				"host": "myhost",
@@ -238,14 +240,15 @@ func TestCheck(t *testing.T) {
 				Archive: archive,
 			},
 		}
-		return resource.NewPropertyMapFromMap(m)
+		pm := resource.NewPropertyMapFromMap(m)
+		return resource.FromResourcePropertyMap(pm)
 	}
 
-	check := func(news resource.PropertyMap) []p.CheckFailure {
+	check := func(news property.Map) []p.CheckFailure {
 		copy := &CopyToRemote{}
-		_, failures, err := copy.Check(context.Background(), "urn", nil, news)
+		resp, err := copy.Check(context.Background(), infer.CheckRequest{Name: "name", NewInputs: news})
 		require.NoError(t, err)
-		return failures
+		return resp.Failures
 	}
 
 	t.Run("happy path, asset", func(t *testing.T) {
