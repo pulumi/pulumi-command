@@ -88,7 +88,8 @@
         },
         "password": {
           "type": "string",
-          "description": "The password we should use for the connection."
+          "description": "The password we should use for the connection.",
+          "secret": true
         },
         "perDialTimeout": {
           "type": "integer",
@@ -102,11 +103,13 @@
         },
         "privateKey": {
           "type": "string",
-          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+          "secret": true
         },
         "privateKeyPassword": {
           "type": "string",
-          "description": "The password to use in case the private key is encrypted."
+          "description": "The password to use in case the private key is encrypted.",
+          "secret": true
         },
         "proxy": {
           "$ref": "#/types/command:remote:ProxyConnection",
@@ -162,7 +165,8 @@
         },
         "password": {
           "type": "string",
-          "description": "The password we should use for the connection to the bastion host."
+          "description": "The password we should use for the connection to the bastion host.",
+          "secret": true
         },
         "perDialTimeout": {
           "type": "integer",
@@ -176,11 +180,13 @@
         },
         "privateKey": {
           "type": "string",
-          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided."
+          "description": "The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+          "secret": true
         },
         "privateKeyPassword": {
           "type": "string",
-          "description": "The password to use in case the private key is encrypted."
+          "description": "The password to use in case the private key is encrypted.",
+          "secret": true
         },
         "user": {
           "type": "string",
@@ -233,11 +239,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "dir": {
           "type": "string",
@@ -278,12 +284,12 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\nPlease see the resource documentation for examples.",
+          "description": "The resource will be updated (or replaced) if any of these values change.\n\nThe trigger values can be of any type.\n\nIf the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.\n\nPlease see the resource documentation for examples.",
           "replaceOnChanges": true
         },
         "update": {
           "type": "string",
-          "description": "The command to run on update, if empty, create will \nrun again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR \nare set to the stdout and stderr properties of the Command resource from previous \ncreate or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         }
       },
       "type": "object",
@@ -313,11 +319,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "dir": {
           "type": "string",
@@ -350,12 +356,12 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\nPlease see the resource documentation for examples.",
+          "description": "The resource will be updated (or replaced) if any of these values change.\n\nThe trigger values can be of any type.\n\nIf the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.\n\nPlease see the resource documentation for examples.",
           "replaceOnChanges": true
         },
         "update": {
           "type": "string",
-          "description": "The command to run on update, if empty, create will \nrun again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR \nare set to the stdout and stderr properties of the Command resource from previous \ncreate or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         }
       }
     },
@@ -374,11 +380,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "environment": {
           "type": "object",
@@ -408,12 +414,12 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\nPlease see the resource documentation for examples.",
+          "description": "The resource will be updated (or replaced) if any of these values change.\n\nThe trigger values can be of any type.\n\nIf the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.\n\nPlease see the resource documentation for examples.",
           "replaceOnChanges": true
         },
         "update": {
           "type": "string",
-          "description": "The command to run on update, if empty, create will \nrun again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR \nare set to the stdout and stderr properties of the Command resource from previous \ncreate or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         }
       },
       "type": "object",
@@ -435,11 +441,11 @@
         },
         "create": {
           "type": "string",
-          "description": "The command to run on create."
+          "description": "The command to run once on resource creation.\n\nIf an `update` command isn't provided, then `create` will also be run when the resource's inputs are modified.\n\nNote that this command will not be executed if the resource has already been created and its inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program."
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT\nand PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the\nCommand resource from previous create or update steps."
+          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "environment": {
           "type": "object",
@@ -461,12 +467,12 @@
           "items": {
             "$ref": "pulumi.json#/Any"
           },
-          "description": "Trigger a resource replacement on changes to any of these values. The\ntrigger values can be of any type. If a value is different in the current update compared to the\nprevious update, the resource will be replaced, i.e., the \"create\" command will be re-run.\nPlease see the resource documentation for examples.",
+          "description": "The resource will be updated (or replaced) if any of these values change.\n\nThe trigger values can be of any type.\n\nIf the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.\n\nPlease see the resource documentation for examples.",
           "replaceOnChanges": true
         },
         "update": {
           "type": "string",
-          "description": "The command to run on update, if empty, create will \nrun again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR \nare set to the stdout and stderr properties of the Command resource from previous \ncreate or update steps."
+          "description": "The command to run when the resource is updated.\n\nIf empty, the create command will be executed instead.\n\nNote that this command will not run if the resource's inputs are unchanged.\n\nUse `local.runOutput` if you need to run a command on every execution of your program.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps."
         }
       },
       "requiredInputs": [
@@ -595,7 +601,7 @@
   },
   "functions": {
     "command:local:run": {
-      "description": "A local command to be executed.\nThis command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.",
+      "description": "A local command to be executed unconditionally.\nThis command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.",
       "inputs": {
         "properties": {
           "addPreviousOutputInEnv": {

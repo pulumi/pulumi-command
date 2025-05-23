@@ -138,32 +138,44 @@ public class Command extends com.pulumi.resources.CustomResource {
         return this.connection;
     }
     /**
-     * The command to run on create.
+     * The command to run once on resource creation.
+     * 
+     * If an `update` command isn&#39;t provided, then `create` will also be run when the resource&#39;s inputs are modified.
+     * 
+     * Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
      * 
      */
     @Export(name="create", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> create;
 
     /**
-     * @return The command to run on create.
+     * @return The command to run once on resource creation.
+     * 
+     * If an `update` command isn&#39;t provided, then `create` will also be run when the resource&#39;s inputs are modified.
+     * 
+     * Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
      * 
      */
     public Output<Optional<String>> create() {
         return Codegen.optional(this.create);
     }
     /**
-     * The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-     * Command resource from previous create or update steps.
+     * The command to run on resource delettion.
+     * 
+     * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      * 
      */
     @Export(name="delete", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> delete;
 
     /**
-     * @return The command to run on delete. The environment variables PULUMI_COMMAND_STDOUT
-     * and PULUMI_COMMAND_STDERR are set to the stdout and stderr properties of the
-     * Command resource from previous create or update steps.
+     * @return The command to run on resource delettion.
+     * 
+     * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      * 
      */
     public Output<Optional<String>> delete() {
@@ -250,9 +262,12 @@ public class Command extends com.pulumi.resources.CustomResource {
         return this.stdout;
     }
     /**
-     * Trigger a resource replacement on changes to any of these values. The
-     * trigger values can be of any type. If a value is different in the current update compared to the
-     * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+     * The resource will be updated (or replaced) if any of these values change.
+     * 
+     * The trigger values can be of any type.
+     * 
+     * If the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.
+     * 
      * Please see the resource documentation for examples.
      * 
      */
@@ -260,9 +275,12 @@ public class Command extends com.pulumi.resources.CustomResource {
     private Output</* @Nullable */ List<Object>> triggers;
 
     /**
-     * @return Trigger a resource replacement on changes to any of these values. The
-     * trigger values can be of any type. If a value is different in the current update compared to the
-     * previous update, the resource will be replaced, i.e., the &#34;create&#34; command will be re-run.
+     * @return The resource will be updated (or replaced) if any of these values change.
+     * 
+     * The trigger values can be of any type.
+     * 
+     * If the `update` command was provided the resource will be updated, otherwise it will be replaced using the `create` command.
+     * 
      * Please see the resource documentation for examples.
      * 
      */
@@ -270,20 +288,30 @@ public class Command extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.triggers);
     }
     /**
-     * The command to run on update, if empty, create will
-     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
-     * are set to the stdout and stderr properties of the Command resource from previous
-     * create or update steps.
+     * The command to run when the resource is updated.
+     * 
+     * If empty, the create command will be executed instead.
+     * 
+     * Note that this command will not run if the resource&#39;s inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
+     * 
+     * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
      * 
      */
     @Export(name="update", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> update;
 
     /**
-     * @return The command to run on update, if empty, create will
-     * run again. The environment variables PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR
-     * are set to the stdout and stderr properties of the Command resource from previous
-     * create or update steps.
+     * @return The command to run when the resource is updated.
+     * 
+     * If empty, the create command will be executed instead.
+     * 
+     * Note that this command will not run if the resource&#39;s inputs are unchanged.
+     * 
+     * Use `local.runOutput` if you need to run a command on every execution of your program.
+     * 
+     * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
      * 
      */
     public Output<Optional<String>> update() {

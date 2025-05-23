@@ -16,40 +16,40 @@ import java.util.concurrent.CompletableFuture;
 
 public final class LocalFunctions {
     /**
-     * A local command to be executed.
-     * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+     * A local command to be executed unconditionally.
+     * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
      * 
      */
     public static Output<RunResult> run(RunArgs args) {
         return run(args, InvokeOptions.Empty);
     }
     /**
-     * A local command to be executed.
-     * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+     * A local command to be executed unconditionally.
+     * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
      * 
      */
     public static CompletableFuture<RunResult> runPlain(RunPlainArgs args) {
         return runPlain(args, InvokeOptions.Empty);
     }
     /**
-     * A local command to be executed.
-     * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+     * A local command to be executed unconditionally.
+     * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
      * 
      */
     public static Output<RunResult> run(RunArgs args, InvokeOptions options) {
         return Deployment.getInstance().invoke("command:local:run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
     }
     /**
-     * A local command to be executed.
-     * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+     * A local command to be executed unconditionally.
+     * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
      * 
      */
     public static Output<RunResult> run(RunArgs args, InvokeOutputOptions options) {
         return Deployment.getInstance().invoke("command:local:run", TypeShape.of(RunResult.class), args, Utilities.withVersion(options));
     }
     /**
-     * A local command to be executed.
-     * This command will always be run on any preview or deployment. Use `local.Command` to avoid duplicating executions.
+     * A local command to be executed unconditionally.
+     * This command will always be run on any preview or deployment. Use `local.Command` to conditionally execute commands as part of the resource lifecycle.
      * 
      */
     public static CompletableFuture<RunResult> runPlain(RunPlainArgs args, InvokeOptions options) {

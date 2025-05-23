@@ -91,11 +91,9 @@ class CopyFileArgs:
 warnings.warn("""This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.""", DeprecationWarning)
 
 
+@pulumi.type_token("command:remote:CopyFile")
 class CopyFile(pulumi.CustomResource):
     warnings.warn("""This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.""", DeprecationWarning)
-
-
-    pulumi_type = "command:remote:CopyFile"
 
     @overload
     def __init__(__self__,

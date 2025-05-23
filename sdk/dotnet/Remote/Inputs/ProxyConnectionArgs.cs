@@ -33,11 +33,21 @@ namespace Pulumi.Command.Remote.Inputs
         [Input("host", required: true)]
         public Input<string> Host { get; set; } = null!;
 
+        [Input("password")]
+        private Input<string>? _password;
+
         /// <summary>
         /// The password we should use for the connection to the bastion host.
         /// </summary>
-        [Input("password")]
-        public Input<string>? Password { get; set; }
+        public Input<string>? Password
+        {
+            get => _password;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _password = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
 
         /// <summary>
         /// Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -51,17 +61,37 @@ namespace Pulumi.Command.Remote.Inputs
         [Input("port")]
         public Input<double>? Port { get; set; }
 
+        [Input("privateKey")]
+        private Input<string>? _privateKey;
+
         /// <summary>
         /// The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         /// </summary>
-        [Input("privateKey")]
-        public Input<string>? PrivateKey { get; set; }
+        public Input<string>? PrivateKey
+        {
+            get => _privateKey;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _privateKey = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
+
+        [Input("privateKeyPassword")]
+        private Input<string>? _privateKeyPassword;
 
         /// <summary>
         /// The password to use in case the private key is encrypted.
         /// </summary>
-        [Input("privateKeyPassword")]
-        public Input<string>? PrivateKeyPassword { get; set; }
+        public Input<string>? PrivateKeyPassword
+        {
+            get => _privateKeyPassword;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _privateKeyPassword = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
 
         /// <summary>
         /// The user that we should use for the connection to the bastion host.
