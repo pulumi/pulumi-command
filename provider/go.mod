@@ -10,7 +10,7 @@ require (
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/providertest v0.3.1
-	github.com/pulumi/pulumi-go-provider v1.0.2
+	github.com/pulumi/pulumi-go-provider v1.1.0
 	github.com/pulumi/pulumi/sdk/v3 v3.175.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.37.0
