@@ -6,8 +6,8 @@ toolchain go1.24.3
 
 require (
 	github.com/aws/aws-sdk-go v1.50.36
-	github.com/pulumi/pulumi/pkg/v3 v3.184.0
-	github.com/pulumi/pulumi/sdk/v3 v3.184.0
+	github.com/pulumi/pulumi/pkg/v3 v3.185.0
+	github.com/pulumi/pulumi/sdk/v3 v3.185.0
 	github.com/stretchr/testify v1.10.0
 )
 
@@ -159,7 +159,7 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/oauth2 v0.27.0 // indirect
+	golang.org/x/oauth2 v0.30.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
