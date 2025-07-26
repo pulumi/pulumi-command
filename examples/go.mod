@@ -1,13 +1,13 @@
 module github.com/pulumi/pulumi-command/examples
 
-go 1.23.0
+go 1.23.11
 
-toolchain go1.24.3
+toolchain go1.24.5
 
 require (
 	github.com/aws/aws-sdk-go v1.50.36
-	github.com/pulumi/pulumi/pkg/v3 v3.185.0
-	github.com/pulumi/pulumi/sdk/v3 v3.185.0
+	github.com/pulumi/pulumi/pkg/v3 v3.186.0
+	github.com/pulumi/pulumi/sdk/v3 v3.186.0
 	github.com/stretchr/testify v1.10.0
 )
 
