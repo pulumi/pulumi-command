@@ -98,11 +98,11 @@ export class Command extends pulumi.CustomResource {
      * injected into the environment of the next run as PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR.
      * Defaults to true.
      */
-    public readonly addPreviousOutputInEnv!: pulumi.Output<boolean | undefined>;
+    declare public readonly addPreviousOutputInEnv: pulumi.Output<boolean | undefined>;
     /**
      * The parameters with which to connect to the remote host.
      */
-    public readonly connection!: pulumi.Output<outputs.remote.Connection>;
+    declare public readonly connection: pulumi.Output<outputs.remote.Connection>;
     /**
      * The command to run once on resource creation.
      *
@@ -112,38 +112,38 @@ export class Command extends pulumi.CustomResource {
      *
      * Use `local.runOutput` if you need to run a command on every execution of your program.
      */
-    public readonly create!: pulumi.Output<string | undefined>;
+    declare public readonly create: pulumi.Output<string | undefined>;
     /**
      * The command to run on resource delettion.
      *
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      */
-    public readonly delete!: pulumi.Output<string | undefined>;
+    declare public readonly delete: pulumi.Output<string | undefined>;
     /**
      * Additional environment variables available to the command's process.
      * Note that this only works if the SSH server is configured to accept these variables via AcceptEnv.
      * Alternatively, if a Bash-like shell runs the command on the remote host, you could prefix the command itself
      * with the variables in the form 'VAR=value command'.
      */
-    public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
+    declare public readonly environment: pulumi.Output<{[key: string]: string} | undefined>;
     /**
      * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    public readonly logging!: pulumi.Output<enums.remote.Logging | undefined>;
+    declare public readonly logging: pulumi.Output<enums.remote.Logging | undefined>;
     /**
      * The standard error of the command's process
      */
-    public /*out*/ readonly stderr!: pulumi.Output<string>;
+    declare public /*out*/ readonly stderr: pulumi.Output<string>;
     /**
      * Pass a string to the command's process as standard in
      */
-    public readonly stdin!: pulumi.Output<string | undefined>;
+    declare public readonly stdin: pulumi.Output<string | undefined>;
     /**
      * The standard output of the command's process
      */
-    public /*out*/ readonly stdout!: pulumi.Output<string>;
+    declare public /*out*/ readonly stdout: pulumi.Output<string>;
     /**
      * The resource will be updated (or replaced) if any of these values change.
      *
@@ -153,7 +153,7 @@ export class Command extends pulumi.CustomResource {
      *
      * Please see the resource documentation for examples.
      */
-    public readonly triggers!: pulumi.Output<any[] | undefined>;
+    declare public readonly triggers: pulumi.Output<any[] | undefined>;
     /**
      * The command to run when the resource is updated.
      *
@@ -165,7 +165,7 @@ export class Command extends pulumi.CustomResource {
      *
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
      */
-    public readonly update!: pulumi.Output<string | undefined>;
+    declare public readonly update: pulumi.Output<string | undefined>;
 
     /**
      * Create a Command resource with the given unique name, arguments, and options.
@@ -178,18 +178,18 @@ export class Command extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.connection === undefined) && !opts.urn) {
+            if (args?.connection === undefined && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
-            resourceInputs["addPreviousOutputInEnv"] = (args ? args.addPreviousOutputInEnv : undefined) ?? true;
+            resourceInputs["addPreviousOutputInEnv"] = (args?.addPreviousOutputInEnv) ?? true;
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
-            resourceInputs["create"] = args ? args.create : undefined;
-            resourceInputs["delete"] = args ? args.delete : undefined;
-            resourceInputs["environment"] = args ? args.environment : undefined;
-            resourceInputs["logging"] = args ? args.logging : undefined;
-            resourceInputs["stdin"] = args ? args.stdin : undefined;
-            resourceInputs["triggers"] = args ? args.triggers : undefined;
-            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["create"] = args?.create;
+            resourceInputs["delete"] = args?.delete;
+            resourceInputs["environment"] = args?.environment;
+            resourceInputs["logging"] = args?.logging;
+            resourceInputs["stdin"] = args?.stdin;
+            resourceInputs["triggers"] = args?.triggers;
+            resourceInputs["update"] = args?.update;
             resourceInputs["stderr"] = undefined /*out*/;
             resourceInputs["stdout"] = undefined /*out*/;
         } else {

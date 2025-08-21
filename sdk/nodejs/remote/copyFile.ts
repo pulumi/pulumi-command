@@ -43,19 +43,19 @@ export class CopyFile extends pulumi.CustomResource {
     /**
      * The parameters with which to connect to the remote host.
      */
-    public readonly connection!: pulumi.Output<outputs.remote.Connection>;
+    declare public readonly connection: pulumi.Output<outputs.remote.Connection>;
     /**
      * The path of the file to be copied.
      */
-    public readonly localPath!: pulumi.Output<string>;
+    declare public readonly localPath: pulumi.Output<string>;
     /**
      * The destination path in the remote host.
      */
-    public readonly remotePath!: pulumi.Output<string>;
+    declare public readonly remotePath: pulumi.Output<string>;
     /**
      * Trigger replacements on changes to this input.
      */
-    public readonly triggers!: pulumi.Output<any[] | undefined>;
+    declare public readonly triggers: pulumi.Output<any[] | undefined>;
 
     /**
      * Create a CopyFile resource with the given unique name, arguments, and options.
@@ -70,19 +70,19 @@ export class CopyFile extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.connection === undefined) && !opts.urn) {
+            if (args?.connection === undefined && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
-            if ((!args || args.localPath === undefined) && !opts.urn) {
+            if (args?.localPath === undefined && !opts.urn) {
                 throw new Error("Missing required property 'localPath'");
             }
-            if ((!args || args.remotePath === undefined) && !opts.urn) {
+            if (args?.remotePath === undefined && !opts.urn) {
                 throw new Error("Missing required property 'remotePath'");
             }
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
-            resourceInputs["localPath"] = args ? args.localPath : undefined;
-            resourceInputs["remotePath"] = args ? args.remotePath : undefined;
-            resourceInputs["triggers"] = args ? args.triggers : undefined;
+            resourceInputs["localPath"] = args?.localPath;
+            resourceInputs["remotePath"] = args?.remotePath;
+            resourceInputs["triggers"] = args?.triggers;
         } else {
             resourceInputs["connection"] = undefined /*out*/;
             resourceInputs["localPath"] = undefined /*out*/;
