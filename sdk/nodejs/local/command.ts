@@ -117,11 +117,11 @@ export class Command extends pulumi.CustomResource {
      * injected into the environment of the next run as PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR.
      * Defaults to true.
      */
-    public readonly addPreviousOutputInEnv!: pulumi.Output<boolean | undefined>;
+    declare public readonly addPreviousOutputInEnv: pulumi.Output<boolean | undefined>;
     /**
      * An archive asset containing files found after running the command.
      */
-    public /*out*/ readonly archive!: pulumi.Output<pulumi.asset.Archive | undefined>;
+    declare public /*out*/ readonly archive: pulumi.Output<pulumi.asset.Archive | undefined>;
     /**
      * A list of path globs to return as a single archive asset after the command completes.
      *
@@ -162,7 +162,7 @@ export class Command extends pulumi.CustomResource {
      * - src/index.js
      * ```
      */
-    public readonly archivePaths!: pulumi.Output<string[] | undefined>;
+    declare public readonly archivePaths: pulumi.Output<string[] | undefined>;
     /**
      * A list of path globs to read after the command completes.
      *
@@ -203,12 +203,12 @@ export class Command extends pulumi.CustomResource {
      * - src/index.js
      * ```
      */
-    public readonly assetPaths!: pulumi.Output<string[] | undefined>;
+    declare public readonly assetPaths: pulumi.Output<string[] | undefined>;
     /**
      * A map of assets found after running the command.
      * The key is the relative path from the command dir
      */
-    public /*out*/ readonly assets!: pulumi.Output<{[key: string]: pulumi.asset.Asset | pulumi.asset.Archive} | undefined>;
+    declare public /*out*/ readonly assets: pulumi.Output<{[key: string]: pulumi.asset.Asset | pulumi.asset.Archive} | undefined>;
     /**
      * The command to run once on resource creation.
      *
@@ -218,45 +218,45 @@ export class Command extends pulumi.CustomResource {
      *
      * Use `local.runOutput` if you need to run a command on every execution of your program.
      */
-    public readonly create!: pulumi.Output<string | undefined>;
+    declare public readonly create: pulumi.Output<string | undefined>;
     /**
      * The command to run on resource delettion.
      *
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      */
-    public readonly delete!: pulumi.Output<string | undefined>;
+    declare public readonly delete: pulumi.Output<string | undefined>;
     /**
      * The directory from which to run the command from. If `dir` does not exist, then
      * `Command` will fail.
      */
-    public readonly dir!: pulumi.Output<string | undefined>;
+    declare public readonly dir: pulumi.Output<string | undefined>;
     /**
      * Additional environment variables available to the command's process.
      */
-    public readonly environment!: pulumi.Output<{[key: string]: string} | undefined>;
+    declare public readonly environment: pulumi.Output<{[key: string]: string} | undefined>;
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
-    public readonly interpreter!: pulumi.Output<string[] | undefined>;
+    declare public readonly interpreter: pulumi.Output<string[] | undefined>;
     /**
      * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    public readonly logging!: pulumi.Output<enums.local.Logging | undefined>;
+    declare public readonly logging: pulumi.Output<enums.local.Logging | undefined>;
     /**
      * The standard error of the command's process
      */
-    public /*out*/ readonly stderr!: pulumi.Output<string>;
+    declare public /*out*/ readonly stderr: pulumi.Output<string>;
     /**
      * Pass a string to the command's process as standard in
      */
-    public readonly stdin!: pulumi.Output<string | undefined>;
+    declare public readonly stdin: pulumi.Output<string | undefined>;
     /**
      * The standard output of the command's process
      */
-    public /*out*/ readonly stdout!: pulumi.Output<string>;
+    declare public /*out*/ readonly stdout: pulumi.Output<string>;
     /**
      * The resource will be updated (or replaced) if any of these values change.
      *
@@ -266,7 +266,7 @@ export class Command extends pulumi.CustomResource {
      *
      * Please see the resource documentation for examples.
      */
-    public readonly triggers!: pulumi.Output<any[] | undefined>;
+    declare public readonly triggers: pulumi.Output<any[] | undefined>;
     /**
      * The command to run when the resource is updated.
      *
@@ -278,7 +278,7 @@ export class Command extends pulumi.CustomResource {
      *
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
      */
-    public readonly update!: pulumi.Output<string | undefined>;
+    declare public readonly update: pulumi.Output<string | undefined>;
 
     /**
      * Create a Command resource with the given unique name, arguments, and options.
@@ -291,18 +291,18 @@ export class Command extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            resourceInputs["addPreviousOutputInEnv"] = (args ? args.addPreviousOutputInEnv : undefined) ?? true;
-            resourceInputs["archivePaths"] = args ? args.archivePaths : undefined;
-            resourceInputs["assetPaths"] = args ? args.assetPaths : undefined;
-            resourceInputs["create"] = args ? args.create : undefined;
-            resourceInputs["delete"] = args ? args.delete : undefined;
-            resourceInputs["dir"] = args ? args.dir : undefined;
-            resourceInputs["environment"] = args ? args.environment : undefined;
-            resourceInputs["interpreter"] = args ? args.interpreter : undefined;
-            resourceInputs["logging"] = args ? args.logging : undefined;
-            resourceInputs["stdin"] = args ? args.stdin : undefined;
-            resourceInputs["triggers"] = args ? args.triggers : undefined;
-            resourceInputs["update"] = args ? args.update : undefined;
+            resourceInputs["addPreviousOutputInEnv"] = (args?.addPreviousOutputInEnv) ?? true;
+            resourceInputs["archivePaths"] = args?.archivePaths;
+            resourceInputs["assetPaths"] = args?.assetPaths;
+            resourceInputs["create"] = args?.create;
+            resourceInputs["delete"] = args?.delete;
+            resourceInputs["dir"] = args?.dir;
+            resourceInputs["environment"] = args?.environment;
+            resourceInputs["interpreter"] = args?.interpreter;
+            resourceInputs["logging"] = args?.logging;
+            resourceInputs["stdin"] = args?.stdin;
+            resourceInputs["triggers"] = args?.triggers;
+            resourceInputs["update"] = args?.update;
             resourceInputs["archive"] = undefined /*out*/;
             resourceInputs["assets"] = undefined /*out*/;
             resourceInputs["stderr"] = undefined /*out*/;
