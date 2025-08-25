@@ -369,18 +369,18 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@pulumi/aws@7.3.1":
-  version "7.3.1"
-  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-7.3.1.tgz#77603631d0e8c713eff52fb90737bf89e955dffd"
-  integrity sha512-ob/fObLnC4YPnj+eCn0DkwfTR6KYzbgwqtdo+cYGdQlDfo7hSQqJeAWyYaPKYa32220BjYALaX9GwJrZGey84w==
+"@pulumi/aws@7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/aws/-/aws-7.5.0.tgz#7d1ee4e9ea054efb0b05a5a1924605321c96691a"
+  integrity sha512-oE6IcvNPSFz0IWfOWDxPElIG8DADhJRGoC9AAqF/5gF4Mx2IjCpLQaTGkxe1aEEIkem2jhKKG3xLbDkxsnLm/g==
   dependencies:
     "@pulumi/pulumi" "^3.142.0"
     mime "^2.0.0"
 
-"@pulumi/pulumi@3.188.0", "@pulumi/pulumi@^3.142.0":
-  version "3.188.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.188.0.tgz#efa3c72345ca9de8960e08812e4802caa0eaf1f7"
-  integrity sha512-c2L2QMq1bNo+1TxuoMQKQM7fiIZOMAAjDaIr2JKyg/ADGi7dhpKckEDbg43EMlzFUtI7t0mkiUYTaVPVcZ1kqg==
+"@pulumi/pulumi@3.191.0", "@pulumi/pulumi@^3.142.0":
+  version "3.191.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.191.0.tgz#2c3deb0529daf763214f6be68c891f4a6b873c4c"
+  integrity sha512-l2zFS+wGKeyFaAcSn+AhIi2Hkq7hXS/+biacKO5L38LFPGXMDrrmzhLsQ+uLXng9f6ZwXvfSbQC9m0YM5s8wwg==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"
@@ -397,7 +397,7 @@
     "@types/tmp" "^0.2.6"
     execa "^5.1.0"
     fdir "^6.1.1"
-    google-protobuf "^3.5.0"
+    google-protobuf "^3.21.4"
     got "^11.8.6"
     ini "^2.0.0"
     js-yaml "^3.14.0"
@@ -884,7 +884,7 @@ glob@^10.2.2, glob@^10.3.10:
     package-json-from-dist "^1.0.0"
     path-scurry "^1.11.1"
 
-google-protobuf@^3.5.0:
+google-protobuf@^3.21.4:
   version "3.21.4"
   resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.21.4.tgz#2f933e8b6e5e9f8edde66b7be0024b68f77da6c9"
   integrity sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==

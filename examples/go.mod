@@ -6,8 +6,8 @@ toolchain go1.24.5
 
 require (
 	github.com/aws/aws-sdk-go v1.50.36
-	github.com/pulumi/pulumi/pkg/v3 v3.188.0
-	github.com/pulumi/pulumi/sdk/v3 v3.188.0
+	github.com/pulumi/pulumi/pkg/v3 v3.191.0
+	github.com/pulumi/pulumi/sdk/v3 v3.191.0
 	github.com/stretchr/testify v1.10.0
 )
 

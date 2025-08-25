@@ -98,19 +98,19 @@ export class CopyToRemote extends pulumi.CustomResource {
     /**
      * The parameters with which to connect to the remote host.
      */
-    public readonly connection!: pulumi.Output<outputs.remote.Connection>;
+    declare public readonly connection: pulumi.Output<outputs.remote.Connection>;
     /**
      * The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
      */
-    public readonly remotePath!: pulumi.Output<string>;
+    declare public readonly remotePath: pulumi.Output<string>;
     /**
      * An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
      */
-    public readonly source!: pulumi.Output<pulumi.asset.Asset | pulumi.asset.Archive>;
+    declare public readonly source: pulumi.Output<pulumi.asset.Asset | pulumi.asset.Archive>;
     /**
      * Trigger replacements on changes to this input.
      */
-    public readonly triggers!: pulumi.Output<any[] | undefined>;
+    declare public readonly triggers: pulumi.Output<any[] | undefined>;
 
     /**
      * Create a CopyToRemote resource with the given unique name, arguments, and options.
@@ -123,19 +123,19 @@ export class CopyToRemote extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            if ((!args || args.connection === undefined) && !opts.urn) {
+            if (args?.connection === undefined && !opts.urn) {
                 throw new Error("Missing required property 'connection'");
             }
-            if ((!args || args.remotePath === undefined) && !opts.urn) {
+            if (args?.remotePath === undefined && !opts.urn) {
                 throw new Error("Missing required property 'remotePath'");
             }
-            if ((!args || args.source === undefined) && !opts.urn) {
+            if (args?.source === undefined && !opts.urn) {
                 throw new Error("Missing required property 'source'");
             }
             resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
-            resourceInputs["remotePath"] = args ? args.remotePath : undefined;
-            resourceInputs["source"] = args ? args.source : undefined;
-            resourceInputs["triggers"] = args ? args.triggers : undefined;
+            resourceInputs["remotePath"] = args?.remotePath;
+            resourceInputs["source"] = args?.source;
+            resourceInputs["triggers"] = args?.triggers;
         } else {
             resourceInputs["connection"] = undefined /*out*/;
             resourceInputs["remotePath"] = undefined /*out*/;
