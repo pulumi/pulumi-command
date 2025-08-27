@@ -190,8 +190,8 @@ github.com/pulumi/inflector v0.1.1 h1:dvlxlWtXwOJTUUtcYDvwnl6Mpg33prhK+7mzeF+Sob
 github.com/pulumi/inflector v0.1.1/go.mod h1:HUFCjcPTz96YtTuUlwG3i3EZG4WlniBvR9bd+iJxCUY=
 github.com/pulumi/providertest v0.3.1 h1:vlftr7TZlObh81mL88IhhF0/9ZbLrZZos4NAvR4HUUw=
 github.com/pulumi/providertest v0.3.1/go.mod h1:fFHUP4/9DRyYnHWiRnwcynMtM/a7hHR/QcJfcuZKO3A=
-github.com/pulumi/pulumi-go-provider v1.1.0 h1:TNrLoQ7LrT6Z2xPbspJKXE3pKZsz+pCVo62zKFGxjBI=
-github.com/pulumi/pulumi-go-provider v1.1.0/go.mod h1:bWvFWytb2ULBefjDW/YG+GcjHbzVojwtl1RW5afMvR0=
+github.com/pulumi/pulumi-go-provider v1.1.1 h1:4UT3LeNT9CdGhkq8OSWKJsmKTW9Tg+vsfOO/hsFVyb4=
+github.com/pulumi/pulumi-go-provider v1.1.1/go.mod h1:3lNIuxT/BArFyiKrVfv+UT7gMMtplss7V69KuBZ4zIk=
 github.com/pulumi/pulumi/pkg/v3 v3.191.0 h1:AIONP+ACReGWeIWq9U8yqZ15x3y00DZPLANVk+pGReo=
 github.com/pulumi/pulumi/pkg/v3 v3.191.0/go.mod h1:lOf/lnZK1HcJOrefdjkxctc8p0xDje91ub0kozzXLGs=
 github.com/pulumi/pulumi/sdk/v3 v3.191.0 h1:irZiK/9teTjVOVQLsz8+zqfyWBc0KU/L389gztK5BB0=
