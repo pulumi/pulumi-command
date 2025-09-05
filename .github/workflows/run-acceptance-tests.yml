@@ -67,7 +67,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@cc7494be991dba0978f7ffafaf995b0449a0998e # v6.5.0
+      uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6.3.0
       with:
         pulumi-version-file: .pulumi.version
     - name: Build codegen binaries
@@ -196,7 +196,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@cc7494be991dba0978f7ffafaf995b0449a0998e # v6.5.0
+      uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6.3.0
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup Node
@@ -355,7 +355,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@cc7494be991dba0978f7ffafaf995b0449a0998e # v6.5.0
+      uses: pulumi/actions@df5a93ad715135263c732ba288301bd044c383c0 # v6.3.0
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup Node
@@ -437,6 +437,8 @@ jobs:
         set -euo pipefail
 
         cd examples && go test -count=1 -cover -timeout 2h -tags=${{ matrix.language }} -parallel 4 .
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - if: failure() && github.event_name == 'push'
       name: Notify Slack
       uses: 8398a7/action-slack@1750b5085f3ec60384090fb7c52965ef822e869e # v3.18.0
