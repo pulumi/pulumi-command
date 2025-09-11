@@ -5,13 +5,14 @@ go 1.24
 toolchain go1.24.1
 
 require (
+	github.com/Microsoft/go-winio v0.6.2
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gliderlabs/ssh v0.3.8
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/providertest v0.3.1
 	github.com/pulumi/pulumi-go-provider v1.1.1
-	github.com/pulumi/pulumi/sdk/v3 v3.193.0
+	github.com/pulumi/pulumi/sdk/v3 v3.194.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.39.0
 )
@@ -19,7 +20,6 @@ require (
 require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
-	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.2.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
