@@ -5,13 +5,14 @@ go 1.24
 toolchain go1.24.1
 
 require (
+	github.com/Microsoft/go-winio v0.6.2
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gliderlabs/ssh v0.3.8
 	github.com/gobwas/glob v0.2.3
 	github.com/pkg/sftp v1.13.6
 	github.com/pulumi/providertest v0.3.1
 	github.com/pulumi/pulumi-go-provider v1.1.1
-	github.com/pulumi/pulumi/sdk/v3 v3.193.0
+	github.com/pulumi/pulumi/sdk/v3 v3.195.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.39.0
 )
@@ -19,7 +20,6 @@ require (
 require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
-	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.2.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
@@ -80,7 +80,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.17.0 // indirect
-	github.com/pulumi/pulumi/pkg/v3 v3.193.0 // indirect
+	github.com/pulumi/pulumi/pkg/v3 v3.195.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
@@ -100,12 +100,12 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
 	golang.org/x/mod v0.25.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250519155744-55703ea1f237 // indirect
 	google.golang.org/grpc v1.72.1 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
