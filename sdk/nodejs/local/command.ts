@@ -291,7 +291,7 @@ export class Command extends pulumi.CustomResource {
         let resourceInputs: pulumi.Inputs = {};
         opts = opts || {};
         if (!opts.id) {
-            resourceInputs["addPreviousOutputInEnv"] = (args?.addPreviousOutputInEnv) ?? true;
+            resourceInputs["addPreviousOutputInEnv"] = args?.addPreviousOutputInEnv;
             resourceInputs["archivePaths"] = args?.archivePaths;
             resourceInputs["assetPaths"] = args?.assetPaths;
             resourceInputs["create"] = args?.create;

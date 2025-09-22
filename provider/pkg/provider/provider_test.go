@@ -4,11 +4,13 @@ package provider
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/pulumi/providertest"
 	"github.com/pulumi/providertest/pulumitest"
 	"github.com/pulumi/providertest/pulumitest/assertpreview"
+	"github.com/pulumi/providertest/pulumitest/opttest"
 )
 
 const baselineVersion = "0.11.1"
@@ -24,7 +26,10 @@ func test(t *testing.T, example string) {
 
 	dir := fmt.Sprintf("../../../examples/%s", example)
 
-	test := pulumitest.NewPulumiTest(t, dir)
+	test := pulumitest.NewPulumiTest(t, dir,
+		opttest.YarnLink("@pulumi/command"),
+		opttest.LocalProviderPath("command", filepath.Join(dir, "../..", "bin")),
+	)
 	result := providertest.PreviewProviderUpgrade(t, test, "command", baselineVersion)
-	assertpreview.HasNoReplacements(t, result)
+	assertpreview.HasNoChanges(t, result)
 }

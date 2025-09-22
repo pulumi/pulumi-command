@@ -44,12 +44,10 @@
         "id": "stdin30aceb66",
         "type": "command:local:Command",
         "inputs": {
-          "addPreviousOutputInEnv": true,
           "create": "head -n 1",
           "stdin": "the quick brown fox\njumped over\nthe lazy dog"
         },
         "outputs": {
-          "addPreviousOutputInEnv": true,
           "create": "head -n 1",
           "stderr": "",
           "stdin": "the quick brown fox\njumped over\nthe lazy dog",
@@ -58,7 +56,6 @@
         "parent": "urn:pulumi:test::command-random::pulumi:pulumi:Stack::command-random-test",
         "provider": "urn:pulumi:test::command-random::pulumi:providers:command::default_0_11_1::da5f149c-ad5d-47d1-950a-84ce47984797",
         "propertyDependencies": {
-          "addPreviousOutputInEnv": [],
           "create": [],
           "stdin": []
         },
