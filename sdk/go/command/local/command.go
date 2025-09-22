@@ -290,9 +290,6 @@ func NewCommand(ctx *pulumi.Context,
 		args = &CommandArgs{}
 	}
 
-	if args.AddPreviousOutputInEnv == nil {
-		args.AddPreviousOutputInEnv = pulumi.BoolPtr(true)
-	}
 	replaceOnChanges := pulumi.ReplaceOnChanges([]string{
 		"triggers[*]",
 	})

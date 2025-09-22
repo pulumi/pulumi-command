@@ -16,11 +16,11 @@ import (
 func Run(ctx *pulumi.Context, args *RunArgs, opts ...pulumi.InvokeOption) (*RunResult, error) {
 	opts = internal.PkgInvokeDefaultOpts(opts)
 	var rv RunResult
-	err := ctx.Invoke("command:local:run", args.Defaults(), &rv, opts...)
+	err := ctx.Invoke("command:local:run", args, &rv, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return rv.Defaults(), nil
+	return &rv, nil
 }
 
 type RunArgs struct {
@@ -84,19 +84,6 @@ type RunArgs struct {
 	Logging *Logging `pulumi:"logging"`
 	// Pass a string to the command's process as standard in
 	Stdin *string `pulumi:"stdin"`
-}
-
-// Defaults sets the appropriate defaults for RunArgs
-func (val *RunArgs) Defaults() *RunArgs {
-	if val == nil {
-		return nil
-	}
-	tmp := *val
-	if tmp.AddPreviousOutputInEnv == nil {
-		addPreviousOutputInEnv_ := true
-		tmp.AddPreviousOutputInEnv = &addPreviousOutputInEnv_
-	}
-	return &tmp
 }
 
 type RunResult struct {
@@ -171,24 +158,12 @@ type RunResult struct {
 	Stdout string `pulumi:"stdout"`
 }
 
-// Defaults sets the appropriate defaults for RunResult
-func (val *RunResult) Defaults() *RunResult {
-	if val == nil {
-		return nil
-	}
-	tmp := *val
-	if tmp.AddPreviousOutputInEnv == nil {
-		addPreviousOutputInEnv_ := true
-		tmp.AddPreviousOutputInEnv = &addPreviousOutputInEnv_
-	}
-	return &tmp
-}
 func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOption) RunResultOutput {
 	return pulumi.ToOutputWithContext(ctx.Context(), args).
 		ApplyT(func(v interface{}) (RunResultOutput, error) {
 			args := v.(RunArgs)
 			options := pulumi.InvokeOutputOptions{InvokeOptions: internal.PkgInvokeDefaultOpts(opts)}
-			return ctx.InvokeOutput("command:local:run", args.Defaults(), RunResultOutput{}, options).(RunResultOutput), nil
+			return ctx.InvokeOutput("command:local:run", args, RunResultOutput{}, options).(RunResultOutput), nil
 		}).(RunResultOutput)
 }
 

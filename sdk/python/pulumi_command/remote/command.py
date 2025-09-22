@@ -73,8 +73,6 @@ class CommandArgs:
                The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the `stdout` and `stderr` properties of the Command resource from previous create or update steps.
         """
         pulumi.set(__self__, "connection", connection)
-        if add_previous_output_in_env is None:
-            add_previous_output_in_env = True
         if add_previous_output_in_env is not None:
             pulumi.set(__self__, "add_previous_output_in_env", add_previous_output_in_env)
         if create is not None:
@@ -436,8 +434,6 @@ class Command(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = CommandArgs.__new__(CommandArgs)
 
-            if add_previous_output_in_env is None:
-                add_previous_output_in_env = True
             __props__.__dict__["add_previous_output_in_env"] = add_previous_output_in_env
             if connection is None and not opts.urn:
                 raise TypeError("Missing required property 'connection'")

@@ -196,7 +196,6 @@ namespace Pulumi.Command.Local
 
         public RunArgs()
         {
-            AddPreviousOutputInEnv = true;
         }
         public static new RunArgs Empty => new RunArgs();
     }
@@ -363,7 +362,6 @@ namespace Pulumi.Command.Local
 
         public RunInvokeArgs()
         {
-            AddPreviousOutputInEnv = true;
         }
         public static new RunInvokeArgs Empty => new RunInvokeArgs();
     }
