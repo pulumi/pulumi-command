@@ -6,6 +6,7 @@ package examples
 
 import (
 	"encoding/base64"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,6 +14,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/pulumi/providertest"
+	"github.com/pulumi/providertest/pulumitest"
+	"github.com/pulumi/providertest/pulumitest/assertpreview"
+	"github.com/pulumi/providertest/pulumitest/opttest"
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
@@ -357,6 +362,19 @@ func TestSimpleRun(t *testing.T) {
 			},
 		})
 	integration.ProgramTest(t, &test)
+}
+
+func TestUpgradeLocalCommand(t *testing.T) {
+	t.Parallel()
+
+	dir := fmt.Sprintf("./stdin")
+
+	test := pulumitest.NewPulumiTest(t, dir,
+		opttest.YarnLink("@pulumi/command"),
+		opttest.LocalProviderPath("command", filepath.Join(dir, "../../", "bin")),
+	)
+	result := providertest.PreviewProviderUpgrade(t, test, "command", "0.11.1")
+	assertpreview.HasNoChanges(t, result)
 }
 
 func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
