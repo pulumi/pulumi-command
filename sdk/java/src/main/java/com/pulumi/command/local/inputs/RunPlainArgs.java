@@ -5,7 +5,6 @@ package com.pulumi.command.local.inputs;
 
 import com.pulumi.command.local.enums.Logging;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.core.internal.Codegen;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.String;
@@ -480,7 +479,6 @@ public final class RunPlainArgs extends com.pulumi.resources.InvokeArgs {
         }
 
         public RunPlainArgs build() {
-            $.addPreviousOutputInEnv = Codegen.booleanProp("addPreviousOutputInEnv").arg($.addPreviousOutputInEnv).def(true).getNullable();
             if ($.command == null) {
                 throw new MissingRequiredPropertyException("RunPlainArgs", "command");
             }

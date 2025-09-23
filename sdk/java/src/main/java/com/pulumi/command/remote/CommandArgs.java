@@ -7,7 +7,6 @@ import com.pulumi.command.remote.enums.Logging;
 import com.pulumi.command.remote.inputs.ConnectionArgs;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.core.internal.Codegen;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import java.lang.Boolean;
 import java.lang.Object;
@@ -512,7 +511,6 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public CommandArgs build() {
-            $.addPreviousOutputInEnv = Codegen.booleanProp("addPreviousOutputInEnv").output().arg($.addPreviousOutputInEnv).def(true).getNullable();
             if ($.connection == null) {
                 throw new MissingRequiredPropertyException("CommandArgs", "connection");
             }

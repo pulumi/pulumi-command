@@ -6,7 +6,6 @@ package com.pulumi.command.local;
 import com.pulumi.command.local.enums.Logging;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.core.internal.Codegen;
 import java.lang.Boolean;
 import java.lang.Object;
 import java.lang.String;
@@ -828,7 +827,6 @@ public final class CommandArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         public CommandArgs build() {
-            $.addPreviousOutputInEnv = Codegen.booleanProp("addPreviousOutputInEnv").output().arg($.addPreviousOutputInEnv).def(true).getNullable();
             return $;
         }
     }

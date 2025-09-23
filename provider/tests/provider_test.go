@@ -360,7 +360,6 @@ func TestRegress248(t *testing.T) {
 			"dialErrorLimit": property.New(10.0),
 			"perDialTimeout": property.New(15.0),
 		})).WithSecret(true),
-		"addPreviousOutputInEnv": property.New(true),
 	}),
 
 		resp.Inputs)
@@ -377,9 +376,8 @@ func TestLocalRun(t *testing.T) {
 	})
 	require.NoError(t, err)
 	assert.Equal(t, property.NewMap(map[string]property.Value{
-		"command":                property.New(`echo "Hello, World!"`),
-		"stderr":                 property.New(""),
-		"stdout":                 property.New("Hello, World!"),
-		"addPreviousOutputInEnv": property.New(true),
+		"command": property.New(`echo "Hello, World!"`),
+		"stderr":  property.New(""),
+		"stdout":  property.New("Hello, World!"),
 	}), resp.Return)
 }
