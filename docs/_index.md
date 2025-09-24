@@ -262,7 +262,7 @@ conn = command.remote.ConnectionArgs(
 copy = command.remote.CopyToRemote("copy",
     connection=conn,
     source=archive,
-    destination=dest_dir)
+    remote_path=dest_dir)
 
 # Verify that the expected files were copied to the remote.
 # We want to run this after each copy, i.e., when something changed,
