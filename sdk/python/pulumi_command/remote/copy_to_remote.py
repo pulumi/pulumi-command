@@ -123,7 +123,7 @@ class CopyToRemote(pulumi.CustomResource):
         conn = command.remote.ConnectionArgs(
             host = server_public_ip,
             user = user_name,
-            privateKey = private_key,
+            private_key = private_key,
         )
 
         # Copy the files to the remote.
@@ -182,7 +182,7 @@ class CopyToRemote(pulumi.CustomResource):
         conn = command.remote.ConnectionArgs(
             host = server_public_ip,
             user = user_name,
-            privateKey = private_key,
+            private_key = private_key,
         )
 
         # Copy the files to the remote.
