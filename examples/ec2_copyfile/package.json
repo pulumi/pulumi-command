@@ -8,7 +8,7 @@
         "@grpc/grpc-js": "^1.10.10",
         "@pulumi/aws": "7.7.0",
         "@pulumi/awsx": "3.0.0",
-        "@pulumi/command": "1.1.1",
+        "@pulumi/command": "1.1.2",
         "@pulumi/pulumi": "3.198.0",
         "@types/folder-hash": "^4.0.4",
         "folder-hash": "^4.0.4",
