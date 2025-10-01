@@ -18,6 +18,10 @@ export GOPATH   := $(shell go env GOPATH)
 WORKING_DIR     := $(shell pwd)
 TESTPARALLELISM := 4
 
+GO_TEST_EXEC := go test
+
+GO_TEST_UNIT_TESTS_CFG := -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
+
 # Override during CI using `make [TARGET] PROVIDER_VERSION=""` or by setting a PROVIDER_VERSION environment variable
 # Local & branch builds will just used this fixed default version unless specified
 PROVIDER_VERSION ?= 1.0.0-alpha.0+dev
@@ -80,7 +84,7 @@ provider_debug:
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -gcflags="all=-N -l" -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION_GENERIC}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))
 
 test_provider: tidy_provider
-	cd provider && go test -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} -coverprofile="coverage.txt" ./...
+	cd provider && $(GO_TEST_EXEC) -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} -coverprofile="coverage.txt" ./...
 
 dotnet_sdk: sdk/dotnet
 	cd ${PACKDIR}/dotnet/&& \
@@ -128,15 +132,12 @@ lint:
 install:: install_nodejs_sdk install_dotnet_sdk
 	cp $(WORKING_DIR)/bin/${PROVIDER} ${GOPATH}/bin
 
-
-GO_TEST := go test -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM}
-
 test_all:: test
-	cd provider/pkg && $(GO_TEST) ./...
-	cd tests/sdk/nodejs && $(GO_TEST) ./...
-	cd tests/sdk/python && $(GO_TEST) ./...
-	cd tests/sdk/dotnet && $(GO_TEST) ./...
-	cd tests/sdk/go && $(GO_TEST) ./...
+	cd provider/pkg && $(GO_TEST_EXEC) $(GO_TEST_UNIT_TESTS_CFG) ./...
+	cd tests/sdk/nodejs && $(GO_TEST_EXEC) $(GO_TEST_UNIT_TESTS_CFG) ./...
+	cd tests/sdk/python && $(GO_TEST_EXEC) $(GO_TEST_UNIT_TESTS_CFG) ./...
+	cd tests/sdk/dotnet && $(GO_TEST_EXEC) $(GO_TEST_UNIT_TESTS_CFG) ./...
+	cd tests/sdk/go && $(GO_TEST_EXEC) $(GO_TEST_UNIT_TESTS_CFG) ./...
 
 install_dotnet_sdk::
 	rm -rf $(WORKING_DIR)/nuget/$(NUGET_PKG_NAME).*.nupkg
@@ -156,8 +157,8 @@ install_nodejs_sdk::
 	-yarn unlink --cwd $(WORKING_DIR)/sdk/nodejs/bin
 	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-test:: tidy_examples test_provider
-	cd examples && go test -v -tags=all -timeout 2h
+test:: install_nodejs_sdk tidy_examples test_provider
+	cd examples && $(GO_TEST_EXEC) -v -tags=all -timeout 2h
 
 # Keep the version of the pulumi binary used for code generation in sync with the version
 # of the dependency used by github.com/pulumi/pulumi-command/provider
