@@ -9,7 +9,7 @@
         "@pulumi/aws": "7.9.0",
         "@pulumi/awsx": "3.0.1",
         "@pulumi/command": "1.1.3",
-        "@pulumi/pulumi": "3.203.0",
+        "@pulumi/pulumi": "3.204.0",
         "@types/folder-hash": "^4.0.4",
         "folder-hash": "^4.0.4",
         "typescript": "^5.0.0"
