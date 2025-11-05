@@ -7,8 +7,8 @@ toolchain go1.24.9
 require (
 	github.com/aws/aws-sdk-go v1.50.36
 	github.com/pulumi/providertest v0.3.1
-	github.com/pulumi/pulumi/pkg/v3 v3.205.0
-	github.com/pulumi/pulumi/sdk/v3 v3.205.0
+	github.com/pulumi/pulumi/pkg/v3 v3.206.0
+	github.com/pulumi/pulumi/sdk/v3 v3.206.0
 	github.com/stretchr/testify v1.10.0
 )
 
@@ -72,7 +72,7 @@ require (
 	github.com/go-jose/go-jose/v3 v3.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-test/deep v1.0.3 // indirect
+	github.com/go-test/deep v1.1.1 // indirect
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
