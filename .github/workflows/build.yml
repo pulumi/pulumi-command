@@ -64,7 +64,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@d7ceb0215da5a14ec84f50b703365ddf0194a9c8 # v6.6.0
+      uses: pulumi/actions@8582a9e8cc630786854029b4e09281acd6794b58 # v6.6.1
       with:
         pulumi-version-file: .pulumi.version
     - name: Build codegen binaries
@@ -204,7 +204,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@d7ceb0215da5a14ec84f50b703365ddf0194a9c8 # v6.6.0
+      uses: pulumi/actions@8582a9e8cc630786854029b4e09281acd6794b58 # v6.6.1
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup Node
@@ -405,7 +405,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@d7ceb0215da5a14ec84f50b703365ddf0194a9c8 # v6.6.0
+      uses: pulumi/actions@8582a9e8cc630786854029b4e09281acd6794b58 # v6.6.1
       with:
         pulumi-version-file: .pulumi.version
     - name: Setup Node
@@ -545,7 +545,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@d7ceb0215da5a14ec84f50b703365ddf0194a9c8 # v6.6.0
+      uses: pulumi/actions@8582a9e8cc630786854029b4e09281acd6794b58 # v6.6.1
       with:
         pulumi-version-file: .pulumi.version
     - name: Configure AWS Credentials
@@ -624,7 +624,7 @@ jobs:
       with:
         repo: pulumi/pulumictl
     - name: Install Pulumi CLI
-      uses: pulumi/actions@d7ceb0215da5a14ec84f50b703365ddf0194a9c8 # v6.6.0
+      uses: pulumi/actions@8582a9e8cc630786854029b4e09281acd6794b58 # v6.6.1
     - name: Setup Node
       uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
       with:
