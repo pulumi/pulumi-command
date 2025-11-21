@@ -26,7 +26,6 @@ env:
   JAVAVERSION: "11"
   AWS_REGION: us-west-2
   PULUMI_API: https://api.pulumi-staging.io
-  PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
 
 jobs:
   prerequisites:
