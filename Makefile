@@ -160,6 +160,22 @@ install_nodejs_sdk::
 test:: install_nodejs_sdk tidy_examples test_provider
 	cd examples && $(GO_TEST_EXEC) -v -tags=all -timeout 2h
 
+# Ensure all directories exist before evaluating targets
+_ := $(shell mkdir -p .make bin .pulumi/bin)
+
+# Installs all necessary tools with mise and records completion in a sentinel
+# file so dependent targets can participate in make's caching behaviour. The
+# environment is refreshed via an order-only prerequisite so it still runs on
+# every invocation without invalidating the sentinel.
+mise_install: .make/mise_install | mise_env
+
+mise_env:
+	@mise env -q > /dev/null
+
+.make/mise_install:
+	@mise install -q
+	@touch $@
+
 # Set these variables to enable signing of the windows binary
 AZURE_SIGNING_CLIENT_ID ?=
 AZURE_SIGNING_CLIENT_SECRET ?=
