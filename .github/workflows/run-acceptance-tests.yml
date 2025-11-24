@@ -80,6 +80,11 @@ jobs:
       with:
         cache: 'true'
         github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup mise (second install to sync directories)
+      uses: jdx/mise-action@d16887ba50704baed7de72bd1e82e04391e4457a # v3
+      with:
+        version: 2025.11.6
+        github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build codegen binaries
       run: make codegen
     - name: Build Provider
