@@ -1,7 +1,5 @@
 dario.cat/mergo v1.0.1 h1:Ra4+bf83h2ztPIQYNP99R6m+Y7KfnARDfID+a+vLl4s=
 dario.cat/mergo v1.0.1/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
-github.com/BurntSushi/toml v1.5.0 h1:W5quZX/G/csjUnuI8SUYlsHs9M38FC7znL0lIO+DvMg=
-github.com/BurntSushi/toml v1.5.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/HdrHistogram/hdrhistogram-go v1.1.2 h1:5IcZpTvzydCQeHzK4Ef/D5rrSqwxob0t8PQPMybUNFM=
 github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXYg9BVp4O+o5f6V/ehm6Oo=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
@@ -177,10 +175,10 @@ github.com/pulumi/inflector v0.1.1 h1:dvlxlWtXwOJTUUtcYDvwnl6Mpg33prhK+7mzeF+Sob
 github.com/pulumi/inflector v0.1.1/go.mod h1:HUFCjcPTz96YtTuUlwG3i3EZG4WlniBvR9bd+iJxCUY=
 github.com/pulumi/pulumi-go-provider v1.2.0 h1:PZ5P986OiS+tTzEaO+9LRHbXnYU6jqVtIYlRJa8quS0=
 github.com/pulumi/pulumi-go-provider v1.2.0/go.mod h1:3lNIuxT/BArFyiKrVfv+UT7gMMtplss7V69KuBZ4zIk=
-github.com/pulumi/pulumi/pkg/v3 v3.208.0 h1:MBnkg2QCXE+nssylAgYRWiOGaTi2ynBbSgjGeaaktAk=
-github.com/pulumi/pulumi/pkg/v3 v3.208.0/go.mod h1:7SMtVWWoCTPQHQNBpDjaZrqo8tBFygDv50rTCmGjEds=
-github.com/pulumi/pulumi/sdk/v3 v3.208.0 h1:AUBoh7zw67NZVo1IkapOog1WBMz46DXco/7YsKBNK1s=
-github.com/pulumi/pulumi/sdk/v3 v3.208.0/go.mod h1:UsBMdaUQ+WoKoQtF2PYbQIbo8ZRJuAo1axkyit9IQVE=
+github.com/pulumi/pulumi/pkg/v3 v3.209.0 h1:1KzIJTO2F6iCb+08E25C/QBdbQ9by0FATsAFdynDve8=
+github.com/pulumi/pulumi/pkg/v3 v3.209.0/go.mod h1:q7JXbGRh+m5lwA743tS8zrzU6mjmDGpFEUQxyio/900=
+github.com/pulumi/pulumi/sdk/v3 v3.209.0 h1:Ti0FohAset2HEgogTxTOWoyvQd2N2+pkTSIn5DW3W7s=
+github.com/pulumi/pulumi/sdk/v3 v3.209.0/go.mod h1:qBMg01woyYVNqNDJXpFL1e5gdN7oQQvCNNNtfq1gsEo=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
 github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
