@@ -377,10 +377,10 @@
     "@pulumi/pulumi" "^3.142.0"
     mime "^2.0.0"
 
-"@pulumi/pulumi@3.208.0", "@pulumi/pulumi@^3.142.0":
-  version "3.208.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.208.0.tgz#8dac5a009e1897d6f6b831cd618e351596195ed4"
-  integrity sha512-6RM/QQXyAoEj1J1U8bdtRqLp4zCdxl0YpoQfc+CtOfR1QrR7sHcZ4anpLbVs+fE7nxK1h4Cx8YykJ8cYq2BzJQ==
+"@pulumi/pulumi@3.209.0", "@pulumi/pulumi@^3.142.0":
+  version "3.209.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.209.0.tgz#b65e45d11ee66ca235f85b9474a130bdc2eae4b8"
+  integrity sha512-rGEYl+EO1deSFBbkymNc3/pWH5IFU1195zcxAqj6YTCaF0Wf1Y5Kx4A8TxULpa1gUCKESOQyv01OAY5HXtpBGg==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"
@@ -400,7 +400,7 @@
     google-protobuf "^3.21.4"
     got "^11.8.6"
     ini "^2.0.0"
-    js-yaml "^3.14.0"
+    js-yaml "^3.14.2"
     minimist "^1.2.6"
     normalize-package-data "^6.0.0"
     picomatch "^3.0.1"
@@ -1052,10 +1052,10 @@ jackspeak@^3.1.2:
   optionalDependencies:
     "@pkgjs/parseargs" "^0.11.0"
 
-js-yaml@^3.14.0:
-  version "3.14.1"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.1.tgz#dae812fdb3825fa306609a8717383c50c36a0537"
-  integrity sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==
+js-yaml@^3.14.2:
+  version "3.14.2"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.14.2.tgz#77485ce1dd7f33c061fd1b16ecea23b55fcb04b0"
+  integrity sha512-PMSmkqxr106Xa156c2M265Z+FTrPl+oxd/rgOQy2tijQeK5TxQ43psO1ZCwhVOSdnn+RzkzlRz/eY4BgJBYVpg==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
