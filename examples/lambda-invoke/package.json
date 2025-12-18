@@ -5,7 +5,7 @@
         "@types/node": "latest"
     },
     "dependencies": {
-        "@pulumi/aws": "7.14.0",
+        "@pulumi/aws": "7.15.0",
         "@pulumi/pulumi": "latest"
     }
 }
