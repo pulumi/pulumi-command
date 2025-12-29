@@ -1,5 +1,10 @@
 Copy an Asset or Archive to a remote host.
 
+Supported source types:
+- `FileAsset`: Copy a local file to the remote host.
+- `StringAsset`: Copy text content directly to a remote file (useful for configuration files, certificates, etc.).
+- `FileArchive`: Copy a local directory or archive to the remote host.
+
 {{% examples %}}
 
 ## Example usage

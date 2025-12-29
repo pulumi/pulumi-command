@@ -293,4 +293,66 @@ func TestCheck(t *testing.T) {
 		failures := check(news)
 		assert.Len(t, failures, 3)
 	})
+
+	t.Run("happy path, text asset", func(t *testing.T) {
+		news := makeNewInput(&asset.Asset{Text: "hello world"}, nil)
+		failures := check(news)
+		assert.Empty(t, failures)
+	})
+}
+
+func TestCopyTextContent(t *testing.T) {
+	t.Run("copy text content to file", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+
+		sftpClient := startSshServer(t, destDir)
+
+		textContent := "hello from text asset"
+		destFile := "textfile.txt"
+		require.NoError(t, copyTextContent(sftpClient, textContent, destFile))
+
+		content, err := os.ReadFile(filepath.Join(destDir, destFile))
+		require.NoError(t, err)
+		assert.Equal(t, textContent, string(content))
+	})
+
+	t.Run("overwrite existing file with text content", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+
+		sftpClient := startSshServer(t, destDir)
+
+		// Create an existing file
+		destFile := "existing.txt"
+		require.NoError(t, os.WriteFile(filepath.Join(destDir, destFile), []byte("old content"), 0o644))
+
+		// Overwrite with text content
+		textContent := "new content from text asset"
+		require.NoError(t, copyTextContent(sftpClient, textContent, destFile))
+
+		content, err := os.ReadFile(filepath.Join(destDir, destFile))
+		require.NoError(t, err)
+		assert.Equal(t, textContent, string(content))
+	})
+
+	t.Run("error when destination is directory", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+
+		sftpClient := startSshServer(t, destDir)
+
+		// Create a subdirectory
+		subDir := "subdir"
+		require.NoError(t, os.Mkdir(filepath.Join(destDir, subDir), 0o755))
+
+		// Trying to copy text content to a directory should fail
+		textContent := "hello"
+		err := copyTextContent(sftpClient, textContent, subDir)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is a directory")
+	})
 }

@@ -30,11 +30,39 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
+// copyTextContent writes text content directly to a remote file via SFTP.
+func copyTextContent(sftpClient *sftp.Client, content, destPath string) error {
+	destStat, err := remoteStat(sftpClient, destPath)
+	if err != nil {
+		return err
+	}
+
+	// If destination is a directory, we cannot copy text content to it without a filename.
+	// The user must provide a full file path as the destination.
+	if destStat != nil && destStat.IsDir() {
+		return fmt.Errorf("remote path %s is a directory; when using a text asset, remotePath must be a file path", destPath)
+	}
+
+	remote, err := sftpClient.Create(destPath)
+	if err != nil {
+		return fmt.Errorf("failed to create remote file %s: %w", destPath, err)
+	}
+	defer remote.Close()
+
+	_, err = remote.Write([]byte(content))
+	if err != nil {
+		return fmt.Errorf("failed to write text content to remote path %s: %w", destPath, err)
+	}
+	return nil
+}
+
 // These are not required. They indicate to Go that Command implements the following interfaces.
 // If the function signature doesn't match or isn't implemented, we get nice compile time errors in this file.
-var _ = (infer.CustomResource[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
-var _ = (infer.CustomCheck[CopyToRemoteInputs])((*CopyToRemote)(nil))
-var _ = (infer.CustomUpdate[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
+var (
+	_ = (infer.CustomResource[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
+	_ = (infer.CustomCheck[CopyToRemoteInputs])((*CopyToRemote)(nil))
+	_ = (infer.CustomUpdate[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
+)
 
 func (c *CopyToRemote) Check(
 	ctx context.Context,
@@ -65,10 +93,10 @@ func (c *CopyToRemote) Check(
 		})
 	}
 
-	if hasAsset && !inputs.Source.Asset.IsPath() {
+	if hasAsset && !inputs.Source.Asset.IsPath() && !inputs.Source.Asset.IsText() {
 		failures = append(failures, p.CheckFailure{
 			Property: "asset",
-			Reason:   "asset must be a path-based file asset",
+			Reason:   "asset must be a path-based file asset or a text asset",
 		})
 	}
 	if hasArchive && !inputs.Source.Archive.IsPath() {
@@ -122,10 +150,16 @@ func (c *CopyToRemote) Update(
 
 // copyToRemote unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.
 func copyToRemote(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, error) {
-	sourcePath := input.sourcePath()
-
-	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
-		*input.Connection.Host, input.RemotePath, sourcePath)
+	isText := input.isTextAsset()
+	var sourcePath string
+	if isText {
+		p.GetLogger(ctx).Debugf("Creating file: %s:%s from text asset",
+			*input.Connection.Host, input.RemotePath)
+	} else {
+		sourcePath = input.sourcePath()
+		p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
+			*input.Connection.Host, input.RemotePath, sourcePath)
+	}
 
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
@@ -137,13 +171,17 @@ func copyToRemote(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOu
 	/// offset in a file after an error, could end up with a file length longer than what was
 	// successfully written."
 	// We don't do subsequent writes to the same file, only a single ReadFrom, so we should be fine.
-	sftp, err := sftp.NewClient(client, sftp.UseConcurrentWrites(true))
+	sftpClient, err := sftp.NewClient(client, sftp.UseConcurrentWrites(true))
 	if err != nil {
 		return CopyToRemoteOutputs{input}, err
 	}
-	defer sftp.Close()
+	defer sftpClient.Close()
 
-	err = sftpCopy(sftp, sourcePath, input.RemotePath)
+	if isText {
+		err = copyTextContent(sftpClient, input.textContent(), input.RemotePath)
+	} else {
+		err = sftpCopy(sftpClient, sourcePath, input.RemotePath)
+	}
 	return CopyToRemoteOutputs{input}, err
 }
 
