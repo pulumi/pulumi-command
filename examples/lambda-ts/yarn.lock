@@ -377,10 +377,10 @@
     "@pulumi/pulumi" "^3.142.0"
     mime "^2.0.0"
 
-"@pulumi/pulumi@3.213.0", "@pulumi/pulumi@^3.142.0":
-  version "3.213.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.213.0.tgz#201b04d3cb7722890289e27571a036bb2e6b62c7"
-  integrity sha512-qTAOJXQYjMse2oAwht4iuYA4TiSgUgDfGmlySf2xa4n34+eF1/ytCbF3UJdfOx9+yDD5mYBAi37t0OY/VyVzyQ==
+"@pulumi/pulumi@3.214.0", "@pulumi/pulumi@^3.142.0":
+  version "3.214.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.214.0.tgz#8acb51dbf6609d22a25d695350f78f29d337bf52"
+  integrity sha512-5QJnpv8O8dgryzSV6XoWHCYnxADs8EMllwJoRF4AV/TS0YJdaantNSdz+8yie7YdkePfKLfPULoM2BdYllk6Fw==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"
