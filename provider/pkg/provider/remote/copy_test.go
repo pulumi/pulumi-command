@@ -52,7 +52,7 @@ func TestArchiveHash(t *testing.T) {
 
 func createArchiveInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	archivePath := filepath.Join(t.TempDir(), "archive.zip")
-	require.NoError(t, os.WriteFile(archivePath, []byte("hello, world"), 0644))
+	require.NoError(t, os.WriteFile(archivePath, []byte("hello, world"), 0o644))
 	archive, err := resource.NewPathArchive(archivePath)
 	require.NoError(t, err)
 
@@ -66,7 +66,7 @@ func createArchiveInput(t *testing.T) (string, *CopyToRemoteInputs) {
 
 func createAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	assetPath := filepath.Join(t.TempDir(), "asset")
-	require.NoError(t, os.WriteFile(assetPath, []byte("hello, world"), 0644))
+	require.NoError(t, os.WriteFile(assetPath, []byte("hello, world"), 0o644))
 	asset, err := resource.NewPathAsset(assetPath)
 	require.NoError(t, err)
 
@@ -76,4 +76,44 @@ func createAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
 		},
 	}
 	return assetPath, c
+}
+
+func createTextAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
+	textContent := "hello from text asset"
+	asset, err := resource.NewTextAsset(textContent)
+	require.NoError(t, err)
+
+	c := &CopyToRemoteInputs{
+		Source: types.AssetOrArchive{
+			Asset: asset,
+		},
+	}
+	return textContent, c
+}
+
+func TestTextAssetContent(t *testing.T) {
+	content, input := createTextAssetInput(t)
+	require.NotNil(t, input.Source.Asset)
+	require.True(t, input.isTextAsset())
+	require.Equal(t, content, input.textContent())
+}
+
+func TestTextAssetHash(t *testing.T) {
+	_, input := createTextAssetInput(t)
+	require.NotNil(t, input.Source.Asset)
+	require.NotEmpty(t, input.hash())
+}
+
+func TestIsTextAsset(t *testing.T) {
+	// Test text asset
+	_, textInput := createTextAssetInput(t)
+	require.True(t, textInput.isTextAsset())
+
+	// Test path asset
+	_, pathInput := createAssetInput(t)
+	require.False(t, pathInput.isTextAsset())
+
+	// Test archive
+	_, archiveInput := createArchiveInput(t)
+	require.False(t, archiveInput.isTextAsset())
 }
