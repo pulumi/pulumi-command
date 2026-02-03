@@ -19,9 +19,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/pulumi/pulumi-go-provider/infer/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAssetSourcePath(t *testing.T) {
@@ -52,7 +53,7 @@ func TestArchiveHash(t *testing.T) {
 
 func createArchiveInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	archivePath := filepath.Join(t.TempDir(), "archive.zip")
-	require.NoError(t, os.WriteFile(archivePath, []byte("hello, world"), 0644))
+	require.NoError(t, os.WriteFile(archivePath, []byte("hello, world"), 0o600))
 	archive, err := resource.NewPathArchive(archivePath)
 	require.NoError(t, err)
 
@@ -66,7 +67,7 @@ func createArchiveInput(t *testing.T) (string, *CopyToRemoteInputs) {
 
 func createAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	assetPath := filepath.Join(t.TempDir(), "asset")
-	require.NoError(t, os.WriteFile(assetPath, []byte("hello, world"), 0644))
+	require.NoError(t, os.WriteFile(assetPath, []byte("hello, world"), 0o600))
 	asset, err := resource.NewPathAsset(assetPath)
 	require.NoError(t, err)
 

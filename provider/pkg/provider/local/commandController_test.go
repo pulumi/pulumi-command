@@ -19,11 +19,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
+	"github.com/stretchr/testify/require"
+
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/stretchr/testify/require"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
 )
 
 func TestOptionalLogging(t *testing.T) {

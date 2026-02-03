@@ -11,15 +11,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type TestSshServer struct {
+type TestSSHServer struct {
 	Host string
 	Port int64
 }
 
-// NewTestSshServer creates a new in-process SSH server with the specified handler.
+// NewTestSSHServer creates a new in-process SSH server with the specified handler.
 // The server is bound to an arbitrary free port, and automatically closed
 // during test cleanup.
-func NewTestSshServer(t *testing.T, handler ssh.Handler) TestSshServer {
+func NewTestSSHServer(t *testing.T, handler ssh.Handler) TestSSHServer {
 	const host = "127.0.0.1"
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, 0))
@@ -37,7 +37,7 @@ func NewTestSshServer(t *testing.T, handler ssh.Handler) TestSshServer {
 		_ = server.Close()
 	})
 
-	return TestSshServer{
+	return TestSSHServer{
 		Host: host,
 		Port: port,
 	}

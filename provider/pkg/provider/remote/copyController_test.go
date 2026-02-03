@@ -9,20 +9,19 @@ import (
 	"testing"
 	"time"
 
-	p "github.com/pulumi/pulumi-go-provider"
-	"github.com/pulumi/pulumi-go-provider/infer"
-	"github.com/pulumi/pulumi-go-provider/infer/types"
-
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
-	"github.com/pulumi/pulumi/sdk/v3/go/property"
-
 	"github.com/gliderlabs/ssh"
 	"github.com/pkg/sftp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	xssh "golang.org/x/crypto/ssh"
+
+	p "github.com/pulumi/pulumi-go-provider"
+	"github.com/pulumi/pulumi-go-provider/infer"
+	"github.com/pulumi/pulumi-go-provider/infer/types"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
+	"github.com/pulumi/pulumi/sdk/v3/go/property"
 )
 
 func testSftpHandler(t *testing.T, baseDir string, sess ssh.Session) {
@@ -36,7 +35,7 @@ func testSftpHandler(t *testing.T, baseDir string, sess ssh.Session) {
 }
 
 // Start a local SSH and SFTP server that writes files to the local file system, under baseDir.
-func startSshServer(t *testing.T, baseDir string) *sftp.Client {
+func startSSHServer(t *testing.T, baseDir string) *sftp.Client {
 	serverAddr := "127.0.0.1:3333"
 
 	server := ssh.Server{
@@ -58,6 +57,7 @@ func startSshServer(t *testing.T, baseDir string) *sftp.Client {
 	var err error
 	for i := 0; i < 20; i++ {
 		sshClient, err = xssh.Dial("tcp", serverAddr, &xssh.ClientConfig{
+			//nolint:gosec // G106: InsecureIgnoreHostKey is acceptable in tests
 			HostKeyCallback: xssh.InsecureIgnoreHostKey(),
 		})
 		if err == nil {
@@ -79,7 +79,7 @@ func initCopyTest(t *testing.T) (srcDir, destDir string, sftpClient *sftp.Client
 	destDir = filepath.Join(baseDir, "dest")
 	require.NoError(t, os.Mkdir(destDir, 0o755))
 
-	sftpClient = startSshServer(t, destDir)
+	sftpClient = startSSHServer(t, destDir)
 
 	srcDirName := "src"
 	srcDir = filepath.Join(baseDir, srcDirName)
@@ -101,7 +101,8 @@ func initCopyTest(t *testing.T) (srcDir, destDir string, sftpClient *sftp.Client
 	return srcDir, destDir, sftpClient
 }
 
-// assertDirectoryTree asserts that the directory structure under baseDir matches the structure that initCopyTest creates.
+// assertDirectoryTree asserts that the directory structure under baseDir matches the structure
+// that initCopyTest creates.
 func assertDirectoryTree(t *testing.T, baseDir string) {
 	assert.FileExists(t, filepath.Join(baseDir, "file1"))
 	assert.FileExists(t, filepath.Join(baseDir, "one", "file2"))
@@ -162,7 +163,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		fileTwo := filepath.Join(destDir, "src", "one", "two")
 		require.NoError(t, os.RemoveAll(fileTwo))
-		require.NoError(t, os.WriteFile(fileTwo, []byte("dir turned to file"), 0o644))
+		require.NoError(t, os.WriteFile(fileTwo, []byte("dir turned to file"), 0o600))
 
 		require.Error(t, sftpCopy(sftpClient, srcDir, destDir))
 	})
@@ -181,7 +182,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		// modify the file
 		srcFile := filepath.Join(srcDir, "file1")
-		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o644))
+		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o600))
 
 		// copy it to remote again
 		require.NoError(t, sftpCopy(sftpClient, srcFile, destFile))
@@ -199,7 +200,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		// modify the file
 		srcFile := filepath.Join(srcDir, "file1")
-		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o644))
+		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o600))
 
 		// copy it to remote again
 		require.NoError(t, sftpCopy(sftpClient, srcDir, destDir))
@@ -217,7 +218,7 @@ func TestCopyDirectories(t *testing.T) {
 
 		// modify the file
 		srcFile := filepath.Join(srcDir, "file1")
-		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o644))
+		require.NoError(t, os.WriteFile(srcFile, []byte("new content"), 0o600))
 
 		// copy it to remote again
 		require.NoError(t, sftpCopy(sftpClient, srcDir+"/", destDir))
@@ -245,8 +246,8 @@ func TestCheck(t *testing.T) {
 	}
 
 	check := func(news property.Map) []p.CheckFailure {
-		copy := &CopyToRemote{}
-		resp, err := copy.Check(context.Background(), infer.CheckRequest{Name: "name", NewInputs: news})
+		ctr := &CopyToRemote{}
+		resp, err := ctr.Check(context.Background(), infer.CheckRequest{Name: "name", NewInputs: news})
 		require.NoError(t, err)
 		return resp.Failures
 	}

@@ -1,7 +1,8 @@
 package remote
 
-// TODO This file (along with logging_test.go) should be in the `common` package since its contents are used by `local`` and `remote`.
-// It's duplicated in `local` and `remote` for the time being due to pulumi/pulumi#16221, and changes need to be made in both copies.
+// TODO This file (along with logging_test.go) should be in the `common` package since its contents
+// are used by `local`` and `remote`. It's duplicated in `local` and `remote` for the time being due
+// to pulumi/pulumi#16221, and changes need to be made in both copies.
 
 import "github.com/pulumi/pulumi-go-provider/infer"
 

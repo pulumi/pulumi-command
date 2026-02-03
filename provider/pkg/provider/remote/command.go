@@ -43,7 +43,7 @@ type CommandInputs struct {
 	// provider:"secret" specifies that a field should be marked secret.
 	Stdin                  *string           `pulumi:"stdin,optional"`
 	Logging                *Logging          `pulumi:"logging,optional"`
-	Connection             *Connection       `pulumi:"connection" provider:"secret"`
+	Connection             *Connection       `pulumi:"connection"                      provider:"secret"`
 	Environment            map[string]string `pulumi:"environment,optional"`
 	AddPreviousOutputInEnv *bool             `pulumi:"addPreviousOutputInEnv,optional"`
 }

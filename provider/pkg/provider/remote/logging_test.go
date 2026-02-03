@@ -3,8 +3,9 @@ package remote_test
 import (
 	"testing"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/remote"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/remote"
 )
 
 func TestShouldLog(t *testing.T) {

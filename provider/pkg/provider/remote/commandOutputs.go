@@ -43,7 +43,7 @@ func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *Logging) 
 		for k, v := range c.Environment {
 			err := session.Setenv(k, v)
 			if err != nil {
-				return logAndWrapSetenvErr(diag.Error, k, ctx, err)
+				return logAndWrapSetenvErr(ctx, diag.Error, k, err)
 			}
 		}
 	}
@@ -51,21 +51,21 @@ func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *Logging) 
 	if c.AddPreviousOutputInEnv == nil || *c.AddPreviousOutputInEnv {
 		// Set remote Stdout and Stderr environment variables optimistically, but log and continue if they fail.
 		if c.Stdout != "" {
-			err := session.Setenv(util.PULUMI_COMMAND_STDOUT, c.Stdout)
+			err := session.Setenv(util.PulumiCommandStdout, c.Stdout)
 			if err != nil {
 				// Set remote Stdout var optimistically, but warn and continue on failure.
 				//
 				//nolint:errcheck
-				logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDOUT, ctx, err)
+				logAndWrapSetenvErr(ctx, diag.Warning, util.PulumiCommandStdout, err)
 			}
 		}
 		if c.Stderr != "" {
-			err := session.Setenv(util.PULUMI_COMMAND_STDERR, c.Stderr)
+			err := session.Setenv(util.PulumiCommandStderr, c.Stderr)
 			if err != nil {
 				// Set remote STDERR var optimistically, but warn and continue on failure.
 				//
 				//nolint:errcheck
-				logAndWrapSetenvErr(diag.Warning, util.PULUMI_COMMAND_STDERR, ctx, err)
+				logAndWrapSetenvErr(ctx, diag.Warning, util.PulumiCommandStderr, err)
 			}
 		}
 	}
@@ -107,7 +107,7 @@ func (c *CommandOutputs) run(ctx context.Context, cmd string, logging *Logging) 
 	return nil
 }
 
-func logAndWrapSetenvErr(severity diag.Severity, key string, ctx context.Context, err error) error {
+func logAndWrapSetenvErr(ctx context.Context, severity diag.Severity, key string, err error) error {
 	l := p.GetLogger(ctx)
 	msg := fmt.Sprintf(`Unable to set '%s'. This only works if your SSH server is configured to accept
 	these variables via AcceptEnv. Alternatively, if a Bash-like shell runs the command on the remote host, you could

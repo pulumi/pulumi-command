@@ -22,7 +22,10 @@ import (
 
 // Invoke takes a RunInputs parameter and runs the command specified in
 // it.
-func (*Run) Invoke(ctx context.Context, req infer.FunctionRequest[RunInputs]) (infer.FunctionResponse[RunOutputs], error) {
+func (*Run) Invoke(
+	ctx context.Context,
+	req infer.FunctionRequest[RunInputs],
+) (infer.FunctionResponse[RunOutputs], error) {
 	input := req.Input
 	r := RunOutputs{RunInputs: input}
 	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs, input.Logging)

@@ -28,12 +28,24 @@ func (c *ProxyConnection) Annotate(a infer.Annotator) {
 	a.Describe(&c.Host, "The address of the bastion host to connect to.")
 	a.Describe(&c.Port, "The port of the bastion host to connect to.")
 	a.SetDefault(&c.Port, 22)
-	a.Describe(&c.PrivateKey, "The contents of an SSH key to use for the connection. This takes preference over the password if provided.")
+	a.Describe(
+		&c.PrivateKey,
+		"The contents of an SSH key to use for the connection. This takes preference over the password if provided.",
+	)
 	a.Describe(&c.PrivateKeyPassword, "The password to use in case the private key is encrypted.")
 	a.Describe(&c.AgentSocketPath, "SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.")
-	a.Describe(&c.DialErrorLimit, "Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.")
+	a.Describe(
+		&c.DialErrorLimit,
+		"Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.",
+	)
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
-	a.Describe(&c.PerDialTimeout, "Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.")
+	a.Describe(
+		&c.PerDialTimeout,
+		"Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.",
+	)
 	a.SetDefault(&c.PerDialTimeout, 15)
-	a.Describe(&c.HostKey, "The expected host key to verify the server's identity. If not provided, the host key will be ignored.")
+	a.Describe(
+		&c.HostKey,
+		"The expected host key to verify the server's identity. If not provided, the host key will be ignored.",
+	)
 }

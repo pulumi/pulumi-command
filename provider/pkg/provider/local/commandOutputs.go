@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/gobwas/glob"
+
 	"github.com/pulumi/pulumi-go-provider/infer/types"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
@@ -54,6 +55,7 @@ func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, l
 	stdouterrwriter := util.ConcurrentWriter{Writer: &stdouterrbuf}
 	loggingReader, loggingWriter := io.Pipe()
 
+	//nolint:gosec // G204: This is a command execution provider, running user-specified commands is the intended behavior
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
 
 	stdoutWriters := []io.Writer{&stdoutbuf, &stdouterrwriter}
@@ -85,10 +87,10 @@ func run(ctx context.Context, command string, in BaseInputs, out *BaseOutputs, l
 
 	if in.AddPreviousOutputInEnv == nil || *in.AddPreviousOutputInEnv {
 		if out.Stdout != "" {
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDOUT, out.Stdout))
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PulumiCommandStdout, out.Stdout))
 		}
 		if out.Stderr != "" {
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PULUMI_COMMAND_STDERR, out.Stderr))
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", util.PulumiCommandStderr, out.Stderr))
 		}
 	}
 

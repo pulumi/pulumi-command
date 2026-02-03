@@ -21,11 +21,13 @@ import (
 	"testing"
 
 	"github.com/gliderlabs/ssh"
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
+	"github.com/stretchr/testify/require"
+
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	"github.com/stretchr/testify/require"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/common"
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
 )
 
 func TestOptionalLogging(t *testing.T) {
@@ -39,7 +41,7 @@ func TestOptionalLogging(t *testing.T) {
 			t.Parallel()
 
 			// This SSH server always writes "foo" to stdout and "bar" to stderr, no matter the command.
-			server := testutil.NewTestSshServer(t, func(s ssh.Session) {
+			server := testutil.NewTestSSHServer(t, func(s ssh.Session) {
 				_, err := io.WriteString(s, "foo")
 				require.NoError(t, err)
 				_, err = io.WriteString(s.Stderr(), "bar")
