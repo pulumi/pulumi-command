@@ -21,8 +21,9 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
-// The following statements are not required. They are type assertions to indicate to Go that Command implements the following interfaces.
-// If the function signature doesn't match or isn't implemented, we get nice compile time errors at this location.
+// The following statements are not required. They are type assertions to indicate to Go that Command
+// implements the following interfaces. If the function signature doesn't match or isn't implemented,
+// we get nice compile time errors at this location.
 var (
 	_ = (infer.CustomResource[CommandInputs, CommandOutputs])((*Command)(nil))
 	_ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
@@ -30,7 +31,10 @@ var (
 )
 
 // This is the Create method. This will be run on every Command resource creation.
-func (c *Command) Create(ctx context.Context, req infer.CreateRequest[CommandInputs]) (infer.CreateResponse[CommandOutputs], error) {
+func (c *Command) Create(
+	ctx context.Context,
+	req infer.CreateRequest[CommandInputs],
+) (infer.CreateResponse[CommandOutputs], error) {
 	name := req.Name
 	input := req.Inputs
 	preview := req.DryRun
@@ -60,7 +64,10 @@ func (c *Command) Create(ctx context.Context, req infer.CreateRequest[CommandInp
 // Because we want every output to depend on every input, we can leave the default behavior.
 
 // The Update method will be run on every update.
-func (c *Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInputs, CommandOutputs]) (infer.UpdateResponse[CommandOutputs], error) {
+func (c *Command) Update(
+	ctx context.Context,
+	req infer.UpdateRequest[CommandInputs, CommandOutputs],
+) (infer.UpdateResponse[CommandOutputs], error) {
 	olds := req.State
 	news := req.Inputs
 	preview := req.DryRun

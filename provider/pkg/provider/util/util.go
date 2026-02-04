@@ -20,14 +20,14 @@ import (
 	"io"
 	"sync"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
-
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
 )
 
-const PULUMI_COMMAND_STDOUT = "PULUMI_COMMAND_STDOUT"
-const PULUMI_COMMAND_STDERR = "PULUMI_COMMAND_STDERR"
+const PulumiCommandStdout = "PULUMI_COMMAND_STDOUT"
+const PulumiCommandStderr = "PULUMI_COMMAND_STDERR"
 
 func LogOutput(ctx context.Context, r io.Reader, doneCh chan<- struct{}, severity diag.Severity) {
 	defer close(doneCh)

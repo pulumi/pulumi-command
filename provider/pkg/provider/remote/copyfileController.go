@@ -30,7 +30,10 @@ import (
 var _ = (infer.CustomResource[CopyFileInputs, CopyFileOutputs])((*CopyFile)(nil))
 
 // This is the Create method. This will be run on every CopyFile resource creation.
-func (*CopyFile) Create(ctx context.Context, req infer.CreateRequest[CopyFileInputs]) (infer.CreateResponse[CopyFileOutputs], error) {
+func (*CopyFile) Create(
+	ctx context.Context,
+	req infer.CreateRequest[CopyFileInputs],
+) (infer.CreateResponse[CopyFileOutputs], error) {
 	input := req.Inputs
 	preview := req.DryRun
 	if preview {

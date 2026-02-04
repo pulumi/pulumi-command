@@ -28,7 +28,10 @@ var _ = (infer.CustomUpdate[CommandInputs, CommandOutputs])((*Command)(nil))
 var _ = (infer.CustomDelete[CommandOutputs])((*Command)(nil))
 
 // This is the Create method. This will be run on every Command resource creation.
-func (*Command) Create(ctx context.Context, req infer.CreateRequest[CommandInputs]) (infer.CreateResponse[CommandOutputs], error) {
+func (*Command) Create(
+	ctx context.Context,
+	req infer.CreateRequest[CommandInputs],
+) (infer.CreateResponse[CommandOutputs], error) {
 	name := req.Name
 	input := req.Inputs
 	preview := req.DryRun
@@ -42,12 +45,12 @@ func (*Command) Create(ctx context.Context, req infer.CreateRequest[CommandInput
 		return infer.CreateResponse[CommandOutputs]{ID: id, Output: state}, nil
 	}
 
-	if state.Create == nil {
+	if input.Create == nil {
 		return infer.CreateResponse[CommandOutputs]{ID: id, Output: state}, nil
 	}
 	cmd := ""
-	if state.Create != nil {
-		cmd = *state.Create
+	if input.Create != nil {
+		cmd = *input.Create
 	}
 
 	if !preview {
@@ -57,7 +60,10 @@ func (*Command) Create(ctx context.Context, req infer.CreateRequest[CommandInput
 }
 
 // The Update method will be run on every update.
-func (*Command) Update(ctx context.Context, req infer.UpdateRequest[CommandInputs, CommandOutputs]) (infer.UpdateResponse[CommandOutputs], error) {
+func (*Command) Update(
+	ctx context.Context,
+	req infer.UpdateRequest[CommandInputs, CommandOutputs],
+) (infer.UpdateResponse[CommandOutputs], error) {
 	olds := req.State
 	news := req.Inputs
 	preview := req.DryRun

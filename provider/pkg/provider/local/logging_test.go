@@ -3,8 +3,9 @@ package local_test
 import (
 	"testing"
 
-	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/pulumi/pulumi-command/provider/pkg/provider/local"
 )
 
 func TestShouldLog(t *testing.T) {

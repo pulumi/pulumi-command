@@ -7,13 +7,14 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/gliderlabs/ssh"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/integration"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/tokens"
 	"github.com/pulumi/pulumi/sdk/v3/go/property"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	command "github.com/pulumi/pulumi-command/provider/pkg/provider"
 	"github.com/pulumi/pulumi-command/provider/pkg/provider/util/testutil"
@@ -239,7 +240,7 @@ func TestRemoteCommandStdoutStderrFlag(t *testing.T) {
 		createCommand = "arbitrary create command"
 	)
 
-	sshServer := testutil.NewTestSshServer(t, func(session ssh.Session) {
+	sshServer := testutil.NewTestSSHServer(t, func(session ssh.Session) {
 		// Find the PULUMI_COMMAND_STDOUT environment variable
 		var envVar string
 		for _, v := range session.Environ() {

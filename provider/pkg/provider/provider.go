@@ -33,7 +33,8 @@ func NewProvider() p.Provider {
 		// This is the metadata for the provider
 		Metadata: schema.Metadata{
 			DisplayName: "Command",
-			Description: "The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.",
+			Description: "The Pulumi Command Provider enables you to execute commands and scripts either " +
+				"locally or remotely as part of the Pulumi resource model.",
 			Keywords: []string{
 				"pulumi",
 				"command",

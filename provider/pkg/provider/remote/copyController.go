@@ -36,7 +36,10 @@ var _ = (infer.CustomResource[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyTo
 var _ = (infer.CustomCheck[CopyToRemoteInputs])((*CopyToRemote)(nil))
 var _ = (infer.CustomUpdate[CopyToRemoteInputs, CopyToRemoteOutputs])((*CopyToRemote)(nil))
 
-func (c *CopyToRemote) Check(ctx context.Context, req infer.CheckRequest) (infer.CheckResponse[CopyToRemoteInputs], error) {
+func (c *CopyToRemote) Check(
+	ctx context.Context,
+	req infer.CheckRequest,
+) (infer.CheckResponse[CopyToRemoteInputs], error) {
 	var failures []p.CheckFailure
 
 	newInputs := req.NewInputs
@@ -79,14 +82,17 @@ func (c *CopyToRemote) Check(ctx context.Context, req infer.CheckRequest) (infer
 }
 
 // This is the Create method. This will be run on every Copy resource creation.
-func (*CopyToRemote) Create(ctx context.Context, req infer.CreateRequest[CopyToRemoteInputs]) (infer.CreateResponse[CopyToRemoteOutputs], error) {
+func (*CopyToRemote) Create(
+	ctx context.Context,
+	req infer.CreateRequest[CopyToRemoteInputs],
+) (infer.CreateResponse[CopyToRemoteOutputs], error) {
 	input := req.Inputs
 	preview := req.DryRun
 	if preview {
 		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Output: CopyToRemoteOutputs{input}}, nil
 	}
 
-	outputs, err := copy(ctx, input)
+	outputs, err := copyToRemote(ctx, input)
 	if err != nil {
 		return infer.CreateResponse[CopyToRemoteOutputs]{ID: "", Output: CopyToRemoteOutputs{input}}, err
 	}
@@ -95,7 +101,10 @@ func (*CopyToRemote) Create(ctx context.Context, req infer.CreateRequest[CopyToR
 	return infer.CreateResponse[CopyToRemoteOutputs]{ID: id, Output: outputs}, err
 }
 
-func (c *CopyToRemote) Update(ctx context.Context, req infer.UpdateRequest[CopyToRemoteInputs, CopyToRemoteOutputs]) (infer.UpdateResponse[CopyToRemoteOutputs], error) {
+func (c *CopyToRemote) Update(
+	ctx context.Context,
+	req infer.UpdateRequest[CopyToRemoteInputs, CopyToRemoteOutputs],
+) (infer.UpdateResponse[CopyToRemoteOutputs], error) {
 	olds := req.State
 	news := req.Inputs
 	preview := req.DryRun
@@ -105,14 +114,14 @@ func (c *CopyToRemote) Update(ctx context.Context, req infer.UpdateRequest[CopyT
 
 	needCopy := news.hash() != olds.hash() || news.RemotePath != olds.RemotePath
 	if needCopy {
-		outputs, err := copy(ctx, news)
+		outputs, err := copyToRemote(ctx, news)
 		return infer.UpdateResponse[CopyToRemoteOutputs]{Output: outputs}, err
 	}
 	return infer.UpdateResponse[CopyToRemoteOutputs]{Output: CopyToRemoteOutputs{news}}, nil
 }
 
-// copy unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.
-func copy(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, error) {
+// copyToRemote unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.
+func copyToRemote(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, error) {
 	sourcePath := input.sourcePath()
 
 	p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
