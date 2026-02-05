@@ -78,3 +78,43 @@ func createAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	}
 	return assetPath, c
 }
+
+func createTextAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
+	textContent := "hello from text asset"
+	asset, err := resource.NewTextAsset(textContent)
+	require.NoError(t, err)
+
+	c := &CopyToRemoteInputs{
+		Source: types.AssetOrArchive{
+			Asset: asset,
+		},
+	}
+	return textContent, c
+}
+
+func TestTextAssetContent(t *testing.T) {
+	content, input := createTextAssetInput(t)
+	require.NotNil(t, input.Source.Asset)
+	require.True(t, input.isTextAsset())
+	require.Equal(t, content, input.textContent())
+}
+
+func TestTextAssetHash(t *testing.T) {
+	_, input := createTextAssetInput(t)
+	require.NotNil(t, input.Source.Asset)
+	require.NotEmpty(t, input.hash())
+}
+
+func TestIsTextAsset(t *testing.T) {
+	// Test text asset
+	_, textInput := createTextAssetInput(t)
+	require.True(t, textInput.isTextAsset())
+
+	// Test path asset
+	_, pathInput := createAssetInput(t)
+	require.False(t, pathInput.isTextAsset())
+
+	// Test archive
+	_, archiveInput := createArchiveInput(t)
+	require.False(t, archiveInput.isTextAsset())
+}
