@@ -4,7 +4,7 @@ meta_desc: The Pulumi Command Provider enables you to execute commands and scrip
 layout: package
 ---
 
-The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model. It provides a lightweight configuration management solution for cloud infrastructure, allowing you to run setup scripts, install software, and configure servers without requiring dedicated tools like Ansible or Chef.  The package also includes a resource for copying assets and archives to remote hosts via SSH.  Resources in the command package support running scripts on `create`, `update`, and `destroy` operations, supporting stateful command execution.
+The Pulumi Command Provider enables you to execute commands either locally or remotely as part of the Pulumi resource model. It’s commonly used for running shell scripts or performing configuration management tasks with tools like Ansible, Puppet, or Chef.  The package also includes a resource for copying assets and archives to remote hosts via SSH.  Resources in the command package support running scripts on create, update, and destroy operations, supporting stateful command execution.
 
 There are many scenarios where the Command package can be useful:
 
