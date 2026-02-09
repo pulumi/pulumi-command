@@ -1,6 +1,6 @@
 ---
 title: Command
-meta_desc: The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model, enabling configuration management workflows, server bootstrapping, and custom provisioning tasks.
+meta_desc: The Pulumi Command Provider allows you to run commands, scripts, or configuration management tasks locally or remotely as part of the Pulumi resource model.
 layout: package
 ---
 
