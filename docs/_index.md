@@ -1,10 +1,10 @@
 ---
 title: Command
-meta_desc: The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.
+meta_desc: The Pulumi Command Provider allows you to run commands, scripts, or configuration management tasks locally or remotely as part of the Pulumi resource model.
 layout: package
 ---
 
-The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.  The package also includes a resource for copying assets and archives to remote hosts via SSH.  Resources in the command package support running scripts on `create`, `update`, and `destroy` operations, supporting stateful command execution.
+The Pulumi Command Provider enables you to execute commands either locally or remotely as part of the Pulumi resource model. It’s commonly used for running shell scripts or performing configuration management tasks with tools like Ansible, Puppet, or Chef.  The package also includes a resource for copying assets and archives to remote hosts via SSH.  Resources in the command package support running scripts on create, update, and destroy operations, supporting stateful command execution.
 
 There are many scenarios where the Command package can be useful:
 
@@ -12,6 +12,8 @@ There are many scenarios where the Command package can be useful:
 * Running a command locally before deleting a resource, to deregister it with an external service
 * Running a command remotely on a remote host immediately after creating it
 * Copying a file to a remote host after creating it (potentially as a script to be executed afterwards)
+* Running configuration management tools like Ansible playbooks, Chef recipes, or shell scripts on remote hosts
+* Bootstrapping and provisioning servers with custom software and configurations
 * As a simple alternative to some use cases for Dynamic Providers (especially in languages which do not yet support Dynamic Providers).
 
 Some users may have experience with Terraform "provisioners", and the Command package offers support for similar scenarios.  However, the Command package is provided as independent resources which can be combined with other resources in many interesting ways. This has many strengths, but also some differences, such as the fact that a Command resource failing does not cause a resource it is operating on to fail.
