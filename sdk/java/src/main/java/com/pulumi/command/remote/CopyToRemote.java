@@ -20,6 +20,11 @@ import javax.annotation.Nullable;
 /**
  * Copy an Asset or Archive to a remote host.
  * 
+ * Supported source types:
+ * - `FileAsset`: Copy a local file to the remote host.
+ * - `StringAsset`: Copy text content directly to a remote file (useful for configuration files, certificates, etc.).
+ * - `FileArchive`: Copy a local directory or archive to the remote host.
+ * 
  * ## Example usage
  * 
  * This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
@@ -122,14 +127,14 @@ public class CopyToRemote extends com.pulumi.resources.CustomResource {
         return this.remotePath;
     }
     /**
-     * An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
+     * An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
      * 
      */
     @Export(name="source", refs={AssetOrArchive.class}, tree="[0]")
     private Output<AssetOrArchive> source;
 
     /**
-     * @return An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
+     * @return An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
      * 
      */
     public Output<AssetOrArchive> source() {
