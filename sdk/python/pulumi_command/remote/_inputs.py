@@ -22,59 +22,54 @@ __all__ = [
     'ProxyConnectionArgsDict',
 ]
 
-MYPY = False
-
-if not MYPY:
-    class ConnectionArgsDict(TypedDict):
-        """
-        Instructions for how to connect to a remote endpoint.
-        """
-        host: pulumi.Input[_builtins.str]
-        """
-        The address of the resource to connect to.
-        """
-        agent_socket_path: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-        """
-        dial_error_limit: NotRequired[pulumi.Input[_builtins.int]]
-        """
-        Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
-        """
-        host_key: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
-        """
-        password: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The password we should use for the connection.
-        """
-        per_dial_timeout: NotRequired[pulumi.Input[_builtins.int]]
-        """
-        Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
-        """
-        port: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The port to connect to. Defaults to 22.
-        """
-        private_key: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        """
-        private_key_password: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The password to use in case the private key is encrypted.
-        """
-        proxy: NotRequired[pulumi.Input['ProxyConnectionArgsDict']]
-        """
-        The connection settings for the bastion/proxy host.
-        """
-        user: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The user that we should use for the connection.
-        """
-elif False:
-    ConnectionArgsDict: TypeAlias = Mapping[str, Any]
+class ConnectionArgsDict(TypedDict):
+    """
+    Instructions for how to connect to a remote endpoint.
+    """
+    host: pulumi.Input[_builtins.str]
+    """
+    The address of the resource to connect to.
+    """
+    agent_socket_path: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+    """
+    dial_error_limit: NotRequired[pulumi.Input[_builtins.int]]
+    """
+    Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+    """
+    host_key: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+    """
+    password: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The password we should use for the connection.
+    """
+    per_dial_timeout: NotRequired[pulumi.Input[_builtins.int]]
+    """
+    Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+    """
+    port: NotRequired[pulumi.Input[_builtins.float]]
+    """
+    The port to connect to. Defaults to 22.
+    """
+    private_key: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+    """
+    private_key_password: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The password to use in case the private key is encrypted.
+    """
+    proxy: NotRequired[pulumi.Input['ProxyConnectionArgsDict']]
+    """
+    The connection settings for the bastion/proxy host.
+    """
+    user: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The user that we should use for the connection.
+    """
 
 @pulumi.input_type
 class ConnectionArgs:
@@ -267,53 +262,50 @@ class ConnectionArgs:
         pulumi.set(self, "user", value)
 
 
-if not MYPY:
-    class ProxyConnectionArgsDict(TypedDict):
-        """
-        Instructions for how to connect to a remote endpoint via a bastion host.
-        """
-        host: pulumi.Input[_builtins.str]
-        """
-        The address of the bastion host to connect to.
-        """
-        agent_socket_path: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
-        """
-        dial_error_limit: NotRequired[pulumi.Input[_builtins.int]]
-        """
-        Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
-        """
-        host_key: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The expected host key to verify the server's identity. If not provided, the host key will be ignored.
-        """
-        password: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The password we should use for the connection to the bastion host.
-        """
-        per_dial_timeout: NotRequired[pulumi.Input[_builtins.int]]
-        """
-        Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
-        """
-        port: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The port of the bastion host to connect to.
-        """
-        private_key: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The contents of an SSH key to use for the connection. This takes preference over the password if provided.
-        """
-        private_key_password: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The password to use in case the private key is encrypted.
-        """
-        user: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        The user that we should use for the connection to the bastion host.
-        """
-elif False:
-    ProxyConnectionArgsDict: TypeAlias = Mapping[str, Any]
+class ProxyConnectionArgsDict(TypedDict):
+    """
+    Instructions for how to connect to a remote endpoint via a bastion host.
+    """
+    host: pulumi.Input[_builtins.str]
+    """
+    The address of the bastion host to connect to.
+    """
+    agent_socket_path: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
+    """
+    dial_error_limit: NotRequired[pulumi.Input[_builtins.int]]
+    """
+    Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+    """
+    host_key: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The expected host key to verify the server's identity. If not provided, the host key will be ignored.
+    """
+    password: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The password we should use for the connection to the bastion host.
+    """
+    per_dial_timeout: NotRequired[pulumi.Input[_builtins.int]]
+    """
+    Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
+    """
+    port: NotRequired[pulumi.Input[_builtins.float]]
+    """
+    The port of the bastion host to connect to.
+    """
+    private_key: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The contents of an SSH key to use for the connection. This takes preference over the password if provided.
+    """
+    private_key_password: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The password to use in case the private key is encrypted.
+    """
+    user: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    The user that we should use for the connection to the bastion host.
+    """
 
 @pulumi.input_type
 class ProxyConnectionArgs:
