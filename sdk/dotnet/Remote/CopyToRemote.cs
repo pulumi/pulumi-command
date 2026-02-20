@@ -12,6 +12,11 @@ namespace Pulumi.Command.Remote
     /// <summary>
     /// Copy an Asset or Archive to a remote host.
     /// 
+    /// Supported source types:
+    /// - `FileAsset`: Copy a local file to the remote host.
+    /// - `StringAsset`: Copy text content directly to a remote file (useful for configuration files, certificates, etc.).
+    /// - `FileArchive`: Copy a local directory or archive to the remote host.
+    /// 
     /// ## Example usage
     /// 
     /// This example copies a local directory to a remote host via SSH. For brevity, the remote server is assumed to exist, but it could also be provisioned in the same Pulumi program.
@@ -89,7 +94,7 @@ namespace Pulumi.Command.Remote
         public Output<string> RemotePath { get; private set; } = null!;
 
         /// <summary>
-        /// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
+        /// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
         /// </summary>
         [Output("source")]
         public Output<AssetOrArchive> Source { get; private set; } = null!;
@@ -176,7 +181,7 @@ namespace Pulumi.Command.Remote
         public Input<string> RemotePath { get; set; } = null!;
 
         /// <summary>
-        /// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be path-based, i.e., be a `FileAsset` or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
+        /// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
         /// </summary>
         [Input("source", required: true)]
         public Input<AssetOrArchive> Source { get; set; } = null!;
