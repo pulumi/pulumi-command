@@ -307,7 +307,7 @@ func TestCopyTextContent(t *testing.T) {
 		destDir := filepath.Join(baseDir, "dest")
 		require.NoError(t, os.Mkdir(destDir, 0o755))
 
-		sftpClient := startSshServer(t, destDir)
+		sftpClient := startSSHServer(t, destDir)
 
 		textContent := "hello from text asset"
 		destFile := "textfile.txt"
@@ -323,11 +323,11 @@ func TestCopyTextContent(t *testing.T) {
 		destDir := filepath.Join(baseDir, "dest")
 		require.NoError(t, os.Mkdir(destDir, 0o755))
 
-		sftpClient := startSshServer(t, destDir)
+		sftpClient := startSSHServer(t, destDir)
 
 		// Create an existing file
 		destFile := "existing.txt"
-		require.NoError(t, os.WriteFile(filepath.Join(destDir, destFile), []byte("old content"), 0o644))
+		require.NoError(t, os.WriteFile(filepath.Join(destDir, destFile), []byte("old content"), 0o600))
 
 		// Overwrite with text content
 		textContent := "new content from text asset"
@@ -343,7 +343,7 @@ func TestCopyTextContent(t *testing.T) {
 		destDir := filepath.Join(baseDir, "dest")
 		require.NoError(t, os.Mkdir(destDir, 0o755))
 
-		sftpClient := startSshServer(t, destDir)
+		sftpClient := startSSHServer(t, destDir)
 
 		// Create a subdirectory
 		subDir := "subdir"
