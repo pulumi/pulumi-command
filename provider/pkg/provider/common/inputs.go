@@ -1,4 +1,4 @@
-package common
+package common //nolint:revive
 
 import "github.com/pulumi/pulumi-go-provider/infer"
 

@@ -28,6 +28,6 @@ func (*Run) Invoke(
 ) (infer.FunctionResponse[RunOutputs], error) {
 	input := req.Input
 	r := RunOutputs{RunInputs: input}
-	err := run(ctx, input.Command, r.RunInputs.BaseInputs, &r.BaseOutputs, input.Logging)
+	err := run(ctx, input.Command, r.BaseInputs, &r.BaseOutputs, input.Logging)
 	return infer.FunctionResponse[RunOutputs]{Output: r}, err
 }
