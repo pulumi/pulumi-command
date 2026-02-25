@@ -67,6 +67,7 @@ class Connection(dict):
                  user: Optional[_builtins.str] = None):
         """
         Instructions for how to connect to a remote endpoint.
+
         :param _builtins.str host: The address of the resource to connect to.
         :param _builtins.str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param _builtins.int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
@@ -243,6 +244,7 @@ class ProxyConnection(dict):
                  user: Optional[_builtins.str] = None):
         """
         Instructions for how to connect to a remote endpoint via a bastion host.
+
         :param _builtins.str host: The address of the bastion host to connect to.
         :param _builtins.str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param _builtins.int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.

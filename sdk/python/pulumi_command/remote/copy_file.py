@@ -27,6 +27,7 @@ class CopyFileArgs:
                  triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a CopyFile resource.
+
         :param pulumi.Input['ConnectionArgs'] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[_builtins.str] local_path: The path of the file to be copied.
         :param pulumi.Input[_builtins.str] remote_path: The destination path in the remote host.
@@ -106,6 +107,7 @@ class CopyFile(pulumi.CustomResource):
         """
         Copy a local file to a remote host.
 
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']] connection: The parameters with which to connect to the remote host.
@@ -121,6 +123,7 @@ class CopyFile(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Copy a local file to a remote host.
+
 
         :param str resource_name: The name of the resource.
         :param CopyFileArgs args: The arguments to use to populate this resource's properties.
