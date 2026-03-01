@@ -48,8 +48,7 @@ func (c *CopyToRemoteInputs) Annotate(a infer.Annotator) {
 		"The item will be copied as-is; archives like .tgz will not be unpacked. "+
 		"Directories are copied recursively, overwriting existing files.")
 	a.Describe(&c.RemotePath, "The destination path on the remote host. "+
-		"The last element of the path will be created if it doesn't exist but it's an error when "+
-		"additional elements don't exist. "+
+		"Any necessary parent directories will be created automatically. "+
 		"When the remote path is an existing directory, the source file or directory will be copied into that directory. "+
 		"When the source is a file and the remote path is an existing file, that file will be overwritten. "+
 		"When the source is a directory and the remote path an existing file, the copy will fail.")

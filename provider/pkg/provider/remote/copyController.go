@@ -43,6 +43,11 @@ func copyTextContent(sftpClient *sftp.Client, content, destPath string) error {
 		return fmt.Errorf("remote path %s is a directory; when using a text asset, remotePath must be a file path", destPath)
 	}
 
+	// Ensure parent directories exist.
+	if err := sftpClient.MkdirAll(filepath.Dir(destPath)); err != nil {
+		return fmt.Errorf("failed to create parent directories for %s: %w", destPath, err)
+	}
+
 	remote, err := sftpClient.Create(destPath)
 	if err != nil {
 		return fmt.Errorf("failed to create remote file %s: %w", destPath, err)
@@ -224,7 +229,7 @@ func sftpCopy(sftpClient *sftp.Client, sourcePath, destPath string) error {
 	dest := destPath
 	if srcInfo.IsDir() {
 		if destStat == nil {
-			err = sftpClient.Mkdir(dest)
+			err = sftpClient.MkdirAll(dest)
 			if err != nil {
 				return fmt.Errorf("failed to create remote directory %s: %w", dest, err)
 			}
@@ -252,6 +257,11 @@ func sftpCopy(sftpClient *sftp.Client, sourcePath, destPath string) error {
 		// If the file is f and the destination is existing dir/, copy to dir/f.
 		if destStat != nil && destStat.IsDir() {
 			dest = filepath.Join(dest, filepath.Base(sourcePath))
+		} else if destStat == nil {
+			// Ensure parent directories exist when creating a new file.
+			if err := sftpClient.MkdirAll(filepath.Dir(dest)); err != nil {
+				return fmt.Errorf("failed to create parent directories for %s: %w", dest, err)
+			}
 		}
 		err = copyFile(sftpClient, sourcePath, dest)
 	}
