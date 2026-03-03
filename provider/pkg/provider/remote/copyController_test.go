@@ -209,6 +209,30 @@ func TestCopyDirectories(t *testing.T) {
 		assert.Equal(t, "new content", string(content))
 	})
 
+	t.Run("copy file creates parent dirs", func(t *testing.T) {
+		srcDir, destDir, sftpClient := initCopyTest(t)
+		// Copy a file to a nested path where parent dirs don't exist
+		dest := filepath.Join("a", "b", "c", "remoteFile")
+		require.NoError(t, sftpCopy(sftpClient, filepath.Join(srcDir, "file1"), dest))
+		assert.FileExists(t, filepath.Join(destDir, dest))
+	})
+
+	t.Run("copy dir creates parent dirs", func(t *testing.T) {
+		srcDir, destDir, sftpClient := initCopyTest(t)
+		// Copy a directory to a nested path where parent dirs don't exist
+		dest := filepath.Join("a", "b", "c")
+		require.NoError(t, sftpCopy(sftpClient, srcDir, dest))
+		assertDirectoryTree(t, filepath.Join(destDir, dest, filepath.Base(srcDir)))
+	})
+
+	t.Run("copy dir contents creates parent dirs", func(t *testing.T) {
+		srcDir, destDir, sftpClient := initCopyTest(t)
+		// Copy directory contents to a nested path where parent dirs don't exist
+		dest := filepath.Join("x", "y", "z")
+		require.NoError(t, sftpCopy(sftpClient, srcDir+"/", dest))
+		assertDirectoryTree(t, filepath.Join(destDir, dest))
+	})
+
 	t.Run("overwrite file copying dir contents", func(t *testing.T) {
 		srcDir, destDir, sftpClient := initCopyTest(t)
 
@@ -331,6 +355,22 @@ func TestCopyTextContent(t *testing.T) {
 
 		// Overwrite with text content
 		textContent := "new content from text asset"
+		require.NoError(t, copyTextContent(sftpClient, textContent, destFile))
+
+		content, err := os.ReadFile(filepath.Join(destDir, destFile))
+		require.NoError(t, err)
+		assert.Equal(t, textContent, string(content))
+	})
+
+	t.Run("copy text content creates parent dirs", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+
+		sftpClient := startSSHServer(t, destDir)
+
+		textContent := "hello from nested text asset"
+		destFile := filepath.Join("a", "b", "c", "textfile.txt")
 		require.NoError(t, copyTextContent(sftpClient, textContent, destFile))
 
 		content, err := os.ReadFile(filepath.Join(destDir, destFile))

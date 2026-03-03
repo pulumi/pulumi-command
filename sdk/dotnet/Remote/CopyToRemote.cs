@@ -88,7 +88,7 @@ namespace Pulumi.Command.Remote
         public Output<Outputs.Connection> Connection { get; private set; } = null!;
 
         /// <summary>
-        /// The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+        /// The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
         /// </summary>
         [Output("remotePath")]
         public Output<string> RemotePath { get; private set; } = null!;
@@ -175,7 +175,7 @@ namespace Pulumi.Command.Remote
         }
 
         /// <summary>
-        /// The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+        /// The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
         /// </summary>
         [Input("remotePath", required: true)]
         public Input<string> RemotePath { get; set; } = null!;

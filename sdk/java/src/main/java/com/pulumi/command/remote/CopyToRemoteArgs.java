@@ -36,14 +36,14 @@ public final class CopyToRemoteArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
-     * The destination path on the remote host. The last element of the path will be created if it doesn&#39;t exist but it&#39;s an error when additional elements don&#39;t exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+     * The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
      * 
      */
     @Import(name="remotePath", required=true)
     private Output<String> remotePath;
 
     /**
-     * @return The destination path on the remote host. The last element of the path will be created if it doesn&#39;t exist but it&#39;s an error when additional elements don&#39;t exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+     * @return The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
      * 
      */
     public Output<String> remotePath() {
@@ -129,7 +129,7 @@ public final class CopyToRemoteArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param remotePath The destination path on the remote host. The last element of the path will be created if it doesn&#39;t exist but it&#39;s an error when additional elements don&#39;t exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+         * @param remotePath The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
          * 
          * @return builder
          * 
@@ -140,7 +140,7 @@ public final class CopyToRemoteArgs extends com.pulumi.resources.ResourceArgs {
         }
 
         /**
-         * @param remotePath The destination path on the remote host. The last element of the path will be created if it doesn&#39;t exist but it&#39;s an error when additional elements don&#39;t exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+         * @param remotePath The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
          * 
          * @return builder
          * 

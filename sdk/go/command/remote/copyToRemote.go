@@ -85,7 +85,7 @@ type CopyToRemote struct {
 
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionOutput `pulumi:"connection"`
-	// The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+	// The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
 	RemotePath pulumi.StringOutput `pulumi:"remotePath"`
 	// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
 	Source pulumi.AssetOrArchiveOutput `pulumi:"source"`
@@ -156,7 +156,7 @@ func (CopyToRemoteState) ElementType() reflect.Type {
 type copyToRemoteArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`
-	// The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+	// The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
 	RemotePath string `pulumi:"remotePath"`
 	// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
 	Source pulumi.AssetOrArchive `pulumi:"source"`
@@ -168,7 +168,7 @@ type copyToRemoteArgs struct {
 type CopyToRemoteArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection ConnectionInput
-	// The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+	// The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
 	RemotePath pulumi.StringInput
 	// An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
 	Source pulumi.AssetOrArchiveInput
@@ -268,7 +268,7 @@ func (o CopyToRemoteOutput) Connection() ConnectionOutput {
 	return o.ApplyT(func(v *CopyToRemote) ConnectionOutput { return v.Connection }).(ConnectionOutput)
 }
 
-// The destination path on the remote host. The last element of the path will be created if it doesn't exist but it's an error when additional elements don't exist. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
+// The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
 func (o CopyToRemoteOutput) RemotePath() pulumi.StringOutput {
 	return o.ApplyT(func(v *CopyToRemote) pulumi.StringOutput { return v.RemotePath }).(pulumi.StringOutput)
 }
