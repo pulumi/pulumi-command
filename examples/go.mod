@@ -5,8 +5,8 @@ go 1.25.6
 require (
 	github.com/aws/aws-sdk-go v1.50.36
 	github.com/pulumi/providertest v0.6.0
-	github.com/pulumi/pulumi/pkg/v3 v3.225.0
-	github.com/pulumi/pulumi/sdk/v3 v3.225.0
+	github.com/pulumi/pulumi/pkg/v3 v3.225.1
+	github.com/pulumi/pulumi/sdk/v3 v3.225.1
 	github.com/stretchr/testify v1.11.1
 )
 
