@@ -50,18 +50,22 @@
       "type": "string",
       "enum": [
         {
+          "name": "stdout",
           "description": "Capture stdout in logs but not stderr",
           "value": "stdout"
         },
         {
+          "name": "stderr",
           "description": "Capture stderr in logs but not stdout",
           "value": "stderr"
         },
         {
+          "name": "stdoutAndStderr",
           "description": "Capture stdout and stderr in logs",
           "value": "stdoutAndStderr"
         },
         {
+          "name": "none",
           "description": "Capture no logs",
           "value": "none"
         }
@@ -131,18 +135,22 @@
       "type": "string",
       "enum": [
         {
+          "name": "stdout",
           "description": "Capture stdout in logs but not stderr",
           "value": "stdout"
         },
         {
+          "name": "stderr",
           "description": "Capture stderr in logs but not stdout",
           "value": "stderr"
         },
         {
+          "name": "stdoutAndStderr",
           "description": "Capture stdout and stderr in logs",
           "value": "stdoutAndStderr"
         },
         {
+          "name": "none",
           "description": "Capture no logs",
           "value": "none"
         }
