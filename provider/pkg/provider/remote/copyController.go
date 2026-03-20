@@ -82,33 +82,40 @@ func (c *CopyToRemote) Check(
 		return infer.CheckResponse[CopyToRemoteInputs]{Inputs: inputs, Failures: failures}, err
 	}
 
-	hasAsset := inputs.Source.Asset != nil
-	hasArchive := inputs.Source.Archive != nil
+	// If source is unknown (computed during preview), skip asset/archive validation
+	// since the value isn't available yet.
+	sourceVal, sourceOk := newInputs.GetOk("source")
+	sourceIsComputed := sourceOk && sourceVal.IsComputed()
 
-	if hasAsset && hasArchive {
-		failures = append(failures, p.CheckFailure{
-			Property: "asset",
-			Reason:   "only one of asset or archive can be set",
-		})
-	}
-	if !hasAsset && !hasArchive {
-		failures = append(failures, p.CheckFailure{
-			Property: "asset",
-			Reason:   "either asset or archive must be set",
-		})
-	}
+	if !sourceIsComputed {
+		hasAsset := inputs.Source.Asset != nil
+		hasArchive := inputs.Source.Archive != nil
 
-	if hasAsset && !inputs.Source.Asset.IsPath() && !inputs.Source.Asset.IsText() {
-		failures = append(failures, p.CheckFailure{
-			Property: "asset",
-			Reason:   "asset must be a path-based file asset or a text asset",
-		})
-	}
-	if hasArchive && !inputs.Source.Archive.IsPath() {
-		failures = append(failures, p.CheckFailure{
-			Property: "archive",
-			Reason:   "archive must be a path to a file or directory",
-		})
+		if hasAsset && hasArchive {
+			failures = append(failures, p.CheckFailure{
+				Property: "asset",
+				Reason:   "only one of asset or archive can be set",
+			})
+		}
+		if !hasAsset && !hasArchive {
+			failures = append(failures, p.CheckFailure{
+				Property: "asset",
+				Reason:   "either asset or archive must be set",
+			})
+		}
+
+		if hasAsset && !inputs.Source.Asset.IsPath() && !inputs.Source.Asset.IsText() {
+			failures = append(failures, p.CheckFailure{
+				Property: "asset",
+				Reason:   "asset must be a path-based file asset or a text asset",
+			})
+		}
+		if hasArchive && !inputs.Source.Archive.IsPath() {
+			failures = append(failures, p.CheckFailure{
+				Property: "archive",
+				Reason:   "archive must be a path to a file or directory",
+			})
+		}
 	}
 
 	return infer.CheckResponse[CopyToRemoteInputs]{Inputs: inputs, Failures: failures}, nil

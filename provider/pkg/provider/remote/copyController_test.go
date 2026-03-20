@@ -323,6 +323,19 @@ func TestCheck(t *testing.T) {
 		failures := check(news)
 		assert.Empty(t, failures)
 	})
+
+	t.Run("unknown source is allowed during preview", func(t *testing.T) {
+		// When source is unknown (computed), Check should skip asset/archive validation.
+		news := property.NewMap(map[string]property.Value{
+			"connection": property.New(property.NewMap(map[string]property.Value{
+				"host": property.New("myhost"),
+			})),
+			"remotePath": property.New("path/to/remote"),
+			"source":     property.New(property.Computed),
+		})
+		failures := check(news)
+		assert.Empty(t, failures)
+	})
 }
 
 func TestCopyTextContent(t *testing.T) {
