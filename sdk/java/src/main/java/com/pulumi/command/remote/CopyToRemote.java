@@ -197,6 +197,9 @@ public class CopyToRemote extends com.pulumi.resources.CustomResource {
             .additionalSecretOutputs(List.of(
                 "connection"
             ))
+            .replaceOnChanges(List.of(
+                "triggers[*]"
+            ))
             .build();
         return com.pulumi.resources.CustomResourceOptions.merge(defaultOptions, options, id);
     }
