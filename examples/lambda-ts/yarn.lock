@@ -432,10 +432,10 @@
     "@pulumi/pulumi" "^3.142.0"
     mime "^2.0.0"
 
-"@pulumi/pulumi@3.228.0", "@pulumi/pulumi@^3.142.0":
-  version "3.228.0"
-  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.228.0.tgz#be4edbc2285349cd60062d9025eef793ea586776"
-  integrity sha512-yAwieapB/Huro8/psool1sKhe2rGT80GTnEFLDWbKPHTMo6oSegGb6aYg+bzPuC3vgBOn2dnHkobSuwbBhQ7gQ==
+"@pulumi/pulumi@3.229.0", "@pulumi/pulumi@^3.142.0":
+  version "3.229.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/pulumi/-/pulumi-3.229.0.tgz#c21ae9bcb0db33e17a19b16fd875065f3923b0af"
+  integrity sha512-SoGAonHOrGP/NQQivq3gMz0nlebVUYOf6TgpsPHqvFARsHz4JIR+/fpFm/8JW+Ev5o6tvb6g04a+STmpdxoaOg==
   dependencies:
     "@grpc/grpc-js" "^1.10.1"
     "@logdna/tail-file" "^2.0.6"
@@ -460,7 +460,7 @@
     minimist "^1.2.6"
     normalize-package-data "^6.0.0"
     package-directory "^8.1.0"
-    picomatch "^3.0.1"
+    picomatch "^4.0.0"
     require-from-string "^2.0.1"
     semver "^7.5.2"
     source-map-support "^0.5.6"
@@ -1418,15 +1418,10 @@ path-scurry@^2.0.0:
     lru-cache "^11.0.0"
     minipass "^7.1.2"
 
-picomatch@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-3.0.1.tgz#817033161def55ec9638567a2f3bbc876b3e7516"
-  integrity sha512-I3EurrIQMlRc9IaAZnqRR044Phh2DXY+55o7uJ0V+hYZAcQYSuFWsc9q5PvyDHUSCe1Qxn/iBz+78s86zWnGag==
-
-picomatch@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.3.tgz#796c76136d1eead715db1e7bad785dedd695a042"
-  integrity sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==
+picomatch@^4.0.0, picomatch@^4.0.3:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.4.tgz#fd6f5e00a143086e074dffe4c924b8fb293b0589"
+  integrity sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==
 
 postcss-selector-parser@^7.0.0:
   version "7.1.1"
