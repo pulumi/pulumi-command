@@ -6,7 +6,7 @@
     },
     "dependencies": {
         "@grpc/grpc-js": "^1.10.10",
-        "@pulumi/aws": "7.24.0",
+        "@pulumi/aws": "7.25.0",
         "@pulumi/awsx": "3.4.0",
         "@pulumi/command": "1.2.1",
         "@pulumi/pulumi": "3.230.0",
