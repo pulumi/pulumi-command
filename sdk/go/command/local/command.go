@@ -241,7 +241,7 @@ type Command struct {
 	//
 	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create pulumi.StringPtrOutput `pulumi:"create"`
-	// The command to run on resource delettion.
+	// The command to run on resource deletion.
 	//
 	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 	Delete pulumi.StringPtrOutput `pulumi:"delete"`
@@ -379,7 +379,7 @@ type commandArgs struct {
 	//
 	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create *string `pulumi:"create"`
-	// The command to run on resource delettion.
+	// The command to run on resource deletion.
 	//
 	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 	Delete *string `pulumi:"delete"`
@@ -471,7 +471,7 @@ type CommandArgs struct {
 	//
 	// Use `local.runOutput` if you need to run a command on every execution of your program.
 	Create pulumi.StringPtrInput
-	// The command to run on resource delettion.
+	// The command to run on resource deletion.
 	//
 	// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 	Delete pulumi.StringPtrInput
@@ -671,7 +671,7 @@ func (o CommandOutput) Create() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *Command) pulumi.StringPtrOutput { return v.Create }).(pulumi.StringPtrOutput)
 }
 
-// The command to run on resource delettion.
+// The command to run on resource deletion.
 //
 // The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
 func (o CommandOutput) Delete() pulumi.StringPtrOutput {

@@ -345,7 +345,7 @@ public class Command extends com.pulumi.resources.CustomResource {
         return Codegen.optional(this.create);
     }
     /**
-     * The command to run on resource delettion.
+     * The command to run on resource deletion.
      * 
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      * 
@@ -354,7 +354,7 @@ public class Command extends com.pulumi.resources.CustomResource {
     private Output</* @Nullable */ String> delete;
 
     /**
-     * @return The command to run on resource delettion.
+     * @return The command to run on resource deletion.
      * 
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      * 

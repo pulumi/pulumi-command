@@ -114,7 +114,7 @@ export class Command extends pulumi.CustomResource {
      */
     declare public readonly create: pulumi.Output<string | undefined>;
     /**
-     * The command to run on resource delettion.
+     * The command to run on resource deletion.
      *
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      */
@@ -239,7 +239,7 @@ export interface CommandArgs {
      */
     create?: pulumi.Input<string>;
     /**
-     * The command to run on resource delettion.
+     * The command to run on resource deletion.
      *
      * The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
      */
