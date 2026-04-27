@@ -3,30 +3,15 @@
 package examples
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
-func getRegion(t *testing.T) string {
-	region := os.Getenv("AWS_REGION")
-	if region == "" {
-		region = "us-east-2"
-		fmt.Println("Defaulting region to 'us-east-2'. You can override using the AWS_REGION variable.")
-	}
-
-	return region
-}
-
 func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
-	awsRegion := getRegion(t)
 	return integration.ProgramTestOptions{
 		ExpectRefreshChanges: true,
-		Config: map[string]string{
-			"aws:region": awsRegion,
-		},
 	}
 }
 

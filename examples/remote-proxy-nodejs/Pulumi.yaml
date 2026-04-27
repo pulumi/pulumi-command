@@ -1,0 +1,3 @@
+name: command-remote-proxy-nodejs
+runtime: nodejs
+description: Exercises the SSH proxy connection against two local SSH servers.

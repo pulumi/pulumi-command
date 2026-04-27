@@ -9,11 +9,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/pulumi/providertest"
 	"github.com/pulumi/providertest/pulumitest"
 	"github.com/pulumi/providertest/pulumitest/assertpreview"
@@ -24,6 +22,8 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/pulumi/pulumi-command/examples/sshfixture"
 )
 
 func TestRandom(t *testing.T) {
@@ -76,14 +76,6 @@ func TestStderr(t *testing.T) {
 					}
 				}
 			},
-		})
-	integration.ProgramTest(t, &test)
-}
-
-func TestLambdaTs(t *testing.T) {
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "lambda-ts"),
 		})
 	integration.ProgramTest(t, &test)
 }
@@ -162,48 +154,29 @@ func TestSimpleWithUpdate(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func genEC2KeyPair(t *testing.T) (*ec2.CreateKeyPairOutput, func()) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(getRegion(t))},
-	)
-	assert.NoError(t, err)
-	svc := ec2.New(sess)
-	keyName, err := resource.NewUniqueHex("test-keyname", 8, 20)
-	assert.NoError(t, err)
-	t.Logf("Creating keypair %s.\n", keyName)
-	key, err := svc.CreateKeyPair(&ec2.CreateKeyPairInput{
-		KeyName: aws.String(keyName),
-	})
-	require.NoError(t, err)
-
-	cleanup := func() {
-		t.Logf("Deleting keypair %s.\n", keyName)
-		_, err := svc.DeleteKeyPair(&ec2.DeleteKeyPairInput{
-			KeyName: aws.String(keyName),
-		})
-		assert.NoError(t, err)
+// remoteBaseConfig returns the Config and Secrets blocks describing a single
+// SSH server fixture.
+func remoteBaseConfig(s sshfixture.Server) (cfg, secrets map[string]string) {
+	cfg = map[string]string{
+		"host": s.Host,
+		"port": strconv.Itoa(s.Port),
+		"user": sshfixture.User,
 	}
-
-	return key, cleanup
+	secrets = map[string]string{
+		"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(s.PrivateKeyPEM)),
+	}
+	return cfg, secrets
 }
 
-func testEc2Ts(t *testing.T, targetDir string) {
-	key, keyCleanup := genEC2KeyPair(t)
-	defer keyCleanup()
+func TestRemoteNodejs(t *testing.T) {
+	server := sshfixture.New(t)
+	cfg, secrets := remoteBaseConfig(server)
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), targetDir),
-			Config: map[string]string{
-				"keyName": aws.StringValue(key.KeyName),
-			},
-			Secrets: map[string]string{
-				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
-			},
-			EditDirs: []integration.EditDir{{
-				Dir:      filepath.Join(targetDir, "replace_instance"),
-				Additive: true,
-			}},
+			Dir:     filepath.Join(getCwd(t), "remote-nodejs"),
+			Config:  cfg,
+			Secrets: secrets,
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
 				isEncrypted := func(v interface{}) bool {
 					m, ok := v.(map[string]interface{})
@@ -214,62 +187,61 @@ func testEc2Ts(t *testing.T, targetDir string) {
 					if sigKey == nil {
 						return false
 					}
-
-					v, vOk := sigKey.(string)
-					if !vOk {
+					sig, sigOk := sigKey.(string)
+					if !sigOk || sig != resource.SecretSig {
 						return false
 					}
-
-					if v != resource.SecretSig {
-						return false
-					}
-
-					ciphertext := m["ciphertext"]
-					if ciphertext == nil {
-						return false
-					}
-
-					_, cOk := ciphertext.(string)
+					_, cOk := m["ciphertext"].(string)
 					return cOk
 				}
-
-				assertEncryptedValue := func(m map[string]interface{}, key string) {
-					assert.Truef(t, isEncrypted(m[key]), "%s value should be encrypted", key)
-				}
-				assertEncryptedValue(stack.Outputs, "connectionSecret")
+				assert.Truef(t, isEncrypted(stack.Outputs["connectionSecret"]),
+					"connectionSecret value should be encrypted")
+				assert.Equal(t, "micro", fmt.Sprintf("%v", stack.Outputs["confirmSize"]))
 			},
 		})
 
 	integration.ProgramTest(t, &test)
 }
 
-func TestEc2RemoteTs(t *testing.T) { testEc2Ts(t, "ec2_remote") }
-
-func TestEc2RemoteProxyTs(t *testing.T) { testEc2Ts(t, "ec2_remote_proxy") }
-
-func TestEc2DirCopy(t *testing.T) {
-	key, keyCleanup := genEC2KeyPair(t)
-	defer keyCleanup()
-
-	const dest = "/tmp/ec2_dir_copy"
-	basePath := filepath.Join(getCwd(t), "ec2_dir_copy")
+func TestRemoteProxyNodejs(t *testing.T) {
+	proxy := sshfixture.NewProxy(t)
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: basePath,
+			Dir: filepath.Join(getCwd(t), "remote-proxy-nodejs"),
 			Config: map[string]string{
-				"keyName": aws.StringValue(key.KeyName),
-				"destDir": dest,
+				"proxyHost":  proxy.Proxy.Host,
+				"proxyPort":  strconv.Itoa(proxy.Proxy.Port),
+				"targetHost": proxy.Target.Host,
+				"targetPort": strconv.Itoa(proxy.Target.Port),
+				"user":       sshfixture.User,
 			},
 			Secrets: map[string]string{
-				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
+				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(proxy.PrivateKeyPEM)),
 			},
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-				remoteLSOutput, ok := stack.Outputs["lsRemote"]
-				require.True(t, ok)
-				remoteLS, ok := remoteLSOutput.(string)
-				require.True(t, ok)
+				assert.Equal(t, "micro", fmt.Sprintf("%v", stack.Outputs["confirmSize"]))
+			},
+		})
 
+	integration.ProgramTest(t, &test)
+}
+
+func TestDirCopyNodejs(t *testing.T) {
+	server := sshfixture.New(t)
+	cfg, secrets := remoteBaseConfig(server)
+
+	const dest = "/tmp/dir-copy-nodejs"
+	cfg["destDir"] = dest
+	basePath := filepath.Join(getCwd(t), "dir-copy-nodejs")
+
+	test := getJSBaseOptions(t).
+		With(integration.ProgramTestOptions{
+			Dir:     basePath,
+			Config:  cfg,
+			Secrets: secrets,
+			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+				remoteLS := stringOutput(t, stack, "lsRemote")
 				assert.Equal(t,
 					dest+"\n"+
 						dest+"/file1\n"+
@@ -280,21 +252,16 @@ func TestEc2DirCopy(t *testing.T) {
 					remoteLS)
 			},
 			EditDirs: []integration.EditDir{
-				// There's a new file in src/ so a new copy should be made.
 				{
 					Dir:             filepath.Join(basePath, "step2"),
 					Additive:        true,
 					ExpectNoChanges: false,
 					ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-						remoteLSOutput, ok := stack.Outputs["lsRemote"]
-						require.True(t, ok)
-						remoteLS, ok := remoteLSOutput.(string)
-						require.True(t, ok)
-
+						remoteLS := stringOutput(t, stack, "lsRemote")
 						assert.Equal(t,
 							dest+"\n"+
 								dest+"/file1\n"+
-								dest+"/newfile\n"+ // added
+								dest+"/newfile\n"+
 								dest+"/one\n"+
 								dest+"/one/file2\n"+
 								dest+"/one/two\n"+
@@ -308,46 +275,24 @@ func TestEc2DirCopy(t *testing.T) {
 	integration.ProgramTest(t, &test)
 }
 
-func TestEc2CopyFile(t *testing.T) {
-	key, keyCleanup := genEC2KeyPair(t)
-	defer keyCleanup()
+func TestCopyFileNodejs(t *testing.T) {
+	server := sshfixture.New(t)
+	cfg, secrets := remoteBaseConfig(server)
 
-	const dest = "/tmp/TestEc2CopyFile"
-	basePath := filepath.Join(getCwd(t), "ec2_copyfile")
+	const dest = "/tmp/TestCopyFileNodejs"
+	cfg["destDir"] = dest
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir: basePath,
-			Config: map[string]string{
-				"keyName": aws.StringValue(key.KeyName),
-				"destDir": dest,
-			},
-			Secrets: map[string]string{
-				"privateKeyBase64": base64.StdEncoding.EncodeToString([]byte(aws.StringValue(key.KeyMaterial))),
-			},
+			Dir:     filepath.Join(getCwd(t), "copyfile-nodejs"),
+			Config:  cfg,
+			Secrets: secrets,
 			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-				remoteLSOutput, ok := stack.Outputs["lsRemote"]
-				require.True(t, ok)
-				remoteLS, ok := remoteLSOutput.(string)
-				require.True(t, ok)
-
-				assert.Contains(t, remoteLS, "TestEc2CopyFile")
+				remoteLS := stringOutput(t, stack, "lsRemote")
+				assert.Equal(t, dest, remoteLS)
 			},
 		})
 
-	integration.ProgramTest(t, &test)
-}
-
-func TestLambdaInvoke(t *testing.T) {
-	test := getJSBaseOptions(t).
-		With(integration.ProgramTestOptions{
-			Dir: filepath.Join(getCwd(t), "lambda-invoke"),
-			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-				out, ok := stack.Outputs["output"].(string)
-				assert.True(t, ok)
-				assert.Len(t, out, 10)
-			},
-		})
 	integration.ProgramTest(t, &test)
 }
 
@@ -386,4 +331,13 @@ func getJSBaseOptions(t *testing.T) integration.ProgramTestOptions {
 	})
 
 	return baseJS
+}
+
+func stringOutput(t *testing.T, stack integration.RuntimeValidationStackInfo, key string) string {
+	t.Helper()
+	out, ok := stack.Outputs[key]
+	require.Truef(t, ok, "missing output %q", key)
+	s, ok := out.(string)
+	require.Truef(t, ok, "output %q is not a string: %T", key, out)
+	return s
 }

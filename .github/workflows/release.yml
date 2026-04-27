@@ -14,7 +14,6 @@ env:
   PYTHONVERSION: "3.11.8"
   DOTNETVERSION: "8.0.x"
   JAVAVERSION: "11"
-  AWS_REGION: us-west-2
   PULUMI_API: https://api.pulumi-staging.io
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
@@ -249,19 +248,6 @@ jobs:
     - name: Install dependencies
       if: ${{ matrix.language != 'yaml' }}
       run: make install_${{ matrix.language}}_sdk
-    - name: Generate Pulumi Access Token
-      id: generate_pulumi_token
-      uses: pulumi/auth-actions@1c89817aab0c66407723cdef72b05266e7376640 # v1.0.1
-      with:
-        organization: pulumi
-        requested-token-type: urn:pulumi:token-type:access_token:organization
-        export-environment-variables: false
-    - name: Export AWS Credentials
-      uses: pulumi/esc-action@9840934db12128a33f6afb60b17d9de8f7ec5519
-      env:
-        PULUMI_ACCESS_TOKEN: ${{ steps.generate_pulumi_token.outputs.pulumi-access-token }}
-      with:
-        environment: logins/pulumi-ci
     - name: Install gotestfmt
       uses: GoTestTools/gotestfmt-action@v2
       with:
