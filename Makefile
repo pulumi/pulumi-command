@@ -83,6 +83,14 @@ provider:
 provider_debug:
 	(cd provider && go build -o $(WORKING_DIR)/bin/${PROVIDER} -gcflags="all=-N -l" -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION_GENERIC}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER))
 
+# Build a coverage-instrumented provider for collecting runtime coverage from
+# integration tests. Set GOCOVERDIR when running the binary (the integration
+# test workflow does this), then convert the resulting data files with
+# `go tool covdata textfmt -i=$$GOCOVERDIR -o cover.out`.
+.PHONY: provider_cover
+provider_cover:
+	cd provider && go build -cover -covermode=atomic -o $(WORKING_DIR)/bin/${PROVIDER} -ldflags "-X ${PROJECT}/${VERSION_PATH}=${VERSION_GENERIC}" $(PROJECT)/${PROVIDER_PATH}/cmd/$(PROVIDER)
+
 test_provider: tidy_provider
 	cd provider && $(GO_TEST_EXEC) -short -v -count=1 -cover -timeout 2h -parallel ${TESTPARALLELISM} -coverprofile="coverage.txt" ./...
 
@@ -216,5 +224,5 @@ sign-goreleaser-exe-%: bin/jsign-7.4.jar
 # - Run make ci-mgmt to apply the change locally.
 #
 ci-mgmt: .ci-mgmt.yaml
-	go run github.com/pulumi/ci-mgmt/provider-ci@master generate
+	go run github.com/pulumi/ci-mgmt/provider-ci@21c3957e81a7d182529559ac53417dfc910f8241 generate
 .PHONY: ci-mgmt
