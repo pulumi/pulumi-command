@@ -1,0 +1,7 @@
+name: command-copyfile-nodejs
+runtime: nodejs
+description: Exercises the deprecated remote.CopyFile against a local SSH server.
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: ""

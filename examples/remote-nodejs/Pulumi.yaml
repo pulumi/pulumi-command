@@ -1,0 +1,3 @@
+name: command-remote-nodejs
+runtime: nodejs
+description: Exercises remote.Command and CopyToRemote against a local SSH server.
