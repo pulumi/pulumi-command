@@ -269,11 +269,14 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: Prepare coverage directory
       run: mkdir -p ${{ github.workspace }}/coverage
+    # `go test -cover` would override the test process's GOCOVERDIR with a
+    # private tmpdir, which then gets inherited (and discarded) by the
+    # provider subprocess. Omit -cover so the env var we set below sticks.
     - name: Run tests
       run: >-
         set -euo pipefail
 
-        cd examples && go test -count=1 -cover -timeout 2h -tags=${{ matrix.language }} -parallel 4 .
+        cd examples && go test -count=1 -timeout 2h -tags=${{ matrix.language }} -parallel 4 .
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GOCOVERDIR: ${{ github.workspace }}/coverage
