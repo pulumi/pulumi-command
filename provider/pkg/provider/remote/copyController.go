@@ -18,8 +18,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -28,6 +31,8 @@ import (
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
+	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
 )
 
 // copyTextContent writes text content directly to a remote file via SFTP.
@@ -103,19 +108,6 @@ func (c *CopyToRemote) Check(
 				Reason:   "either asset or archive must be set",
 			})
 		}
-
-		if hasAsset && !inputs.Source.Asset.IsPath() && !inputs.Source.Asset.IsText() {
-			failures = append(failures, p.CheckFailure{
-				Property: "asset",
-				Reason:   "asset must be a path-based file asset or a text asset",
-			})
-		}
-		if hasArchive && !inputs.Source.Archive.IsPath() {
-			failures = append(failures, p.CheckFailure{
-				Property: "archive",
-				Reason:   "archive must be a path to a file or directory",
-			})
-		}
 	}
 
 	return infer.CheckResponse[CopyToRemoteInputs]{Inputs: inputs, Failures: failures}, nil
@@ -160,18 +152,11 @@ func (c *CopyToRemote) Update(
 	return infer.UpdateResponse[CopyToRemoteOutputs]{Output: CopyToRemoteOutputs{news}}, nil
 }
 
-// copyToRemote unpacks the inputs, dials the SSH connection, creates an sFTP client, and calls sftpCopy.
+// copyToRemote unpacks the inputs, dials the SSH connection, creates an sFTP client, and dispatches
+// to the appropriate copy routine based on the source asset/archive subtype.
 func copyToRemote(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOutputs, error) {
-	isText := input.isTextAsset()
-	var sourcePath string
-	if isText {
-		p.GetLogger(ctx).Debugf("Creating file: %s:%s from text asset",
-			*input.Connection.Host, input.RemotePath)
-	} else {
-		sourcePath = input.sourcePath()
-		p.GetLogger(ctx).Debugf("Creating file: %s:%s from local file %s",
-			*input.Connection.Host, input.RemotePath, sourcePath)
-	}
+	p.GetLogger(ctx).Debugf("Creating %s:%s from %s",
+		*input.Connection.Host, input.RemotePath, sourceDescription(input))
 
 	client, err := input.Connection.Dial(ctx)
 	if err != nil {
@@ -189,12 +174,212 @@ func copyToRemote(ctx context.Context, input CopyToRemoteInputs) (CopyToRemoteOu
 	}
 	defer sftpClient.Close()
 
-	if isText {
-		err = copyTextContent(sftpClient, input.textContent(), input.RemotePath)
+	if input.Source.Asset != nil {
+		err = copyAssetToRemote(sftpClient, input.Source.Asset, input.RemotePath)
 	} else {
-		err = sftpCopy(sftpClient, sourcePath, input.RemotePath)
+		err = copyArchiveToRemote(sftpClient, input.Source.Archive, input.RemotePath)
 	}
 	return CopyToRemoteOutputs{input}, err
+}
+
+func sourceDescription(input CopyToRemoteInputs) string {
+	if a := input.Source.Asset; a != nil {
+		switch {
+		case a.IsText():
+			return "text asset"
+		case a.IsPath():
+			return fmt.Sprintf("local file %s", a.Path)
+		case a.IsURI():
+			return fmt.Sprintf("remote asset %s", a.URI)
+		}
+	}
+	if a := input.Source.Archive; a != nil {
+		switch {
+		case a.IsPath():
+			return fmt.Sprintf("local path %s", a.Path)
+		case a.IsURI():
+			return fmt.Sprintf("remote archive %s", a.URI)
+		case a.IsAssets():
+			return "asset archive"
+		}
+	}
+	return "unknown source"
+}
+
+func copyAssetToRemote(sftpClient *sftp.Client, a *resource.Asset, destPath string) error {
+	switch {
+	case a.IsText():
+		return copyTextContent(sftpClient, a.Text, destPath)
+	case a.IsPath():
+		return sftpCopy(sftpClient, a.Path, destPath)
+	case a.IsURI():
+		blob, err := a.Read()
+		if err != nil {
+			return fmt.Errorf("failed to read remote asset %s: %w", a.URI, err)
+		}
+		defer blob.Close()
+		return copyReaderAsFile(sftpClient, blob, uriBasename(a.URI), destPath)
+	}
+	return fmt.Errorf("asset is neither path-based, text-based, nor URI-based")
+}
+
+func copyArchiveToRemote(sftpClient *sftp.Client, a *resource.Archive, destPath string) error {
+	switch {
+	case a.IsPath():
+		return sftpCopy(sftpClient, a.Path, destPath)
+	case a.IsURI():
+		format, rc, err := a.ReadSourceArchive()
+		if err != nil {
+			return fmt.Errorf("failed to read remote archive %s: %w", a.URI, err)
+		}
+		if format == archive.NotArchive || rc == nil {
+			return fmt.Errorf("URL %q is not a recognized archive format", a.URI)
+		}
+		defer rc.Close()
+		return copyReaderAsFile(sftpClient, rc, uriBasename(a.URI), destPath)
+	case a.IsAssets():
+		return copyAssetArchive(sftpClient, a, destPath)
+	}
+	return fmt.Errorf("archive is neither path-based, URI-based, nor asset-based")
+}
+
+// copyReaderAsFile streams r to destPath via SFTP, mirroring the file-handling logic of sftpCopy:
+// when destPath is an existing directory the contents are written to destPath/sourceName, when
+// destPath does not exist the parent directories are created and the file is written at destPath,
+// and when destPath is an existing file it is overwritten.
+func copyReaderAsFile(sftpClient *sftp.Client, r io.Reader, sourceName, destPath string) error {
+	destStat, err := remoteStat(sftpClient, destPath)
+	if err != nil {
+		return err
+	}
+
+	dest := destPath
+	if destStat != nil && destStat.IsDir() {
+		if sourceName == "" {
+			return fmt.Errorf("remote path %s is a directory; cannot determine destination filename", destPath)
+		}
+		dest = filepath.Join(dest, sourceName)
+	} else if destStat == nil {
+		if err := sftpClient.MkdirAll(filepath.Dir(dest)); err != nil {
+			return fmt.Errorf("failed to create parent directories for %s: %w", dest, err)
+		}
+	}
+
+	remote, err := sftpClient.Create(dest)
+	if err != nil {
+		return fmt.Errorf("failed to create remote file %s: %w", dest, err)
+	}
+	defer remote.Close()
+
+	if _, err := remote.ReadFrom(r); err != nil {
+		return fmt.Errorf("failed to write to remote path %s: %w", dest, err)
+	}
+	return nil
+}
+
+// normalizeArchiveAssets returns an Archive whose Assets map is guaranteed to contain
+// *asset.Asset / *archive.Archive values. The wire decoding for an asset-archive received as a
+// resource input leaves each entry as a raw map[string]any tagged with the appropriate signature,
+// which archive.Open() does not understand. This converts those raw maps using the same
+// deserializer the engine uses for top-level asset/archive properties.
+func normalizeArchiveAssets(a *archive.Archive) (*archive.Archive, error) {
+	if !a.IsAssets() {
+		return a, nil
+	}
+	normalized := make(map[string]any, len(a.Assets))
+	for k, v := range a.Assets {
+		switch v := v.(type) {
+		case *asset.Asset, *archive.Archive, nil:
+			normalized[k] = v
+		case map[string]any:
+			if as, isAsset, err := asset.Deserialize(v); err != nil {
+				return nil, fmt.Errorf("failed to deserialize asset %q in asset archive: %w", k, err)
+			} else if isAsset {
+				normalized[k] = as
+				continue
+			}
+			if ar, isArchive, err := archive.Deserialize(v); err != nil {
+				return nil, fmt.Errorf("failed to deserialize archive %q in asset archive: %w", k, err)
+			} else if isArchive {
+				normalized[k] = ar
+				continue
+			}
+			return nil, fmt.Errorf("asset archive entry %q is neither an asset nor an archive", k)
+		default:
+			return nil, fmt.Errorf("asset archive entry %q has unsupported type %T", k, v)
+		}
+	}
+	return &archive.Archive{Sig: a.Sig, Hash: a.Hash, Assets: normalized}, nil
+}
+
+// copyAssetArchive iterates over the entries of an AssetArchive and writes each one to destPath/name.
+func copyAssetArchive(sftpClient *sftp.Client, a *resource.Archive, destPath string) error {
+	destStat, err := remoteStat(sftpClient, destPath)
+	if err != nil {
+		return err
+	}
+	if destStat != nil && !destStat.IsDir() {
+		return fmt.Errorf("remote path %s exists but is not a directory; cannot copy asset archive contents", destPath)
+	}
+	if destStat == nil {
+		if err := sftpClient.MkdirAll(destPath); err != nil {
+			return fmt.Errorf("failed to create remote directory %s: %w", destPath, err)
+		}
+	}
+
+	normalized, err := normalizeArchiveAssets(a)
+	if err != nil {
+		return err
+	}
+
+	reader, err := normalized.Open()
+	if err != nil {
+		return fmt.Errorf("failed to open asset archive: %w", err)
+	}
+	defer reader.Close()
+
+	for {
+		name, blob, err := reader.Next()
+		if errors.Is(err, io.EOF) {
+			return nil
+		}
+		if err != nil {
+			return fmt.Errorf("failed to read asset archive entry: %w", err)
+		}
+		if err := writeArchiveEntry(sftpClient, blob, filepath.Join(destPath, name)); err != nil {
+			return err
+		}
+	}
+}
+
+func writeArchiveEntry(sftpClient *sftp.Client, blob io.ReadCloser, remotePath string) error {
+	defer blob.Close()
+	if err := sftpClient.MkdirAll(filepath.Dir(remotePath)); err != nil {
+		return fmt.Errorf("failed to create parent directories for %s: %w", remotePath, err)
+	}
+	remote, err := sftpClient.Create(remotePath)
+	if err != nil {
+		return fmt.Errorf("failed to create remote file %s: %w", remotePath, err)
+	}
+	defer remote.Close()
+	if _, err := remote.ReadFrom(blob); err != nil {
+		return fmt.Errorf("failed to copy archive entry to %s: %w", remotePath, err)
+	}
+	return nil
+}
+
+// uriBasename returns the basename of the path component of the given URI, or "" when one cannot be
+// determined (e.g. the URI is malformed or has no path).
+func uriBasename(uri string) string {
+	u, err := url.Parse(uri)
+	if err != nil {
+		return ""
+	}
+	base := path.Base(u.Path)
+	if base == "/" || base == "." {
+		return ""
+	}
+	return base
 }
 
 // If the file does not exist, returns nil, nil.
