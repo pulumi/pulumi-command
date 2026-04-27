@@ -32,7 +32,6 @@ import (
 	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/archive"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
 )
 
 // copyTextContent writes text content directly to a remote file via SFTP.
@@ -277,41 +276,6 @@ func copyReaderAsFile(sftpClient *sftp.Client, r io.Reader, sourceName, destPath
 	return nil
 }
 
-// normalizeArchiveAssets returns an Archive whose Assets map is guaranteed to contain
-// *asset.Asset / *archive.Archive values. The wire decoding for an asset-archive received as a
-// resource input leaves each entry as a raw map[string]any tagged with the appropriate signature,
-// which archive.Open() does not understand. This converts those raw maps using the same
-// deserializer the engine uses for top-level asset/archive properties.
-func normalizeArchiveAssets(a *archive.Archive) (*archive.Archive, error) {
-	if !a.IsAssets() {
-		return a, nil
-	}
-	normalized := make(map[string]any, len(a.Assets))
-	for k, v := range a.Assets {
-		switch v := v.(type) {
-		case *asset.Asset, *archive.Archive, nil:
-			normalized[k] = v
-		case map[string]any:
-			if as, isAsset, err := asset.Deserialize(v); err != nil {
-				return nil, fmt.Errorf("failed to deserialize asset %q in asset archive: %w", k, err)
-			} else if isAsset {
-				normalized[k] = as
-				continue
-			}
-			if ar, isArchive, err := archive.Deserialize(v); err != nil {
-				return nil, fmt.Errorf("failed to deserialize archive %q in asset archive: %w", k, err)
-			} else if isArchive {
-				normalized[k] = ar
-				continue
-			}
-			return nil, fmt.Errorf("asset archive entry %q is neither an asset nor an archive", k)
-		default:
-			return nil, fmt.Errorf("asset archive entry %q has unsupported type %T", k, v)
-		}
-	}
-	return &archive.Archive{Sig: a.Sig, Hash: a.Hash, Assets: normalized}, nil
-}
-
 // copyAssetArchive iterates over the entries of an AssetArchive and writes each one to destPath/name.
 func copyAssetArchive(sftpClient *sftp.Client, a *resource.Archive, destPath string) error {
 	destStat, err := remoteStat(sftpClient, destPath)
@@ -327,12 +291,7 @@ func copyAssetArchive(sftpClient *sftp.Client, a *resource.Archive, destPath str
 		}
 	}
 
-	normalized, err := normalizeArchiveAssets(a)
-	if err != nil {
-		return err
-	}
-
-	reader, err := normalized.Open()
+	reader, err := a.Open()
 	if err != nil {
 		return fmt.Errorf("failed to open asset archive: %w", err)
 	}
