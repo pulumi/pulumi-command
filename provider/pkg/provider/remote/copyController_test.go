@@ -1,9 +1,12 @@
 package remote
 
 import (
-	"context"
+	"archive/zip"
+	"bytes"
 	"fmt"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -23,6 +26,35 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource/asset"
 	"github.com/pulumi/pulumi/sdk/v3/go/property"
 )
+
+// startStaticServer serves the given path→body map over HTTP and returns the base URL. The server
+// is shut down at test end.
+func startStaticServer(t *testing.T, files map[string][]byte) string {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, ok := files[r.URL.Path]
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		_, _ = w.Write(body)
+	}))
+	t.Cleanup(srv.Close)
+	return srv.URL
+}
+
+// makeZipBytes builds an in-memory ZIP archive from the given path→content entries.
+func makeZipBytes(t *testing.T, entries map[string][]byte) []byte {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	for name, body := range entries {
+		w, err := zw.Create(name)
+		require.NoError(t, err)
+		_, err = w.Write(body)
+		require.NoError(t, err)
+	}
+	require.NoError(t, zw.Close())
+	return buf.Bytes()
+}
 
 func testSftpHandler(t *testing.T, baseDir string, sess ssh.Session) {
 	server, err := sftp.NewServer(sess, sftp.WithServerWorkingDirectory(baseDir))
@@ -271,7 +303,7 @@ func TestCheck(t *testing.T) {
 
 	check := func(news property.Map) []p.CheckFailure {
 		ctr := &CopyToRemote{}
-		resp, err := ctr.Check(context.Background(), infer.CheckRequest{Name: "name", NewInputs: news})
+		resp, err := ctr.Check(t.Context(), infer.CheckRequest{Name: "name", NewInputs: news})
 		require.NoError(t, err)
 		return resp.Failures
 	}
@@ -300,22 +332,23 @@ func TestCheck(t *testing.T) {
 		assert.Len(t, failures, 1)
 	})
 
-	t.Run("asset must be path-based", func(t *testing.T) {
-		news := makeNewInput(&asset.Asset{URI: "http://example.com"}, nil)
+	t.Run("happy path, remote (URI) asset", func(t *testing.T) {
+		news := makeNewInput(&asset.Asset{URI: "http://example.com/file.txt"}, nil)
 		failures := check(news)
-		assert.Len(t, failures, 1)
+		assert.Empty(t, failures)
 	})
 
-	t.Run("archive must be path-based", func(t *testing.T) {
-		news := makeNewInput(nil, &archive.Archive{URI: "http://example.com"})
+	t.Run("happy path, remote (URI) archive", func(t *testing.T) {
+		news := makeNewInput(nil, &archive.Archive{URI: "http://example.com/archive.zip"})
 		failures := check(news)
-		assert.Len(t, failures, 1)
+		assert.Empty(t, failures)
 	})
 
-	t.Run("can diagnose multiple issues", func(t *testing.T) {
-		news := makeNewInput(&asset.Asset{URI: "http://example.com"}, &archive.Archive{URI: "http://example.com"})
+	t.Run("happy path, asset archive", func(t *testing.T) {
+		assetMap := map[string]any{"file.txt": &asset.Asset{Text: "hello"}}
+		news := makeNewInput(nil, &archive.Archive{Assets: assetMap})
 		failures := check(news)
-		assert.Len(t, failures, 3)
+		assert.Empty(t, failures)
 	})
 
 	t.Run("happy path, text asset", func(t *testing.T) {
@@ -408,4 +441,162 @@ func TestCopyTextContent(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "is a directory")
 	})
+}
+
+func TestCopyAssetToRemote_RemoteAsset(t *testing.T) {
+	// Serve a small file from a local HTTP server and copy it via a RemoteAsset.
+	body := []byte("hello from remote asset")
+	srvURL := startStaticServer(t, map[string][]byte{"/data/file.txt": body})
+
+	t.Run("copy remote asset to file path", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+
+		a, err := asset.FromURI(srvURL + "/data/file.txt")
+		require.NoError(t, err)
+
+		require.NoError(t, copyAssetToRemote(sftpClient, a, "out.txt"))
+
+		content, err := os.ReadFile(filepath.Join(destDir, "out.txt"))
+		require.NoError(t, err)
+		assert.Equal(t, body, content)
+	})
+
+	t.Run("copy remote asset into existing directory", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+		require.NoError(t, os.Mkdir(filepath.Join(destDir, "sub"), 0o755))
+
+		a, err := asset.FromURI(srvURL + "/data/file.txt")
+		require.NoError(t, err)
+
+		require.NoError(t, copyAssetToRemote(sftpClient, a, "sub"))
+
+		content, err := os.ReadFile(filepath.Join(destDir, "sub", "file.txt"))
+		require.NoError(t, err)
+		assert.Equal(t, body, content)
+	})
+}
+
+func TestCopyArchiveToRemote_RemoteArchive(t *testing.T) {
+	zipBytes := makeZipBytes(t, map[string][]byte{
+		"a.txt":     []byte("a"),
+		"sub/b.txt": []byte("b"),
+	})
+	srvURL := startStaticServer(t, map[string][]byte{"/pkgs/bundle.zip": zipBytes})
+
+	t.Run("copy remote archive to file path as-is", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+
+		arc, err := archive.FromURI(srvURL + "/pkgs/bundle.zip")
+		require.NoError(t, err)
+
+		require.NoError(t, copyArchiveToRemote(sftpClient, arc, "out.zip"))
+
+		content, err := os.ReadFile(filepath.Join(destDir, "out.zip"))
+		require.NoError(t, err)
+		assert.Equal(t, zipBytes, content)
+	})
+
+	t.Run("copy remote archive into existing directory uses URL basename", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+
+		arc, err := archive.FromURI(srvURL + "/pkgs/bundle.zip")
+		require.NoError(t, err)
+
+		require.NoError(t, copyArchiveToRemote(sftpClient, arc, "."))
+
+		content, err := os.ReadFile(filepath.Join(destDir, "bundle.zip"))
+		require.NoError(t, err)
+		assert.Equal(t, zipBytes, content)
+	})
+
+	t.Run("error when remote URL is not an archive", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+
+		arc := &archive.Archive{URI: srvURL + "/pkgs/bundle.zip"}
+		// Override URI to a non-archive extension to force the format detection branch.
+		arc.URI = srvURL + "/data/file.txt"
+		err := copyArchiveToRemote(sftpClient, arc, "out")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "not a recognized archive format")
+	})
+}
+
+func TestCopyArchiveToRemote_AssetArchive(t *testing.T) {
+	t.Run("copy asset archive recursively into directory", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+
+		fileA, err := asset.FromText("alpha")
+		require.NoError(t, err)
+		fileB, err := asset.FromText("beta")
+		require.NoError(t, err)
+
+		arc, err := archive.FromAssets(map[string]any{
+			"a.txt":     fileA,
+			"sub/b.txt": fileB,
+		})
+		require.NoError(t, err)
+
+		require.NoError(t, copyArchiveToRemote(sftpClient, arc, "out"))
+
+		got, err := os.ReadFile(filepath.Join(destDir, "out", "a.txt"))
+		require.NoError(t, err)
+		assert.Equal(t, "alpha", string(got))
+
+		got, err = os.ReadFile(filepath.Join(destDir, "out", "sub", "b.txt"))
+		require.NoError(t, err)
+		assert.Equal(t, "beta", string(got))
+	})
+
+	t.Run("error when destination is an existing file", func(t *testing.T) {
+		baseDir := t.TempDir()
+		destDir := filepath.Join(baseDir, "dest")
+		require.NoError(t, os.Mkdir(destDir, 0o755))
+		sftpClient := startSSHServer(t, destDir)
+		require.NoError(t, os.WriteFile(filepath.Join(destDir, "out"), []byte("x"), 0o600))
+
+		fileA, err := asset.FromText("alpha")
+		require.NoError(t, err)
+		arc, err := archive.FromAssets(map[string]any{"a.txt": fileA})
+		require.NoError(t, err)
+
+		err = copyArchiveToRemote(sftpClient, arc, "out")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is not a directory")
+	})
+}
+
+func TestUriBasename(t *testing.T) {
+	cases := []struct {
+		uri  string
+		want string
+	}{
+		{"http://example.com/foo/bar.zip", "bar.zip"},
+		{"https://example.com/file.txt", "file.txt"},
+		{"file:///tmp/data.tgz", "data.tgz"},
+		{"http://example.com/", ""},
+		{"http://example.com", ""},
+	}
+	for _, c := range cases {
+		t.Run(c.uri, func(t *testing.T) {
+			assert.Equal(t, c.want, uriBasename(c.uri))
+		})
+	}
 }

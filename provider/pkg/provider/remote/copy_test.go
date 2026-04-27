@@ -25,20 +25,6 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 )
 
-func TestAssetSourcePath(t *testing.T) {
-	assetPath, input := createAssetInput(t)
-	require.NotNil(t, input.Source.Asset)
-	require.Equal(t, assetPath, input.Source.Asset.Path)
-	require.Equal(t, assetPath, input.sourcePath())
-}
-
-func TestArchiveSourcePath(t *testing.T) {
-	archivePath, input := createArchiveInput(t)
-	require.NotNil(t, input.Source.Archive)
-	require.Equal(t, archivePath, input.Source.Archive.Path)
-	require.Equal(t, archivePath, input.sourcePath())
-}
-
 func TestAssetHash(t *testing.T) {
 	_, input := createAssetInput(t)
 	require.NotNil(t, input.Source.Asset)
@@ -92,29 +78,8 @@ func createTextAssetInput(t *testing.T) (string, *CopyToRemoteInputs) {
 	return textContent, c
 }
 
-func TestTextAssetContent(t *testing.T) {
-	content, input := createTextAssetInput(t)
-	require.NotNil(t, input.Source.Asset)
-	require.True(t, input.isTextAsset())
-	require.Equal(t, content, input.textContent())
-}
-
 func TestTextAssetHash(t *testing.T) {
 	_, input := createTextAssetInput(t)
 	require.NotNil(t, input.Source.Asset)
 	require.NotEmpty(t, input.hash())
-}
-
-func TestIsTextAsset(t *testing.T) {
-	// Test text asset
-	_, textInput := createTextAssetInput(t)
-	require.True(t, textInput.isTextAsset())
-
-	// Test path asset
-	_, pathInput := createAssetInput(t)
-	require.False(t, pathInput.isTextAsset())
-
-	// Test archive
-	_, archiveInput := createArchiveInput(t)
-	require.False(t, archiveInput.isTextAsset())
 }

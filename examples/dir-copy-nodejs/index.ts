@@ -31,6 +31,40 @@ export = async () => {
         remotePath: to,
     }, { dependsOn: poll });
 
+    // Exercise the remaining asset/archive subtypes that CopyToRemote supports. Each is written to
+    // its own subdirectory under `extrasTo` so the verification command below can list them all.
+    const extrasTo = `${to}-extras`;
+
+    const stringAssetCopy = new remote.CopyToRemote("string-asset", {
+        connection,
+        source: new pulumi.asset.StringAsset("hello from a string asset\n"),
+        remotePath: `${extrasTo}/string-asset.txt`,
+    }, { dependsOn: poll });
+
+    const remoteAssetCopy = new remote.CopyToRemote("remote-asset", {
+        connection,
+        // file:// URIs are resolved on the machine running Pulumi, so this exercises the
+        // RemoteAsset code path without depending on a public HTTP server.
+        source: new pulumi.asset.RemoteAsset("file://" + path.join(__dirname, "src/file1")),
+        remotePath: `${extrasTo}/remote-asset.txt`,
+    }, { dependsOn: poll });
+
+    const remoteArchiveCopy = new remote.CopyToRemote("remote-archive", {
+        connection,
+        source: new pulumi.asset.RemoteArchive("file://" + path.join(__dirname, "fixtures/sample.tar.gz")),
+        // Remote archives are copied as-is, so the destination is a file path.
+        remotePath: `${extrasTo}/remote-archive.tar.gz`,
+    }, { dependsOn: poll });
+
+    const assetArchiveCopy = new remote.CopyToRemote("asset-archive", {
+        connection,
+        source: new pulumi.asset.AssetArchive({
+            "greeting.txt": new pulumi.asset.StringAsset("hello\n"),
+            "nested/answer.txt": new pulumi.asset.StringAsset("42\n"),
+        }),
+        remotePath: `${extrasTo}/asset-archive`,
+    }, { dependsOn: poll });
+
     // Use the source-tree hash as a trigger so `ls` only re-runs when the
     // copy itself changed. FileArchive computes a hash internally but doesn't
     // expose it.
@@ -41,8 +75,15 @@ export = async () => {
         triggers: [hash],
     }, { dependsOn: copy });
 
+    const lsExtras = new remote.Command("ls-extras", {
+        connection,
+        create: `find ${extrasTo} | sort`,
+        triggers: [hash],
+    }, { dependsOn: [stringAssetCopy, remoteAssetCopy, remoteArchiveCopy, assetArchiveCopy] });
+
     return {
         destDir: to,
         lsRemote: ls.stdout,
+        lsExtras: lsExtras.stdout,
     };
 };

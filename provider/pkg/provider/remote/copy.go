@@ -44,7 +44,7 @@ func (c *CopyToRemoteInputs) Annotate(a infer.Annotator) {
 	a.Describe(&c.Connection, "The parameters with which to connect to the remote host.")
 	a.Describe(&c.Triggers, "Trigger replacements on changes to this input.")
 	a.Describe(&c.Source, "An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) "+
-		"to upload as the source of the copy. It must be a `FileAsset`, `StringAsset`, or a `FileArchive`. "+
+		"to upload as the source of the copy. "+
 		"The item will be copied as-is; archives like .tgz will not be unpacked. "+
 		"Directories are copied recursively, overwriting existing files.")
 	a.Describe(&c.RemotePath, "The destination path on the remote host. "+
@@ -52,26 +52,6 @@ func (c *CopyToRemoteInputs) Annotate(a infer.Annotator) {
 		"When the remote path is an existing directory, the source file or directory will be copied into that directory. "+
 		"When the source is a file and the remote path is an existing file, that file will be overwritten. "+
 		"When the source is a directory and the remote path an existing file, the copy will fail.")
-}
-
-func (c *CopyToRemoteInputs) sourcePath() string {
-	if c.Source.Asset != nil {
-		return c.Source.Asset.Path
-	}
-	return c.Source.Archive.Path
-}
-
-// isTextAsset returns true if the source is a text-based asset (StringAsset).
-func (c *CopyToRemoteInputs) isTextAsset() bool {
-	return c.Source.Asset != nil && c.Source.Asset.IsText()
-}
-
-// textContent returns the text content of a StringAsset.
-func (c *CopyToRemoteInputs) textContent() string {
-	if c.Source.Asset != nil {
-		return c.Source.Asset.Text
-	}
-	return ""
 }
 
 func (c *CopyToRemoteInputs) hash() string {
