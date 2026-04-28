@@ -12,6 +12,9 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/pulumi/providertest"
 	"github.com/pulumi/providertest/pulumitest"
 	"github.com/pulumi/providertest/pulumitest/assertpreview"
@@ -20,8 +23,6 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	"github.com/pulumi/pulumi-command/examples/sshfixture"
 )
@@ -96,8 +97,7 @@ func TestStdin(t *testing.T) {
 func TestSimple(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:                    filepath.Join(getCwd(t), "simple"),
-			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
+			Dir: filepath.Join(getCwd(t), "simple"),
 			EditDirs: []integration.EditDir{
 				{
 					Dir:      filepath.Join("simple", "update"),
@@ -142,8 +142,7 @@ func TestSimple(t *testing.T) {
 func TestSimpleWithUpdate(t *testing.T) {
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
-			Dir:                    filepath.Join(getCwd(t), "simple-with-update"),
-			ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {},
+			Dir: filepath.Join(getCwd(t), "simple-with-update"),
 			EditDirs: []integration.EditDir{
 				{
 					Dir:      filepath.Join("simple-with-update", "update-change"),
@@ -312,7 +311,7 @@ func TestSimpleRun(t *testing.T) {
 func TestUpgradeLocalCommand(t *testing.T) {
 	t.Parallel()
 
-	dir := fmt.Sprintf("./stdin")
+	dir := "./stdin"
 
 	test := pulumitest.NewPulumiTest(t, dir,
 		opttest.YarnLink("@pulumi/command"),

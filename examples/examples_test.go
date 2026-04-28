@@ -9,7 +9,7 @@ import (
 	"github.com/pulumi/pulumi/pkg/v3/testing/integration"
 )
 
-func getBaseOptions(t *testing.T) integration.ProgramTestOptions {
+func getBaseOptions(_ *testing.T) integration.ProgramTestOptions {
 	return integration.ProgramTestOptions{
 		ExpectRefreshChanges: true,
 	}
@@ -22,10 +22,4 @@ func getCwd(t *testing.T) string {
 	}
 
 	return cwd
-}
-
-func skipIfShort(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping long-running test in short mode")
-	}
 }

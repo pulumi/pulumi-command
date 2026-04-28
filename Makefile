@@ -33,11 +33,8 @@ export PULUMI_IGNORE_AMBIENT_PLUGINS = true
 
 ensure:: tidy
 
-tidy: tidy_provider tidy_examples
+tidy: tidy_provider
 	cd sdk && go mod tidy
-
-tidy_examples:
-	cd examples && go mod tidy
 
 tidy_provider:
 	cd provider && go mod tidy
@@ -126,7 +123,7 @@ build_sdks: dotnet_sdk go_sdk nodejs_sdk python_sdk java_sdk
 only_build:: build
 
 lint:
-	cd provider && golangci-lint --path-prefix provider --config ../.golangci.yml run
+	golangci-lint run --build-tags=all
 
 
 install:: install_nodejs_sdk install_dotnet_sdk
@@ -157,7 +154,7 @@ install_nodejs_sdk::
 	-yarn unlink --cwd $(WORKING_DIR)/sdk/nodejs/bin
 	yarn link --cwd $(WORKING_DIR)/sdk/nodejs/bin
 
-test:: install_nodejs_sdk tidy_examples test_provider
+test:: install_nodejs_sdk test_provider
 	cd examples && $(GO_TEST_EXEC) -v -tags=all -timeout 2h
 
 # Set these variables to enable signing of the windows binary with Azure Trusted Signing.
