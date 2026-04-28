@@ -1,2 +1,2 @@
-[tools]
-golangci-lint = "2.7.0"
+[env]
+_.vfox-pulumi = { module_path = "." }
