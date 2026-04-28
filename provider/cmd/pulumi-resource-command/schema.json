@@ -253,7 +253,7 @@
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
+          "description": "The command to run on resource deletion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "dir": {
           "type": "string",
@@ -331,7 +331,7 @@
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
+          "description": "The command to run on resource deletion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "dir": {
           "type": "string",
@@ -391,7 +391,7 @@
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
+          "description": "The command to run on resource deletion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "environment": {
           "type": "object",
@@ -450,7 +450,7 @@
         },
         "delete": {
           "type": "string",
-          "description": "The command to run on resource delettion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
+          "description": "The command to run on resource deletion.\n\nThe environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps."
         },
         "environment": {
           "type": "object",

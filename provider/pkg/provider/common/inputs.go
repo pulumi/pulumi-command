@@ -30,7 +30,7 @@ func (c *ResourceInputs) Annotate(a infer.Annotator) {
 		"its inputs are unchanged.\n\n"+
 		"Use `local.runOutput` if you need to run a command on every execution of your program.",
 	)
-	a.Describe(&c.Delete, "The command to run on resource delettion.\n\n"+
+	a.Describe(&c.Delete, "The command to run on resource deletion.\n\n"+
 		"The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to "+
 		"the stdout and stderr properties of the Command resource from previous create or update steps.",
 	)

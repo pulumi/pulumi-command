@@ -276,7 +276,7 @@ namespace Pulumi.Command.Local
         public Output<string?> Create { get; private set; } = null!;
 
         /// <summary>
-        /// The command to run on resource delettion.
+        /// The command to run on resource deletion.
         /// 
         /// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
         /// </summary>
@@ -523,7 +523,7 @@ namespace Pulumi.Command.Local
         public Input<string>? Create { get; set; }
 
         /// <summary>
-        /// The command to run on resource delettion.
+        /// The command to run on resource deletion.
         /// 
         /// The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
         /// </summary>

@@ -121,7 +121,7 @@ class CommandArgs:
                Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
                
                Use `local.runOutput` if you need to run a command on every execution of your program.
-        :param pulumi.Input[_builtins.str] delete: The command to run on resource delettion.
+        :param pulumi.Input[_builtins.str] delete: The command to run on resource deletion.
                
                The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
         :param pulumi.Input[_builtins.str] dir: The directory from which to run the command from. If `dir` does not exist, then
@@ -309,7 +309,7 @@ class CommandArgs:
     @pulumi.getter
     def delete(self) -> Optional[pulumi.Input[_builtins.str]]:
         """
-        The command to run on resource delettion.
+        The command to run on resource deletion.
 
         The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
         """
@@ -623,7 +623,7 @@ class Command(pulumi.CustomResource):
                Note that this command will not be executed if the resource has already been created and its inputs are unchanged.
                
                Use `local.runOutput` if you need to run a command on every execution of your program.
-        :param pulumi.Input[_builtins.str] delete: The command to run on resource delettion.
+        :param pulumi.Input[_builtins.str] delete: The command to run on resource deletion.
                
                The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
         :param pulumi.Input[_builtins.str] dir: The directory from which to run the command from. If `dir` does not exist, then
@@ -981,7 +981,7 @@ class Command(pulumi.CustomResource):
     @pulumi.getter
     def delete(self) -> pulumi.Output[Optional[_builtins.str]]:
         """
-        The command to run on resource delettion.
+        The command to run on resource deletion.
 
         The environment variables `PULUMI_COMMAND_STDOUT` and `PULUMI_COMMAND_STDERR` are set to the stdout and stderr properties of the Command resource from previous create or update steps.
         """
