@@ -7,7 +7,6 @@ on:
     inputs: {}
 
 env:
-  AWS_REGION: us-west-2
   PULUMI_API: https://api.pulumi-staging.io
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
   PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
@@ -43,7 +42,7 @@ jobs:
         private-key: ${{ steps.esc-secrets.outputs.PULUMI_PROVIDER_AUTOMATION_PRIVATE_KEY }}
         owner: ${{ github.repository_owner }}
     - name: Setup mise
-      uses: jdx/mise-action@db69447ab3fe3551c979c98174c303c5d9708e58
+      uses: jdx/mise-action@1c5f70fd400ce6c745085c93ea80026272f8d346
       env:
         MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: 30s
       with:

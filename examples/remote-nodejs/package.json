@@ -1,0 +1,10 @@
+{
+    "name": "command-remote-nodejs",
+    "devDependencies": {
+        "@types/node": "latest"
+    },
+    "dependencies": {
+        "@pulumi/command": "latest",
+        "@pulumi/pulumi": "latest"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "name": "command-dir-copy-nodejs",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^18"
+    },
+    "dependencies": {
+        "@pulumi/command": "latest",
+        "@pulumi/pulumi": "latest",
+        "@types/folder-hash": "^4.0.4",
+        "folder-hash": "^4.0.4",
+        "typescript": "^5.0.0"
+    }
+}
