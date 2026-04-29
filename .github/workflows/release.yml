@@ -61,7 +61,7 @@ jobs:
     - name: Build codegen binaries
       run: make codegen
     - name: Build Provider
-      run: make provider
+      run: make provider_cover
     - name: Check worktree clean
       id: worktreeClean
       uses: pulumi/git-status-check-action@54000b91124a8dd9fd6a872cb41f5dd246a46e7c # v1.1.1
@@ -253,13 +253,31 @@ jobs:
       with:
         version: v2.5.0
         token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Prepare coverage directory
+      run: mkdir -p ${{ github.workspace }}/coverage
+    # `go test -cover` would override the test process's GOCOVERDIR with a
+    # private tmpdir, which then gets inherited (and discarded) by the
+    # provider subprocess. Omit -cover so the env var we set below sticks.
     - name: Run tests
       run: >-
         set -euo pipefail
 
-        cd examples && go test -count=1 -cover -timeout 2h -tags=${{ matrix.language }} -parallel 4 .
+        cd examples && go test -count=1 -timeout 2h -tags=${{ matrix.language }} -parallel 4 .
       env:
         GTIHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GOCOVERDIR: ${{ github.workspace }}/coverage
+    - name: Convert coverage data
+      if: always()
+      run: go tool covdata textfmt -i=${{ github.workspace }}/coverage -o
+        ${{ github.workspace }}/coverage-${{ matrix.language }}.out
+    - name: Upload integration test coverage to Codecov
+      if: always()
+      uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+      with:
+        files: ${{ github.workspace }}/coverage-${{ matrix.language }}.out
+        flags: integration-${{ matrix.language }}
+      env:
+        CODECOV_TOKEN: ${{ steps.esc-secrets.outputs.CODECOV_TOKEN }}
     - if: failure() && github.event_name == 'push'
       name: Notify Slack
       uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
