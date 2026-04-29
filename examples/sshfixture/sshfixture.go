@@ -96,9 +96,9 @@ func startContainer(
 			// finishes and sshd is fully up.
 			WaitingFor: wait.ForAll(
 				wait.ForLog("[ls.io-init] done.").
-					WithStartupTimeout(90 * time.Second),
+					WithStartupTimeout(90*time.Second),
 				wait.ForListeningPort("2222/tcp").
-					WithStartupTimeout(90 * time.Second),
+					WithStartupTimeout(90*time.Second),
 			),
 		},
 		Started: true,
