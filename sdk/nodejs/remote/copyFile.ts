@@ -79,7 +79,7 @@ export class CopyFile extends pulumi.CustomResource {
             if (args?.remotePath === undefined && !opts.urn) {
                 throw new Error("Missing required property 'remotePath'");
             }
-            resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
+            resourceInputs["connection"] = args?.connection ? pulumi.secret(pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults)) : undefined;
             resourceInputs["localPath"] = args?.localPath;
             resourceInputs["remotePath"] = args?.remotePath;
             resourceInputs["triggers"] = args?.triggers;
@@ -115,5 +115,5 @@ export interface CopyFileArgs {
     /**
      * Trigger replacements on changes to this input.
      */
-    triggers?: pulumi.Input<any[]>;
+    triggers?: pulumi.Input<any[] | undefined>;
 }

@@ -24,7 +24,7 @@ class CopyFileArgs:
                  connection: pulumi.Input['ConnectionArgs'],
                  local_path: pulumi.Input[_builtins.str],
                  remote_path: pulumi.Input[_builtins.str],
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
+                 triggers: pulumi.Input[Optional[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a CopyFile resource.
 
@@ -77,14 +77,14 @@ class CopyFileArgs:
 
     @_builtins.property
     @pulumi.getter
-    def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
+    def triggers(self) -> pulumi.Input[Optional[Sequence[Any]]]:
         """
         Trigger replacements on changes to this input.
         """
         return pulumi.get(self, "triggers")
 
     @triggers.setter
-    def triggers(self, value: Optional[pulumi.Input[Sequence[Any]]]):
+    def triggers(self, value: pulumi.Input[Optional[Sequence[Any]]]):
         pulumi.set(self, "triggers", value)
 
 
@@ -99,10 +99,10 @@ class CopyFile(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: Optional[pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
-                 local_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 remote_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 local_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 remote_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
                  __props__=None):
         """
         Copy a local file to a remote host.
@@ -140,10 +140,10 @@ class CopyFile(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: Optional[pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
-                 local_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 remote_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 local_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 remote_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
                  __props__=None):
         pulumi.log.warn("""CopyFile is deprecated: This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.""")
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)

@@ -24,7 +24,7 @@ class CopyToRemoteArgs:
                  connection: pulumi.Input['ConnectionArgs'],
                  remote_path: pulumi.Input[_builtins.str],
                  source: pulumi.Input[Union[pulumi.Asset, pulumi.Archive]],
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None):
+                 triggers: pulumi.Input[Optional[Sequence[Any]]] = None):
         """
         The set of arguments for constructing a CopyToRemote resource.
 
@@ -77,14 +77,14 @@ class CopyToRemoteArgs:
 
     @_builtins.property
     @pulumi.getter
-    def triggers(self) -> Optional[pulumi.Input[Sequence[Any]]]:
+    def triggers(self) -> pulumi.Input[Optional[Sequence[Any]]]:
         """
         Trigger replacements on changes to this input.
         """
         return pulumi.get(self, "triggers")
 
     @triggers.setter
-    def triggers(self, value: Optional[pulumi.Input[Sequence[Any]]]):
+    def triggers(self, value: pulumi.Input[Optional[Sequence[Any]]]):
         pulumi.set(self, "triggers", value)
 
 
@@ -94,10 +94,10 @@ class CopyToRemote(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: Optional[pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
-                 remote_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 source: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]] = None,
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 remote_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 source: pulumi.Input[Optional[Union[pulumi.Asset, pulumi.Archive]]] = None,
+                 triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
                  __props__=None):
         """
         Copy an Asset or Archive to a remote host.
@@ -231,10 +231,10 @@ class CopyToRemote(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: Optional[pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
-                 remote_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 source: Optional[pulumi.Input[Union[pulumi.Asset, pulumi.Archive]]] = None,
-                 triggers: Optional[pulumi.Input[Sequence[Any]]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 remote_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 source: pulumi.Input[Optional[Union[pulumi.Asset, pulumi.Archive]]] = None,
+                 triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):

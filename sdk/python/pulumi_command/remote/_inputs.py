@@ -30,43 +30,43 @@ class ConnectionArgsDict(TypedDict):
     """
     The address of the resource to connect to.
     """
-    agent_socket_path: NotRequired[pulumi.Input[_builtins.str]]
+    agent_socket_path: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
     """
-    dial_error_limit: NotRequired[pulumi.Input[_builtins.int]]
+    dial_error_limit: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
     """
-    host_key: NotRequired[pulumi.Input[_builtins.str]]
+    host_key: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The expected host key to verify the server's identity. If not provided, the host key will be ignored.
     """
-    password: NotRequired[pulumi.Input[_builtins.str]]
+    password: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The password we should use for the connection.
     """
-    per_dial_timeout: NotRequired[pulumi.Input[_builtins.int]]
+    per_dial_timeout: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
     """
-    port: NotRequired[pulumi.Input[_builtins.float]]
+    port: NotRequired[pulumi.Input[Optional[_builtins.float]]]
     """
     The port to connect to. Defaults to 22.
     """
-    private_key: NotRequired[pulumi.Input[_builtins.str]]
+    private_key: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The contents of an SSH key to use for the connection. This takes preference over the password if provided.
     """
-    private_key_password: NotRequired[pulumi.Input[_builtins.str]]
+    private_key_password: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The password to use in case the private key is encrypted.
     """
-    proxy: NotRequired[pulumi.Input['ProxyConnectionArgsDict']]
+    proxy: NotRequired[pulumi.Input[Optional['ProxyConnectionArgs']]]
     """
     The connection settings for the bastion/proxy host.
     """
-    user: NotRequired[pulumi.Input[_builtins.str]]
+    user: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The user that we should use for the connection.
     """
@@ -75,16 +75,16 @@ class ConnectionArgsDict(TypedDict):
 class ConnectionArgs:
     def __init__(__self__, *,
                  host: pulumi.Input[_builtins.str],
-                 agent_socket_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 dial_error_limit: Optional[pulumi.Input[_builtins.int]] = None,
-                 host_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 password: Optional[pulumi.Input[_builtins.str]] = None,
-                 per_dial_timeout: Optional[pulumi.Input[_builtins.int]] = None,
-                 port: Optional[pulumi.Input[_builtins.float]] = None,
-                 private_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 private_key_password: Optional[pulumi.Input[_builtins.str]] = None,
-                 proxy: Optional[pulumi.Input['ProxyConnectionArgs']] = None,
-                 user: Optional[pulumi.Input[_builtins.str]] = None):
+                 agent_socket_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 dial_error_limit: pulumi.Input[Optional[_builtins.int]] = None,
+                 host_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 password: pulumi.Input[Optional[_builtins.str]] = None,
+                 per_dial_timeout: pulumi.Input[Optional[_builtins.int]] = None,
+                 port: pulumi.Input[Optional[_builtins.float]] = None,
+                 private_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 private_key_password: pulumi.Input[Optional[_builtins.str]] = None,
+                 proxy: pulumi.Input[Optional['ProxyConnectionArgs']] = None,
+                 user: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Instructions for how to connect to a remote endpoint.
 
@@ -144,122 +144,122 @@ class ConnectionArgs:
 
     @_builtins.property
     @pulumi.getter(name="agentSocketPath")
-    def agent_socket_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def agent_socket_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         """
         return pulumi.get(self, "agent_socket_path")
 
     @agent_socket_path.setter
-    def agent_socket_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def agent_socket_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "agent_socket_path", value)
 
     @_builtins.property
     @pulumi.getter(name="dialErrorLimit")
-    def dial_error_limit(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def dial_error_limit(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
         return pulumi.get(self, "dial_error_limit")
 
     @dial_error_limit.setter
-    def dial_error_limit(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def dial_error_limit(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "dial_error_limit", value)
 
     @_builtins.property
     @pulumi.getter(name="hostKey")
-    def host_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def host_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         """
         return pulumi.get(self, "host_key")
 
     @host_key.setter
-    def host_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def host_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "host_key", value)
 
     @_builtins.property
     @pulumi.getter
-    def password(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def password(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The password we should use for the connection.
         """
         return pulumi.get(self, "password")
 
     @password.setter
-    def password(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def password(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "password", value)
 
     @_builtins.property
     @pulumi.getter(name="perDialTimeout")
-    def per_dial_timeout(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def per_dial_timeout(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
         """
         return pulumi.get(self, "per_dial_timeout")
 
     @per_dial_timeout.setter
-    def per_dial_timeout(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def per_dial_timeout(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "per_dial_timeout", value)
 
     @_builtins.property
     @pulumi.getter
-    def port(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def port(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The port to connect to. Defaults to 22.
         """
         return pulumi.get(self, "port")
 
     @port.setter
-    def port(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def port(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "port", value)
 
     @_builtins.property
     @pulumi.getter(name="privateKey")
-    def private_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def private_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         """
         return pulumi.get(self, "private_key")
 
     @private_key.setter
-    def private_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def private_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "private_key", value)
 
     @_builtins.property
     @pulumi.getter(name="privateKeyPassword")
-    def private_key_password(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def private_key_password(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The password to use in case the private key is encrypted.
         """
         return pulumi.get(self, "private_key_password")
 
     @private_key_password.setter
-    def private_key_password(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def private_key_password(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "private_key_password", value)
 
     @_builtins.property
     @pulumi.getter
-    def proxy(self) -> Optional[pulumi.Input['ProxyConnectionArgs']]:
+    def proxy(self) -> pulumi.Input[Optional['ProxyConnectionArgs']]:
         """
         The connection settings for the bastion/proxy host.
         """
         return pulumi.get(self, "proxy")
 
     @proxy.setter
-    def proxy(self, value: Optional[pulumi.Input['ProxyConnectionArgs']]):
+    def proxy(self, value: pulumi.Input[Optional['ProxyConnectionArgs']]):
         pulumi.set(self, "proxy", value)
 
     @_builtins.property
     @pulumi.getter
-    def user(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def user(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The user that we should use for the connection.
         """
         return pulumi.get(self, "user")
 
     @user.setter
-    def user(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def user(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "user", value)
 
 
@@ -271,39 +271,39 @@ class ProxyConnectionArgsDict(TypedDict):
     """
     The address of the bastion host to connect to.
     """
-    agent_socket_path: NotRequired[pulumi.Input[_builtins.str]]
+    agent_socket_path: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
     """
-    dial_error_limit: NotRequired[pulumi.Input[_builtins.int]]
+    dial_error_limit: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
     """
-    host_key: NotRequired[pulumi.Input[_builtins.str]]
+    host_key: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The expected host key to verify the server's identity. If not provided, the host key will be ignored.
     """
-    password: NotRequired[pulumi.Input[_builtins.str]]
+    password: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The password we should use for the connection to the bastion host.
     """
-    per_dial_timeout: NotRequired[pulumi.Input[_builtins.int]]
+    per_dial_timeout: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
     """
-    port: NotRequired[pulumi.Input[_builtins.float]]
+    port: NotRequired[pulumi.Input[Optional[_builtins.float]]]
     """
     The port of the bastion host to connect to.
     """
-    private_key: NotRequired[pulumi.Input[_builtins.str]]
+    private_key: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The contents of an SSH key to use for the connection. This takes preference over the password if provided.
     """
-    private_key_password: NotRequired[pulumi.Input[_builtins.str]]
+    private_key_password: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The password to use in case the private key is encrypted.
     """
-    user: NotRequired[pulumi.Input[_builtins.str]]
+    user: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     The user that we should use for the connection to the bastion host.
     """
@@ -312,15 +312,15 @@ class ProxyConnectionArgsDict(TypedDict):
 class ProxyConnectionArgs:
     def __init__(__self__, *,
                  host: pulumi.Input[_builtins.str],
-                 agent_socket_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 dial_error_limit: Optional[pulumi.Input[_builtins.int]] = None,
-                 host_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 password: Optional[pulumi.Input[_builtins.str]] = None,
-                 per_dial_timeout: Optional[pulumi.Input[_builtins.int]] = None,
-                 port: Optional[pulumi.Input[_builtins.float]] = None,
-                 private_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 private_key_password: Optional[pulumi.Input[_builtins.str]] = None,
-                 user: Optional[pulumi.Input[_builtins.str]] = None):
+                 agent_socket_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 dial_error_limit: pulumi.Input[Optional[_builtins.int]] = None,
+                 host_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 password: pulumi.Input[Optional[_builtins.str]] = None,
+                 per_dial_timeout: pulumi.Input[Optional[_builtins.int]] = None,
+                 port: pulumi.Input[Optional[_builtins.float]] = None,
+                 private_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 private_key_password: pulumi.Input[Optional[_builtins.str]] = None,
+                 user: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Instructions for how to connect to a remote endpoint via a bastion host.
 
@@ -377,110 +377,110 @@ class ProxyConnectionArgs:
 
     @_builtins.property
     @pulumi.getter(name="agentSocketPath")
-    def agent_socket_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def agent_socket_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         """
         return pulumi.get(self, "agent_socket_path")
 
     @agent_socket_path.setter
-    def agent_socket_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def agent_socket_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "agent_socket_path", value)
 
     @_builtins.property
     @pulumi.getter(name="dialErrorLimit")
-    def dial_error_limit(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def dial_error_limit(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
         return pulumi.get(self, "dial_error_limit")
 
     @dial_error_limit.setter
-    def dial_error_limit(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def dial_error_limit(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "dial_error_limit", value)
 
     @_builtins.property
     @pulumi.getter(name="hostKey")
-    def host_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def host_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         """
         return pulumi.get(self, "host_key")
 
     @host_key.setter
-    def host_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def host_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "host_key", value)
 
     @_builtins.property
     @pulumi.getter
-    def password(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def password(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The password we should use for the connection to the bastion host.
         """
         return pulumi.get(self, "password")
 
     @password.setter
-    def password(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def password(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "password", value)
 
     @_builtins.property
     @pulumi.getter(name="perDialTimeout")
-    def per_dial_timeout(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def per_dial_timeout(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
         """
         return pulumi.get(self, "per_dial_timeout")
 
     @per_dial_timeout.setter
-    def per_dial_timeout(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def per_dial_timeout(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "per_dial_timeout", value)
 
     @_builtins.property
     @pulumi.getter
-    def port(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def port(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The port of the bastion host to connect to.
         """
         return pulumi.get(self, "port")
 
     @port.setter
-    def port(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def port(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "port", value)
 
     @_builtins.property
     @pulumi.getter(name="privateKey")
-    def private_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def private_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The contents of an SSH key to use for the connection. This takes preference over the password if provided.
         """
         return pulumi.get(self, "private_key")
 
     @private_key.setter
-    def private_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def private_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "private_key", value)
 
     @_builtins.property
     @pulumi.getter(name="privateKeyPassword")
-    def private_key_password(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def private_key_password(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The password to use in case the private key is encrypted.
         """
         return pulumi.get(self, "private_key_password")
 
     @private_key_password.setter
-    def private_key_password(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def private_key_password(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "private_key_password", value)
 
     @_builtins.property
     @pulumi.getter
-    def user(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def user(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The user that we should use for the connection to the bastion host.
         """
         return pulumi.get(self, "user")
 
     @user.setter
-    def user(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def user(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "user", value)
 
 

@@ -305,7 +305,7 @@ export interface RunOutputArgs {
      * injected into the environment of the next run as PULUMI_COMMAND_STDOUT and PULUMI_COMMAND_STDERR.
      * Defaults to true.
      */
-    addPreviousOutputInEnv?: pulumi.Input<boolean>;
+    addPreviousOutputInEnv?: pulumi.Input<boolean | undefined>;
     /**
      * A list of path globs to return as a single archive asset after the command completes.
      *
@@ -346,7 +346,7 @@ export interface RunOutputArgs {
      * - src/index.js
      * ```
      */
-    archivePaths?: pulumi.Input<pulumi.Input<string>[]>;
+    archivePaths?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * A list of path globs to read after the command completes.
      *
@@ -387,7 +387,7 @@ export interface RunOutputArgs {
      * - src/index.js
      * ```
      */
-    assetPaths?: pulumi.Input<pulumi.Input<string>[]>;
+    assetPaths?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * The command to run.
      */
@@ -396,24 +396,24 @@ export interface RunOutputArgs {
      * The directory from which to run the command from. If `dir` does not exist, then
      * `Command` will fail.
      */
-    dir?: pulumi.Input<string>;
+    dir?: pulumi.Input<string | undefined>;
     /**
      * Additional environment variables available to the command's process.
      */
-    environment?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    environment?: pulumi.Input<{[key: string]: pulumi.Input<string>} | undefined>;
     /**
      * The program and arguments to run the command.
      * On Linux and macOS, defaults to: `["/bin/sh", "-c"]`. On Windows, defaults to: `["cmd", "/C"]`
      */
-    interpreter?: pulumi.Input<pulumi.Input<string>[]>;
+    interpreter?: pulumi.Input<pulumi.Input<string>[] | undefined>;
     /**
      * If the command's stdout and stderr should be logged. This doesn't affect the capturing of
      * stdout and stderr as outputs. If there might be secrets in the output, you can disable logging here and mark the
      * outputs as secret via 'additionalSecretOutputs'. Defaults to logging both stdout and stderr.
      */
-    logging?: pulumi.Input<enums.local.Logging>;
+    logging?: pulumi.Input<enums.local.Logging | undefined>;
     /**
      * Pass a string to the command's process as standard in
      */
-    stdin?: pulumi.Input<string>;
+    stdin?: pulumi.Input<string | undefined>;
 }
