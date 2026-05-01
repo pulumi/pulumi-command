@@ -16,11 +16,11 @@ export namespace remote {
         /**
          * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
          */
-        agentSocketPath?: pulumi.Input<string>;
+        agentSocketPath?: pulumi.Input<string | undefined>;
         /**
          * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
          */
-        dialErrorLimit?: pulumi.Input<number>;
+        dialErrorLimit?: pulumi.Input<number | undefined>;
         /**
          * The address of the resource to connect to.
          */
@@ -28,35 +28,35 @@ export namespace remote {
         /**
          * The expected host key to verify the server's identity. If not provided, the host key will be ignored.
          */
-        hostKey?: pulumi.Input<string>;
+        hostKey?: pulumi.Input<string | undefined>;
         /**
          * The password we should use for the connection.
          */
-        password?: pulumi.Input<string>;
+        password?: pulumi.Input<string | undefined>;
         /**
          * Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
          */
-        perDialTimeout?: pulumi.Input<number>;
+        perDialTimeout?: pulumi.Input<number | undefined>;
         /**
          * The port to connect to. Defaults to 22.
          */
-        port?: pulumi.Input<number>;
+        port?: pulumi.Input<number | undefined>;
         /**
          * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
          */
-        privateKey?: pulumi.Input<string>;
+        privateKey?: pulumi.Input<string | undefined>;
         /**
          * The password to use in case the private key is encrypted.
          */
-        privateKeyPassword?: pulumi.Input<string>;
+        privateKeyPassword?: pulumi.Input<string | undefined>;
         /**
          * The connection settings for the bastion/proxy host.
          */
-        proxy?: pulumi.Input<inputs.remote.ProxyConnectionArgs>;
+        proxy?: pulumi.Input<inputs.remote.ProxyConnectionArgs | undefined>;
         /**
          * The user that we should use for the connection.
          */
-        user?: pulumi.Input<string>;
+        user?: pulumi.Input<string | undefined>;
     }
     /**
      * connectionArgsProvideDefaults sets the appropriate defaults for ConnectionArgs
@@ -67,7 +67,7 @@ export namespace remote {
             dialErrorLimit: (val.dialErrorLimit) ?? 10,
             perDialTimeout: (val.perDialTimeout) ?? 15,
             port: (val.port) ?? 22,
-            proxy: (val.proxy ? pulumi.output(val.proxy).apply(inputs.remote.proxyConnectionArgsProvideDefaults) : undefined),
+            proxy: pulumi.output(val.proxy).apply(v => v === undefined ? undefined : inputs.remote.proxyConnectionArgsProvideDefaults(v)),
             user: (val.user) ?? "root",
         };
     }
@@ -79,11 +79,11 @@ export namespace remote {
         /**
          * SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
          */
-        agentSocketPath?: pulumi.Input<string>;
+        agentSocketPath?: pulumi.Input<string | undefined>;
         /**
          * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
          */
-        dialErrorLimit?: pulumi.Input<number>;
+        dialErrorLimit?: pulumi.Input<number | undefined>;
         /**
          * The address of the bastion host to connect to.
          */
@@ -91,31 +91,31 @@ export namespace remote {
         /**
          * The expected host key to verify the server's identity. If not provided, the host key will be ignored.
          */
-        hostKey?: pulumi.Input<string>;
+        hostKey?: pulumi.Input<string | undefined>;
         /**
          * The password we should use for the connection to the bastion host.
          */
-        password?: pulumi.Input<string>;
+        password?: pulumi.Input<string | undefined>;
         /**
          * Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
          */
-        perDialTimeout?: pulumi.Input<number>;
+        perDialTimeout?: pulumi.Input<number | undefined>;
         /**
          * The port of the bastion host to connect to.
          */
-        port?: pulumi.Input<number>;
+        port?: pulumi.Input<number | undefined>;
         /**
          * The contents of an SSH key to use for the connection. This takes preference over the password if provided.
          */
-        privateKey?: pulumi.Input<string>;
+        privateKey?: pulumi.Input<string | undefined>;
         /**
          * The password to use in case the private key is encrypted.
          */
-        privateKeyPassword?: pulumi.Input<string>;
+        privateKeyPassword?: pulumi.Input<string | undefined>;
         /**
          * The user that we should use for the connection to the bastion host.
          */
-        user?: pulumi.Input<string>;
+        user?: pulumi.Input<string | undefined>;
     }
     /**
      * proxyConnectionArgsProvideDefaults sets the appropriate defaults for ProxyConnectionArgs

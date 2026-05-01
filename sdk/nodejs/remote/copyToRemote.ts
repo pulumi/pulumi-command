@@ -137,7 +137,7 @@ export class CopyToRemote extends pulumi.CustomResource {
             if (args?.source === undefined && !opts.urn) {
                 throw new Error("Missing required property 'source'");
             }
-            resourceInputs["connection"] = args?.connection ? pulumi.secret((args.connection ? pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults) : undefined)) : undefined;
+            resourceInputs["connection"] = args?.connection ? pulumi.secret(pulumi.output(args.connection).apply(inputs.remote.connectionArgsProvideDefaults)) : undefined;
             resourceInputs["remotePath"] = args?.remotePath;
             resourceInputs["source"] = args?.source;
             resourceInputs["triggers"] = args?.triggers;
@@ -175,5 +175,5 @@ export interface CopyToRemoteArgs {
     /**
      * Trigger replacements on changes to this input.
      */
-    triggers?: pulumi.Input<any[]>;
+    triggers?: pulumi.Input<any[] | undefined>;
 }
