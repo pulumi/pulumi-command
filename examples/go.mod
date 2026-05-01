@@ -4,8 +4,8 @@ go 1.25.8
 
 require (
 	github.com/pulumi/providertest v0.7.0
-	github.com/pulumi/pulumi/pkg/v3 v3.233.0
-	github.com/pulumi/pulumi/sdk/v3 v3.233.0
+	github.com/pulumi/pulumi/pkg/v3 v3.234.0
+	github.com/pulumi/pulumi/sdk/v3 v3.234.0
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.34.0
 	golang.org/x/crypto v0.50.0
