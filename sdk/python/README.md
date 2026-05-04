@@ -6,7 +6,7 @@
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/pulumi/pulumi-command/sdk/go)](https://pkg.go.dev/github.com/pulumi/pulumi-command/sdk/go)
 [![License](https://img.shields.io/npm/l/%40pulumi%2Fpulumi.svg)](https://github.com/pulumi/pulumi-command/blob/master/LICENSE)
 
-# Pulumi Command Provider (preview)
+# Pulumi Command Provider
 
 The Pulumi Command Provider enables you to execute commands and scripts either locally or remotely as part of the Pulumi resource model.  Resources in the command package support running scripts on `create` and `destroy` operations, supporting stateful local and remote command execution.
 
@@ -23,8 +23,6 @@ Some users may have experience with Terraform "provisioners", and the Command pa
 You can use the Command package from a Pulumi program written in any Pulumi language: C#, Go, JavaScript/TypeScript, Python, and YAML.
 You'll need to [install and configure the Pulumi CLI](https://pulumi.com/docs/get-started/install) if you haven't already.
 
-
-> **NOTE**: The Command package is in preview.  The API design may change ahead of general availability based on [user feedback](https://github.com/pulumi/pulumi-command/issues). 
 
 ## Examples
 
