@@ -231,8 +231,22 @@ func TestDirCopyNodejs(t *testing.T) {
 	cfg, secrets := remoteBaseConfig(server)
 
 	const dest = "/tmp/dir-copy-nodejs"
+	const extrasDest = dest + "-extras"
 	cfg["destDir"] = dest
 	basePath := filepath.Join(getCwd(t), "dir-copy-nodejs")
+
+	expectedExtras := extrasDest + "\n" +
+		extrasDest + "/asset-archive\n" +
+		extrasDest + "/asset-archive/greeting.txt\n" +
+		extrasDest + "/asset-archive/nested\n" +
+		extrasDest + "/asset-archive/nested/answer.txt\n" +
+		extrasDest + "/remote-archive.tar.gz\n" +
+		extrasDest + "/remote-asset.txt\n" +
+		extrasDest + "/string-asset.txt"
+
+	assertExtras := func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
+		assert.Equal(t, expectedExtras, stringOutput(t, stack, "lsExtras"))
+	}
 
 	test := getJSBaseOptions(t).
 		With(integration.ProgramTestOptions{
@@ -249,6 +263,8 @@ func TestDirCopyNodejs(t *testing.T) {
 						dest+"/one/two\n"+
 						dest+"/one/two/file3",
 					remoteLS)
+
+				assertExtras(t, stack)
 			},
 			EditDirs: []integration.EditDir{
 				{
@@ -266,6 +282,8 @@ func TestDirCopyNodejs(t *testing.T) {
 								dest+"/one/two\n"+
 								dest+"/one/two/file3",
 							remoteLS)
+
+						assertExtras(t, stack)
 					},
 				},
 			},
