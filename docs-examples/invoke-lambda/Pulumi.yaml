@@ -1,3 +1,0 @@
-name: invoke-lambda
-runtime: hcl
-description: Invoke an AWS Lambda function during deployment

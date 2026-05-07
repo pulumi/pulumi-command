@@ -1,3 +1,0 @@
-name: eks-cleanup
-runtime: hcl
-description: Run a delete-only Command to clean up Kubernetes resources before destroying an EKS cluster

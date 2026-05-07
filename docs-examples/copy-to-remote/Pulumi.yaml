@@ -1,3 +1,0 @@
-name: copy-to-remote
-runtime: hcl
-description: Copy files to a remote host and verify their presence
