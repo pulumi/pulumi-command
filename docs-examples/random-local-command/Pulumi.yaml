@@ -1,0 +1,3 @@
+name: random-local-command
+runtime: hcl
+description: A simple local Command that produces some randomness
