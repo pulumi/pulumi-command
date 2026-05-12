@@ -18,7 +18,7 @@ There are many scenarios where the Command package can be useful:
 
 Some users may have experience with Terraform "provisioners", and the Command package offers support for similar scenarios.  However, the Command package is provided as independent resources which can be combined with other resources in many interesting ways. This has many strengths, but also some differences, such as the fact that a Command resource failing does not cause a resource it is operating on to fail.
 
-You can use the Command package from a Pulumi program written in any Pulumi language: C#, Go, Java, JavaScript/TypeScript, Python, and YAML.
+You can use the Command package from a Pulumi program written in any Pulumi language: C#, Go, HCL, Java, JavaScript/TypeScript, Python, and YAML.
 You'll need to [install and configure the Pulumi CLI](https://pulumi.com/docs/install/) if you haven't already.
 
 ## Examples
@@ -27,7 +27,7 @@ You'll need to [install and configure the Pulumi CLI](https://pulumi.com/docs/in
 
 The simplest use case for `local.Command` is to just run a command on `create`, which can return some value which will be stored in the state file, and will be persistent for the life of the stack (or until the resource is destroyed or replaced).  The example below uses this as an alternative to the `random` package to create some randomness which is stored in Pulumi state.
 
-{{< chooser language "javascript,typescript,python,go,csharp,yaml,java" >}}
+{{< chooser language "javascript,typescript,python,go,csharp,yaml,java,hcl" >}}
 
 {{% choosable language javascript %}}
 
@@ -167,6 +167,20 @@ public class App {
 
 {{% /choosable %}}
 
+{{% choosable language hcl %}}
+
+```hcl
+resource "command_local_command" "random" {
+  create = "openssl rand -hex 16"
+}
+
+output "output" {
+  value = command_local_command.random.stdout
+}
+```
+
+{{% /choosable %}}
+
 {{< /chooser >}}
 
 ### Remote Commands and Copying Assets To Remote Hosts
@@ -177,7 +191,7 @@ Because the `Command` and `CopyToRemote` resources replace on changes to their c
 
 Note also that `deleteBeforeReplace` can be composed with `Command` resources to ensure that the `delete` operation on an "old" instance is run before the `create` operation of the new instance, in case a scarce resource is managed by the command.  Similarly, other resource options can naturally be applied to `Command` resources, like `ignoreChanges`.
 
-{{< chooser language "typescript,python,go,csharp,java,yaml" >}}
+{{< chooser language "typescript,python,go,csharp,java,yaml,hcl" >}}
 
 {{% choosable language "javascript,typescript" %}}
 
@@ -515,6 +529,69 @@ outputs:
 
 {{% /choosable %}}
 
+{{% choosable language hcl %}}
+
+```hcl
+variable "server_public_ip" {
+  type = string
+}
+
+variable "user_name" {
+  type = string
+}
+
+variable "private_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "payload" {
+  type        = string
+  description = "Local source directory or archive to copy."
+}
+
+variable "dest_dir" {
+  type        = string
+  description = "Destination directory on the remote host."
+}
+
+locals {
+  # The source directory or archive to copy.
+  archive = fileArchive(var.payload)
+
+  # The configuration of our SSH connection to the instance.
+  conn = {
+    host        = var.server_public_ip
+    user        = var.user_name
+    private_key = var.private_key
+  }
+}
+
+# Copy the files to the remote.
+resource "command_remote_copytoremote" "copy" {
+  connection  = local.conn
+  source      = local.archive
+  remote_path = var.dest_dir
+}
+
+# Verify that the expected files were copied to the remote.
+# We want to run this after each copy, i.e., when something changed,
+# so we use the asset to be copied as a trigger.
+resource "command_remote_command" "find" {
+  connection = local.conn
+  create     = "find ${var.dest_dir}/${var.payload} | sort"
+  triggers   = [local.archive]
+
+  depends_on = [command_remote_copytoremote.copy]
+}
+
+output "remoteContents" {
+  value = command_remote_command.find.stdout
+}
+```
+
+{{% /choosable %}}
+
 {{< /chooser >}}
 
 ### Invoking a Lambda during Pulumi deployment
@@ -525,7 +602,7 @@ Note that the Lambda function itself can be created within the same Pulumi progr
 
 The example below simply creates some random value within the Lambda, which is a very roundabout way of doing the same thing as the first "random" example above, but this pattern can be used for more complex scenarios where the Lambda does things a local script could not.
 
-{{< chooser language "javascript,typescript,python,go,csharp,java,yaml" >}}
+{{< chooser language "javascript,typescript,python,go,csharp,java,yaml,hcl" >}}
 
 {{% choosable language "javascript" %}}
 
@@ -893,6 +970,64 @@ outputs:
 
 {{% /choosable %}}
 
+{{% choosable language hcl %}}
+
+```hcl
+pulumi {
+  required_providers {
+    aws = {
+      source  = "pulumi/aws"
+      version = ">= 7.0.0"
+    }
+  }
+}
+
+variable "aws_region" {
+  type        = string
+  description = "AWS region for the Lambda function."
+}
+
+resource "aws_iam_role" "lambda_role" {
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_lambda_function" "lambda_function" {
+  name    = "f"
+  publish = true
+  role    = aws_iam_role.lambda_role.arn
+  handler = "index.handler"
+  runtime = "nodejs20.x"
+  code    = fileArchive("./handler")
+}
+
+resource "command_local_command" "invoke" {
+  create = "aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"${pulumi.stack}\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt"
+
+  environment = {
+    FN         = aws_lambda_function.lambda_function.arn
+    AWS_REGION = var.aws_region
+    AWS_PAGER  = ""
+  }
+
+  depends_on = [aws_lambda_function.lambda_function]
+}
+
+output "output" {
+  value = command_local_command.invoke.stdout
+}
+```
+
+{{% /choosable %}}
+
 {{< /chooser >}}
 
 ### Using `local.Command` with CURL to manage external REST API
@@ -973,7 +1108,7 @@ curl \
 
 There are cases where it's important to run some cleanup operation before destroying a resource, in case destroying the resource does not properly handle orderly cleanup.  For example, destroying an EKS Cluster will not ensure that all Kubernetes object finalizers are run, which may lead to leaking external resources managed by those Kubernetes resources.  This example shows how we can use a `delete`-only `Command` to ensure some cleanup is run within a cluster before destroying it.
 
-{{< chooser language "javascript,typescript,python,go,csharp,java,yaml" >}}
+{{< chooser language "javascript,typescript,python,go,csharp,java,yaml,hcl" >}}
 
 {{% choosable language "javascript" %}}
 
@@ -1165,6 +1300,40 @@ resources:
       interpreter: ["/bin/bash", "-c"]
       environment:
         KUBECONFIG_DATA: "${cluster.kubeconfigJson}"
+```
+
+{{% /choosable %}}
+
+{{% choosable language hcl %}}
+
+```hcl
+pulumi {
+  required_providers {
+    eks = {
+      source  = "pulumi/eks"
+      version = ">= 3.0.0"
+    }
+  }
+}
+
+resource "eks_cluster" "cluster" {
+}
+
+# We could also use `command_remote_command` to run this from
+# within a node in the cluster.
+resource "command_local_command" "cleanup_kubernetes_namespaces" {
+  # This will run before the cluster is destroyed.
+  # Everything else will need to depend on this resource
+  # to ensure this cleanup doesn't happen too early.
+  delete = "kubectl --kubeconfig <(echo \"$KUBECONFIG_DATA\") delete namespace nginx\n"
+
+  # Process substitution "<()" doesn't work in the default interpreter sh.
+  interpreter = ["/bin/bash", "-c"]
+
+  environment = {
+    KUBECONFIG_DATA = eks_cluster.cluster.kubeconfig_json
+  }
+}
 ```
 
 {{% /choosable %}}
