@@ -62,7 +62,7 @@ class ConnectionArgsDict(TypedDict):
     """
     The password to use in case the private key is encrypted.
     """
-    proxy: NotRequired[pulumi.Input[Optional['ProxyConnectionArgs']]]
+    proxy: NotRequired[pulumi.Input[Optional['ProxyConnectionArgsDict']]]
     """
     The connection settings for the bastion/proxy host.
     """
