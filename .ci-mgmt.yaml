@@ -6,6 +6,7 @@ providerDefaultBranch: main
 parallel: 3
 timeout: 0.0000001
 noSchema: true # Disable schema check.
+integrationTestCoverage: true
 envOverride:
     PULUMI_API: https://api.pulumi-staging.io
 esc:
