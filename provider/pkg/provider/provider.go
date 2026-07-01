@@ -25,6 +25,8 @@ import (
 
 const (
 	Name = "command"
+
+	respectSchemaVersion = "respectSchemaVersion"
 )
 
 // This provider uses the `pulumi-go-provider` library to produce a code-first provider definition.
@@ -49,21 +51,21 @@ func NewProvider() p.Provider {
 			// This contains language specific details for generating the provider's SDKs
 			LanguageMap: map[string]any{
 				"csharp": map[string]any{
-					"respectSchemaVersion": true,
+					respectSchemaVersion: true,
 					"packageReferences": map[string]string{
 						"Pulumi": "3.*",
 					},
 				},
 				"go": map[string]any{
-					"respectSchemaVersion":           true,
+					respectSchemaVersion:             true,
 					"generateResourceContainerTypes": true,
 					"importBasePath":                 "github.com/pulumi/pulumi-command/sdk/go/command",
 				},
 				"nodejs": map[string]any{
-					"respectSchemaVersion": true,
+					respectSchemaVersion: true,
 				},
 				"python": map[string]any{
-					"respectSchemaVersion": true,
+					respectSchemaVersion: true,
 					"pyproject": map[string]bool{
 						"enabled": true,
 					},
