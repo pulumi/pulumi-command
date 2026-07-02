@@ -27,6 +27,12 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/property"
 )
 
+// Fixture values reused across the copy controller tests.
+const (
+	pathToFile = "path/to/file"
+	aTxtFile   = "a.txt"
+)
+
 // startStaticServer serves the given path→body map over HTTP and returns the base URL. The server
 // is shut down at test end.
 func startStaticServer(t *testing.T, files map[string][]byte) string {
@@ -309,19 +315,19 @@ func TestCheck(t *testing.T) {
 	}
 
 	t.Run("happy path, asset", func(t *testing.T) {
-		news := makeNewInput(&asset.Asset{Path: "path/to/file"}, nil)
+		news := makeNewInput(&asset.Asset{Path: pathToFile}, nil)
 		failures := check(news)
 		assert.Empty(t, failures)
 	})
 
 	t.Run("happy path, archive", func(t *testing.T) {
-		news := makeNewInput(nil, &archive.Archive{Path: "path/to/file"})
+		news := makeNewInput(nil, &archive.Archive{Path: pathToFile})
 		failures := check(news)
 		assert.Empty(t, failures)
 	})
 
 	t.Run("asset or archive, not both", func(t *testing.T) {
-		news := makeNewInput(&asset.Asset{Path: "path/to/file"}, &archive.Archive{Path: "path/to/file"})
+		news := makeNewInput(&asset.Asset{Path: pathToFile}, &archive.Archive{Path: pathToFile})
 		failures := check(news)
 		assert.Len(t, failures, 1)
 	})
@@ -484,7 +490,7 @@ func TestCopyAssetToRemote_RemoteAsset(t *testing.T) {
 
 func TestCopyArchiveToRemote_RemoteArchive(t *testing.T) {
 	zipBytes := makeZipBytes(t, map[string][]byte{
-		"a.txt":     []byte("a"),
+		aTxtFile:    []byte("a"),
 		"sub/b.txt": []byte("b"),
 	})
 	srvURL := startStaticServer(t, map[string][]byte{"/pkgs/bundle.zip": zipBytes})
@@ -549,14 +555,14 @@ func TestCopyArchiveToRemote_AssetArchive(t *testing.T) {
 		require.NoError(t, err)
 
 		arc, err := archive.FromAssets(map[string]any{
-			"a.txt":     fileA,
+			aTxtFile:    fileA,
 			"sub/b.txt": fileB,
 		})
 		require.NoError(t, err)
 
 		require.NoError(t, copyArchiveToRemote(sftpClient, arc, "out"))
 
-		got, err := os.ReadFile(filepath.Join(destDir, "out", "a.txt"))
+		got, err := os.ReadFile(filepath.Join(destDir, "out", aTxtFile))
 		require.NoError(t, err)
 		assert.Equal(t, "alpha", string(got))
 
@@ -574,7 +580,7 @@ func TestCopyArchiveToRemote_AssetArchive(t *testing.T) {
 
 		fileA, err := asset.FromText("alpha")
 		require.NoError(t, err)
-		arc, err := archive.FromAssets(map[string]any{"a.txt": fileA})
+		arc, err := archive.FromAssets(map[string]any{aTxtFile: fileA})
 		require.NoError(t, err)
 
 		err = copyArchiveToRemote(sftpClient, arc, "out")
