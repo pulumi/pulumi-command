@@ -159,12 +159,8 @@ type RunResult struct {
 }
 
 func RunOutput(ctx *pulumi.Context, args RunOutputArgs, opts ...pulumi.InvokeOption) RunResultOutput {
-	return pulumi.ToOutputWithContext(ctx.Context(), args).
-		ApplyT(func(v interface{}) (RunResultOutput, error) {
-			args := v.(RunArgs)
-			options := pulumi.InvokeOutputOptions{InvokeOptions: internal.PkgInvokeDefaultOpts(opts)}
-			return ctx.InvokeOutput("command:local:run", args, RunResultOutput{}, options).(RunResultOutput), nil
-		}).(RunResultOutput)
+	options := pulumi.InvokeOutputOptions{InvokeOptions: internal.PkgInvokeDefaultOpts(opts)}
+	return ctx.InvokeOutput("command:local:run", args, RunResultOutput{}, options).(RunResultOutput)
 }
 
 type RunOutputArgs struct {
