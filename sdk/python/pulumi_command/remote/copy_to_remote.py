@@ -94,7 +94,7 @@ class CopyToRemote(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict', 'outputs.Connection']]] = None,
                  remote_path: pulumi.Input[Optional[_builtins.str]] = None,
                  source: pulumi.Input[Optional[Union[pulumi.Asset, pulumi.Archive]]] = None,
                  triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
@@ -148,7 +148,7 @@ class CopyToRemote(pulumi.CustomResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']] connection: The parameters with which to connect to the remote host.
+        :param pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict', 'outputs.Connection']] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[_builtins.str] remote_path: The destination path on the remote host. Any necessary parent directories will be created automatically. When the remote path is an existing directory, the source file or directory will be copied into that directory. When the source is a file and the remote path is an existing file, that file will be overwritten. When the source is a directory and the remote path an existing file, the copy will fail.
         :param pulumi.Input[Union[pulumi.Asset, pulumi.Archive]] source: An [asset or an archive](https://www.pulumi.com/docs/concepts/assets-archives/) to upload as the source of the copy. The item will be copied as-is; archives like .tgz will not be unpacked. Directories are copied recursively, overwriting existing files.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
@@ -221,7 +221,7 @@ class CopyToRemote(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict', 'outputs.Connection']]] = None,
                  remote_path: pulumi.Input[Optional[_builtins.str]] = None,
                  source: pulumi.Input[Optional[Union[pulumi.Asset, pulumi.Archive]]] = None,
                  triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
