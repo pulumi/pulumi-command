@@ -99,7 +99,7 @@ class CopyFile(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict', 'outputs.Connection']]] = None,
                  local_path: pulumi.Input[Optional[_builtins.str]] = None,
                  remote_path: pulumi.Input[Optional[_builtins.str]] = None,
                  triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
@@ -109,7 +109,7 @@ class CopyFile(pulumi.CustomResource):
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict']] connection: The parameters with which to connect to the remote host.
+        :param pulumi.Input[Union['ConnectionArgs', 'ConnectionArgsDict', 'outputs.Connection']] connection: The parameters with which to connect to the remote host.
         :param pulumi.Input[_builtins.str] local_path: The path of the file to be copied.
         :param pulumi.Input[_builtins.str] remote_path: The destination path in the remote host.
         :param pulumi.Input[Sequence[Any]] triggers: Trigger replacements on changes to this input.
@@ -138,7 +138,7 @@ class CopyFile(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict']]] = None,
+                 connection: pulumi.Input[Optional[Union['ConnectionArgs', 'ConnectionArgsDict', 'outputs.Connection']]] = None,
                  local_path: pulumi.Input[Optional[_builtins.str]] = None,
                  remote_path: pulumi.Input[Optional[_builtins.str]] = None,
                  triggers: pulumi.Input[Optional[Sequence[Any]]] = None,
