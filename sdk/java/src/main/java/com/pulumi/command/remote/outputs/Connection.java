@@ -26,6 +26,11 @@ public final class Connection {
      */
     private @Nullable Integer dialErrorLimit;
     /**
+     * @return Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+     * 
+     */
+    private @Nullable Integer dialRetryWait;
+    /**
      * @return The address of the resource to connect to.
      * 
      */
@@ -85,6 +90,13 @@ public final class Connection {
      */
     public Optional<Integer> dialErrorLimit() {
         return Optional.ofNullable(this.dialErrorLimit);
+    }
+    /**
+     * @return Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+     * 
+     */
+    public Optional<Integer> dialRetryWait() {
+        return Optional.ofNullable(this.dialRetryWait);
     }
     /**
      * @return The address of the resource to connect to.
@@ -161,6 +173,7 @@ public final class Connection {
     public static final class Builder {
         private @Nullable String agentSocketPath;
         private @Nullable Integer dialErrorLimit;
+        private @Nullable Integer dialRetryWait;
         private String host;
         private @Nullable String hostKey;
         private @Nullable String password;
@@ -175,6 +188,7 @@ public final class Connection {
     	      Objects.requireNonNull(defaults);
     	      this.agentSocketPath = defaults.agentSocketPath;
     	      this.dialErrorLimit = defaults.dialErrorLimit;
+    	      this.dialRetryWait = defaults.dialRetryWait;
     	      this.host = defaults.host;
     	      this.hostKey = defaults.hostKey;
     	      this.password = defaults.password;
@@ -196,6 +210,12 @@ public final class Connection {
         public Builder dialErrorLimit(@Nullable Integer dialErrorLimit) {
 
             this.dialErrorLimit = dialErrorLimit;
+            return this;
+        }
+        @CustomType.Setter
+        public Builder dialRetryWait(@Nullable Integer dialRetryWait) {
+
+            this.dialRetryWait = dialRetryWait;
             return this;
         }
         @CustomType.Setter
@@ -258,6 +278,7 @@ public final class Connection {
             final var _resultValue = new Connection();
             _resultValue.agentSocketPath = agentSocketPath;
             _resultValue.dialErrorLimit = dialErrorLimit;
+            _resultValue.dialRetryWait = dialRetryWait;
             _resultValue.host = host;
             _resultValue.hostKey = hostKey;
             _resultValue.password = password;

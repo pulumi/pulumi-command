@@ -22,6 +22,10 @@ export namespace remote {
          */
         dialErrorLimit?: number;
         /**
+         * Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+         */
+        dialRetryWait?: number;
+        /**
          * The address of the resource to connect to.
          */
         host: string;
@@ -84,6 +88,10 @@ export namespace remote {
          * Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
          */
         dialErrorLimit?: number;
+        /**
+         * Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+         */
+        dialRetryWait?: number;
         /**
          * The address of the bastion host to connect to.
          */

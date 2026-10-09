@@ -19,6 +19,8 @@ type Connection struct {
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
+	// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+	DialRetryWait *int `pulumi:"dialRetryWait"`
 	// The address of the resource to connect to.
 	Host string `pulumi:"host"`
 	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
@@ -83,6 +85,8 @@ type ConnectionArgs struct {
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
+	// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+	DialRetryWait pulumi.IntPtrInput `pulumi:"dialRetryWait"`
 	// The address of the resource to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
 	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
@@ -161,6 +165,11 @@ func (o ConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v Connection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
 }
 
+// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+func (o ConnectionOutput) DialRetryWait() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v Connection) *int { return v.DialRetryWait }).(pulumi.IntPtrOutput)
+}
+
 // The address of the resource to connect to.
 func (o ConnectionOutput) Host() pulumi.StringOutput {
 	return o.ApplyT(func(v Connection) string { return v.Host }).(pulumi.StringOutput)
@@ -212,6 +221,8 @@ type ProxyConnection struct {
 	AgentSocketPath *string `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit *int `pulumi:"dialErrorLimit"`
+	// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+	DialRetryWait *int `pulumi:"dialRetryWait"`
 	// The address of the bastion host to connect to.
 	Host string `pulumi:"host"`
 	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
@@ -272,6 +283,8 @@ type ProxyConnectionArgs struct {
 	AgentSocketPath pulumi.StringPtrInput `pulumi:"agentSocketPath"`
 	// Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
 	DialErrorLimit pulumi.IntPtrInput `pulumi:"dialErrorLimit"`
+	// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+	DialRetryWait pulumi.IntPtrInput `pulumi:"dialRetryWait"`
 	// The address of the bastion host to connect to.
 	Host pulumi.StringInput `pulumi:"host"`
 	// The expected host key to verify the server's identity. If not provided, the host key will be ignored.
@@ -398,6 +411,11 @@ func (o ProxyConnectionOutput) DialErrorLimit() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v ProxyConnection) *int { return v.DialErrorLimit }).(pulumi.IntPtrOutput)
 }
 
+// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+func (o ProxyConnectionOutput) DialRetryWait() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v ProxyConnection) *int { return v.DialRetryWait }).(pulumi.IntPtrOutput)
+}
+
 // The address of the bastion host to connect to.
 func (o ProxyConnectionOutput) Host() pulumi.StringOutput {
 	return o.ApplyT(func(v ProxyConnection) string { return v.Host }).(pulumi.StringOutput)
@@ -479,6 +497,16 @@ func (o ProxyConnectionPtrOutput) DialErrorLimit() pulumi.IntPtrOutput {
 			return nil
 		}
 		return v.DialErrorLimit
+	}).(pulumi.IntPtrOutput)
+}
+
+// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+func (o ProxyConnectionPtrOutput) DialRetryWait() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *ProxyConnection) *int {
+		if v == nil {
+			return nil
+		}
+		return v.DialRetryWait
 	}).(pulumi.IntPtrOutput)
 }
 

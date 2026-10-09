@@ -379,6 +379,34 @@ func TestRegress248(t *testing.T) {
 		resp.Inputs)
 }
 
+func TestConnectionDialRetryWaitInputs(t *testing.T) {
+	t.Parallel()
+	for _, wait := range []float64{0, 2} {
+		t.Run(fmt.Sprintf("wait=%g", wait), func(t *testing.T) {
+			t.Parallel()
+			connection := property.NewMap(map[string]property.Value{
+				hostKey:         property.New("localhost"),
+				"dialRetryWait": property.New(wait),
+				"proxy": property.New(property.NewMap(map[string]property.Value{
+					hostKey:         property.New("localhost"),
+					"dialRetryWait": property.New(wait),
+				})),
+			})
+			resp, err := provider(t).Check(p.CheckRequest{
+				Urn: urn("remote", "Command", "check"),
+				Inputs: property.NewMap(map[string]property.Value{
+					connectionKey: property.New(connection),
+				}),
+			})
+			require.NoError(t, err)
+			require.Empty(t, resp.Failures)
+			checked := resp.Inputs.Get(connectionKey).AsMap()
+			require.Equal(t, property.New(wait), checked.Get("dialRetryWait"))
+			require.Equal(t, property.New(wait), checked.Get("proxy").AsMap().Get("dialRetryWait"))
+		})
+	}
+}
+
 func TestLocalRun(t *testing.T) {
 	t.Parallel()
 
