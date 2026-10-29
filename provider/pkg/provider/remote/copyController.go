@@ -48,7 +48,7 @@ func copyTextContent(sftpClient *sftp.Client, content, destPath string) error {
 	}
 
 	// Ensure parent directories exist.
-	if err := sftpClient.MkdirAll(filepath.Dir(destPath)); err != nil {
+	if err := sftpClient.MkdirAll(path.Dir(destPath)); err != nil {
 		return fmt.Errorf("failed to create parent directories for %s: %w", destPath, err)
 	}
 
@@ -257,9 +257,9 @@ func copyReaderAsFile(sftpClient *sftp.Client, r io.Reader, sourceName, destPath
 		if sourceName == "" {
 			return fmt.Errorf("remote path %s is a directory; cannot determine destination filename", destPath)
 		}
-		dest = filepath.Join(dest, sourceName)
+		dest = path.Join(dest, sourceName)
 	} else if destStat == nil {
-		if err := sftpClient.MkdirAll(filepath.Dir(dest)); err != nil {
+		if err := sftpClient.MkdirAll(path.Dir(dest)); err != nil {
 			return fmt.Errorf("failed to create parent directories for %s: %w", dest, err)
 		}
 	}
@@ -305,7 +305,7 @@ func copyAssetArchive(sftpClient *sftp.Client, a *resource.Archive, destPath str
 		if err != nil {
 			return fmt.Errorf("failed to read asset archive entry: %w", err)
 		}
-		if err := writeArchiveEntry(sftpClient, blob, filepath.Join(destPath, name)); err != nil {
+		if err := writeArchiveEntry(sftpClient, blob, remoteJoin(destPath, name)); err != nil {
 			return err
 		}
 	}
@@ -313,7 +313,7 @@ func copyAssetArchive(sftpClient *sftp.Client, a *resource.Archive, destPath str
 
 func writeArchiveEntry(sftpClient *sftp.Client, blob io.ReadCloser, remotePath string) error {
 	defer blob.Close()
-	if err := sftpClient.MkdirAll(filepath.Dir(remotePath)); err != nil {
+	if err := sftpClient.MkdirAll(path.Dir(remotePath)); err != nil {
 		return fmt.Errorf("failed to create parent directories for %s: %w", remotePath, err)
 	}
 	remote, err := sftpClient.Create(remotePath)
@@ -339,6 +339,14 @@ func uriBasename(uri string) string {
 		return ""
 	}
 	return base
+}
+
+// remoteJoin appends a name taken from the local machine (for example the base name of a local
+// file) to a remote directory path. SFTP paths always use forward slashes regardless of the local
+// operating system, so remote paths must be built with the path package rather than path/filepath,
+// which would produce backslash-separated paths such as `\scripts\install.sh` on Windows.
+func remoteJoin(remoteDir, localName string) string {
+	return path.Join(remoteDir, filepath.ToSlash(localName))
 }
 
 // If the file does not exist, returns nil, nil.
@@ -386,8 +394,8 @@ func sftpCopy(sftpClient *sftp.Client, sourcePath, destPath string) error {
 			}
 		}
 
-		if !strings.HasSuffix(sourcePath, "/") {
-			dest = filepath.Join(dest, filepath.Base(sourcePath))
+		if !strings.HasSuffix(sourcePath, "/") && !strings.HasSuffix(sourcePath, string(filepath.Separator)) {
+			dest = remoteJoin(dest, filepath.Base(sourcePath))
 			destStat, err := remoteStat(sftpClient, dest)
 			if err != nil {
 				return err
@@ -407,10 +415,10 @@ func sftpCopy(sftpClient *sftp.Client, sourcePath, destPath string) error {
 	} else {
 		// If the file is f and the destination is existing dir/, copy to dir/f.
 		if destStat != nil && destStat.IsDir() {
-			dest = filepath.Join(dest, filepath.Base(sourcePath))
+			dest = remoteJoin(dest, filepath.Base(sourcePath))
 		} else if destStat == nil {
 			// Ensure parent directories exist when creating a new file.
-			if err := sftpClient.MkdirAll(filepath.Dir(dest)); err != nil {
+			if err := sftpClient.MkdirAll(path.Dir(dest)); err != nil {
 				return fmt.Errorf("failed to create parent directories for %s: %w", dest, err)
 			}
 		}
@@ -443,15 +451,16 @@ func copyFile(sftp *sftp.Client, src, dst string) error {
 // Note that the current implementation is naive and sequential and therefore can be slow.
 func copyDir(sftp *sftp.Client, src, dst string) error {
 	fileSystem := os.DirFS(src)
-	return fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, err error) error {
+	return fs.WalkDir(fileSystem, ".", func(relPath string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		remotePath := filepath.Join(dst, path)
+		// fs.FS paths are always slash-separated, so they can be joined to the remote path as-is.
+		remotePath := path.Join(dst, relPath)
 
 		if !d.IsDir() {
-			return copyFile(sftp, filepath.Join(src, path), remotePath)
+			return copyFile(sftp, filepath.Join(src, filepath.FromSlash(relPath)), remotePath)
 		}
 
 		dirInfo, err := remoteStat(sftp, remotePath)
