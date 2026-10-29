@@ -1,2 +1,0 @@
-[env]
-_.vfox-pulumi = { module_path = "." }
