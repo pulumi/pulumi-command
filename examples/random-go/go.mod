@@ -3,7 +3,7 @@ module goaws
 go 1.26.0
 
 require (
-	github.com/pulumi/pulumi-command/sdk v1.2.1
+	github.com/pulumi/pulumi-command/sdk v1.3.0
 	github.com/pulumi/pulumi/sdk/v3 v3.256.0
 )
 
