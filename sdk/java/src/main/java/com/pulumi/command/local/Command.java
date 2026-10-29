@@ -77,12 +77,12 @@ import javax.annotation.Nullable;
  * import com.pulumi.asset.FileArchive;
  * import java.util.Map;
  * 
- * public class App {
- *     public static void main(String[] args) {
+ * public class App }{{@code
+ *     public static void main(String[] args) }{{@code
  *         Pulumi.run(App::stack);
- *     }
+ *     }}{@code
  * 
- *     public static void stack(Context ctx) {
+ *     public static void stack(Context ctx) }{{@code
  *         var awsConfig = ctx.config("aws");
  *         var awsRegion = awsConfig.require("region");
  * 
@@ -116,7 +116,7 @@ import javax.annotation.Nullable;
  * 
  *         var invokeCommand = new Command("invokeCommand", CommandArgs.builder()
  *                 .create(String.format(
- *                         "aws lambda invoke --function-name \"$FN\" --payload '{\"stackName\": \"%s\"}' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '\"'  && rm out.txt",
+ *                         "aws lambda invoke --function-name }&#92;{@code "$FN}&#92;{@code " --payload '}{&#92;{@code "stackName}&#92;{@code ": }&#92;{@code "%s}&#92;{@code "}}{@code ' --cli-binary-format raw-in-base64-out out.txt >/dev/null && cat out.txt | tr -d '}&#92;{@code "'  && rm out.txt",
  *                         ctx.stackName()))
  *                 .environment(invokeEnv)
  *                 .build(),
@@ -125,8 +125,8 @@ import javax.annotation.Nullable;
  *                         .build());
  * 
  *         ctx.export("output", invokeCommand.stdout());
- *     }
- * }
+ *     }}{@code
+ * }}{@code
  * }
  * </pre>
  * 
