@@ -19,11 +19,10 @@ import javax.annotation.Nullable;
 /**
  * Copy a local file to a remote host.
  * 
- * @deprecated
- * This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.
+ * @deprecated This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead.
  * 
  */
-@Deprecated /* This resource is deprecated and will be removed in a future release. Please use the `CopyToRemote` resource instead. */
+@Deprecated
 @ResourceType(type="command:remote:CopyFile")
 public class CopyFile extends com.pulumi.resources.CustomResource {
     /**
