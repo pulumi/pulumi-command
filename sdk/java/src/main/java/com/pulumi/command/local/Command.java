@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
  * This command can be inserted into the life cycles of other resources using the `dependsOn` or `parent` resource options. A command is considered to have failed when it finished with a non-zero exit code. This will fail the CRUD step of the `Command` resource.
  * 
  * ## Example Usage
- * 
  * ### Basic Example
  * 
  * This example shows the simplest use case, simply running a command on `create` in the Pulumi lifecycle.
@@ -55,7 +54,6 @@ import javax.annotation.Nullable;
  * }
  * }
  * </pre>
- * 
  * ### Invoking a Lambda during Pulumi Deployment
  * 
  * This example show using a local command to invoke an AWS Lambda once it&#39;s deployed. The Lambda invocation could also depend on other resources.
@@ -129,7 +127,6 @@ import javax.annotation.Nullable;
  * }}{@code
  * }
  * </pre>
- * 
  * ### Using Triggers
  * 
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
