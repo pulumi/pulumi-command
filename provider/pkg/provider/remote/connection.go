@@ -47,6 +47,7 @@ type connectionBase struct {
 	PrivateKeyPassword *string  `pulumi:"privateKeyPassword,optional" provider:"secret"`
 	AgentSocketPath    *string  `pulumi:"agentSocketPath,optional"`
 	DialErrorLimit     *int     `pulumi:"dialErrorLimit,optional"`
+	DialRetryWait      *int     `pulumi:"dialRetryWait,optional"`
 	PerDialTimeout     *int     `pulumi:"perDialTimeout,optional"`
 	HostKey            *string  `pulumi:"hostKey,optional"`
 }
@@ -71,6 +72,7 @@ func (c *Connection) Annotate(a infer.Annotator) {
 	)
 	a.Describe(&c.Proxy, "The connection settings for the bastion/proxy host.")
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
+	a.Describe(&c.DialRetryWait, dialRetryWaitDescription)
 	a.Describe(
 		&c.PerDialTimeout,
 		"Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.",
@@ -147,9 +149,15 @@ func (con *connectionBase) SSHConfig() (*ssh.ClientConfig, error) {
 	return config, nil
 }
 
-func dialWithRetry[T any](ctx context.Context, msg string, maxAttempts int, f func() (T, error)) (T, error) {
+const dialRetryWaitDescription = "Number of seconds to wait between failed SSH dial attempts. " +
+	"When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. " +
+	"0 retries immediately."
+
+func dialWithRetry[T any](
+	ctx context.Context, msg string, maxAttempts int, dialRetryWait *int, f func() (T, error),
+) (T, error) {
 	var userError error
-	ok, data, err := retry.Until(ctx, retry.Acceptor{
+	acceptor := retry.Acceptor{
 		Accept: func(try int, _ time.Duration) (bool, any, error) {
 			var result T
 			result, userError = f()
@@ -171,7 +179,15 @@ func dialWithRetry[T any](ctx context.Context, msg string, maxAttempts int, f fu
 				msg, dials, limit)
 			return false, nil, nil
 		},
-	})
+	}
+	if dialRetryWait != nil {
+		delay := time.Duration(*dialRetryWait) * time.Second
+		backoff := 1.0
+		acceptor.Delay = &delay
+		acceptor.Backoff = &backoff
+		acceptor.MaxDelay = &delay
+	}
+	ok, data, err := retry.Until(ctx, acceptor)
 	// It's important to check both `ok` and `err` as sometimes `err` will be nil when `ok` is false,
 	// such as when the context is cancelled.
 	if ok && err == nil {
@@ -196,7 +212,7 @@ func (c *Connection) Dial(ctx context.Context) (*ssh.Client, error) {
 	endpoint := net.JoinHostPort(*c.Host, fmt.Sprintf("%d", int(*c.Port)))
 	tries := c.getDialErrorLimit()
 	if c.Proxy == nil {
-		return dialWithRetry(ctx, "Dial", tries, func() (*ssh.Client, error) {
+		return dialWithRetry(ctx, "Dial", tries, c.DialRetryWait, func() (*ssh.Client, error) {
 			return ssh.Dial("tcp", endpoint, config)
 		})
 	}
@@ -208,7 +224,7 @@ func (c *Connection) Dial(ctx context.Context) (*ssh.Client, error) {
 
 	proxyTries := c.Proxy.getDialErrorLimit()
 	// The user has specified a proxy connection. First, connect to the proxy:
-	proxyClient, err := dialWithRetry(ctx, "Dial proxy", proxyTries, func() (*ssh.Client, error) {
+	proxyClient, err := dialWithRetry(ctx, "Dial proxy", proxyTries, c.Proxy.DialRetryWait, func() (*ssh.Client, error) {
 		return ssh.Dial("tcp",
 			net.JoinHostPort(*c.Proxy.Host, fmt.Sprintf("%d", int(*c.Proxy.Port))),
 			proxyConfig)
@@ -219,7 +235,7 @@ func (c *Connection) Dial(ctx context.Context) (*ssh.Client, error) {
 
 	// Having connected with the proxy, we establish a connection from our proxy to
 	// our server.
-	conn, err := dialWithRetry(ctx, "Dial from proxy", tries, func() (net.Conn, error) {
+	conn, err := dialWithRetry(ctx, "Dial from proxy", tries, c.DialRetryWait, func() (net.Conn, error) {
 		return proxyClient.Dial("tcp", endpoint)
 	})
 	if err != nil {
@@ -229,7 +245,7 @@ func (c *Connection) Dial(ctx context.Context) (*ssh.Client, error) {
 	// We initiate a SSH connection over the bridge we just established.
 	var channel <-chan ssh.NewChannel
 	var req <-chan *ssh.Request
-	proxyConn, err := dialWithRetry(ctx, "Dial", tries, func() (ssh.Conn, error) {
+	proxyConn, err := dialWithRetry(ctx, "Dial", tries, c.DialRetryWait, func() (ssh.Conn, error) {
 		connVar, ch, r, err := ssh.NewClientConn(conn, endpoint, config)
 		channel = ch
 		req = r

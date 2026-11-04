@@ -33,6 +33,8 @@ class Connection(dict):
             suggest = "agent_socket_path"
         elif key == "dialErrorLimit":
             suggest = "dial_error_limit"
+        elif key == "dialRetryWait":
+            suggest = "dial_retry_wait"
         elif key == "hostKey":
             suggest = "host_key"
         elif key == "perDialTimeout":
@@ -57,6 +59,7 @@ class Connection(dict):
                  host: _builtins.str,
                  agent_socket_path: Optional[_builtins.str] = None,
                  dial_error_limit: Optional[_builtins.int] = None,
+                 dial_retry_wait: Optional[_builtins.int] = None,
                  host_key: Optional[_builtins.str] = None,
                  password: Optional[_builtins.str] = None,
                  per_dial_timeout: Optional[_builtins.int] = None,
@@ -71,6 +74,7 @@ class Connection(dict):
         :param _builtins.str host: The address of the resource to connect to.
         :param _builtins.str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param _builtins.int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+        :param _builtins.int dial_retry_wait: Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
         :param _builtins.str host_key: The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         :param _builtins.str password: The password we should use for the connection.
         :param _builtins.int per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -87,6 +91,8 @@ class Connection(dict):
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if dial_retry_wait is not None:
+            pulumi.set(__self__, "dial_retry_wait", dial_retry_wait)
         if host_key is not None:
             pulumi.set(__self__, "host_key", host_key)
         if password is not None:
@@ -133,6 +139,14 @@ class Connection(dict):
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
         return pulumi.get(self, "dial_error_limit")
+
+    @_builtins.property
+    @pulumi.getter(name="dialRetryWait")
+    def dial_retry_wait(self) -> Optional[_builtins.int]:
+        """
+        Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+        """
+        return pulumi.get(self, "dial_retry_wait")
 
     @_builtins.property
     @pulumi.getter(name="hostKey")
@@ -211,6 +225,8 @@ class ProxyConnection(dict):
             suggest = "agent_socket_path"
         elif key == "dialErrorLimit":
             suggest = "dial_error_limit"
+        elif key == "dialRetryWait":
+            suggest = "dial_retry_wait"
         elif key == "hostKey":
             suggest = "host_key"
         elif key == "perDialTimeout":
@@ -235,6 +251,7 @@ class ProxyConnection(dict):
                  host: _builtins.str,
                  agent_socket_path: Optional[_builtins.str] = None,
                  dial_error_limit: Optional[_builtins.int] = None,
+                 dial_retry_wait: Optional[_builtins.int] = None,
                  host_key: Optional[_builtins.str] = None,
                  password: Optional[_builtins.str] = None,
                  per_dial_timeout: Optional[_builtins.int] = None,
@@ -248,6 +265,7 @@ class ProxyConnection(dict):
         :param _builtins.str host: The address of the bastion host to connect to.
         :param _builtins.str agent_socket_path: SSH Agent socket path. Default to environment variable SSH_AUTH_SOCK if present.
         :param _builtins.int dial_error_limit: Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
+        :param _builtins.int dial_retry_wait: Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
         :param _builtins.str host_key: The expected host key to verify the server's identity. If not provided, the host key will be ignored.
         :param _builtins.str password: The password we should use for the connection to the bastion host.
         :param _builtins.int per_dial_timeout: Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.
@@ -263,6 +281,8 @@ class ProxyConnection(dict):
             dial_error_limit = 10
         if dial_error_limit is not None:
             pulumi.set(__self__, "dial_error_limit", dial_error_limit)
+        if dial_retry_wait is not None:
+            pulumi.set(__self__, "dial_retry_wait", dial_retry_wait)
         if host_key is not None:
             pulumi.set(__self__, "host_key", host_key)
         if password is not None:
@@ -307,6 +327,14 @@ class ProxyConnection(dict):
         Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.
         """
         return pulumi.get(self, "dial_error_limit")
+
+    @_builtins.property
+    @pulumi.getter(name="dialRetryWait")
+    def dial_retry_wait(self) -> Optional[_builtins.int]:
+        """
+        Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+        """
+        return pulumi.get(self, "dial_retry_wait")
 
     @_builtins.property
     @pulumi.getter(name="hostKey")
