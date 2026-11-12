@@ -10,8 +10,8 @@ require (
 	github.com/pkg/sftp v1.13.10
 	github.com/pulumi/providertest v0.7.0
 	github.com/pulumi/pulumi-go-provider v1.8.0
-	github.com/pulumi/pulumi/pkg/v3 v3.273.0
-	github.com/pulumi/pulumi/sdk/v3 v3.273.0
+	github.com/pulumi/pulumi/pkg/v3 v3.275.0
+	github.com/pulumi/pulumi/sdk/v3 v3.275.0
 	github.com/stretchr/testify v1.12.1
 	github.com/testcontainers/testcontainers-go v0.41.0
 	golang.org/x/crypto v0.58.0
@@ -107,7 +107,7 @@ require (
 	github.com/iwdgo/sigintwindows v0.2.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.6.0 // indirect
-	github.com/klauspost/compress v1.18.7 // indirect
+	github.com/klauspost/compress v1.20.2 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
@@ -147,7 +147,7 @@ require (
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/inflector v0.2.1 // indirect
-	github.com/pulumi/pulumi-cloud-sdk/go v1.20261103.0 // indirect
+	github.com/pulumi/pulumi-cloud-sdk/go v1.20261104.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
