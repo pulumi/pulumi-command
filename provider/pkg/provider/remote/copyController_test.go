@@ -606,3 +606,28 @@ func TestUriBasename(t *testing.T) {
 		})
 	}
 }
+
+func TestRemoteJoin(t *testing.T) {
+	t.Parallel()
+
+	const script = "install.sh"
+
+	tests := []struct {
+		name      string
+		remoteDir string
+		localName string
+		expected  string
+	}{
+		{"file name", "/scripts", script, "/scripts/install.sh"},
+		{"relative remote dir", "scripts", script, "scripts/install.sh"},
+		// Built with filepath.Join so that it uses the OS separator: backslashes on Windows.
+		{"local nested path", "/scripts", filepath.Join("one", "two", "file3"), "/scripts/one/two/file3"},
+		{"trailing slash on remote dir", "/scripts/", script, "/scripts/install.sh"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			assert.Equal(t, tt.expected, remoteJoin(tt.remoteDir, tt.localName))
+		})
+	}
+}
