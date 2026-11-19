@@ -39,6 +39,7 @@ func (c *ProxyConnection) Annotate(a infer.Annotator) {
 		"Max allowed errors on trying to dial the remote host. -1 set count to unlimited. Default value is 10.",
 	)
 	a.SetDefault(&c.DialErrorLimit, dialErrorDefault)
+	a.Describe(&c.DialRetryWait, dialRetryWaitDescription)
 	a.Describe(
 		&c.PerDialTimeout,
 		"Max number of seconds for each dial attempt. 0 implies no maximum. Default value is 15 seconds.",

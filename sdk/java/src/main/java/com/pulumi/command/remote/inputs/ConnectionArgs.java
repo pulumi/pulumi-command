@@ -55,6 +55,21 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     }
 
     /**
+     * Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+     * 
+     */
+    @Import(name="dialRetryWait")
+    private @Nullable Output<Integer> dialRetryWait;
+
+    /**
+     * @return Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+     * 
+     */
+    public Optional<Output<Integer>> dialRetryWait() {
+        return Optional.ofNullable(this.dialRetryWait);
+    }
+
+    /**
      * The address of the resource to connect to.
      * 
      */
@@ -194,6 +209,7 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
     private ConnectionArgs(ConnectionArgs $) {
         this.agentSocketPath = $.agentSocketPath;
         this.dialErrorLimit = $.dialErrorLimit;
+        this.dialRetryWait = $.dialRetryWait;
         this.host = $.host;
         this.hostKey = $.hostKey;
         this.password = $.password;
@@ -263,6 +279,27 @@ public final class ConnectionArgs extends com.pulumi.resources.ResourceArgs {
          */
         public Builder dialErrorLimit(Integer dialErrorLimit) {
             return dialErrorLimit(Output.of(dialErrorLimit));
+        }
+
+        /**
+         * @param dialRetryWait Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder dialRetryWait(@Nullable Output<Integer> dialRetryWait) {
+            $.dialRetryWait = dialRetryWait;
+            return this;
+        }
+
+        /**
+         * @param dialRetryWait Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+         * 
+         * @return builder
+         * 
+         */
+        public Builder dialRetryWait(Integer dialRetryWait) {
+            return dialRetryWait(Output.of(dialRetryWait));
         }
 
         /**
