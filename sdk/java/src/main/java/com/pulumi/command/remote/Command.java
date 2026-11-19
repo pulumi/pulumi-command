@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
  * A command to run on a remote host. The connection is established via ssh.
  * 
  * ## Example Usage
- * 
  * ### A Basic Example
  * This program connects to a server and runs the `hostname` command. The output is then available via the `stdout` property.
  * 
@@ -62,7 +61,6 @@ import javax.annotation.Nullable;
  * }
  * }
  * </pre>
- * 
  * ### Triggers
  * This example defines several trigger values of various kinds. Changes to any of them will cause `cmd` to be re-run.
  * 
@@ -101,6 +99,7 @@ import javax.annotation.Nullable;
  * }
  * }
  * </pre>
+ * {{% /example %}}
  * 
  */
 @ResourceType(type="command:remote:Command")

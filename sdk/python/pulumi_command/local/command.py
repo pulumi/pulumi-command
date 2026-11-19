@@ -844,6 +844,12 @@ class Command(pulumi.CustomResource):
         __props__.__dict__["update"] = None
         return Command(resource_name, opts=opts, __props__=__props__)
 
+    @staticmethod
+    def exists(id: pulumi.Input[str],
+            opts: Optional[pulumi.ResourceOptions] = None) -> pulumi.Output[bool]:
+        __props__: dict = {}
+        return pulumi.runtime.exists_resource(None, 'command:local:Command', id, __props__, opts or pulumi.ResourceOptions())
+
     @_builtins.property
     @pulumi.getter(name="addPreviousOutputInEnv")
     def add_previous_output_in_env(self) -> pulumi.Output[Optional[_builtins.bool]]:
