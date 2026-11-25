@@ -28,6 +28,12 @@ namespace Pulumi.Command.Remote.Inputs
         public Input<int>? DialErrorLimit { get; set; }
 
         /// <summary>
+        /// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+        /// </summary>
+        [Input("dialRetryWait")]
+        public Input<int>? DialRetryWait { get; set; }
+
+        /// <summary>
         /// The address of the resource to connect to.
         /// </summary>
         [Input("host", required: true)]

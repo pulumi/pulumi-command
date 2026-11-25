@@ -25,6 +25,10 @@ namespace Pulumi.Command.Remote.Outputs
         /// </summary>
         public readonly int? DialErrorLimit;
         /// <summary>
+        /// Number of seconds to wait between failed SSH dial attempts. When omitted, uses exponential backoff starting at 100 milliseconds, capped at 5 seconds. 0 retries immediately.
+        /// </summary>
+        public readonly int? DialRetryWait;
+        /// <summary>
         /// The address of the resource to connect to.
         /// </summary>
         public readonly string Host;
@@ -67,6 +71,8 @@ namespace Pulumi.Command.Remote.Outputs
 
             int? dialErrorLimit,
 
+            int? dialRetryWait,
+
             string host,
 
             string? hostKey,
@@ -87,6 +93,7 @@ namespace Pulumi.Command.Remote.Outputs
         {
             AgentSocketPath = agentSocketPath;
             DialErrorLimit = dialErrorLimit;
+            DialRetryWait = dialRetryWait;
             Host = host;
             HostKey = hostKey;
             Password = password;
