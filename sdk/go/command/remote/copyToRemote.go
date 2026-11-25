@@ -148,6 +148,12 @@ func (CopyToRemoteState) ElementType() reflect.Type {
 	return reflect.TypeOf((*copyToRemoteState)(nil)).Elem()
 }
 
+// CopyToRemoteExists checks whether an existing CopyToRemote resource with the given ID exists.
+func CopyToRemoteExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *CopyToRemoteState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("command:remote:CopyToRemote", id, state, "", opts...)
+}
+
 type copyToRemoteArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`

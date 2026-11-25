@@ -84,6 +84,12 @@ func (CopyFileState) ElementType() reflect.Type {
 	return reflect.TypeOf((*copyFileState)(nil)).Elem()
 }
 
+// CopyFileExists checks whether an existing CopyFile resource with the given ID exists.
+func CopyFileExists(ctx *pulumi.Context,
+	id pulumi.StringInput, state *CopyFileState, opts ...pulumi.ResourceOption) pulumi.BoolOutput {
+	return ctx.ExistsResource("command:remote:CopyFile", id, state, "", opts...)
+}
+
 type copyFileArgs struct {
 	// The parameters with which to connect to the remote host.
 	Connection Connection `pulumi:"connection"`

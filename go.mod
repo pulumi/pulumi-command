@@ -10,8 +10,8 @@ require (
 	github.com/pkg/sftp v1.13.10
 	github.com/pulumi/providertest v0.7.0
 	github.com/pulumi/pulumi-go-provider v1.8.0
-	github.com/pulumi/pulumi/pkg/v3 v3.273.0
-	github.com/pulumi/pulumi/sdk/v3 v3.273.0
+	github.com/pulumi/pulumi/pkg/v3 v3.274.0
+	github.com/pulumi/pulumi/sdk/v3 v3.274.0
 	github.com/stretchr/testify v1.12.1
 	github.com/testcontainers/testcontainers-go v0.41.0
 	golang.org/x/crypto v0.58.0
